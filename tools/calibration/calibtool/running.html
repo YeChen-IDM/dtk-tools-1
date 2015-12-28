@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. Running CalibTool &mdash; DTK Package 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="DTK Package 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Calibtool" href="index.html"/>
+        <link rel="next" title="3. Adding a new malaria site or analyzer" href="adding.html"/>
+        <link rel="prev" title="1. Overview" href="overview.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../../../index.html" class="icon icon-home"> DTK Package
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../generic/index.html">Generic package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/climate.html">Climate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/demographics.html">Demographics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/disease.html">Disease</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/geography.html">Geography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/migration.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/properties.html">Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interventions/index.html">Interventions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/empty_campaign.html">Empty campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/habitat_scale.html">Habitat scale campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/health_seeking.html">Health seeking campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/inputs_EIR.html">Inputs EIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/irs.html">IRS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/itn.html">ITN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/ivernectin.html">Ivermectin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_challenge.html">Malaria Challenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_drugs.html">Malaria drugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_vaccine.html">Malaria vaccine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/outbreak.html">Outbreak</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../malaria/index.html">Malaria package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/immunity.html">Immunity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/infection.html">Infection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/symptoms.html">Symptoms</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Tools package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Calibration tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../IMIS.html">IMIS</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Calibtool</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="">2. Running CalibTool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="adding.html">3. Adding a new malaria site or analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modifying.html">4. Modifying updater for new parameter sampling method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="running_outside.html">5. Running outside Edward&#8217;s python tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../climate/index.html">Climate tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../climate/display_climate.html">Display climate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../climate/large_data.html">Large data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../demographics/index.html">Demographics tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../demographics/compiledemog.html">Compiledemog script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../demographics/createimmunelayer.html">Createimmunelayer script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../demographics/osm2nx.html">osm2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../demographics/shp2nx.html">shp2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../demographics/visualize_nodes.html">visualize_nodes script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../separatrix/index.html">Separatrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../vector.html">Vector package</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">DTK Package</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Tools package</a> &raquo;</li>
+      
+          <li><a href="../index.html">Calibration tools</a> &raquo;</li>
+      
+          <li><a href="index.html">Calibtool</a> &raquo;</li>
+      
+    <li>2. Running CalibTool</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../_sources/tools/calibration/calibtool/running.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="running-calibtool">
+<h1>2. Running CalibTool<a class="headerlink" href="#running-calibtool" title="Permalink to this headline">¶</a></h1>
+<p>Run from the command line as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>% python ./calibration_manager.py
+</pre></div>
+</div>
+<p>The primary point of user manipulation is load_settings.py, which sets
+up a dictionary including locations of local working directories, HPC
+settings, local simulation settings, which sites to simulate, which
+analyzers should be run for each site, any relative weights for each
+site, iterative settings such as number of samples and max number of
+iterations, and the file where the names and boundaries of sampled
+parameters are listed.</p>
+<p>Parameters to be sampled over should be specified as follows in json
+format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;Parameter_Name_1&#39;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;max&#39;</span> <span class="p">:</span> <span class="n">max_value</span><span class="p">,</span>
+    <span class="s">&#39;min&#39;</span> <span class="p">:</span> <span class="n">min_value</span><span class="p">,</span>
+    <span class="s">&#39;type&#39;</span> <span class="p">:</span> <span class="n">PARAM_TYPE</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal"><span class="pre">PARAM_TYPE</span></code> is a string specifying linear vs log sampling, and if
+the parameter must be an integer. For example, a parameter to be
+sampled over log space should have type &#8216;log&#8217;, a parameter sampled
+over linear space but as an integer should have type &#8216;linear_int&#8217;,
+etc.</p>
+<p>load_settings.py also contains setup details for each
+analyzer type. This includes the reporter from which data should be
+gathered, relevant fields, and any other analyzer-specific settings
+that will be needed for parsing and calculating likelihoods.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Each calibration experiment MUST have a unique name.</p>
+</div>
+<p>When setting up a new calibration experiment, load_settings.py will
+save settings and analyzers to json files.</p>
+<p>To resume a partially-completed calibration, set <code class="docutils literal"><span class="pre">settings['expname']</span></code>
+in load_settings.py to the name of the calibration, then run
+calibration_manager.py as normal. It is not necessary to cross-check
+all remaining settings since load_settings.py will be loading the
+settings.json and analyzers.json files from the appropriate experiment
+directory.</p>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="adding.html" class="btn btn-neutral float-right" title="3. Adding a new malaria site or analyzer" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="overview.html" class="btn btn-neutral" title="1. Overview" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Institute for Disease Modeling (IDM).
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

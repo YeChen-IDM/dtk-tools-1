@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Demographics &mdash; DTK Package 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="DTK Package 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Generic package" href="index.html"/>
+        <link rel="next" title="Disease" href="disease.html"/>
+        <link rel="prev" title="Climate" href="climate.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> DTK Package
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Generic package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="climate.html">Climate</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Demographics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="disease.html">Disease</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geography.html">Geography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="properties.html">Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../interventions/index.html">Interventions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/empty_campaign.html">Empty campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/habitat_scale.html">Habitat scale campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/health_seeking.html">Health seeking campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/inputs_EIR.html">Inputs EIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/irs.html">IRS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/itn.html">ITN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/ivernectin.html">Ivermectin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/malaria_challenge.html">Malaria Challenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/malaria_drugs.html">Malaria drugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/malaria_vaccine.html">Malaria vaccine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interventions/outbreak.html">Outbreak</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../malaria/index.html">Malaria package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/immunity.html">Immunity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/infection.html">Infection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/symptoms.html">Symptoms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">Tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tools/calibration/index.html">Calibration tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/calibration/IMIS.html">IMIS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/calibration/calibtool/index.html">Calibtool</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/overview.html">1. Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/running.html">2. Running CalibTool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/adding.html">3. Adding a new malaria site or analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/modifying.html">4. Modifying updater for new parameter sampling method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/running_outside.html">5. Running outside Edward&#8217;s python tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/climate/index.html">Climate tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/climate/display_climate.html">Display climate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/climate/large_data.html">Large data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/demographics/index.html">Demographics tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/compiledemog.html">Compiledemog script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/createimmunelayer.html">Createimmunelayer script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/osm2nx.html">osm2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/shp2nx.html">shp2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/visualize_nodes.html">visualize_nodes script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/separatrix/index.html">Separatrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vector.html">Vector package</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">DTK Package</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Generic package</a> &raquo;</li>
+      
+    <li>Demographics</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/generic/demographics.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="demographics">
+<h1>Demographics<a class="headerlink" href="#demographics" title="Permalink to this headline">¶</a></h1>
+<p>Contains the generic defaults to set the demographics. All the parameters are hold in the <code class="docutils literal"><span class="pre">params</span></code> dictionary.
+It also initialized the <code class="docutils literal"><span class="pre">distribution_types</span></code> dictionary containing the different types of distribution for the demographic file flags (like <code class="docutils literal"><span class="pre">AgeDistributionFlag</span></code> or <code class="docutils literal"><span class="pre">PrevalenceDistributionFlag</span></code>).</p>
+<span class="target" id="module-dtk.generic.demographics"></span><dl class="function">
+<dt id="dtk.generic.demographics.apply_to_defaults_or_nodes">
+<code class="descclassname">dtk.generic.demographics.</code><code class="descname">apply_to_defaults_or_nodes</code><span class="sig-paren">(</span><em>demog</em>, <em>fn</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/demographics.html#apply_to_defaults_or_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.demographics.apply_to_defaults_or_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the <code class="docutils literal"><span class="pre">fn</span></code> function either to the <code class="docutils literal"><span class="pre">Defaults</span></code> dictionary or to each of the nodes depending
+if the <code class="docutils literal"><span class="pre">IndividualAttributes</span></code> parameter is present in the <code class="docutils literal"><span class="pre">Defaults</span></code> or not.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function should be refactored to look at both the <code class="docutils literal"><span class="pre">Defaults</span></code> and each individual nodes.
+It will make sure that if a node override the default <code class="docutils literal"><span class="pre">IndividualAttributes</span></code> the change will still
+be effective.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>demog</strong> &#8211; The demographic file represented as a dictionary</li>
+<li><strong>fn</strong> &#8211; The function to apply the <code class="docutils literal"><span class="pre">Defaults</span></code> or individual nodes</li>
+<li><strong>args</strong> &#8211; Argument list needed by <code class="docutils literal"><span class="pre">fn</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.demographics.set_demog_distributions">
+<code class="descclassname">dtk.generic.demographics.</code><code class="descname">set_demog_distributions</code><span class="sig-paren">(</span><em>filename</em>, <em>distributions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/demographics.html#set_demog_distributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.demographics.set_demog_distributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply distributions to a given demographics file.
+The distributions needs to be formatted as a list of (name, distribution, par1, par2) with:</p>
+<ul class="simple">
+<li><strong>name:</strong> Immunity, Risk, Age, Prevalence or MigrationHeterogeneity</li>
+<li><strong>distribution:</strong> One distribution contained in <code class="docutils literal"><span class="pre">distribution_types</span></code></li>
+<li><strong>par1, par2:</strong> the values for the distribution parameters</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Set the PrevalenceDistribution to a uniform distribution with 0.1 and 0.2</span>
+<span class="c"># and the ImmunityDistributionFlag to a constant distribution with 1</span>
+<span class="n">demog</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;demographics.json&quot;</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">))</span>
+<span class="n">distributions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">distributions</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&quot;Prevalence&quot;</span><span class="p">,</span><span class="s">&quot;UNIFORM_DISTRIBUTION&quot;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">))</span>
+<span class="n">distributions</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&quot;Immunity&quot;</span><span class="p">,</span><span class="s">&quot;CONSTANT_DISTRIBUTION&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">set_demog_distribution</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">distributions</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; the demographics file as json</li>
+<li><strong>distributions</strong> &#8211; the different distributions to set contained in a list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.demographics.set_growing_demographics">
+<code class="descclassname">dtk.generic.demographics.</code><code class="descname">set_growing_demographics</code><span class="sig-paren">(</span><em>cb</em>, <em>use_existing=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/demographics.html#set_growing_demographics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.demographics.set_growing_demographics" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a growing population. It works the same way as the <a class="reference internal" href="#dtk.generic.demographics.set_static_demographics" title="dtk.generic.demographics.set_static_demographics"><code class="xref any py py-func docutils literal"><span class="pre">set_static_demographics</span></code></a> but with
+a birth rate more important than the death rate which leads to a growing population.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Make sure that the population is 1000 individuals. For now rely on the fact that the base
+demographics file will be 1000 Initial Population.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> &#8211; The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> object</li>
+<li><strong>use_existing</strong> &#8211; If <code class="docutils literal"><span class="pre">True</span></code> will only take the demographics file name and add the .growing to it. If <code class="docutils literal"><span class="pre">False</span></code> will create a growing demographics file based on the specified demographics file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.demographics.set_immune_mod">
+<code class="descclassname">dtk.generic.demographics.</code><code class="descname">set_immune_mod</code><span class="sig-paren">(</span><em>filename</em>, <em>distribution</em>, <em>par1</em>, <em>par2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/demographics.html#set_immune_mod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.demographics.set_immune_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the <code class="docutils literal"><span class="pre">ImmunityDistributionFlag</span></code>, <code class="docutils literal"><span class="pre">ImmunityDistribution1</span></code> and <code class="docutils literal"><span class="pre">ImmunityDistribution2</span></code> in a demographics file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; The demographics file location</li>
+<li><strong>distribution</strong> &#8211; The selected distribution (need to come from <cite>distribution_types</cite>)</li>
+<li><strong>par1</strong> &#8211; Parameter 1 of the distribution</li>
+<li><strong>par2</strong> &#8211; Parameter 2 of the distribution (may be unused depending on the selected distribution)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.demographics.set_risk_mod">
+<code class="descclassname">dtk.generic.demographics.</code><code class="descname">set_risk_mod</code><span class="sig-paren">(</span><em>filename</em>, <em>distribution</em>, <em>par1</em>, <em>par2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/demographics.html#set_risk_mod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.demographics.set_risk_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the <code class="docutils literal"><span class="pre">RiskDistributionFlag</span></code>, <code class="docutils literal"><span class="pre">RiskDistribution1</span></code> and <code class="docutils literal"><span class="pre">RiskDistribution2</span></code> in a demographics file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; The demographics file location</li>
+<li><strong>distribution</strong> &#8211; The selected distribution (need to come from <code class="docutils literal"><span class="pre">distribution_types</span></code>)</li>
+<li><strong>par1</strong> &#8211; Parameter 1 of the distribution</li>
+<li><strong>par2</strong> &#8211; Parameter 2 of the distribution (may be unused depending on the selected distribution)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.demographics.set_static_demographics">
+<code class="descclassname">dtk.generic.demographics.</code><code class="descname">set_static_demographics</code><span class="sig-paren">(</span><em>cb</em>, <em>use_existing=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/demographics.html#set_static_demographics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.demographics.set_static_demographics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a static demographics based on the demographics file specified in the config file
+of the <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> object passed to the function.</p>
+<p>This function takes the current demographics file and adjust the birth rate/death rate
+to get a static population (the deaths are always compensated by new births).</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">Make sure that the population is 1000 individuals. For now rely on the fact that the base
+demographics file will be 1000 Initial Population.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> &#8211; The config builder object</li>
+<li><strong>use_existing</strong> &#8211; If <code class="docutils literal"><span class="pre">True</span></code> will only take the demographics file name and add the .static to it. If <code class="docutils literal"><span class="pre">False</span></code> will create a static demographics file based on the specified demographics file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="disease.html" class="btn btn-neutral float-right" title="Disease" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="climate.html" class="btn btn-neutral" title="Climate" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Institute for Disease Modeling (IDM).
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

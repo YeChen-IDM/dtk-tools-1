@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Malaria drugs &mdash; DTK Package 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="DTK Package 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Interventions package" href="index.html"/>
+        <link rel="next" title="Malaria vaccine" href="malaria_vaccine.html"/>
+        <link rel="prev" title="Malaria Challenge" href="malaria_challenge.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> DTK Package
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generic/index.html">Generic package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generic/climate.html">Climate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generic/demographics.html">Demographics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generic/disease.html">Disease</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generic/geography.html">Geography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generic/migration.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generic/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generic/properties.html">Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Interventions package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="empty_campaign.html">Empty campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="habitat_scale.html">Habitat scale campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="health_seeking.html">Health seeking campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs_EIR.html">Inputs EIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="irs.html">IRS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="itn.html">ITN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ivernectin.html">Ivermectin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="malaria_challenge.html">Malaria Challenge</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Malaria drugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="malaria_vaccine.html">Malaria vaccine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outbreak.html">Outbreak</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../malaria/index.html">Malaria package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/immunity.html">Immunity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/infection.html">Infection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../malaria/symptoms.html">Symptoms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">Tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tools/calibration/index.html">Calibration tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/calibration/IMIS.html">IMIS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/calibration/calibtool/index.html">Calibtool</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/overview.html">1. Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/running.html">2. Running CalibTool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/adding.html">3. Adding a new malaria site or analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/modifying.html">4. Modifying updater for new parameter sampling method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tools/calibration/calibtool/running_outside.html">5. Running outside Edward&#8217;s python tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/climate/index.html">Climate tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/climate/display_climate.html">Display climate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/climate/large_data.html">Large data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/demographics/index.html">Demographics tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/compiledemog.html">Compiledemog script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/createimmunelayer.html">Createimmunelayer script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/osm2nx.html">osm2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/shp2nx.html">shp2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/demographics/visualize_nodes.html">visualize_nodes script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/separatrix/index.html">Separatrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vector.html">Vector package</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">DTK Package</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Interventions package</a> &raquo;</li>
+      
+    <li>Malaria drugs</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/interventions/malaria_drugs.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="malaria-drugs">
+<h1>Malaria drugs<a class="headerlink" href="#malaria-drugs" title="Permalink to this headline">¶</a></h1>
+<p>Contains the <code class="docutils literal"><span class="pre">drug_params</span></code> dictionary holding the malaria drugs parameters for the following drugs:</p>
+<ul class="simple">
+<li>Artemether</li>
+<li>Lumefantrine</li>
+<li>DHA</li>
+<li>Piperaquine</li>
+<li>Primaquine</li>
+<li>Vehicle (empty drug)</li>
+</ul>
+<p>Also contains the <code class="docutils literal"><span class="pre">drug_cfg</span></code> dictionary holding the different configurations for the following regimen:</p>
+<ul class="simple">
+<li>MSAT_ALP</li>
+<li>MSAT_AL</li>
+<li>MDA_AL</li>
+<li>MDA_ALP</li>
+<li>MSAT_DP</li>
+<li>MSAT_DPP</li>
+<li>MSAT_PPQ</li>
+<li>MSAT_DHA_PQ</li>
+<li>MSAT_DHA</li>
+<li>MSAT_PMQ</li>
+<li>MDA_DP</li>
+<li>MDA_PPQ</li>
+<li>MDA_DPP</li>
+<li>MDA_PMQ</li>
+<li>MDA_Vehicle</li>
+</ul>
+<span class="target" id="module-dtk.interventions.malaria_drugs"></span><dl class="function">
+<dt id="dtk.interventions.malaria_drugs.add_drug_campaign">
+<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">add_drug_campaign</code><span class="sig-paren">(</span><em>cb</em>, <em>drug_code</em>, <em>start_days</em>, <em>coverage=1.0</em>, <em>repetitions=3</em>, <em>interval=60</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#add_drug_campaign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.add_drug_campaign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a drug campaign defined by the parameters to the config builder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> &#8211; The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug intervention.</li>
+<li><strong>drug_code</strong> &#8211; The drug code of the drug regimen</li>
+<li><strong>start_days</strong> &#8211; List of start days where the drug regimen will be distributed</li>
+<li><strong>coverage</strong> &#8211; Demographic coverage of the distribution</li>
+<li><strong>repetitions</strong> &#8211; Number repetitions</li>
+<li><strong>interval</strong> &#8211; Timesteps between the repetitions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.interventions.malaria_drugs.drug_configs_from_code">
+<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">drug_configs_from_code</code><span class="sig-paren">(</span><em>cb</em>, <em>drug_code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#drug_configs_from_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.drug_configs_from_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a drug config to the simulation configuration based on its code and add the corresponding AntimalarialDrug intervention to the return dictionary.
+The drug_code needs to be one identified in the <code class="docutils literal"><span class="pre">drug_cfg</span></code> dictionary.</p>
+<p>For example passing the <code class="docutils literal"><span class="pre">MDA_ALP</span></code> drug code, will add the drugs config for Artemether, Lumefantrine, Primaquine to the configuration file
+and will return a dictionary containing a Full Treatment course for those 3 drugs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> &#8211; The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug configuration</li>
+<li><strong>drug_code</strong> &#8211; Code of the drug to add</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dictionary containing the parameters for an intervention using the given drug</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.interventions.malaria_drugs.get_drug_param">
+<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">get_drug_param</code><span class="sig-paren">(</span><em>cb</em>, <em>drugname</em>, <em>parameter</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#get_drug_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.get_drug_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a parameter for a given drug</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> &#8211; The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the configuration</li>
+<li><strong>drugname</strong> &#8211; The drug that holds the parameter we want to retrieve</li>
+<li><strong>parameter</strong> &#8211; The name of the parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The parameter value or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.interventions.malaria_drugs.set_drug_param">
+<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">set_drug_param</code><span class="sig-paren">(</span><em>cb</em>, <em>drugname</em>, <em>parameter</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#set_drug_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.set_drug_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a drug parameter in the config builder passed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> &#8211; <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the simulation configuration</li>
+<li><strong>drugname</strong> &#8211; The drug that has a parameter to set</li>
+<li><strong>parameter</strong> &#8211; The parameter to set</li>
+<li><strong>value</strong> &#8211; The new value to set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="malaria_vaccine.html" class="btn btn-neutral float-right" title="Malaria vaccine" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="malaria_challenge.html" class="btn btn-neutral" title="Malaria Challenge" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Institute for Disease Modeling (IDM).
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

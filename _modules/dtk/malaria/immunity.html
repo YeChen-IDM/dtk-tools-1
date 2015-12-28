@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dtk.malaria.immunity &mdash; DTK Package 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="DTK Package 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../../../index.html" class="icon icon-home"> DTK Package
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../generic/index.html">Generic package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/climate.html">Climate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/demographics.html">Demographics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/disease.html">Disease</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/geography.html">Geography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/migration.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generic/properties.html">Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interventions/index.html">Interventions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/empty_campaign.html">Empty campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/habitat_scale.html">Habitat scale campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/health_seeking.html">Health seeking campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/inputs_EIR.html">Inputs EIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/irs.html">IRS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/itn.html">ITN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/ivernectin.html">Ivermectin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_challenge.html">Malaria Challenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_drugs.html">Malaria drugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_vaccine.html">Malaria vaccine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../interventions/outbreak.html">Outbreak</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../malaria/index.html">Malaria package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/immunity.html">Immunity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/infection.html">Infection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/params.html">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../malaria/symptoms.html">Symptoms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/index.html">Tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/calibration/index.html">Calibration tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/calibration/IMIS.html">IMIS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/calibration/calibtool/index.html">Calibtool</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/overview.html">1. Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/running.html">2. Running CalibTool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/adding.html">3. Adding a new malaria site or analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/modifying.html">4. Modifying updater for new parameter sampling method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/running_outside.html">5. Running outside Edward&#8217;s python tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/climate/index.html">Climate tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/climate/display_climate.html">Display climate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/climate/large_data.html">Large data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/demographics/index.html">Demographics tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/compiledemog.html">Compiledemog script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/createimmunelayer.html">Createimmunelayer script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/osm2nx.html">osm2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/shp2nx.html">shp2nx converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/visualize_nodes.html">visualize_nodes script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/separatrix/index.html">Separatrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../vector.html">Vector package</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">DTK Package</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>dtk.malaria.immunity</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for dtk.malaria.immunity</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">dtk.utils.core.DTKSetupParser</span> <span class="kn">import</span> <span class="n">DTKSetupParser</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="kn">import</span> <span class="n">json2dict</span>
+<span class="kn">from</span> <span class="nn">dtk.vector.study_sites</span> <span class="kn">import</span> <span class="n">StudySite</span><span class="p">,</span> <span class="n">set_habitat_scale</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;Antibody_CSP_Decay_Days&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="s">&quot;Antibody_CSP_Killing_Inverse_Width&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="s">&quot;Antibody_CSP_Killing_Threshold&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+
+    <span class="s">&quot;Innate_Immune_Variation_Type&quot;</span><span class="p">:</span> <span class="s">&quot;NONE&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Pyrogenic_Threshold&quot;</span><span class="p">:</span> <span class="mf">1.5e4</span><span class="p">,</span>
+    <span class="s">&quot;Fever_IRBC_Kill_Rate&quot;</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span>
+
+    <span class="s">&quot;Max_MSP1_Antibody_Growthrate&quot;</span><span class="p">:</span> <span class="mf">0.045</span><span class="p">,</span>
+    <span class="s">&quot;Antibody_Capacity_Growth_Rate&quot;</span><span class="p">:</span> <span class="mf">0.09</span><span class="p">,</span>
+    <span class="s">&quot;Nonspecific_Antibody_Growth_Rate_Factor&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="c"># multiplied by major-epitope number to get rate</span>
+    <span class="s">&quot;Antibody_Stimulation_C50&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="s">&quot;Antibody_Memory_Level&quot;</span><span class="p">:</span> <span class="mf">0.34</span><span class="p">,</span>
+    <span class="s">&quot;Min_Adapted_Response&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+
+    <span class="s">&quot;Cytokine_Gametocyte_Inactivation&quot;</span><span class="p">:</span> <span class="mf">0.01667</span><span class="p">,</span>
+
+    <span class="s">&quot;Maternal_Antibodies_Type&quot;</span><span class="p">:</span> <span class="s">&quot;SIMPLE_WANING&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Maternal_Antibody_Protection&quot;</span><span class="p">:</span> <span class="mf">0.1327</span><span class="p">,</span>
+    <span class="s">&quot;Maternal_Antibody_Decay_Rate&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+
+    <span class="s">&quot;Erythropoiesis_Anemia_Effect&quot;</span><span class="p">:</span> <span class="mf">3.5</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="add_immune_overlays"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.add_immune_overlays">[docs]</a><span class="k">def</span> <span class="nf">add_immune_overlays</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">DTKSetupParser</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;LOCAL&#39;</span><span class="p">,</span><span class="s">&#39;input_root&#39;</span><span class="p">),</span> <span class="n">site</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add an immunity overlay.</span>
+
+<span class="sd">    To do so, reads the demographics files and find the corresponding immunity initialization overlay.</span>
+
+<span class="sd">    :param cb: The :py:class:`DTKConfigBuilder &lt;dtk.utils.core.DTKConfigBuilder&gt;` holding the configuration</span>
+<span class="sd">    :param tags: List of immunity tags that have corresponding initialization files</span>
+<span class="sd">    :param directory: Main directory where the ..._immune_init_x_...json files are stored</span>
+<span class="sd">    :param site: If the site is specified, the files will be expected to be found in the immune_init/site subdirectory.</span>
+<span class="sd">    :return: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">demogfiles</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s">&quot;Demographics_Filenames&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;add_immune_init function is expecting only a single demographics file.&#39;</span><span class="p">)</span>
+
+    <span class="n">demog_filename</span> <span class="o">=</span> <span class="n">demogfiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">subdirs</span><span class="p">,</span> <span class="n">demog_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">demog_filename</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">demog_filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c"># e.g. DataFiles/Zambia/Sinamalima_single_node/immune_init/SinazongweConstant/..._immune_init_x_...json</span>
+    <span class="k">if</span> <span class="n">site</span><span class="p">:</span>
+        <span class="n">subdirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdirs</span><span class="p">,</span> <span class="s">&#39;immune_init&#39;</span><span class="p">,</span> <span class="n">site</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s">&#39;demographics&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prefix</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;add_immune_init function expecting a base demographics layer with demographics in the name.&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="n">immune_init_name</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;demographics&quot;</span><span class="p">,</span> <span class="s">&quot;immune_init_&quot;</span> <span class="o">+</span> <span class="n">tag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">directory</span><span class="p">:</span>
+            <span class="n">cb</span><span class="o">.</span><span class="n">add_demog_overlay</span><span class="p">(</span><span class="n">immune_init_name</span><span class="p">,</span> <span class="n">json2dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.json&#39;</span> <span class="o">%</span> <span class="n">immune_init_name</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cb</span><span class="o">.</span><span class="n">append_overlay</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdirs</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.json&#39;</span> <span class="o">%</span> <span class="n">immune_init_name</span><span class="p">))</span>
+
+    <span class="n">cb</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="s">&quot;Immunity_Initialization_Distribution&quot;</span><span class="p">)</span>  <span class="c"># compatibility with EMOD v2.0 and earlier</span>
+    <span class="n">cb</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&quot;Immunity_Initialization_Distribution_Type&quot;</span><span class="p">,</span> <span class="s">&quot;DISTRIBUTION_COMPLEX&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="add_immune_init"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.add_immune_init">[docs]</a><span class="k">def</span> <span class="nf">add_immune_init</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">x_temp_habitats</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes the immunity based on habitat scaling.</span>
+
+<span class="sd">    Simply create the tags and call the :any:`add_immune_overlays` function.</span>
+
+<span class="sd">    :param cb: The :py:class:`DTKConfigBuilder &lt;dtk.utils.core.DTKConfigBuilder&gt;` holding the configuration</span>
+<span class="sd">    :param site: If the site is specified, the files will be expected to be found in the immune_init/site subdirectory.</span>
+<span class="sd">    :param x_temp_habitats: List of temp habitats</span>
+<span class="sd">    :param directory: Main directory where the ..._immune_init_x_...json files are stored</span>
+<span class="sd">    :return: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;x_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_temp_habitats</span><span class="p">]</span>
+    <span class="n">add_immune_overlays</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span><span class="n">site</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="scale_habitat_with_immunity"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.scale_habitat_with_immunity">[docs]</a><span class="k">def</span> <span class="nf">scale_habitat_with_immunity</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">available</span><span class="o">=</span><span class="p">[],</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    .. todo::</span>
+<span class="sd">        Document this function.</span>
+
+<span class="sd">    :param cb:</span>
+<span class="sd">    :param available:</span>
+<span class="sd">    :param scale:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">set_habitat_scale</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">cb</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&quot;Config_Name&quot;</span><span class="p">,</span> <span class="n">StudySite</span><span class="o">.</span><span class="n">site</span> <span class="o">+</span> <span class="s">&#39;_x_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
+    <span class="n">nearest</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">num</span><span class="p">,</span> <span class="n">numlist</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">numlist</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">num</span><span class="p">))</span>
+    <span class="n">nearest_scale</span> <span class="o">=</span> <span class="n">scale</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">available</span> <span class="k">else</span> <span class="n">nearest</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">available</span><span class="p">)</span>
+    <span class="n">add_immune_init</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">StudySite</span><span class="o">.</span><span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="n">nearest_scale</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s">&#39;Config_Name&#39;</span><span class="p">:</span> <span class="n">StudySite</span><span class="o">.</span><span class="n">site</span> <span class="o">+</span> <span class="s">&#39;_x_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scale</span><span class="p">),</span>
+            <span class="s">&#39;habitat_scale&#39;</span><span class="p">:</span> <span class="n">scale</span><span class="p">}</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Institute for Disease Modeling (IDM).
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
