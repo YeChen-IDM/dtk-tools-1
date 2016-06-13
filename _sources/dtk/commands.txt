@@ -205,12 +205,16 @@ For example:
 
 .. dtk-cmd:: stdout {none|id|name}
 
-Prints ``StdOut.txt`` for the `first` simulation in the `most recent` experiment matched by specified id or name (or just the most recent).
+Prints ``StdOut.txt`` for the *first* simulation in the *most recent* experiment matched by specified id or name (or just the most recent).
 
-.. dtk-cmd-option:: --simIds, -s
+.. dtk-cmd-option:: -e
 
-Comma separated list of job IDs or process of simulations to resubmit in the *most recent* experiment matched by specified **id** or **name** (or just the most recent).
+Prints ``StdErr.txt`` for the *first* simulation in the *most recent* experiment matched by specified id or name (or just the most recent).
 
-.. dtk-cmd-option:: --all, -a
+.. dtk-cmd-option:: --failed, --succeeded
 
-Resubmit all failed or canceled simulations in selected experiments.
+Prints ``StdOut.txt`` for the *first* failed or succeeded (depending on flag) simulation in the *most recent* experiment matched by specified id or name (or just the most recent).
+
+.. dtk-cmd-option:: --force, -f
+
+``dtk stdout`` by default will only display simulations of a finished experiment. If you wish to display the outputs while the experiment is running, use this flag.

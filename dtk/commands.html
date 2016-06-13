@@ -383,19 +383,25 @@ For example:</p>
 <code class="descname">dtk stdout {none|id|name}</code><a class="headerlink" href="#dtk-cmd-stdout" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<p>Prints <code class="docutils literal"><span class="pre">StdOut.txt</span></code> for the <cite>first</cite> simulation in the <cite>most recent</cite> experiment matched by specified id or name (or just the most recent).</p>
+<p>Prints <code class="docutils literal"><span class="pre">StdOut.txt</span></code> for the <em>first</em> simulation in the <em>most recent</em> experiment matched by specified id or name (or just the most recent).</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-stdout--simIds">
-<span id="cmdoption-stdout-s"></span><code class="descname">--simIds</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-s</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout--simIds" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-stdout-e">
+<code class="descname">-e</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout-e" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<p>Comma separated list of job IDs or process of simulations to resubmit in the <em>most recent</em> experiment matched by specified <strong>id</strong> or <strong>name</strong> (or just the most recent).</p>
+<p>Prints <code class="docutils literal"><span class="pre">StdErr.txt</span></code> for the <em>first</em> simulation in the <em>most recent</em> experiment matched by specified id or name (or just the most recent).</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-stdout--all">
-<span id="cmdoption-stdout-a"></span><code class="descname">--all</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout--all" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-stdout--failed">
+<span id="cmdoption-stdout--succeeded"></span><code class="descname">--failed</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--succeeded</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout--failed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<p>Resubmit all failed or canceled simulations in selected experiments.</p>
+<p>Prints <code class="docutils literal"><span class="pre">StdOut.txt</span></code> for the <em>first</em> failed or succeeded (depending on flag) simulation in the <em>most recent</em> experiment matched by specified id or name (or just the most recent).</p>
+<dl class="dtk-cmd-option">
+<dt id="cmdoption-stdout--force">
+<span id="cmdoption-stdout-f"></span><code class="descname">--force</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout--force" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><code class="docutils literal"><span class="pre">dtk</span> <span class="pre">stdout</span></code> by default will only display simulations of a finished experiment. If you wish to display the outputs while the experiment is running, use this flag.</p>
 </div>
 </div>
 
