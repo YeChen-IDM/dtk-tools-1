@@ -1,207 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
   
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dtk.interventions.ivermectin &mdash; DTK Package 0.1 documentation</title>
-  
-
-  
-  
-
-  
-
-  
-  
+    <title>dtk.interventions.ivermectin &mdash; DTK Package 0.4 documentation</title>
     
-
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="DTK Package 0.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
   
+   
 
-  
-  
-    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
 
-  
-
-  
-    <link rel="top" title="DTK Package 0.1 documentation" href="../../../index.html"/>
-        <link rel="up" title="Module code" href="../../index.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
-</head>
-
-<body class="wy-body-for-nav" role="document">
-
-  <div class="wy-grid-for-nav">
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../../../index.html" class="text-logo">dtk-tools 0.3.5</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
+</ul>
 
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
-
-        
-          <a href="../../../index.html" class="icon icon-home"> DTK Package
-        
-
-        
-        </a>
-
-        
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  </div>
 </div>
-
         
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
           
-          
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../generic/index.html">Generic package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/climate.html">Climate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/demographics.html">Demographics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/disease.html">Disease</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/geography.html">Geography</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/migration.html">Migration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/params.html">Params</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../generic/properties.html">Properties</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../interventions/index.html">Interventions package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/empty_campaign.html">Empty campaign</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/habitat_scale.html">Habitat scale campaign</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/health_seeking.html">Health seeking campaign</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/inputs_EIR.html">Inputs EIR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/irs.html">IRS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/itn.html">ITN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/ivernectin.html">Ivermectin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_challenge.html">Malaria Challenge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_drugs.html">Malaria drugs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/malaria_vaccine.html">Malaria vaccine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../interventions/outbreak.html">Outbreak</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../malaria/index.html">Malaria package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../malaria/immunity.html">Immunity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../malaria/infection.html">Infection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../malaria/params.html">Params</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../malaria/symptoms.html">Symptoms</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tools/index.html">Tools package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tools/calibration/index.html">Calibration tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/calibration/IMIS.html">IMIS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/calibration/calibtool/index.html">Calibtool</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/overview.html">1. Overview</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/running.html">2. Running CalibTool</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/adding.html">3. Adding a new malaria site or analyzer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/modifying.html">4. Modifying updater for new parameter sampling method</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tools/calibration/calibtool/running_outside.html">5. Running outside Edward&#8217;s python tools</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tools/climate/index.html">Climate tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/climate/display_climate.html">Display climate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/climate/large_data.html">Large data</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tools/demographics/index.html">Demographics tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/compiledemog.html">Compiledemog script</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/createimmunelayer.html">Createimmunelayer script</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/osm2nx.html">osm2nx converter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/shp2nx.html">shp2nx converter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../tools/demographics/visualize_nodes.html">visualize_nodes script</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tools/separatrix/index.html">Separatrix</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../vector.html">Vector package</a></li>
-</ul>
-
-          
-        
-      </div>
-      &nbsp;
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../../index.html">DTK Package</a>
-      </nav>
-
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="../../../index.html">Docs</a> &raquo;</li>
-      
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      
-    <li>dtk.interventions.ivermectin</li>
-      <li class="wy-breadcrumbs-aside">
-        
+            <ol class="breadcrumb">
+              <li><a href="../../../index.html">Docs</a></li>
+              
+                <li><a href="../../index.html">Module code</a></li>
+              
+              <li>dtk.interventions.ivermectin</li>
+            </ol>
+          </div>
           
-        
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document">
+          <div class="document clearer body">
             
   <h1>Source code for dtk.interventions.ivermectin</h1><div class="highlight"><pre>
-<span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="c"># Ivermectin parameters</span>
-<span class="n">ivermectin_cfg</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;Ivermectin&quot;</span><span class="p">,</span>
-                   <span class="s">&quot;Killing_Config&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;WaningEffectBox&quot;</span><span class="p">,</span>
-                                       <span class="s">&quot;Box_Duration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                                       <span class="s">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.95</span> <span class="p">},</span>
-                   <span class="s">&quot;Cost_To_Consumer&quot;</span><span class="p">:</span> <span class="mf">15.0</span> <span class="p">}</span>
+<span class="c1"># Ivermectin parameters</span>
+<span class="n">ivermectin_cfg</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Ivermectin&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;Killing_Config&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;WaningEffectBox&quot;</span><span class="p">,</span>
+                                       <span class="s2">&quot;Box_Duration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                       <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.95</span> <span class="p">},</span>
+                   <span class="s2">&quot;Cost_To_Consumer&quot;</span><span class="p">:</span> <span class="mf">15.0</span> <span class="p">}</span>
 
 <div class="viewcode-block" id="ivermectin_config_by_duration"><a class="viewcode-back" href="../../../interventions/ivernectin.html#dtk.interventions.ivermectin.ivermectin_config_by_duration">[docs]</a><span class="k">def</span> <span class="nf">ivermectin_config_by_duration</span><span class="p">(</span><span class="n">drug_code</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the correct ``Killing_Config`` parameter depending on the ``drug_code``</span>
 
-<span class="sd">    :param drug_code: Can be ``&#39;DAY&#39;``, ``&#39;WEEK&#39;`` or ``&#39;MONTH&#39;`` and drive the ``Killing_config`` (see `Killing config doc &lt;http://idmod.org/idmdoc/#EMOD/ParameterReference/Killing_Config.htm%3FTocPath%3DParameter%2520Reference|Intervention%2520Parameter%2520Reference|Intervention%2520Parameter%2520Listing|Ivermectin|_____1&gt;`_ for more info).</span>
+<span class="sd">    :param drug_code: Can be ``&#39;DAY&#39;``, ``&#39;WEEK&#39;`` or ``&#39;MONTH&#39;`` or a number of days and drive the ``Killing_config`` (see `Killing config doc &lt;http://idmod.org/idmdoc/#EMOD/ParameterReference/Killing_Config.htm%3FTocPath%3DParameter%2520Reference|Intervention%2520Parameter%2520Reference|Intervention%2520Parameter%2520Listing|Ivermectin|_____1&gt;`_ for more info).</span>
 <span class="sd">    :return: a dictionary with the correct ``Killing_Config / Box_Duration`` set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">drug_code</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
     <span class="n">cfg</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ivermectin_cfg</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">drug_code</span> <span class="o">==</span> <span class="s">&#39;DAY&#39;</span><span class="p">:</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">elif</span> <span class="n">drug_code</span> <span class="o">==</span> <span class="s">&#39;WEEK&#39;</span><span class="p">:</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">7</span>
-    <span class="k">elif</span> <span class="n">drug_code</span> <span class="o">==</span> <span class="s">&#39;MONTH&#39;</span><span class="p">:</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">drug_code</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">drug_code</span> <span class="o">==</span> <span class="s1">&#39;DAY&#39;</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">drug_code</span> <span class="o">==</span> <span class="s1">&#39;WEEK&#39;</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">7</span>
+        <span class="k">elif</span> <span class="n">drug_code</span> <span class="o">==</span> <span class="s1">&#39;MONTH&#39;</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Don&#39;t recognize drug_code&quot;</span> <span class="o">%</span> <span class="n">drug_code</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">drug_code</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drug_code</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Don&#39;t recognize drug_code&quot;</span> <span class="o">%</span> <span class="n">drug_code</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cfg</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Drug code should be the IVM duration in days or a string like &#39;DAY&#39;, &#39;WEEK&#39;, &#39;MONTH&#39;&quot;</span><span class="p">)</span>
 
-</div>
+    <span class="k">return</span> <span class="n">cfg</span></div>
+
+
 <div class="viewcode-block" id="add_ivermectin"><a class="viewcode-back" href="../../../interventions/ivernectin.html#dtk.interventions.ivermectin.add_ivermectin">[docs]</a><span class="k">def</span> <span class="nf">add_ivermectin</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">drug_code</span><span class="p">,</span> <span class="n">coverage</span><span class="p">,</span> <span class="n">start_days</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an ivermectin event to the config_builder passed.</span>
@@ -216,74 +161,46 @@
     <span class="n">cfg</span><span class="o">=</span><span class="n">ivermectin_config_by_duration</span><span class="p">(</span><span class="n">drug_code</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">start_day</span> <span class="ow">in</span> <span class="n">start_days</span><span class="p">:</span>
-        <span class="n">IVM_event</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;class&quot;</span> <span class="p">:</span> <span class="s">&quot;CampaignEvent&quot;</span><span class="p">,</span>
-                      <span class="s">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start_day</span><span class="p">,</span>
-                      <span class="s">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                          <span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
-                          <span class="s">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">coverage</span><span class="p">,</span>
-                          <span class="s">&quot;Intervention_Config&quot;</span><span class="p">:</span> <span class="n">cfg</span>
+        <span class="n">IVM_event</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start_day</span><span class="p">,</span>
+                      <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
+                          <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">coverage</span><span class="p">,</span>
+                          <span class="s2">&quot;Intervention_Config&quot;</span><span class="p">:</span> <span class="n">cfg</span>
                       <span class="p">}</span>
                     <span class="p">}</span>
 
-        <span class="n">IVM_event</span><span class="p">[</span><span class="s">&quot;Nodeset_Config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;NodeSetAll&quot;</span> <span class="p">}</span>
+        <span class="n">IVM_event</span><span class="p">[</span><span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span> <span class="p">}</span>
 
         <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">IVM_event</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
-          <footer>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright 2015, Institute for Disease Modeling (IDM).
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-
-</footer>
-
+            
         </div>
-      </div>
-
-    </section>
-
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
-  
-
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../',
-            VERSION:'0.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-  
-
-  
-  
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
-      });
-  </script>
-   
-
-</body>
+  </body>
 </html>

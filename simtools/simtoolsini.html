@@ -1,0 +1,412 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>simtools.ini file &mdash; DTK Package 0.4 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="DTK Package 0.4 documentation" href="../index.html" />
+    <link rel="up" title="Simtools package" href="../simtools.html" />
+    <link rel="next" title="Experiment Manager Class" href="experimentmanager.html" />
+    <link rel="prev" title="Simtools package" href="../simtools.html" />
+  
+   
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="experimentmanager.html" title="Experiment Manager Class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../simtools.html" title="Simtools package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">dtk-tools 0.3.5</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dtk.html">DTK package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../simtools.html">Simtools package</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">simtools.ini file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experimentmanager.html">Experiment Manager Class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../simtools.html">Simtools package</a></li>
+              
+              <li>simtools.ini file</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="simtools-ini-file">
+<span id="simtoolsini"></span><h1>simtools.ini file<a class="headerlink" href="#simtools-ini-file" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal"><span class="pre">simtools.ini</span></code> file allows you to specify the default configuration options.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">To know more on the overlay mechanism, consult the <a class="reference internal" href="overlay.html"><span class="doc">INI File overlay mechanism</span></a>.</p>
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#default-section" id="id1">DEFAULT section</a></li>
+<li><a class="reference internal" href="#common-parameters" id="id2">Common parameters</a><ul>
+<li><a class="reference internal" href="#type" id="id3"><code class="docutils literal"><span class="pre">type</span></code></a></li>
+<li><a class="reference internal" href="#python-path" id="id4"><code class="docutils literal"><span class="pre">python_path</span></code></a></li>
+<li><a class="reference internal" href="#exe-path" id="id5"><code class="docutils literal"><span class="pre">exe_path</span></code></a></li>
+<li><a class="reference internal" href="#dll-path" id="id6"><code class="docutils literal"><span class="pre">dll_path</span></code></a></li>
+<li><a class="reference internal" href="#max-threads" id="id7"><code class="docutils literal"><span class="pre">max_threads</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hpc-defaults" id="id8">HPC defaults</a><ul>
+<li><a class="reference internal" href="#server-endpoint" id="id9"><code class="docutils literal"><span class="pre">server_endpoint</span></code></a></li>
+<li><a class="reference internal" href="#node-group" id="id10"><code class="docutils literal"><span class="pre">node_group</span></code></a></li>
+<li><a class="reference internal" href="#priority" id="id11"><code class="docutils literal"><span class="pre">priority</span></code></a></li>
+<li><a class="reference internal" href="#sim-root" id="id12"><code class="docutils literal"><span class="pre">sim_root</span></code></a></li>
+<li><a class="reference internal" href="#input-root" id="id13"><code class="docutils literal"><span class="pre">input_root</span></code></a></li>
+<li><a class="reference internal" href="#bin-staging-root" id="id14"><code class="docutils literal"><span class="pre">bin_staging_root</span></code></a></li>
+<li><a class="reference internal" href="#lib-staging-root" id="id15"><code class="docutils literal"><span class="pre">lib_staging_root</span></code></a></li>
+<li><a class="reference internal" href="#num-retries" id="id16"><code class="docutils literal"><span class="pre">num_retries</span></code></a></li>
+<li><a class="reference internal" href="#sims-per-thread" id="id17"><code class="docutils literal"><span class="pre">sims_per_thread</span></code></a></li>
+<li><a class="reference internal" href="#use-comps-asset-svc" id="id18"><code class="docutils literal"><span class="pre">use_comps_asset_svc</span></code></a></li>
+<li><a class="reference internal" href="#compress-assets" id="id19"><code class="docutils literal"><span class="pre">compress_assets</span></code></a></li>
+<li><a class="reference internal" href="#environment" id="id20"><code class="docutils literal"><span class="pre">environment</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#complete-example" id="id21">Complete example</a></li>
+</ul>
+</div>
+<div class="section" id="default-section">
+<h2><a class="toc-backref" href="#id1">DEFAULT section</a><a class="headerlink" href="#default-section" title="Permalink to this headline">¶</a></h2>
+<p>Anything in this section will apply to all the subsequent blocks if they do not override the value.
+For example, let's assume the following file:</p>
+<div class="highlight-cfg"><div class="snippet-filename"><em>simtools/simtools.ini</em></div>
+<div class="highlight"><pre><span></span><span class="k">[DEFAULT]</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">16</span>
+
+<span class="k">[HPC]</span>
+<span class="na">other_param</span> <span class="o">=</span> <span class="s">2</span>
+
+<span class="k">[LOCAL]</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">8</span>
+</pre></div>
+</div>
+<p>if the <code class="docutils literal"><span class="pre">HPC</span></code> block is used for a simulation, the <code class="docutils literal"><span class="pre">max_threads</span></code> value will be coming from the <code class="docutils literal"><span class="pre">[DEFAULT]</span></code> block.
+However, if the <code class="docutils literal"><span class="pre">LOCAL</span></code> block is used, the <code class="docutils literal"><span class="pre">max_threads</span></code> will be coming from the <code class="docutils literal"><span class="pre">[LOCAL]</span></code> block.</p>
+<p>Usually this section contains the following parameters: <a class="reference internal" href="#std:setting-exe_path"><code class="xref std std-setting docutils literal"><span class="pre">exe_path</span></code></a>, <a class="reference internal" href="#std:setting-dll_path"><code class="xref std std-setting docutils literal"><span class="pre">dll_path</span></code></a> and <a class="reference internal" href="#std:setting-max_threads"><code class="xref std std-setting docutils literal"><span class="pre">max_threads</span></code></a>.</p>
+</div>
+<div class="section" id="common-parameters">
+<h2><a class="toc-backref" href="#id2">Common parameters</a><a class="headerlink" href="#common-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Those parameters apply to both HPC and LOCAL configurations.</p>
+<div class="section" id="type">
+<span id="std:setting-type"></span><h3><a class="toc-backref" href="#id3"><code class="docutils literal"><span class="pre">type</span></code></a><a class="headerlink" href="#type" title="Permalink to this headline">¶</a></h3>
+<p>Default: LOCAL</p>
+<p>Every blocks defined in ini files need to have a type. The type can be either <code class="docutils literal"><span class="pre">HPC</span></code> or <code class="docutils literal"><span class="pre">LOCAL</span></code> and defines which set of defaults will be used
+and which parameters are expected.</p>
+</div>
+<div class="section" id="python-path">
+<span id="std:setting-python_path"></span><h3><a class="toc-backref" href="#id4"><code class="docutils literal"><span class="pre">python_path</span></code></a><a class="headerlink" href="#python-path" title="Permalink to this headline">¶</a></h3>
+<p>Default: Empty</p>
+<p>Specify the path for the python scripts. This will correspond to the <code class="docutils literal"><span class="pre">--python-script-path</span></code> flag of <code class="docutils literal"><span class="pre">Eradication.exe</span></code> and can be left blank.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If the path does not contain Python script, it can prevent the model to run and should be left blank.</p>
+</div>
+</div>
+<div class="section" id="exe-path">
+<span id="std:setting-exe_path"></span><h3><a class="toc-backref" href="#id5"><code class="docutils literal"><span class="pre">exe_path</span></code></a><a class="headerlink" href="#exe-path" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">C:\Eradication\DtkTrunk\Eradication\x64\Release\Eradication.exe</span></code></p>
+<p>Path of the current executable you wish to use for your simulations. This executable will be staged in the <a class="reference internal" href="#std:setting-bin_staging_root"><code class="xref std std-setting docutils literal"><span class="pre">bin_staging_root</span></code></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If the <a class="reference internal" href="#std:setting-use_comps_asset_svc"><code class="xref std std-setting docutils literal"><span class="pre">use_comps_asset_svc</span></code></a> is used, this path will be ignored as the executable will not be staged.</p>
+</div>
+</div>
+<div class="section" id="dll-path">
+<span id="std:setting-dll_path"></span><h3><a class="toc-backref" href="#id6"><code class="docutils literal"><span class="pre">dll_path</span></code></a><a class="headerlink" href="#dll-path" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">C:\Eradication\DtkTrunk\x64\Release</span></code></p>
+<p>Path where the DLL used for the simulations are stored. The required DLLs will be copied from this directory and staged in the <a class="reference internal" href="#std:setting-lib_staging_root"><code class="xref std std-setting docutils literal"><span class="pre">lib_staging_root</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This folder should not contained directly the dll as simtools will add <code class="docutils literal"><span class="pre">reporter_plugins</span></code>, <code class="docutils literal"><span class="pre">interventions</span></code> or <code class="docutils literal"><span class="pre">disease_plugins</span></code> to this path depending on the type of DLLs it looks for.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If the <a class="reference internal" href="#std:setting-use_comps_asset_svc"><code class="xref std std-setting docutils literal"><span class="pre">use_comps_asset_svc</span></code></a> is used, this path will be ignored as the dll will not be staged.</p>
+</div>
+</div>
+<div class="section" id="max-threads">
+<span id="std:setting-max_threads"></span><h3><a class="toc-backref" href="#id7"><code class="docutils literal"><span class="pre">max_threads</span></code></a><a class="headerlink" href="#max-threads" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">6</span></code></p>
+<p>Defines how many threads can be fired off when analyzing an experiment.</p>
+</div>
+</div>
+<div class="section" id="hpc-defaults">
+<h2><a class="toc-backref" href="#id8">HPC defaults</a><a class="headerlink" href="#hpc-defaults" title="Permalink to this headline">¶</a></h2>
+<p>This section defines parameters related to running the simulations in an HPC environment.
+Those defaults will apply to every blocks with the <code class="docutils literal"><span class="pre">type=HPC</span></code>.</p>
+<div class="section" id="server-endpoint">
+<span id="std:setting-server_endpoint"></span><h3><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">server_endpoint</span></code></a><a class="headerlink" href="#server-endpoint" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">https://comps.idmod.org</span></code></p>
+<p>URL of the endpoint. Note that you will need a valid login/password on this endpoint.</p>
+</div>
+<div class="section" id="node-group">
+<span id="std:setting-node_group"></span><h3><a class="toc-backref" href="#id10"><code class="docutils literal"><span class="pre">node_group</span></code></a><a class="headerlink" href="#node-group" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">emod_abcd</span></code></p>
+<p>Defines the node group that will be used for the simulation.</p>
+</div>
+<div class="section" id="priority">
+<span id="std:setting-priority"></span><h3><a class="toc-backref" href="#id11"><code class="docutils literal"><span class="pre">priority</span></code></a><a class="headerlink" href="#priority" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">Lowest</span></code></p>
+<p>Priority of the simulation can be:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">Lowest</span></code></li>
+<li><code class="docutils literal"><span class="pre">BelowNormal</span></code></li>
+<li><code class="docutils literal"><span class="pre">Normal</span></code></li>
+<li><code class="docutils literal"><span class="pre">AboveNormal</span></code></li>
+<li><code class="docutils literal"><span class="pre">Highest</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="sim-root">
+<span id="std:setting-hpc_sim_root"></span><h3><a class="toc-backref" href="#id12"><code class="docutils literal"><span class="pre">sim_root</span></code></a><a class="headerlink" href="#sim-root" title="Permalink to this headline">¶</a></h3>
+<p>Default:  <code class="docutils literal"><span class="pre">\\idmppfil01\IDM\home\%(user)s\output\simulations\</span></code></p>
+<p>Folder where all the simulations inputs/outputs will be stored.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The provided path needs to be accessible by your endpoint.</p>
+</div>
+</div>
+<div class="section" id="input-root">
+<span id="std:setting-hpc_input_root"></span><h3><a class="toc-backref" href="#id13"><code class="docutils literal"><span class="pre">input_root</span></code></a><a class="headerlink" href="#input-root" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">\\idmppfil01\IDM\home\%(user)s\input\</span></code></p>
+<p>Folder where all the input files (climate and demographics) are stored.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The provided path needs to be accessible by your endpoint.</p>
+</div>
+</div>
+<div class="section" id="bin-staging-root">
+<span id="std:setting-bin_staging_root"></span><h3><a class="toc-backref" href="#id14"><code class="docutils literal"><span class="pre">bin_staging_root</span></code></a><a class="headerlink" href="#bin-staging-root" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">\\idmppfil01\IDM\home\%(user)s\bin\</span></code></p>
+<p>Folder where the executable will be cached.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The provided path needs to be accessible by your endpoint.
+Also if the <a class="reference internal" href="#std:setting-use_comps_asset_svc"><code class="xref std std-setting docutils literal"><span class="pre">use_comps_asset_svc</span></code></a> is on, this path needs to be the full path to an accessible exe.</p>
+</div>
+</div>
+<div class="section" id="lib-staging-root">
+<span id="std:setting-lib_staging_root"></span><h3><a class="toc-backref" href="#id15"><code class="docutils literal"><span class="pre">lib_staging_root</span></code></a><a class="headerlink" href="#lib-staging-root" title="Permalink to this headline">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">\\idmppfil01\IDM\home\%(user)s\emodules\</span></code></p>
+<p>Folder where the custom reporters and other dlls will be cached.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The provided path needs to be accessible by your endpoint.
+Also if the <a class="reference internal" href="#std:setting-use_comps_asset_svc"><code class="xref std std-setting docutils literal"><span class="pre">use_comps_asset_svc</span></code></a> is on, this path needs to hold the path where the DLL are stored.</p>
+</div>
+</div>
+<div class="section" id="num-retries">
+<span id="std:setting-num_retries"></span><h3><a class="toc-backref" href="#id16"><code class="docutils literal"><span class="pre">num_retries</span></code></a><a class="headerlink" href="#num-retries" title="Permalink to this headline">¶</a></h3>
+<p>Default: 0</p>
+<p>How many times a failed simulation needs to be retried.</p>
+</div>
+<div class="section" id="sims-per-thread">
+<span id="std:setting-sims_per_thread"></span><h3><a class="toc-backref" href="#id17"><code class="docutils literal"><span class="pre">sims_per_thread</span></code></a><a class="headerlink" href="#sims-per-thread" title="Permalink to this headline">¶</a></h3>
+<p>Default: 20</p>
+<p>Number of simulations per analysis threads.</p>
+</div>
+<div class="section" id="use-comps-asset-svc">
+<span id="std:setting-use_comps_asset_svc"></span><h3><a class="toc-backref" href="#id18"><code class="docutils literal"><span class="pre">use_comps_asset_svc</span></code></a><a class="headerlink" href="#use-comps-asset-svc" title="Permalink to this headline">¶</a></h3>
+<p>Default: 0</p>
+<p>If set to <code class="docutils literal"><span class="pre">1</span></code>, uses the COMPS assets service.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>When setting this to <code class="docutils literal"><span class="pre">1</span></code>, don't forget to set:</p>
+<ul class="last simple">
+<li><a class="reference internal" href="#std:setting-lib_staging_root"><code class="xref std std-setting docutils literal"><span class="pre">lib_staging_root</span></code></a> with the folder containing already staged DLLs.</li>
+<li><a class="reference internal" href="#std:setting-bin_staging_root"><code class="xref std std-setting docutils literal"><span class="pre">bin_staging_root</span></code></a> with the full path to the exe used for the simulations.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="compress-assets">
+<span id="std:setting-compress_assets"></span><h3><a class="toc-backref" href="#id19"><code class="docutils literal"><span class="pre">compress_assets</span></code></a><a class="headerlink" href="#compress-assets" title="Permalink to this headline">¶</a></h3>
+<p>Default: 0</p>
+<p>If the COMPS assets service is used, choose to compress the assets or not.</p>
+</div>
+<div class="section" id="environment">
+<span id="std:setting-environment"></span><h3><a class="toc-backref" href="#id20"><code class="docutils literal"><span class="pre">environment</span></code></a><a class="headerlink" href="#environment" title="Permalink to this headline">¶</a></h3>
+<p>Default: Bayesian</p>
+<p>Specify which environment to run on.</p>
+</div>
+</div>
+<div class="section" id="complete-example">
+<h2><a class="toc-backref" href="#id21">Complete example</a><a class="headerlink" href="#complete-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-cfg"><div class="snippet-filename"><em>dtk/dtk_setup.cfg</em></div>
+<div class="highlight"><pre><span></span><span class="k">[DEFAULT]</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">16</span>
+<span class="na">exe_path</span> <span class="o">=</span> <span class="s">C:\Eradication\DtkTrunk\Eradication\x64\Release\Eradication.exe</span>
+<span class="na">dll_path</span> <span class="o">=</span> <span class="s">C:\Eradication\DtkTrunk\x64\Release</span>
+
+
+<span class="k">[HPC]</span>
+<span class="na">type</span> <span class="o">=</span> <span class="s">HPC</span>
+<span class="na">server_endpoint</span> <span class="o">=</span> <span class="s">https://comps.idmod.org</span>
+<span class="na">environment</span> <span class="o">=</span> <span class="s">Bayesian</span>
+<span class="na">node_group</span> <span class="o">=</span> <span class="s">emod_abcd</span>
+<span class="na">priority</span> <span class="o">=</span> <span class="s">Normal</span>
+
+<span class="na">sim_root</span> <span class="o">=</span> <span class="s">\\idmppfil01\IDM\home\%(user)s\output\simulations\</span>
+<span class="na">input_root</span> <span class="o">=</span> <span class="s">\\idmppfil01\IDM\home\%(user)s\input\</span>
+<span class="na">bin_staging_root</span> <span class="o">=</span> <span class="s">\\idmppfil01\IDM\home\%(user)s\bin\</span>
+<span class="na">lib_staging_root</span> <span class="o">=</span> <span class="s">\\idmppfil01\IDM\home\%(user)s\emodules\</span>
+
+<span class="na">num_retries</span> <span class="o">=</span> <span class="s">0</span>
+<span class="na">sims_per_thread</span> <span class="o">=</span> <span class="s">20</span>
+<span class="na">use_comps_asset_svc</span> <span class="o">=</span> <span class="s">0</span>
+<span class="na">compress_assets</span> <span class="o">=</span> <span class="s">0</span>
+
+<span class="k">[LOCAL]</span>
+<span class="na">type</span> <span class="o">=</span> <span class="s">LOCAL</span>
+<span class="na">max_local_sims</span> <span class="o">=</span> <span class="s">3</span>
+<span class="na">sim_root</span> <span class="o">=</span> <span class="s">C:\Eradication\simulations</span>
+<span class="na">input_root</span> <span class="o">=</span> <span class="s">C:\Eradication\EMOD-InputData</span>
+<span class="na">bin_staging_root</span> <span class="o">=</span> <span class="s">C:\Eradication\bin</span>
+<span class="na">lib_staging_root</span> <span class="o">=</span> <span class="s">C:\Eradication\bin</span>
+<span class="na">python_path</span><span class="o">=</span><span class="s">C:\Eradication\python</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="../simtools.html" title="previous chapter (use the left arrow)">Simtools package</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="experimentmanager.html" title="next chapter (use the right arrow)">Experiment Manager Class</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="experimentmanager.html" title="Experiment Manager Class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../simtools.html" title="Simtools package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &raquo;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
