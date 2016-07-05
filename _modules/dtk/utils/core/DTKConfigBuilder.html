@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.utils.core.DTKConfigBuilder &mdash; DTK Package 0.4 documentation</title>
+    <title>dtk.utils.core.DTKConfigBuilder &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="../../../../index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" />
   
    
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../dtk.html">DTK package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -115,23 +116,60 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">import</span> <span class="nn">dtk.generic.params</span> <span class="kn">as</span> <span class="nn">generic_params</span>
+<span class="kn">import</span> <span class="nn">dtk.malaria.params</span> <span class="kn">as</span> <span class="nn">malaria_params</span>
+<span class="kn">import</span> <span class="nn">dtk.vector.params</span> <span class="kn">as</span> <span class="nn">vector_params</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.empty_campaign</span> <span class="kn">import</span> <span class="n">empty_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="kn">import</span> <span class="n">json2dict</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.reports.CustomReport</span> <span class="kn">import</span> <span class="n">format</span> <span class="k">as</span> <span class="n">format_reports</span>
 <span class="kn">from</span> <span class="nn">simtools</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">simtools.SimConfigBuilder</span> <span class="kn">import</span> <span class="n">SimConfigBuilder</span>
 
-<span class="kn">import</span> <span class="nn">dtk.generic.params</span> <span class="kn">as</span> <span class="nn">generic_params</span>
-<span class="kn">import</span> <span class="nn">dtk.vector.params</span> <span class="kn">as</span> <span class="nn">vector_params</span>
-<span class="kn">import</span> <span class="nn">dtk.malaria.params</span> <span class="kn">as</span> <span class="nn">malaria_params</span>
-<span class="kn">from</span> <span class="nn">dtk.interventions.empty_campaign</span> <span class="kn">import</span> <span class="n">empty_campaign</span>
-<span class="kn">from</span> <span class="nn">dtk.utils.reports.CustomReport</span> <span class="kn">import</span> <span class="n">format</span> <span class="k">as</span> <span class="n">format_reports</span>
-<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="kn">import</span> <span class="n">json2dict</span><span class="p">,</span> <span class="n">dict2json</span>
-
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DTKConfigBuilder"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">[docs]</a><span class="k">class</span> <span class="nc">DTKConfigBuilder</span><span class="p">(</span><span class="n">SimConfigBuilder</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="DTKConfigBuilder"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">[docs]</a><span class="k">class</span> <span class="nc">DTKConfigBuilder</span><span class="p">(</span><span class="n">SimConfigBuilder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for building, modifying, and writing</span>
-<span class="sd">    required configuration files for a DTK simulation</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    required configuration files for a DTK simulation.</span>
+
+<span class="sd">    There are four ways to create a DTKConfigBuilder:</span>
+
+<span class="sd">    1. From a set of defaults, with the :py:func:`from_defaults` class method.</span>
+<span class="sd">    2. From existing files, with the :py:func:`from_files` class method.</span>
+<span class="sd">    3. From a default config/campaign by calling the constructor without arguments.</span>
+<span class="sd">    4. From a custom config and/or campaign by calling the constructor with the ``config`` and ``campaign`` arguments.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        config (dict): The config (contents of the config.json)</span>
+<span class="sd">        campaign (dict): The campaign configuration (contents of the campaign.json)</span>
+<span class="sd">        kwargs (dict): Additional changes to make to the config</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        staged_dlls (dict): Class variable holding the mapping between (type,dll name) and path</span>
+<span class="sd">        config (dict): Holds the configuration as a dictionary</span>
+<span class="sd">        campaign (dict): Holds the campaign as a dictionary</span>
+<span class="sd">        demog_overlays (dict): map the demographic overlay names to content.</span>
+<span class="sd">            Modified using the function :py:func:`add_demog_overlay`.</span>
+<span class="sd">        input_files (dict): Dictionary map the input file names to content.</span>
+<span class="sd">            Modified using the function :py:func:`add_input_file`.</span>
+<span class="sd">        custom_reports (array): Array holding the custom reporters objects.</span>
+<span class="sd">            Modified using the function :py:func:`add_reports`.</span>
+<span class="sd">        dlls (set): Set containing a list of needed dlls for the simulations. The dlls are coming from the</span>
+<span class="sd">            :py:func:`get_dll_path` function of the reports added by the :py:func:`add_reports`</span>
+<span class="sd">        emodules_map (dict): Dictionary representing the ``emodules_map.json`` file.</span>
+<span class="sd">            This dictionary is filled during the staging process happening in :py:func:`stage_required_libraries`.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        One can instantiate a DTKConfigBuilder with::</span>
+
+<span class="sd">            config = json.load(&#39;my_config.json&#39;)</span>
+<span class="sd">            cb = DTKConfigBuilder(config=config, campaign=None, {&#39;Simulation_Duration&#39;:3650})</span>
+
+<span class="sd">        Which will instantiate the DTKConfigBuilder with the loaded config and a default campaign and override the</span>
+<span class="sd">        ``Simulation_Duration`` in the config.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">staged_dlls</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># caching to avoid repeat md5 and os calls</span>
 
@@ -148,22 +186,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DTKConfigBuilder.from_defaults"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">from_defaults</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="DTKConfigBuilder.from_defaults"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">from_defaults</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build up the default parameters for the specified simulation type.</span>
-<span class="sd">        Start from required GENERIC_SIM parameters and layer VECTOR_SIM</span>
-<span class="sd">        and also MALARIA_SIM default parameters as required.</span>
 
-<span class="sd">        Configution parameter names and values may be passed as keyword arguments,</span>
+<span class="sd">        Start from required ``GENERIC_SIM`` parameters and layer ``VECTOR_SIM``</span>
+<span class="sd">        and also ``MALARIA_SIM`` default parameters as required.</span>
+
+<span class="sd">        Configuration parameter names and values may be passed as keyword arguments,</span>
 <span class="sd">        provided they correspond to existing default parameter names.</span>
 
-<span class="sd">        P.vivax disease parameters may be approximated using VECTOR_SIM simulations</span>
-<span class="sd">        by passing either the VECTOR_SIM_VIVAX_SEMITROPICAL or VECTOR_SIM_VIVAX_CHESSON</span>
+<span class="sd">        P.vivax disease parameters may be approximated using ``VECTOR_SIM`` simulations</span>
+<span class="sd">        by passing either the ``VECTOR_SIM_VIVAX_SEMITROPICAL`` or ``VECTOR_SIM_VIVAX_CHESSON``</span>
 <span class="sd">        sim_type argument depending on the desired relapse pattern.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            sim_type (string): Which simulation will be created.</span>
+<span class="sd">                Current supported choices are:</span>
+
+<span class="sd">                * MALARIA_SIM</span>
+<span class="sd">                * VECTOR_SIM</span>
+<span class="sd">                * VECTOR_SIM_VIVAX_SEMITROPICAL</span>
+<span class="sd">                * VECTOR_SIM_VIVAX_CHESSON</span>
+
+<span class="sd">            kwargs (dict): Additional overrides of config parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sim_type</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Instantiating DTKConfigBuilder from defaults requires a sim_type argument, e.g. &#39;MALARIA_SIM&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Instantiating DTKConfigBuilder from defaults requires a sim_type argument, e.g. &#39;MALARIA_SIM&#39;.&quot;</span><span class="p">)</span>
 
         <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">generic_params</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
 
@@ -192,11 +243,16 @@
         <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">empty_campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DTKConfigBuilder.from_files"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">[docs]</a>    <span class="k">def</span> <span class="nf">from_files</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="DTKConfigBuilder.from_files"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">[docs]</a>    <span class="k">def</span> <span class="nf">from_files</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build up a simulation configuration from the path to an existing</span>
 <span class="sd">        config.json and optionally a campaign.json file on disk.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            config_name (string): Path to the config file to load.</span>
+<span class="sd">            campaign_name (string): Path to the campaign file to load.</span>
+<span class="sd">            kwargs (dict): Additional overrides of config parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">config</span> <span class="o">=</span> <span class="n">json2dict</span><span class="p">(</span><span class="n">config_name</span><span class="p">)</span>
         <span class="n">campaign</span> <span class="o">=</span> <span class="n">json2dict</span><span class="p">(</span><span class="n">campaign_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">campaign_name</span> <span class="k">else</span> <span class="n">empty_campaign</span>
@@ -205,43 +261,143 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dict: Shortcut to the ``config[&#39;parameters&#39;]``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="DTKConfigBuilder.enable"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.enable">[docs]</a>    <span class="k">def</span> <span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.enable"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.enable">[docs]</a>    <span class="k">def</span> <span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable a parameter.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            param (string): Parameter to enable. Note that the ``Enable_`` part of the name is automatically added.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            If one wants to set the ``Enable_Air_Migration`` parameter to ``1``, the way to do it would be::</span>
+
+<span class="sd">                cb.enable(&#39;Air_Migration&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param</span> <span class="o">=</span> <span class="s1">&#39;Enable_&#39;</span> <span class="o">+</span> <span class="n">param</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate_param</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.disable"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.disable">[docs]</a>    <span class="k">def</span> <span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.disable"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.disable">[docs]</a>    <span class="k">def</span> <span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disable a parameter.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            param (string): Parameter to disable. Note that the ``Enable_`` part of the name is automatically added.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            If one wants to set the ``Enable_Demographics_Birth`` parameter to ``0``, the way to do it would be::</span>
+
+<span class="sd">                cb.disable(&#39;Demographics_Birth&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param</span> <span class="o">=</span> <span class="s1">&#39;Enable_&#39;</span> <span class="o">+</span> <span class="n">param</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate_param</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.add_event"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_event">[docs]</a>    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.add_event"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_event">[docs]</a>    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an event to the campaign held by the config builder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event (dict): The dictionary holding the event to be added.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            To add an event to an existing config builder, one can do::</span>
+
+<span class="sd">                event = {</span>
+<span class="sd">                    &quot;Event_Coordinator_Config&quot;: {</span>
+<span class="sd">                        &quot;Intervention_Config&quot;: {</span>
+<span class="sd">                            [...]</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &quot;Number_Repetitions&quot;: 1,</span>
+<span class="sd">                        &quot;class&quot;: &quot;StandardInterventionDistributionEventCoordinator&quot;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    &quot;Event_Name&quot;: &quot;Input EIR intervention&quot;,</span>
+<span class="sd">                    [...]</span>
+<span class="sd">                    }</span>
+
+<span class="sd">                cb.add_event(event)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">[</span><span class="s2">&quot;Events&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.clear_events"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.clear_events">[docs]</a>    <span class="k">def</span> <span class="nf">clear_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">[</span><span class="s2">&quot;Events&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="p">[]</span></div>
+<div class="viewcode-block" id="DTKConfigBuilder.clear_events"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.clear_events">[docs]</a>    <span class="k">def</span> <span class="nf">clear_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes all events from the campaign</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">[</span><span class="s2">&quot;Events&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.add_reports"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports">[docs]</a>    <span class="k">def</span> <span class="nf">add_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">reports</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.add_reports"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports">[docs]</a>    <span class="k">def</span> <span class="nf">add_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">reports</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add the reports to the ``custom_reports`` dictionary. Also extract the required dlls and add them to the</span>
+<span class="sd">        ``dlls`` set.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reports (list): List of reports to add to the config builder</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">custom_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dlls</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get_dll_path</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.add_input_file"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file">[docs]</a>    <span class="k">def</span> <span class="nf">add_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.add_input_file"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file">[docs]</a>    <span class="k">def</span> <span class="nf">add_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add input file to the simulation.</span>
+<span class="sd">        The file can be of any type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (string): Name of the file. Will be used when the file is written to the simulation directory.</span>
+<span class="sd">            content (string): Contents of the file.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            Usage for this function could be::</span>
+
+<span class="sd">                my_txt = open(&#39;test.txt&#39;, &#39;r&#39;)</span>
+<span class="sd">                cb.add_input_file(&#39;test.txt&#39;,my_txt.read())</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Already have input file named </span><span class="si">%s</span><span class="s1">, replacing previous input file.&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.append_overlay"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.append_overlay">[docs]</a>    <span class="k">def</span> <span class="nf">append_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">demog_file</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.append_overlay"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.append_overlay">[docs]</a>    <span class="k">def</span> <span class="nf">append_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">demog_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a demographic overlay at the end of the ``Demographics_Filenames`` array.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            demog_file (string): The demographic file name to append to the array.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Demographics_Filenames&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">demog_file</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.add_demog_overlay"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">[docs]</a>    <span class="k">def</span> <span class="nf">add_demog_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.add_demog_overlay"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">[docs]</a>    <span class="k">def</span> <span class="nf">add_demog_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a demographic overlay to the simulation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (string): Name of the demographic overlay</span>
+<span class="sd">            content (string): Content of the file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">demog_overlays</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Already have demographics overlay named </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">demog_overlays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.get_commandline"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_commandline">[docs]</a>    <span class="k">def</span> <span class="nf">get_commandline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe_path</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.get_commandline"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_commandline">[docs]</a>    <span class="k">def</span> <span class="nf">get_commandline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe_path</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the complete command line to run the simulation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            exe_path (string): The path to the model executable</span>
+<span class="sd">            paths (dict): Dictionary containing the setup and allowing this function to retrieve the ``input_root`` and ``python_path``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The :py:class:`CommandlineGenerator` object created with the correct paths</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">eradication_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;--config&#39;</span><span class="p">:</span> <span class="s1">&#39;config.json&#39;</span><span class="p">,</span> <span class="s1">&#39;--input-path&#39;</span><span class="p">:</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;input_root&#39;</span><span class="p">]}</span>
 
         <span class="k">if</span> <span class="s1">&#39;python_path&#39;</span> <span class="ow">in</span> <span class="n">paths</span> <span class="ow">and</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;python_path&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
@@ -249,7 +405,24 @@
 
         <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">CommandlineGenerator</span><span class="p">(</span><span class="n">exe_path</span><span class="p">,</span> <span class="n">eradication_options</span><span class="p">,</span> <span class="p">[])</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.stage_required_libraries"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">[docs]</a>    <span class="k">def</span> <span class="nf">stage_required_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dll_path</span><span class="p">,</span> <span class="n">staging_root</span><span class="p">,</span><span class="n">assets_service</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.stage_required_libraries"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">[docs]</a>    <span class="k">def</span> <span class="nf">stage_required_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dll_path</span><span class="p">,</span> <span class="n">staging_root</span><span class="p">,</span> <span class="n">assets_service</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stage the required DLLs.</span>
+
+<span class="sd">        This function will work differently depending on the use of the assets service or not.</span>
+<span class="sd">        If the assets service is used, the function will simply create the path for the dll and not copy the file itself.</span>
+<span class="sd">        If the assets service is not used, the function will call the :py:func:`stage_file` function and store</span>
+<span class="sd">        the returned path.</span>
+
+<span class="sd">        For each dll to stage, the ``staged_dlls`` dictionary is updated with the path to the dll mapped to its</span>
+<span class="sd">        type and name and the ``emodules_map`` dictionary is also updated accordingly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dll_path (string): The path where the dll to be staged are</span>
+<span class="sd">            staging_root (string): The staging dll path</span>
+<span class="sd">            assets_service (bool): Are we using the assets service?</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dlls</span><span class="p">:</span>
             <span class="c1"># Try top retrieve the dll from the staged dlls</span>
             <span class="n">staged_dll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">staged_dlls</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
@@ -258,7 +431,7 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">assets_service</span><span class="p">:</span>
                     <span class="c1"># If the assets service is not use, actually stage the dll file</span>
                     <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">stage_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dll_path</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">),</span>
-                                                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">staging_root</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">))</span>
+                                                  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">staging_root</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If the assets service is used, assume that the dll is staged already</span>
                     <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">staging_root</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">)</span>
@@ -268,7 +441,31 @@
             <span class="c1"># Add the dll to the emodules_map</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">emodules_map</span><span class="p">[</span><span class="n">dll_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">staged_dll</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.file_writer"><a class="viewcode-back" href="../../../../utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">[docs]</a>    <span class="k">def</span> <span class="nf">file_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_fn</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.file_writer"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">[docs]</a>    <span class="k">def</span> <span class="nf">file_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_fn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dump all the files needed for the simulation in the simulation directory.</span>
+<span class="sd">        This includes:</span>
+
+<span class="sd">        * The campaign file</span>
+<span class="sd">        * The custom reporters file</span>
+<span class="sd">        * The different demographic overlays</span>
+<span class="sd">        * The other input files (``input_files`` dictionary)</span>
+<span class="sd">        * The config file</span>
+<span class="sd">        * The emodules_map file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            write_fn: The function that will write the files. This function needs to take a file name and a content.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            For example, in the :py:class:`SimConfigBuilder` class, the :py:func:`dump_files` is defining the `write_fn`</span>
+<span class="sd">            like::</span>
+
+<span class="sd">                def write_file(name, content):</span>
+<span class="sd">                    filename = os.path.join(working_directory, &#39;%s.json&#39; % name)</span>
+<span class="sd">                    with open(filename, &#39;w&#39;) as f:</span>
+<span class="sd">                        f.write(content)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
 
         <span class="n">dump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
@@ -304,7 +501,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

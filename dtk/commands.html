@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk commands &mdash; DTK Package 0.4 documentation</title>
+    <title>dtk commands &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,9 +32,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="../index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="../index.html" />
     <link rel="up" title="DTK package" href="../dtk.html" />
-    <link rel="next" title="Simtools package" href="../simtools.html" />
+    <link rel="next" title="DTKConfigBuilder" href="utils/core/DTKConfigBuilder.html" />
     <link rel="prev" title="DTK package" href="../dtk.html" />
   
    
@@ -51,12 +51,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../simtools.html" title="Simtools package"
+          <a href="utils/core/DTKConfigBuilder.html" title="DTKConfigBuilder"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../dtk.html" title="DTK package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dtk.html" accesskey="U">DTK package</a> &raquo;</li> 
       </ul>
     </div>
@@ -82,10 +82,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../dtk.html">DTK package</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">dtk commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/core/DTKConfigBuilder.html">DTKConfigBuilder</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -132,16 +134,19 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="#dtk-cmd-analyze"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">analyze</span></code></a></td>
-<td><a class="reference internal" href="#dtk-cmd-kill"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">kill</span></code></a></td>
+<td><a class="reference internal" href="#dtk-cmd-clean"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">clean</span></code></a></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#dtk-cmd-progress"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">progress</span></code></a></td>
-<td><a class="reference internal" href="#dtk-cmd-resubmit"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">resubmit</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#dtk-cmd-delete"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">delete</span></code></a></td>
+<td><a class="reference internal" href="#dtk-cmd-exterminate"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">exterminate</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dtk-cmd-run"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">run</span></code></a></td>
-<td><a class="reference internal" href="#dtk-cmd-status"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">status</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#dtk-cmd-kill"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">kill</span></code></a></td>
+<td><a class="reference internal" href="#dtk-cmd-progress"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">progress</span></code></a></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#dtk-cmd-stdout"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">stdout</span></code></a></td>
-<td>&nbsp;</td>
+<tr class="row-even"><td><a class="reference internal" href="#dtk-cmd-resubmit"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">resubmit</span></code></a></td>
+<td><a class="reference internal" href="#dtk-cmd-run"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">run</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#dtk-cmd-status"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">status</span></code></a></td>
+<td><a class="reference internal" href="#dtk-cmd-stdout"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">stdout</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -167,6 +172,39 @@
 
 <p>Force analyzer to run even if jobs are not all finished.</p>
 </div>
+<div class="section" id="clean">
+<h2><code class="docutils literal"><span class="pre">clean</span></code><a class="headerlink" href="#clean" title="Permalink to this headline">¶</a></h2>
+<dl class="dtk-cmd">
+<dt id="dtk-cmd-clean">
+<code class="descname">dtk clean {none|id|name}</code><a class="headerlink" href="#dtk-cmd-clean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Hard deletes <strong>ALL</strong> experiments matched by the id or name (or literally all experiments if nothing is passed).</p>
+</div>
+<div class="section" id="delete">
+<h2><code class="docutils literal"><span class="pre">delete</span></code><a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h2>
+<dl class="dtk-cmd">
+<dt id="dtk-cmd-delete">
+<code class="descname">dtk delete {none|id|name}</code><a class="headerlink" href="#dtk-cmd-delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Deletes the cached JSON file for the selected experiment (or most recent).</p>
+<dl class="dtk-cmd-option">
+<dt id="cmdoption-delete--hard">
+<code class="descname">--hard</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-delete--hard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Deletes the cached JSON file and deletes local working directory or marks the experimented as deleted in COMPS for the selected experiment (or most recent).</p>
+</div>
+<div class="section" id="exterminate">
+<h2><code class="docutils literal"><span class="pre">exterminate</span></code><a class="headerlink" href="#exterminate" title="Permalink to this headline">¶</a></h2>
+<dl class="dtk-cmd">
+<dt id="dtk-cmd-exterminate">
+<code class="descname">dtk exterminate {none|id|name}</code><a class="headerlink" href="#dtk-cmd-exterminate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Kills ALL experiments matched by the id or name (or literally all experiments if nothing is passed).</p>
+</div>
 <div class="section" id="kill">
 <h2><code class="docutils literal"><span class="pre">kill</span></code><a class="headerlink" href="#kill" title="Permalink to this headline">¶</a></h2>
 <dl class="dtk-cmd">
@@ -181,12 +219,6 @@
 <dd></dd></dl>
 
 <p>Comma separated list of job IDs or process of simulations to kill in the <em>most recent</em> experiment matched by specified <strong>id</strong> or <strong>name</strong> (or just the most recent).</p>
-<dl class="dtk-cmd-option">
-<dt id="cmdoption-kill--all">
-<span id="cmdoption-kill-a"></span><code class="descname">--all</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-kill--all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>Kills all simulations in all experiments matched by specified id or name (or just the most recent).</p>
 </div>
 <div class="section" id="progress">
 <h2><code class="docutils literal"><span class="pre">progress</span></code><a class="headerlink" href="#progress" title="Permalink to this headline">¶</a></h2>
@@ -230,12 +262,22 @@
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-run--hpc">
-<code class="descname">--hpc</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run--hpc" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-run--">
+<code class="descname">--</code><code class="descclassname">&lt;block_name&gt;</code><a class="headerlink" href="#cmdoption-run--" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<p>Overrides where the simulation will be ran. Even if the python configuration passed defines the location <code class="docutils literal"><span class="pre">LOCAL</span></code>, the simulations will be ran on HPC:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_simulation</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">hpc</span>
+<p>Overrides which configuration block the simulation will be ran. Even if the python configuration passed defines the location <code class="docutils literal"><span class="pre">LOCAL</span></code>, the simulations will be ran on the selected block:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_simulation</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">MY_CONFIG_BLOCK</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../simtools/overlay.html#simtoolsoverlay"><span class="std std-ref">INI File overlay mechanism</span></a> for more information.</p>
+<dl class="dtk-cmd-option">
+<dt id="cmdoption-run--ini">
+<code class="descname">--ini</code><code class="descclassname"> &lt;ini_file_path&gt;</code><a class="headerlink" href="#cmdoption-run--ini" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Overrides which overlay ini configuration file to use. Specifying this parameter will make the system ignore any <code class="docutils literal"><span class="pre">simtools.ini</span></code> file in the working directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="o">--</span><span class="n">ini</span> <span class="n">folder</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">ini</span>
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
@@ -255,7 +297,7 @@ Priority can take the following values:</p>
 </ul>
 </div></blockquote>
 <p>For example, if we have a simulation supposed to run locally, we can force it to be HPC with lowest priority by using:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_local_simulation</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">hpc</span> <span class="o">--</span><span class="n">priority</span> <span class="n">Lowest</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_local_simulation</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">HPC</span> <span class="o">--</span><span class="n">priority</span> <span class="n">Lowest</span>
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
@@ -415,7 +457,7 @@ For example:</p>
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="../simtools.html" title="next chapter (use the right arrow)">Simtools package</a>
+        <a class="btn btn-default" href="utils/core/DTKConfigBuilder.html" title="next chapter (use the right arrow)">DTKConfigBuilder</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -433,12 +475,12 @@ For example:</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../simtools.html" title="Simtools package"
+          <a href="utils/core/DTKConfigBuilder.html" title="DTKConfigBuilder"
              >next</a> |</li>
         <li class="right" >
           <a href="../dtk.html" title="DTK package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dtk.html" >DTK package</a> &raquo;</li> 
       </ul>
     </div>

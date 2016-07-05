@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Utils package &mdash; DTK Package 0.4 documentation</title>
+    <title>Utils package &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="index.html" />
   
    
 
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.4 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -73,6 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dtk.html">DTK package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -112,7 +113,39 @@
 <dt id="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">
 <em class="property">class </em><code class="descclassname">dtk.utils.core.DTKConfigBuilder.</code><code class="descname">DTKConfigBuilder</code><span class="sig-paren">(</span><em>config={'parameters': {}}</em>, <em>campaign={'Campaign_Name': 'Empty Campaign'</em>, <em>'Events': []</em>, <em>'Use_Defaults': 1}</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dtk/utils/core/DTKConfigBuilder.html#DTKConfigBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for building, modifying, and writing
-required configuration files for a DTK simulation</p>
+required configuration files for a DTK simulation.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- The config (contents of the config.json)</li>
+<li><strong>campaign</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- The campaign configuration (contents of the campaign.json)</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Additional changes to make to the config</li>
+</ul>
+</dd>
+<dt class="field-name">Variables</dt><dd class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.staged_dlls" title="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.staged_dlls"><strong>staged_dlls</strong></a> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Class variable holding the mapping between (type,dll name) and path</li>
+<li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Holds the configuration as a dictionary</li>
+<li><strong>campaign</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Holds the campaign as a dictionary</li>
+<li><strong>demog_overlays</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- map the demographic overlay names to content.
+Modified using the function <a class="reference internal" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay" title="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay"><code class="xref py py-func docutils literal"><span class="pre">add_demog_overlay()</span></code></a>.</li>
+<li><strong>input_files</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Dictionary map the input file names to content.
+Modified using the function <a class="reference internal" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file" title="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file"><code class="xref py py-func docutils literal"><span class="pre">add_input_file()</span></code></a>.</li>
+<li><strong>custom_reports</strong> (<a class="reference external" href="https://docs.python.org/2/library/array.html#module-array" title="(in Python v2.7)"><em>array</em></a>) -- Array holding the custom reporters objects.
+Modified using the function <a class="reference internal" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports" title="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports"><code class="xref py py-func docutils literal"><span class="pre">add_reports()</span></code></a>.</li>
+<li><strong>dlls</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) -- Set containing a list of needed dlls for the simulations. The dlls are coming from the
+<code class="xref py py-func docutils literal"><span class="pre">get_dll_path()</span></code> function of the reports added by the <a class="reference internal" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports" title="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports"><code class="xref py py-func docutils literal"><span class="pre">add_reports()</span></code></a></li>
+<li><strong>emodules_map</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Dictionary representing the <code class="docutils literal"><span class="pre">emodules_map.json</span></code> file.
+This dictionary is filled during the staging process happening in <a class="reference internal" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries" title="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries"><code class="xref py py-func docutils literal"><span class="pre">stage_required_libraries()</span></code></a>.</li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>One can instantiate a DTKConfigBuilder with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;my_config.json&#39;</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">DTKConfigBuilder</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Simulation_Duration&#39;</span><span class="p">:</span><span class="mi">3650</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Which will instantiate the DTKConfigBuilder with the loaded config and a default campaign and override the
+<code class="docutils literal"><span class="pre">Simulation_Duration</span></code> in the config.</p>
 <dl class="method">
 <dt id="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">
 <code class="descname">add_demog_overlay</code><span class="sig-paren">(</span><em>name</em>, <em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dtk/utils/core/DTKConfigBuilder.html#DTKConfigBuilder.add_demog_overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay" title="Permalink to this definition">¶</a></dt>
@@ -161,14 +194,29 @@ required configuration files for a DTK simulation</p>
 <dl class="classmethod">
 <dt id="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">
 <em class="property">classmethod </em><code class="descname">from_defaults</code><span class="sig-paren">(</span><em>sim_type=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dtk/utils/core/DTKConfigBuilder.html#DTKConfigBuilder.from_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build up the default parameters for the specified simulation type.
-Start from required GENERIC_SIM parameters and layer VECTOR_SIM
-and also MALARIA_SIM default parameters as required.</p>
-<p>Configution parameter names and values may be passed as keyword arguments,
+<dd><p>Build up the default parameters for the specified simulation type.</p>
+<p>Start from required <code class="docutils literal"><span class="pre">GENERIC_SIM</span></code> parameters and layer <code class="docutils literal"><span class="pre">VECTOR_SIM</span></code>
+and also <code class="docutils literal"><span class="pre">MALARIA_SIM</span></code> default parameters as required.</p>
+<p>Configuration parameter names and values may be passed as keyword arguments,
 provided they correspond to existing default parameter names.</p>
-<p>P.vivax disease parameters may be approximated using VECTOR_SIM simulations
-by passing either the VECTOR_SIM_VIVAX_SEMITROPICAL or VECTOR_SIM_VIVAX_CHESSON
+<p>P.vivax disease parameters may be approximated using <code class="docutils literal"><span class="pre">VECTOR_SIM</span></code> simulations
+by passing either the <code class="docutils literal"><span class="pre">VECTOR_SIM_VIVAX_SEMITROPICAL</span></code> or <code class="docutils literal"><span class="pre">VECTOR_SIM_VIVAX_CHESSON</span></code>
 sim_type argument depending on the desired relapse pattern.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Variables</dt><dd class="field-body"><ul class="first last simple">
+<li><strong>sim_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) -- <p>Which simulation will be created.
+Current supported choices are:</p>
+<ul>
+<li>MALARIA_SIM</li>
+<li>VECTOR_SIM</li>
+<li>VECTOR_SIM_VIVAX_SEMITROPICAL</li>
+<li>VECTOR_SIM_VIVAX_CHESSON</li>
+</ul>
+</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Additional overrides of config parameters</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="classmethod">
@@ -176,6 +224,14 @@ sim_type argument depending on the desired relapse pattern.</p>
 <em class="property">classmethod </em><code class="descname">from_files</code><span class="sig-paren">(</span><em>config_name</em>, <em>campaign_name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dtk/utils/core/DTKConfigBuilder.html#DTKConfigBuilder.from_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build up a simulation configuration from the path to an existing
 config.json and optionally a campaign.json file on disk.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Variables</dt><dd class="field-body"><ul class="first last simple">
+<li><strong>config_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) -- Path to the config file to load.</li>
+<li><strong>campaign_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) -- Path to the campaign file to load.</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) -- Additional overrides of config parameters</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -186,7 +242,8 @@ config.json and optionally a campaign.json file on disk.</p>
 <dl class="attribute">
 <dt id="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.params">
 <code class="descname">params</code><a class="headerlink" href="#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>dict</em> -- Shortcut to the config['parameters']</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">
@@ -217,7 +274,7 @@ config.json and optionally a campaign.json file on disk.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.4 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.vector.species &mdash; DTK Package 0.4 documentation</title>
+    <title>dtk.vector.species &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="../../../index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
   
    
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">DTK package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -113,13 +114,12 @@
   <h1>Source code for dtk.vector.species</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">copy</span>
 
-
 <span class="n">param_block</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:{</span>
-                            <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">8e8</span><span class="p">,</span>
-                            <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">8e7</span>
-                            <span class="p">},</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">8e8</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">8e7</span>
+    <span class="p">},</span>
 
     <span class="s2">&quot;Aquatic_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mi">84200000000</span><span class="p">,</span>
     <span class="s2">&quot;Aquatic_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">8328</span><span class="p">,</span>
@@ -129,17 +129,17 @@
 
     <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
     <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>           <span class="c1">## species- and site-specific feeding parameters</span>
-    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1">##</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># species- and site-specific feeding parameters</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
 
-    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="c1">## VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="c1"># VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes</span>
     <span class="s2">&quot;Infected_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mi">117000000000</span><span class="p">,</span>
     <span class="s2">&quot;Infected_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">8336</span><span class="p">,</span>
     <span class="s2">&quot;Infected_Egg_Batch_Factor&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
 
     <span class="s2">&quot;Infectious_Human_Feed_Mortality_Factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
-    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="c1">## Based on late-2013 calibration of PfPR vs EIR favoring 1.0 to 0.5</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.9</span>  <span class="c1"># Based on late-2013 calibration of PfPR vs EIR favoring 1.0 to 0.5</span>
 <span class="p">}</span>
 
 <span class="c1"># An. arabiensis</span>
@@ -148,13 +148,12 @@
 <span class="c1"># An. funestus</span>
 <span class="n">funestus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_funestus_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:{</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">2e7</span>
-        <span class="p">},</span>
+    <span class="p">},</span>
     <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">funestus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_funestus_params</span><span class="p">)</span>
-
 
 <span class="c1"># An. gambiae</span>
 <span class="n">gambiae_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
@@ -164,9 +163,9 @@
 <span class="n">farauti_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_farauti_params</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:{</span>
-                        <span class="s2">&quot;BRACKISH_SWAMP&quot;</span><span class="p">:</span> <span class="mi">10000000000</span>
-                        <span class="p">},</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;BRACKISH_SWAMP&quot;</span><span class="p">:</span> <span class="mi">10000000000</span>
+    <span class="p">},</span>
     <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mf">5.9</span><span class="p">,</span>
     <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
     <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.97</span><span class="p">,</span>
@@ -184,9 +183,9 @@
 <span class="n">maculatus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_maculatus_params</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:{</span>
-                        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span>
-                        <span class="p">},</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span>
+    <span class="p">},</span>
     <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
     <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
     <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
@@ -203,9 +202,9 @@
 <span class="n">minimus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_minimus_params</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:{</span>
-                        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span>
-                        <span class="p">},</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span>
+    <span class="p">},</span>
     <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
     <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
     <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span>
@@ -225,6 +224,7 @@
     <span class="s2">&quot;maculatus&quot;</span><span class="p">:</span> <span class="n">maculatus_param_block</span><span class="p">,</span>
     <span class="s2">&quot;minimus&quot;</span><span class="p">:</span> <span class="n">minimus_param_block</span>
 <span class="p">}</span>
+
 
 <div class="viewcode-block" id="set_params_by_species"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_params_by_species">[docs]</a><span class="k">def</span> <span class="nf">set_params_by_species</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="s2">&quot;VECTOR_SIM&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -246,9 +246,11 @@
     <span class="p">}</span>
     <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vector_species_params</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="set_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_species_param">[docs]</a><span class="k">def</span> <span class="nf">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">]):</span> <span class="n">value</span><span class="p">}</span></div>
+
 
 <div class="viewcode-block" id="get_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.get_species_param">[docs]</a><span class="k">def</span> <span class="nf">get_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
@@ -257,38 +259,25 @@
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Unable to get parameter </span><span class="si">%s</span><span class="s1"> for species </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">species</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">None</span></div>
 
+
 <div class="viewcode-block" id="scale_all_habitats"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.scale_all_habitats">[docs]</a><span class="k">def</span> <span class="nf">scale_all_habitats</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="n">species</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Vector_Species_Names&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">scale</span><span class="o">*</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">get_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;Required_Habitat_Factor&#39;</span><span class="p">)]</span>
-        <span class="n">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;Required_Habitat_Factor&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+        <span class="n">habitats</span> <span class="o">=</span> <span class="n">get_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;Larval_Habitat_Types&#39;</span><span class="p">)</span>
+        <span class="n">scaled_habitats</span> <span class="o">=</span> <span class="p">{</span><span class="n">h</span><span class="p">:</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">habitats</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;Larval_Habitat_Types&#39;</span><span class="p">,</span> <span class="n">scaled_habitats</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="set_larval_habitat"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_larval_habitat">[docs]</a><span class="k">def</span> <span class="nf">set_larval_habitat</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">habitats</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set vector species and habitat parameters of config argument and return</span>
 <span class="sd">    Example:</span>
-<span class="sd">    habitats = { &quot;arabiensis&quot; : {&quot;TEMPORARY_RAINFALL&quot;:1.7e9,&quot;CONSTANT&quot;:1e7} }</span>
+<span class="sd">    habitats = {&quot;arabiensis&quot;: {&quot;TEMPORARY_RAINFALL&quot;: 1.7e9, &quot;CONSTANT&quot;: 1e7}}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">for</span> <span class="n">species</span><span class="p">,</span> <span class="n">habitat</span> <span class="ow">in</span> <span class="n">habitats</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;Vector_Species_Params&quot;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">habitat</span>
+    <span class="k">for</span> <span class="n">species</span><span class="p">,</span> <span class="n">habitat</span> <span class="ow">in</span> <span class="n">habitats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="s1">&#39;Larval_Habitat_Types&#39;</span><span class="p">,</span> <span class="n">habitat</span><span class="p">)</span></div>
 
-
-    <span class="c1">#cb.set_param(&#39;Vector_Species_Names&#39;, habitats.keys())</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    for (species, habitat) in habitats.items():</span>
-<span class="sd">        s = cb.config[&quot;parameters&quot;][&quot;Vector_Species_Params&quot;][species]</span>
-<span class="sd">        if isinstance(habitat, dict):</span>
-<span class="sd">            s[&quot;Habitat_Type&quot;] = habitat.keys()</span>
-<span class="sd">            s[&quot;Required_Habitat_Factor&quot;] = habitat.values()</span>
-<span class="sd">        elif isinstance(habitat, list):</span>
-<span class="sd">            s[&quot;Required_Habitat_Factor&quot;] = habitat</span>
-<span class="sd">            if len(habitat) != len(s[&quot;Habitat_Type&quot;] ):</span>
-<span class="sd">                raise Exception(&quot;Required_Habitat_Factor argument does not match size of Habitat_Type list&quot;)</span>
-<span class="sd">        else:</span>
-<span class="sd">            raise Exception(&quot;Don&#39;t recognize formatting of %s, which must be a dict or list&quot;,habitat)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span></div>
 </pre></div>
 
           </div>
@@ -305,7 +294,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

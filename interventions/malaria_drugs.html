@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Malaria drugs &mdash; DTK Package 0.4 documentation</title>
+    <title>Malaria drugs &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="../index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="../index.html" />
   
    
 
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -73,6 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../dtk.html">DTK package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -141,7 +142,7 @@
 <dd><p>Add a drug campaign defined by the parameters to the config builder.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug intervention.</li>
+<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug intervention.</li>
 <li><strong>drug_code</strong> -- The drug code of the drug regimen</li>
 <li><strong>start_days</strong> -- List of start days where the drug regimen will be distributed</li>
 <li><strong>coverage</strong> -- Demographic coverage of the distribution</li>
@@ -163,7 +164,7 @@ The drug_code needs to be one identified in the <code class="docutils literal"><
 and will return a dictionary containing a Full Treatment course for those 3 drugs.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug configuration</li>
+<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug configuration</li>
 <li><strong>drug_code</strong> -- Code of the drug to add</li>
 </ul>
 </dd>
@@ -178,7 +179,7 @@ and will return a dictionary containing a Full Treatment course for those 3 drug
 <dd><p>Get a parameter for a given drug</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the configuration</li>
+<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the configuration</li>
 <li><strong>drugname</strong> -- The drug that holds the parameter we want to retrieve</li>
 <li><strong>parameter</strong> -- The name of the parameter</li>
 </ul>
@@ -194,7 +195,7 @@ and will return a dictionary containing a Full Treatment course for those 3 drug
 <dd><p>Set a drug parameter in the config builder passed.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- <a class="reference internal" href="../utils.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the simulation configuration</li>
+<li><strong>cb</strong> -- <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the simulation configuration</li>
 <li><strong>drugname</strong> -- The drug that has a parameter to set</li>
 <li><strong>parameter</strong> -- The parameter to set</li>
 <li><strong>value</strong> -- The new value to set</li>
@@ -222,7 +223,7 @@ and will return a dictionary containing a Full Treatment course for those 3 drug
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

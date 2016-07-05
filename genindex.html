@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Index &mdash; DTK Package 0.4 documentation</title>
+    <title>Index &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -33,7 +33,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="index.html" />
   
    
 
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.4 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -74,6 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dtk.html">DTK package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -119,6 +120,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -136,6 +138,17 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt>
+    --&lt;block_name&gt;
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="dtk/commands.html#cmdoption-run--">run command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     --active, -a
   </dt>
 
@@ -151,10 +164,6 @@
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-kill--all">kill command line option</a>
-  </dt>
-
         
   <dt><a href="dtk/commands.html#cmdoption-resubmit--all">resubmit command line option</a>
   </dt>
@@ -199,17 +208,28 @@
       </dl></dd>
       
   <dt>
-    --hpc
+    --hard
   </dt>
 
       <dd><dl>
         
-  <dt><a href="dtk/commands.html#cmdoption-run--hpc">run command line option</a>
+  <dt><a href="dtk/commands.html#cmdoption-delete--hard">delete command line option</a>
   </dt>
 
       </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt>
+    --ini &lt;ini_file_path&gt;
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="dtk/commands.html#cmdoption-run--ini">run command line option</a>
+  </dt>
+
+      </dl></dd>
       
   <dt>
     --node_group &lt;node_group&gt;
@@ -280,7 +300,7 @@
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">add_demog_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">add_demog_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -288,7 +308,7 @@
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_event">add_event() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_event">add_event() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -304,7 +324,7 @@
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file">add_input_file() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file">add_input_file() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -315,12 +335,12 @@
   <dt><a href="interventions/irs.html#dtk.interventions.irs.add_IRS">add_IRS() (in module dtk.interventions.irs)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="interventions/itn.html#dtk.interventions.itn.add_ITN">add_ITN() (in module dtk.interventions.itn)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="interventions/ivernectin.html#dtk.interventions.ivermectin.add_ivermectin">add_ivermectin() (in module dtk.interventions.ivermectin)</a>
   </dt>
@@ -338,7 +358,7 @@
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports">add_reports() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports">add_reports() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -368,7 +388,11 @@
 
       </dl></dd>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.append_overlay">append_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.analyze_simulations">analyze_simulations() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.append_overlay">append_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -399,7 +423,22 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.clear_events">clear_events() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.cancel_simulations">cancel_simulations() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      
+  <dt>
+    clean
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="dtk/commands.html#dtk-cmd-clean">dtk-cmd command</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.clear_events">clear_events() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -416,7 +455,15 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.CompsExperimentManager">CompsExperimentManager (class in simtools.ExperimentManager)</a>
+  </dt>
+
+      
   <dt><a href="generic/geography.html#dtk.generic.geography.convert_filepaths">convert_filepaths() (in module dtk.generic.geography)</a>
+  </dt>
+
+      
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.create_simulations">create_simulations() (simtools.ExperimentManager.LocalExperimentManager method)</a>
   </dt>
 
   </dl></td>
@@ -426,7 +473,29 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.disable">disable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt>
+    delete
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="dtk/commands.html#dtk-cmd-delete">dtk-cmd command</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    delete command line option
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="dtk/commands.html#cmdoption-delete--hard">--hard</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.disable">disable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -452,6 +521,18 @@
       <dd><dl>
         
   <dt><a href="dtk/commands.html#dtk-cmd-analyze">analyze</a>
+  </dt>
+
+        
+  <dt><a href="dtk/commands.html#dtk-cmd-clean">clean</a>
+  </dt>
+
+        
+  <dt><a href="dtk/commands.html#dtk-cmd-delete">delete</a>
+  </dt>
+
+        
+  <dt><a href="dtk/commands.html#dtk-cmd-exterminate">exterminate</a>
   </dt>
 
         
@@ -515,12 +596,12 @@
   <dt><a href="interventions/inputs_EIR.html#module-dtk.interventions.input_EIR">dtk.interventions.input_EIR (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="interventions/irs.html#module-dtk.interventions.irs">dtk.interventions.irs (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="interventions/itn.html#module-dtk.interventions.itn">dtk.interventions.itn (module)</a>
   </dt>
@@ -562,7 +643,7 @@
   </dt>
 
       
-  <dt><a href="utils.html#module-dtk.utils.core.DTKConfigBuilder">dtk.utils.core.DTKConfigBuilder (module)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder">dtk.utils.core.DTKConfigBuilder (module)</a>
   </dt>
 
       
@@ -570,7 +651,7 @@
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">DTKConfigBuilder (class in dtk.utils.core.DTKConfigBuilder)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">DTKConfigBuilder (class in dtk.utils.core.DTKConfigBuilder)</a>
   </dt>
 
   </dl></td>
@@ -580,7 +661,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.enable">enable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.enable">enable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -607,6 +688,17 @@
   </dt>
 
       </dl></dd>
+      
+  <dt>
+    exterminate
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="dtk/commands.html#dtk-cmd-exterminate">dtk-cmd command</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -614,17 +706,17 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">file_writer() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">file_writer() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">from_defaults() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">from_defaults() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">from_files() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">from_files() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
   </dt>
 
   </dl></td>
@@ -634,7 +726,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_commandline">get_commandline() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_commandline">get_commandline() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
   </dt>
 
       
@@ -652,9 +744,29 @@
   </dt>
 
       
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.get_simulation_status">get_simulation_status() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      
   <dt><a href="vector.html#dtk.vector.species.get_species_param">get_species_param() (in module dtk.vector.species)</a>
   </dt>
 
+  </dl></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.CompsExperimentManager.hard_delete">hard_delete() (simtools.ExperimentManager.CompsExperimentManager method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.hard_delete">(simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -708,10 +820,6 @@
 
       <dd><dl>
         
-  <dt><a href="dtk/commands.html#cmdoption-kill--all">--all, -a</a>
-  </dt>
-
-        
   <dt><a href="dtk/commands.html#cmdoption-kill--simIds">--simIds, -s</a>
   </dt>
 
@@ -734,6 +842,12 @@
 
       </dl></dd>
   </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager">LocalExperimentManager (class in simtools.ExperimentManager)</a>
+  </dt>
+
+  </dl></td>
 </tr></table>
 
 <h2 id="M">M</h2>
@@ -750,8 +864,6 @@
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt>
     max_threads
@@ -760,6 +872,18 @@
       <dd><dl>
         
   <dt><a href="simtools/simtoolsini.html#std:setting-max_threads">setting</a>
+  </dt>
+
+      </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.CompsExperimentManager.monitorClass">monitorClass (simtools.ExperimentManager.CompsExperimentManager attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.monitorClass">(simtools.ExperimentManager.LocalExperimentManager attribute)</a>
   </dt>
 
       </dl></dd>
@@ -800,7 +924,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.params">params (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.params">params (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
   </dt>
 
       
@@ -849,6 +973,10 @@
   </dt>
 
       
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.reload_exp_data">reload_exp_data() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      
   <dt>
     resubmit
   </dt>
@@ -877,6 +1005,10 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.resubmit_simulations">resubmit_simulations() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      
   <dt>
     run
   </dt>
@@ -894,7 +1026,11 @@
 
       <dd><dl>
         
-  <dt><a href="dtk/commands.html#cmdoption-run--hpc">--hpc</a>
+  <dt><a href="dtk/commands.html#cmdoption-run--">--&lt;block_name&gt;</a>
+  </dt>
+
+        
+  <dt><a href="dtk/commands.html#cmdoption-run--ini">--ini &lt;ini_file_path&gt;</a>
   </dt>
 
         
@@ -906,6 +1042,10 @@
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.run_simulations">run_simulations() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -971,12 +1111,12 @@
   <dt><a href="generic/properties.html#dtk.generic.properties.set_property">set_property() (in module dtk.generic.properties)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="generic/demographics.html#dtk.generic.demographics.set_risk_mod">set_risk_mod() (in module dtk.generic.demographics)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="vector.html#dtk.vector.species.set_species_param">set_species_param() (in module dtk.vector.species)</a>
   </dt>
@@ -1087,11 +1227,19 @@
 
       </dl></dd>
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">stage_required_libraries() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  <dt><a href="simtools/experimentmanager.html#module-simtools.ExperimentManager">simtools.ExperimentManager (module)</a>
   </dt>
 
       
-  <dt><a href="utils.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.staged_dlls">staged_dlls (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
+  <dt><a href="simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.soft_delete">soft_delete() (simtools.ExperimentManager.LocalExperimentManager method)</a>
+  </dt>
+
+      
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">stage_required_libraries() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+  </dt>
+
+      
+  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.staged_dlls">staged_dlls (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
   </dt>
 
       
@@ -1203,7 +1351,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.4 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

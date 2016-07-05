@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Experiment Manager Class &mdash; DTK Package 0.4 documentation</title>
+    <title>Experiment Manager Class &mdash; DTK Package 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.4 documentation" href="../index.html" />
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="../index.html" />
     <link rel="up" title="Simtools package" href="../simtools.html" />
     <link rel="next" title="Calibtool package" href="../calibtool.html" />
     <link rel="prev" title="INI File overlay mechanism" href="overlay.html" />
@@ -56,7 +56,7 @@
         <li class="right" >
           <a href="overlay.html" title="INI File overlay mechanism"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &raquo;</li> 
       </ul>
     </div>
@@ -88,6 +88,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 </ul>
 
     
@@ -123,8 +124,116 @@
           
           <div class="document clearer body">
             
-  <div class="section" id="experiment-manager-class">
-<h1>Experiment Manager Class<a class="headerlink" href="#experiment-manager-class" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-simtools.ExperimentManager">
+<span id="experiment-manager-class"></span><span id="experimentmanager"></span><h1>Experiment Manager Class<a class="headerlink" href="#module-simtools.ExperimentManager" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="simtools.ExperimentManager.CompsExperimentManager">
+<em class="property">class </em><code class="descclassname">simtools.ExperimentManager.</code><code class="descname">CompsExperimentManager</code><span class="sig-paren">(</span><em>exe_path</em>, <em>exp_data</em>, <em>setup=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#CompsExperimentManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.CompsExperimentManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the LocalExperimentManager to manage DTK simulations through COMPS wrappers
+e.g. creation of Simulation, Experiment, Suite objects</p>
+<dl class="method">
+<dt id="simtools.ExperimentManager.CompsExperimentManager.hard_delete">
+<code class="descname">hard_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#CompsExperimentManager.hard_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.CompsExperimentManager.hard_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete local cache data for experiment and marks the server entity for deletion.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="simtools.ExperimentManager.CompsExperimentManager.monitorClass">
+<code class="descname">monitorClass</code><a class="headerlink" href="#simtools.ExperimentManager.CompsExperimentManager.monitorClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">CompsSimulationMonitor</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="simtools.ExperimentManager.LocalExperimentManager">
+<em class="property">class </em><code class="descclassname">simtools.ExperimentManager.</code><code class="descname">LocalExperimentManager</code><span class="sig-paren">(</span><em>model_file</em>, <em>exp_data</em>, <em>setup=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the creation, submission, status, parsing, and analysis
+of local experiments, i.e. collections of related simulations</p>
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.analyze_simulations">
+<code class="descname">analyze_simulations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.analyze_simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.analyze_simulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply one or more analyzers to the outputs of simulations.</p>
+<p>A parser thread will be spawned for each simulation with filtered analyzers to run,
+following which the combined outputs of all threads are reduced and displayed or saved.</p>
+<dl class="docutils">
+<dt>The analyzer interface provides the following methods:</dt>
+<dd><ul class="first last simple">
+<li>filter -- based on the simulation meta-data return a Boolean to execute this analyzer</li>
+<li>apply -- parse simulation output files and emit a subset of data</li>
+<li>combine -- reduce the data emitted by each parser</li>
+<li>finalize -- plotting and saving output files</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.cancel_simulations">
+<code class="descname">cancel_simulations</code><span class="sig-paren">(</span><em>ids=[]</em>, <em>killall=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.cancel_simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.cancel_simulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel currently some or all currently running simulations.</p>
+<p>Keyword arguments:
+ids -- a list of job ids to cancel
+killall -- a Boolean flag to kill all running simulations (default: False)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.create_simulations">
+<code class="descname">create_simulations</code><span class="sig-paren">(</span><em>config_builder</em>, <em>exp_name='test'</em>, <em>exp_builder=&lt;simtools.ModBuilder.SingleSimulationBuilder object at 0x00000000045A8390&gt;</em>, <em>verbose=True</em>, <em>suite_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.create_simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.create_simulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an experiment with simulations modified according to the specified experiment builder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.get_simulation_status">
+<code class="descname">get_simulation_status</code><span class="sig-paren">(</span><em>reload=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.get_simulation_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.get_simulation_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the status of simulations in the currently managed experiment.
+For example: 'Running', 'Finished', 'Succeeded', 'Failed', 'Canceled', 'Unknown'
+:param reload: Reload the exp_data (used in case of repeating poll with local simulations)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.hard_delete">
+<code class="descname">hard_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.hard_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.hard_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete local cache data for experiment and output data for experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.monitorClass">
+<code class="descname">monitorClass</code><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.monitorClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">SimulationMonitor</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.reload_exp_data">
+<code class="descname">reload_exp_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.reload_exp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.reload_exp_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh the exp_data with what is in the json metadata
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.resubmit_simulations">
+<code class="descname">resubmit_simulations</code><span class="sig-paren">(</span><em>ids=[]</em>, <em>resubmit_all_failed=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.resubmit_simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.resubmit_simulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resubmit some or all canceled or failed simulations.</p>
+<p>Keyword arguments:
+ids -- a list of job ids to resubmit
+resubmit_all_failed -- a Boolean flag to resubmit all canceled/failed simulations (default: False)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.run_simulations">
+<code class="descname">run_simulations</code><span class="sig-paren">(</span><em>config_builder</em>, <em>exp_name='test'</em>, <em>exp_builder=&lt;simtools.ModBuilder.SingleSimulationBuilder object at 0x000000000557BE80&gt;</em>, <em>suite_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.run_simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.run_simulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an experiment with simulations modified according to the specified experiment builder.
+Commission simulations and cache meta-data to local file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simtools.ExperimentManager.LocalExperimentManager.soft_delete">
+<code class="descname">soft_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simtools/ExperimentManager.html#LocalExperimentManager.soft_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simtools.ExperimentManager.LocalExperimentManager.soft_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete local cache data for experiment.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -160,7 +269,7 @@
         <li class="right" >
           <a href="overlay.html" title="INI File overlay mechanism"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.4 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &raquo;</li> 
       </ul>
     </div>

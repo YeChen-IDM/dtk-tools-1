@@ -1,0 +1,744 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>simtools.ExperimentManager &mdash; DTK Package 0.3.5 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+  
+   
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../../index.html" class="text-logo">dtk-tools 0.3.5</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Module code</a></li>
+              
+              <li>simtools.ExperimentManager</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for simtools.ExperimentManager</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">utils</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">SetupParser</span> <span class="kn">import</span> <span class="n">SetupParser</span>
+<span class="kn">from</span> <span class="nn">ModBuilder</span> <span class="kn">import</span> <span class="n">SingleSimulationBuilder</span>
+<span class="kn">from</span> <span class="nn">Commisioner</span> <span class="kn">import</span> <span class="n">CompsSimulationCommissioner</span>
+<span class="kn">from</span> <span class="nn">Monitor</span> <span class="kn">import</span> <span class="n">SimulationMonitor</span><span class="p">,</span> <span class="n">CompsSimulationMonitor</span>
+<span class="kn">from</span> <span class="nn">OutputParser</span> <span class="kn">import</span> <span class="n">SimulationOutputParser</span><span class="p">,</span> <span class="n">CompsDTKOutputParser</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="k">class</span> <span class="nc">ExperimentManagerFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;LOCAL&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">LocalExperimentManager</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;HPC&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CompsExperimentManager</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ExperimentManagerFactory location argument should be either &#39;LOCAL&#39; or &#39;HPC&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_model</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">model_file</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;LOCAL&#39;</span><span class="p">,</span> <span class="n">setup</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Initializing </span><span class="si">%s</span><span class="s1"> ExperimentManager from: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">model_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">setup</span><span class="p">:</span>
+            <span class="n">setup</span> <span class="o">=</span> <span class="n">SetupParser</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">location</span> <span class="o">==</span> <span class="s1">&#39;HPC&#39;</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">override_HPC_settings</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="n">location</span><span class="p">)(</span><span class="n">model_file</span><span class="p">,</span> <span class="p">{},</span> <span class="n">setup</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_setup</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">setup</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;LOCAL&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">setup</span><span class="p">:</span>
+            <span class="n">setup</span> <span class="o">=</span> <span class="n">SetupParser</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Initializing </span><span class="si">%s</span><span class="s1"> ExperimentManager from parsed setup&#39;</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">location</span> <span class="o">==</span> <span class="s1">&#39;HPC&#39;</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">override_HPC_settings</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="n">location</span><span class="p">)(</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exe_path&#39;</span><span class="p">),</span> <span class="p">{},</span> <span class="n">setup</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Reloading ExperimentManager from experiment data&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">])(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">exp_data_path</span><span class="p">,</span> <span class="n">suppressLogging</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">suppressLogging</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Reloading ExperimentManager from: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">exp_data_path</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">exp_data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">exp_data_file</span><span class="p">:</span>
+            <span class="n">exp_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">exp_data_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">])(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LocalExperimentManager"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager">[docs]</a><span class="k">class</span> <span class="nc">LocalExperimentManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages the creation, submission, status, parsing, and analysis</span>
+<span class="sd">    of local experiments, i.e. collections of related simulations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;LOCAL&#39;</span>
+    <span class="n">monitorClass</span> <span class="o">=</span> <span class="n">SimulationMonitor</span>
+    <span class="n">parserClass</span> <span class="o">=</span> <span class="n">SimulationOutputParser</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">,</span> <span class="n">setup</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c1"># If no setup is passed -&gt; create it</span>
+        <span class="k">if</span> <span class="n">setup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">selected_block</span> <span class="o">=</span> <span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;selected_block&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;selected_block&#39;</span> <span class="ow">in</span> <span class="n">exp_data</span> <span class="k">else</span> <span class="s1">&#39;LOCAL&#39;</span>
+            <span class="n">setup_file</span> <span class="o">=</span> <span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;setup_overlay_file&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;setup_overlay_file&#39;</span> <span class="ow">in</span> <span class="n">exp_data</span> <span class="k">else</span> <span class="bp">None</span>
+            <span class="n">setup</span> <span class="o">=</span> <span class="n">SetupParser</span><span class="p">(</span><span class="n">selected_block</span><span class="o">=</span><span class="n">selected_block</span><span class="p">,</span> <span class="n">setup_file</span><span class="o">=</span><span class="n">setup_file</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="s1">&#39;LOCAL&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_file</span> <span class="o">=</span> <span class="n">model_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span> <span class="o">=</span> <span class="n">exp_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup</span> <span class="o">=</span> <span class="n">setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assets_service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;HPC&quot;</span> <span class="ow">and</span> <span class="n">setup</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;use_comps_asset_svc&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_builder</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">staged_bin_path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commandline</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;quiet&#39;</span><span class="p">)</span>
+
+        <span class="n">max_threads</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_threads&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxThreadSemaphore</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="n">max_threads</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LocalExperimentManager.create_simulations"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.create_simulations">[docs]</a>    <span class="k">def</span> <span class="nf">create_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_builder</span><span class="p">,</span> <span class="n">exp_name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+                           <span class="n">exp_builder</span><span class="o">=</span><span class="n">SingleSimulationBuilder</span><span class="p">(),</span>
+                           <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">suite_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an experiment with simulations modified according to the specified experiment builder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span> <span class="o">=</span> <span class="n">config_builder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_builder</span> <span class="o">=</span> <span class="n">exp_builder</span>
+
+        <span class="c1"># If the assets service is in use, do not stage the exe and just return whats in tbe bin_staging_path</span>
+        <span class="c1"># If not, use the normal staging process</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">assets_service</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">staged_bin_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bin_staging_root&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">staged_bin_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">stage_executable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_setup</span><span class="p">())</span>
+
+        <span class="c1"># Create the command line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commandline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">get_commandline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">staged_bin_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_setup</span><span class="p">())</span>
+
+        <span class="c1"># Get the git revision of the tools</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">subprocess</span>
+            <span class="n">revision</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;describe&quot;</span><span class="p">,</span> <span class="s2">&quot;--tags&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">revision</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span>
+
+        <span class="c1"># Set the meta data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;sim_root&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;sim_root&#39;</span><span class="p">),</span>
+                              <span class="s1">&#39;exe_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandline</span><span class="o">.</span><span class="n">Executable</span><span class="p">,</span>
+                              <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="n">exp_name</span><span class="p">,</span>
+                              <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+                              <span class="s1">&#39;sim_type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Simulation_Type&#39;</span><span class="p">),</span>
+                              <span class="s1">&#39;dtk-tools_revision&#39;</span><span class="p">:</span> <span class="n">revision</span><span class="p">,</span>
+                              <span class="s1">&#39;selected_block&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">selected_block</span><span class="p">,</span>
+                              <span class="s1">&#39;setup_overlay_file&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">setup_file</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_experiment</span><span class="p">(</span><span class="n">suite_id</span><span class="p">)</span>
+
+        <span class="n">cached_cb</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="p">)</span>
+        <span class="n">commissioners</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">mod_fn_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_builder</span><span class="o">.</span><span class="n">mod_generator</span><span class="p">:</span>
+            <span class="c1"># reset to base config/campaign</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">cached_cb</span><span class="p">)</span>
+
+            <span class="c1"># modify next simulation according to experiment builder</span>
+            <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">func</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="p">),</span> <span class="n">mod_fn_list</span><span class="p">)</span>
+
+            <span class="c1"># If the assets service is in use, the path needs to come from COMPS</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">assets_service</span><span class="p">:</span>
+                <span class="n">lib_staging_root</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">translate_COMPS_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lib_staging_root&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lib_staging_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lib_staging_root&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Stage the required dll for the experiment</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">stage_required_libraries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dll_path&#39;</span><span class="p">),</span> <span class="n">lib_staging_root</span><span class="p">,</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">assets_service</span><span class="p">)</span>
+
+            <span class="n">commissioner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_simulation</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">commissioner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">commissioners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">commissioner</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">complete_sim_creation</span><span class="p">(</span><span class="n">commissioners</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_experiment_data</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LocalExperimentManager.run_simulations"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.run_simulations">[docs]</a>    <span class="k">def</span> <span class="nf">run_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_builder</span><span class="p">,</span> <span class="n">exp_name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+                        <span class="n">exp_builder</span><span class="o">=</span><span class="n">SingleSimulationBuilder</span><span class="p">(),</span>
+                        <span class="n">suite_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an experiment with simulations modified according to the specified experiment builder.</span>
+<span class="sd">        Commission simulations and cache meta-data to local file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_simulations</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">exp_name</span><span class="p">,</span> <span class="n">exp_builder</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">suite_id</span><span class="o">=</span><span class="n">suite_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commission_simulations</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_experiment_data</span><span class="p">()</span>  <span class="c1"># now we have job IDs</span></div>
+
+<div class="viewcode-block" id="LocalExperimentManager.get_simulation_status"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.get_simulation_status">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulation_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">reload</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query the status of simulations in the currently managed experiment.</span>
+<span class="sd">        For example: &#39;Running&#39;, &#39;Finished&#39;, &#39;Succeeded&#39;, &#39;Failed&#39;, &#39;Canceled&#39;, &#39;Unknown&#39;</span>
+<span class="sd">        :param reload: Reload the exp_data (used in case of repeating poll with local simulations)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">reload</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;LOCAL&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_exp_data</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Status of simulations run on &#39;</span><span class="si">%s</span><span class="s2">&#39;:&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
+        <span class="n">states</span><span class="p">,</span> <span class="n">msgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitorClass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_setup</span><span class="p">())</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">states</span><span class="p">,</span> <span class="n">msgs</span></div>
+
+<div class="viewcode-block" id="LocalExperimentManager.cancel_simulations"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.cancel_simulations">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[],</span> <span class="n">killall</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel currently some or all currently running simulations.</span>
+
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">        ids -- a list of job ids to cancel</span>
+<span class="sd">        killall -- a Boolean flag to kill all running simulations (default: False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">states</span><span class="p">,</span> <span class="n">msgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">killall</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cancel_all_simulations</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">if</span> <span class="nb">id</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="nb">id</span>  <span class="c1"># arguments come in as strings (as they should for COMPS)</span>
+
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No job in experiment with ID = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Finished&#39;</span><span class="p">,</span> <span class="s1">&#39;Succeeded&#39;</span><span class="p">,</span> <span class="s1">&#39;Failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Canceled&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kill_job</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;JobID </span><span class="si">%s</span><span class="s2"> is already in a &#39;</span><span class="si">%s</span><span class="s2">&#39; state.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span> <span class="n">state</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LocalExperimentManager.soft_delete"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.soft_delete">[docs]</a>    <span class="k">def</span> <span class="nf">soft_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete local cache data for experiment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># First, ensure that all simulations are canceled.</span>
+        <span class="n">states</span><span class="p">,</span> <span class="n">msgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cancel_all_simulations</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+
+        <span class="c1"># Wait for successful cancellation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_finished</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c1"># Delete local cache file.</span>
+        <span class="n">cache_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;simulations&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="LocalExperimentManager.hard_delete"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.hard_delete">[docs]</a>    <span class="k">def</span> <span class="nf">hard_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete local cache data for experiment and output data for experiment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Perform soft delete cleanup.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soft_delete</span><span class="p">()</span>
+
+        <span class="c1"># Delete local simulation data.</span>
+        <span class="n">local_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sim_root&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">])</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">local_data_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LocalExperimentManager.resubmit_simulations"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.resubmit_simulations">[docs]</a>    <span class="k">def</span> <span class="nf">resubmit_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[],</span> <span class="n">resubmit_all_failed</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resubmit some or all canceled or failed simulations.</span>
+
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">        ids -- a list of job ids to resubmit</span>
+<span class="sd">        resubmit_all_failed -- a Boolean flag to resubmit all canceled/failed simulations (default: False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">states</span><span class="p">,</span> <span class="n">msgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">resubmit_all_failed</span><span class="p">:</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span> <span class="k">for</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Canceled&#39;</span><span class="p">]]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Resubmitting all failed simulations in experiment: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No job in experiment with ID = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Canceled&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">resubmit_job</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;JobID </span><span class="si">%d</span><span class="s2"> is in a &#39;</span><span class="si">%s</span><span class="s2">&#39; state and will not be requeued.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LocalExperimentManager.analyze_simulations"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.analyze_simulations">[docs]</a>    <span class="k">def</span> <span class="nf">analyze_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply one or more analyzers to the outputs of simulations.</span>
+
+<span class="sd">        A parser thread will be spawned for each simulation with filtered analyzers to run,</span>
+<span class="sd">        following which the combined outputs of all threads are reduced and displayed or saved.</span>
+
+<span class="sd">        The analyzer interface provides the following methods:</span>
+<span class="sd">           * filter -- based on the simulation meta-data return a Boolean to execute this analyzer</span>
+<span class="sd">           * apply -- parse simulation output files and emit a subset of data</span>
+<span class="sd">           * combine -- reduce the data emitted by each parser</span>
+<span class="sd">           * finalize -- plotting and saving output files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">parsers</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+
+            <span class="n">filtered_analyses</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzers</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sim</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">filtered_analyses</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Simulation did not pass filter on any analyzer.&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxThreadSemaphore</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maxThreadSemaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Thread-</span><span class="si">%d</span><span class="s1">: sim_id=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sim_id</span><span class="p">))</span>
+
+            <span class="n">parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_output_parser</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">filtered_analyses</span><span class="p">)</span>  <span class="c1"># execute filtered analyzers on parser thread</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">parsers</span><span class="p">[</span><span class="n">parser</span><span class="o">.</span><span class="n">sim_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">parser</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parsers</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;No simulations passed analysis filters.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzers</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">parsers</span><span class="p">)</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">create_suite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite_name</span><span class="p">):</span>
+        <span class="n">suite_id</span> <span class="o">=</span> <span class="n">suite_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[ :.-]&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating suite_id = &quot;</span> <span class="o">+</span> <span class="n">suite_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">suite_id</span>
+
+    <span class="k">def</span> <span class="nf">create_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">exp_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[ :.-]&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating exp_id = &quot;</span> <span class="o">+</span> <span class="n">exp_id</span><span class="p">)</span>
+        <span class="n">sim_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sim_root&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">exp_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">sim_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sim_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">exp_id</span>
+
+    <span class="k">def</span> <span class="nf">create_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># to avoid identical datetime</span>
+        <span class="n">sim_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[ :.-]&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Creating sim_id = &#39;</span> <span class="o">+</span> <span class="n">sim_id</span><span class="p">)</span>
+        <span class="n">sim_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sim_root&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">],</span>
+                               <span class="n">sim_id</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sim_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">dump_files</span><span class="p">(</span><span class="n">sim_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">][</span><span class="n">sim_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_builder</span><span class="o">.</span><span class="n">metadata</span>
+
+    <span class="k">def</span> <span class="nf">complete_sim_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commisioners</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="k">return</span>  <span class="c1"># no batching in LOCAL</span>
+
+    <span class="k">def</span> <span class="nf">commission_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Retrieve the experiment dirs and the sim ids that we have to run</span>
+        <span class="n">exp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sim_root&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">])</span>
+        <span class="n">sim_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">max_local_sims</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;max_local_sims&#39;</span><span class="p">))</span>
+
+        <span class="c1"># Create the paths</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">exp_dir</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">sim_id</span> <span class="ow">in</span> <span class="n">sim_ids</span><span class="p">]</span>
+        <span class="n">local_runner_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s2">&quot;LocalRunner.py&quot;</span><span class="p">)</span>
+        <span class="n">cache_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;simulations&#39;</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Open the local runner as a subprocess and pass it all the required info to run the simulations</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">local_runner_path</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">commandline</span><span class="o">.</span><span class="n">Commandline</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_local_sims</span><span class="p">),</span> <span class="n">cache_path</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;blocking&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache_experiment_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_finished</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">cancel_all_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Killing all simulations in experiment: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cancel_simulations</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">kill_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simId</span><span class="p">):</span>
+        <span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">][</span><span class="n">simId</span><span class="p">][</span><span class="s1">&#39;pid&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;pid&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">][</span><span class="n">simId</span><span class="p">]</span> <span class="k">else</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">pid</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">resubmit_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;resubmit_job not implemented for </span><span class="si">%s</span><span class="s1"> jobs&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">property</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">cache_experiment_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="n">cache_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;simulations&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">cache_path</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">),</span>
+                  <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">exp_file</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Saving meta-data for experiment:&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+            <span class="n">exp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">msgs</span><span class="p">):</span>
+        <span class="n">long_states</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">jobid</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;Running&#39;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                <span class="n">steps_complete</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">[</span><span class="n">jobid</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps_complete</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">long_states</span><span class="p">[</span><span class="n">jobid</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">steps_complete</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">steps_complete</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">% c</span><span class="s2">omplete)&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Job states:&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">long_states</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
+            <span class="c1"># We have less than 20 simulations, display the simulations details</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">long_states</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+        <span class="c1"># Display the counter no matter the number of simulations</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">status_finished</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Finished&#39;</span><span class="p">,</span> <span class="s1">&#39;Succeeded&#39;</span><span class="p">,</span> <span class="s1">&#39;Failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Canceled&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">itervalues</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_finished</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">status_succeeded</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Finished&#39;</span><span class="p">,</span> <span class="s1">&#39;Succeeded&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">itervalues</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">status_failed</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Failed&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">itervalues</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">failed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">wait_for_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">init_sleep</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">sleep_time</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">init_sleep</span><span class="p">)</span>
+
+            <span class="c1"># Reload the exp_data because job ids may have been added by the thread</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_exp_data</span><span class="p">()</span>
+
+            <span class="n">states</span><span class="p">,</span> <span class="n">msgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_simulation_status</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_finished</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
+                <span class="c1"># Wait when we are all done to make sure all the output files have time to get written</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_time</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">print_status</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">msgs</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_status</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">msgs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_output_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">,</span> <span class="n">filtered_analyses</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parserClass</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sim_root&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exp_name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+                                <span class="n">sim_id</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">][</span><span class="n">sim_id</span><span class="p">],</span>
+                                <span class="n">filtered_analyses</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">maxThreadSemaphore</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_analyzer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analyzer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">analyzer</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LocalExperimentManager.reload_exp_data"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.LocalExperimentManager.reload_exp_data">[docs]</a>    <span class="k">def</span> <span class="nf">reload_exp_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refresh the exp_data with what is in the json metadata</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cache_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;simulations&#39;</span><span class="p">,</span>
+                                       <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">.json&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">cache_file_path</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="CompsExperimentManager"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.CompsExperimentManager">[docs]</a><span class="k">class</span> <span class="nc">CompsExperimentManager</span><span class="p">(</span><span class="n">LocalExperimentManager</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extends the LocalExperimentManager to manage DTK simulations through COMPS wrappers</span>
+<span class="sd">    e.g. creation of Simulation, Experiment, Suite objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;HPC&#39;</span>
+    <span class="n">monitorClass</span> <span class="o">=</span> <span class="n">CompsSimulationMonitor</span>
+    <span class="n">parserClass</span> <span class="o">=</span> <span class="n">CompsDTKOutputParser</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe_path</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">,</span> <span class="n">setup</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c1"># If no setup is passed -&gt; create it</span>
+        <span class="k">if</span> <span class="n">setup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">selected_block</span> <span class="o">=</span> <span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;selected_block&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;selected_block&#39;</span> <span class="ow">in</span> <span class="n">exp_data</span> <span class="k">else</span> <span class="s1">&#39;HPC&#39;</span>
+            <span class="n">setup_file</span> <span class="o">=</span> <span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;setup_overlay_file&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;setup_overlay_file&#39;</span> <span class="ow">in</span> <span class="n">exp_data</span> <span class="k">else</span> <span class="bp">None</span>
+            <span class="n">setup</span> <span class="o">=</span> <span class="n">SetupParser</span><span class="p">(</span><span class="n">selected_block</span><span class="o">=</span><span class="n">selected_block</span><span class="p">,</span> <span class="n">setup_file</span><span class="o">=</span><span class="n">setup_file</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="s1">&#39;HPC&#39;</span><span class="p">)</span>
+
+        <span class="n">LocalExperimentManager</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe_path</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">,</span> <span class="n">setup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps_sims_to_batch</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;sims_per_thread&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commissioner</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sims_created</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">create_suite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CompsSimulationCommissioner</span><span class="o">.</span><span class="n">create_suite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">,</span> <span class="n">suite_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sims_created</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">CompsSimulationCommissioner</span><span class="o">.</span><span class="n">create_experiment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="p">,</span>
+                                                             <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">staged_bin_path</span><span class="p">,</span>
+                                                             <span class="bp">self</span><span class="o">.</span><span class="n">commandline</span><span class="o">.</span><span class="n">Options</span><span class="p">,</span> <span class="n">suite_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sims_created</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps_sims_to_batch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maxThreadSemaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>  <span class="c1"># Is this okay outside the thread?  Stops the thread from being created</span>
+            <span class="c1"># until it can actually go, but asymmetrical acquire()/release() is not</span>
+            <span class="c1"># ideal...</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">commissioner</span> <span class="o">=</span> <span class="n">CompsSimulationCommissioner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxThreadSemaphore</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commissioner</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">dump_files_to_string</span><span class="p">()</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_builder</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commissioner</span><span class="o">.</span><span class="n">create_simulation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_builder</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Config_Name&#39;</span><span class="p">),</span> <span class="n">files</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sims_created</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sims_created</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps_sims_to_batch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commissioner</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commissioner</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">complete_sim_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commissioners</span><span class="p">):</span>
+        <span class="n">lastBatch</span> <span class="o">=</span> <span class="n">commissioners</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lastBatch</span><span class="o">.</span><span class="n">isAlive</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">lastBatch</span><span class="o">.</span><span class="n">sims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lastBatch</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">commissioners</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect_sim_metadata</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">commission_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">CompsSimulationCommissioner</span><span class="o">.</span><span class="n">commission_experiment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;blocking&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache_experiment_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_finished</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">collect_sim_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;sims&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CompsSimulationCommissioner</span><span class="o">.</span><span class="n">get_sim_metadata_for_exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">cancel_all_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">COMPS</span> <span class="kn">import</span> <span class="n">Client</span>
+        <span class="kn">from</span> <span class="nn">COMPS.Data</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">QueryCriteria</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span><span class="p">:</span>
+            <span class="n">Client</span><span class="o">.</span><span class="n">Login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;server_endpoint&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">e</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">GetById</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">],</span> <span class="n">QueryCriteria</span><span class="p">()</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;Id&#39;</span><span class="p">))</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">Cancel</span><span class="p">()</span>
+        
+<div class="viewcode-block" id="CompsExperimentManager.hard_delete"><a class="viewcode-back" href="../../simtools/experimentmanager.html#simtools.ExperimentManager.CompsExperimentManager.hard_delete">[docs]</a>    <span class="k">def</span> <span class="nf">hard_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete local cache data for experiment and marks the server entity for deletion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Perform soft delete cleanup.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soft_delete</span><span class="p">()</span>
+
+        <span class="c1"># Mark experiment for deletion in COMPS.</span>
+        <span class="kn">from</span> <span class="nn">COMPS</span> <span class="kn">import</span> <span class="n">Client</span>
+        <span class="kn">from</span> <span class="nn">COMPS.Data</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">QueryCriteria</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span><span class="p">:</span>
+            <span class="n">Client</span><span class="o">.</span><span class="n">Login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;server_endpoint&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">e</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">GetById</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">[</span><span class="s1">&#39;exp_id&#39;</span><span class="p">],</span> <span class="n">QueryCriteria</span><span class="p">()</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;Id&#39;</span><span class="p">))</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">Delete</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">kill_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simId</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">COMPS</span> <span class="kn">import</span> <span class="n">Client</span>
+        <span class="kn">from</span> <span class="nn">COMPS.Data</span> <span class="kn">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">QueryCriteria</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span><span class="p">:</span>
+            <span class="n">Client</span><span class="o">.</span><span class="n">Login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;server_endpoint&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">comps_logged_in</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">GetById</span><span class="p">(</span><span class="n">simId</span><span class="p">,</span> <span class="n">QueryCriteria</span><span class="p">()</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;Id&#39;</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">Cancel</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">analyze_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">assets_service</span><span class="p">:</span>
+            <span class="n">CompsDTKOutputParser</span><span class="o">.</span><span class="n">createSimDirectoryMap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exp_id&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;suite_id&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;HPC&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;compress_assets&#39;</span><span class="p">):</span>
+            <span class="n">CompsDTKOutputParser</span><span class="o">.</span><span class="n">enableCompression</span><span class="p">()</span>
+
+        <span class="n">LocalExperimentManager</span><span class="o">.</span><span class="n">analyze_simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
