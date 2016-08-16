@@ -115,8 +115,8 @@
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">dtk.generic.demographics</span> <span class="kn">import</span> <span class="n">set_static_demographics</span>
-<span class="kn">from</span> <span class="nn">dtk.utils.ioformat.OutputMessage</span> <span class="kn">import</span> <span class="n">OutputMessage</span>
+<span class="kn">from</span> <span class="nn">dtk.generic.demographics</span> <span class="k">import</span> <span class="n">set_static_demographics</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.ioformat.OutputMessage</span> <span class="k">import</span> <span class="n">OutputMessage</span>
 
 
 <div class="viewcode-block" id="convert_filepaths"><a class="viewcode-back" href="../../../generic/geography.html#dtk.generic.geography.convert_filepaths">[docs]</a><span class="k">def</span> <span class="nf">convert_filepaths</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
@@ -127,16 +127,11 @@
 <span class="sd">    :param params: The config parameters</span>
 <span class="sd">    :return: Nothing</span>
 
-<span class="sd">    .. deprecated:: 0.3.5</span>
-<span class="sd">        0.4.0 will stop support of Demographics_Filename. Use Demographics_Filenames instead.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Geography&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Geography&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="p">:</span> <span class="k">return</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;Demographics_Filename&#39;</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Demographics_Filenames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;Demographics_Filenames&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;Demographics_Filenames&#39;</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;Campaign_Filename&#39;</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -154,19 +149,10 @@
 <span class="sd">    :param geography: The selected geography</span>
 <span class="sd">    :return: parameters with the correct path</span>
 
-<span class="sd">    .. deprecated:: 0.3.5</span>
-<span class="sd">        0.4.0 will stop support of Demographics_Filename. Use Demographics_Filenames instead.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">geographies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">geography</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> geography not yet implemented&#39;</span> <span class="o">%</span> <span class="n">geography</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="s2">&quot;Demographics_Filename&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">OutputMessage</span><span class="p">(</span><span class="s2">&quot;&#39;Demographic_Filename&#39; in geographies will not be supported anymore with the dtk-tools 0.4.0 &quot;</span>
-                      <span class="s2">&quot;release.</span><span class="se">\r\n</span><span class="s2">Please update the geography to use &#39;Demographic_Filenames&#39; instead.</span><span class="se">\r\n</span><span class="s2">&quot;</span>
-                      <span class="s2">&quot;See http://idmod.org/emoddoc/#EMOD/ParameterReference/Input</span><span class="si">%20F</span><span class="s2">iles.htm?Highlight=demographics_filenames&quot;</span>
-                      <span class="p">,</span> <span class="s1">&#39;deprecate&#39;</span><span class="p">)</span>
 
     <span class="n">convert_filepaths</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
@@ -188,7 +174,7 @@
     <span class="k">return</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="set_geography"><a class="viewcode-back" href="../../../generic/geography.html#dtk.generic.geography.set_geography">[docs]</a><span class="k">def</span> <span class="nf">set_geography</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">geography</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">pop_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="set_geography"><a class="viewcode-back" href="../../../generic/geography.html#dtk.generic.geography.set_geography">[docs]</a><span class="k">def</span> <span class="nf">set_geography</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">geography</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pop_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set the demographics in a given :py:class:`DTKConfigBuilder` for the selected geography.</span>
 <span class="sd">    The demographics can be set to static and created with the :any:`set_static_demographics` function or it can be created</span>
@@ -206,7 +192,7 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Geography parameters: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">cb</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">static</span><span class="p">:</span>
-        <span class="n">set_static_demographics</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">use_existing</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">set_static_demographics</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">use_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pop_scale</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">cb</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s1">&#39;Base_Population_Scale_Factor&#39;</span><span class="p">,</span> <span class="n">pop_scale</span> <span class="o">*</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Base_Population_Scale_Factor&#39;</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Birth_Rate_Dependence&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;FIXED_BIRTH_RATE&#39;</span><span class="p">:</span>
@@ -217,7 +203,7 @@
 
     <span class="s2">&quot;Garki_Single&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Garki_Single&quot;</span><span class="p">,</span>
                      <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Garki_single_temperature.bin&quot;</span><span class="p">,</span>
-                     <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Garki_single_demographics.compiled.json&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Garki_single_demographics.compiled.json&quot;</span><span class="p">],</span>
                      <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Garki_single_temperature.bin&quot;</span><span class="p">,</span>
                      <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Garki_single_rainfall.bin&quot;</span><span class="p">,</span>
                      <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Garki_single_humidity.bin&quot;</span><span class="p">,</span>
@@ -227,7 +213,7 @@
 
     <span class="s2">&quot;Namawala&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Namawala_single_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                  <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_land_temperature_daily.bin&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_rainfall_daily.bin&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -236,7 +222,7 @@
                  <span class="p">},</span>
 
     <span class="s2">&quot;Sinamalima&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Sinamalima_1_node&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;sinamalima_30arcsec_demographics_alt_600.json&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;sinamalima_30arcsec_demographics_alt_600.json&quot;</span><span class="p">],</span>
                    <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
@@ -245,7 +231,7 @@
                    <span class="p">},</span>
 
     <span class="s2">&quot;Munyumbwe&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Munyumbwe_1_node&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;munyumbwe_30arcsec_demographics_alt_800.json&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;munyumbwe_30arcsec_demographics_alt_800.json&quot;</span><span class="p">],</span>
                   <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
@@ -254,7 +240,7 @@
                   <span class="p">},</span>
 
     <span class="s2">&quot;Lukonde&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Lukonde_1_node&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;lukonde_30arcsec_demographics_alt_1000.json&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lukonde_30arcsec_demographics_alt_1000.json&quot;</span><span class="p">],</span>
                 <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
@@ -263,7 +249,7 @@
                 <span class="p">},</span>
 
     <span class="s2">&quot;Gwembe&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Gwembe_1_node&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;gwembe_30arcsec_demographics_alt_1300.json&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gwembe_30arcsec_demographics_alt_1300.json&quot;</span><span class="p">],</span>
                <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
@@ -273,7 +259,7 @@
 
     <span class="s2">&quot;Sinazongwe&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Sinamalima_single_node&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_Sinamalima_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_Sinamalima_single_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Zambia_Sinamalima_single_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                    <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_Sinamalima_2_5arcmin_land_temperature_daily.bin&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_Sinamalima_2_5arcmin_rainfall_daily.bin&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_Sinamalima_2_5arcmin_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -282,7 +268,7 @@
 
     <span class="s2">&quot;Sinamalima_1_node&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Sinamalima_1_node&quot;</span><span class="p">,</span>
                           <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                          <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;sinamalima_30arcsec_demographics_alt_600.json&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;sinamalima_30arcsec_demographics_alt_600.json&quot;</span><span class="p">],</span>
                           <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                           <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
                           <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -291,7 +277,7 @@
 
     <span class="s2">&quot;Gwembe_1_node&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Gwembe_1_node&quot;</span><span class="p">,</span>
                       <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                      <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;gwembe_30arcsec_demographics_alt_1300.json&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gwembe_30arcsec_demographics_alt_1300.json&quot;</span><span class="p">],</span>
                       <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                       <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
                       <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -300,7 +286,7 @@
 
     <span class="s2">&quot;Lukonde_1_node&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Lukonde_1_node&quot;</span><span class="p">,</span>
                        <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;lukonde_30arcsec_demographics_alt_1000.json&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lukonde_30arcsec_demographics_alt_1000.json&quot;</span><span class="p">],</span>
                        <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                        <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
                        <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -309,7 +295,7 @@
 
     <span class="s2">&quot;Munumbwe_1_node&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia/Munumbwe_1_node&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;munumbwe_30arcsec_demographics_alt_800.json&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;munumbwe_30arcsec_demographics_alt_800.json&quot;</span><span class="p">],</span>
                         <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_rainfall_daily.bin&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_30arcsec_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -327,7 +313,7 @@
         <span class="c1"># &quot;x_Local_Migration&quot;: 0 ,</span>
         <span class="c1"># &quot;Local_Migration_Filename&quot;:   &quot;Zambia_Gwembe_Sinazongwe_115_nodes_local_migration.bin&quot;,</span>
         <span class="c1"># &quot;Node_Grid_Size&quot;: 0.00833,    ## 30arcsec/3600</span>
-        <span class="c1"># &quot;Demographics_Filename&quot;: &quot;Zambia_30arcsec_demographics.json&quot;,</span>
+        <span class="c1"># &quot;Demographics_Filenames&quot;: [&quot;Zambia_30arcsec_demographics.json&quot;],</span>
     <span class="p">},</span>
 
     <span class="s2">&quot;GwembeSinazongwePopCluster&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -340,12 +326,12 @@
         <span class="s2">&quot;Enable_Local_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;Local_Migration_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Zambia_Gwembe_Sinazongwe_121_nodes_local_migration.bin&quot;</span>
         <span class="c1"># &quot;Node_Grid_Size&quot;: 0.00833,    ## 30arcsec/3600</span>
-        <span class="c1"># &quot;Demographics_Filename&quot;:      &quot;Zambia_30arcsec_demographics.json&quot;,</span>
+        <span class="c1"># &quot;Demographics_Filenames&quot;:      [&quot;Zambia_30arcsec_demographics.json&quot;],</span>
     <span class="p">},</span>
 
     <span class="s2">&quot;Dielmo&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Gambia/Dielmo_Ndiop&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_single_node_demographics.static.compiled.json&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Senegal_Dielmo_single_node_demographics.static.compiled.json&quot;</span><span class="p">],</span>
                <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_land_temperature_daily.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_rainfall_daily.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -354,7 +340,7 @@
 
     <span class="s2">&quot;Ndiop&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Gambia/Dielmo_Ndiop&quot;</span><span class="p">,</span>
               <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Ndiop_single_node_demographics.static.compiled.json&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Senegal_Ndiop_single_node_demographics.static.compiled.json&quot;</span><span class="p">],</span>
               <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_land_temperature_daily.bin&quot;</span><span class="p">,</span>
               <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_rainfall_daily.bin&quot;</span><span class="p">,</span>
               <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Dielmo_Ndiop_2_5arcmin_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -363,7 +349,7 @@
 
     <span class="s2">&quot;Thies&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Gambia/Thies&quot;</span><span class="p">,</span>
               <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Thies_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Thies_single_node_demographics.static.compiled.json&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Senegal_Thies_single_node_demographics.static.compiled.json&quot;</span><span class="p">],</span>
               <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Thies_2_5arcmin_land_temperature_daily.bin&quot;</span><span class="p">,</span>
               <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Thies_2_5arcmin_rainfall_daily.bin&quot;</span><span class="p">,</span>
               <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Senegal_Thies_2_5arcmin_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -372,7 +358,7 @@
 
     <span class="s2">&quot;Mocuba&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozambique_Zambezia&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozambique_Zambezia_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozambique_Zambezia_Mocuba_single_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Mozambique_Zambezia_Mocuba_single_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozambique_Zambezia_2_5arcmin_land_temperature_daily.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozambique_Zambezia_2_5arcmin_rainfall_daily.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozambique_Zambezia_2_5arcmin_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -382,7 +368,7 @@
     <span class="s2">&quot;West_Kenya&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Kenya_Nyanza&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Node_Grid_Size&quot;</span><span class="p">:</span> <span class="mf">0.009</span><span class="p">,</span>  <span class="c1">##</span>
                    <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Kenya_Nyanza_30arcsec_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Kenya_Nyanza_2node_demographics.compiled.json&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Kenya_Nyanza_2node_demographics.compiled.json&quot;</span><span class="p">],</span>
                    <span class="s2">&quot;Enable_Local_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                    <span class="s2">&quot;Local_Migration_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Kenya_Nyanza_2node_local_migration.bin&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Kenya_Nyanza_30arcsec_land_temperature_daily.bin&quot;</span><span class="p">,</span>
@@ -394,7 +380,7 @@
     <span class="s2">&quot;Solomon_Islands&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Solomon_Islands/Honiara&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;Node_Grid_Size&quot;</span><span class="p">:</span> <span class="mf">0.009</span><span class="p">,</span>  <span class="c1">##</span>
                         <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_temperature_daily10y.bin&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_single_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Honiara_single_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                         <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_temperature_daily10y.bin&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_rainfall_daily10y.bin&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_humidity_daily10y.bin&quot;</span><span class="p">,</span>
@@ -404,7 +390,7 @@
     <span class="s2">&quot;Solomon_Islands_2Node&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Solomon_Islands/Honiara _Haleta&quot;</span><span class="p">,</span>
                               <span class="s2">&quot;Node_Grid_Size&quot;</span><span class="p">:</span> <span class="mf">0.009</span><span class="p">,</span>  <span class="c1">##</span>
                               <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_Haleta_temperature_daily10y.bin&quot;</span><span class="p">,</span>
-                              <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_Haleta_two_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Honiara_Haleta_two_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                               <span class="s2">&quot;Enable_Local_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                               <span class="s2">&quot;Local_Migration_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_Haleta_two_node_local_migration.bin&quot;</span><span class="p">,</span>
                               <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Honiara_Haleta_temperature_daily10y.bin&quot;</span><span class="p">,</span>
@@ -416,7 +402,7 @@
     <span class="s2">&quot;Nabang&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;UCIrvine/Nabang&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Node_Grid_Size&quot;</span><span class="p">:</span> <span class="mf">0.009</span><span class="p">,</span>  <span class="c1">##</span>
                <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;China_Nabang_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Nabang_two_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Nabang_two_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                <span class="s2">&quot;Enable_Local_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                <span class="s2">&quot;Local_Migration_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Nabang_two_node_local_migration.bin&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;China_Nabang_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
@@ -428,7 +414,7 @@
     <span class="s2">&quot;Tha_Song_Yang&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Tha_Song_Yang&quot;</span><span class="p">,</span>
                       <span class="s2">&quot;Node_Grid_Size&quot;</span><span class="p">:</span> <span class="mf">0.009</span><span class="p">,</span>  <span class="c1">##</span>
                       <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Thailand_Tha_Song_Yang_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                      <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;TSY_two_node_demographics.compiled.json&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;TSY_two_node_demographics.compiled.json&quot;</span><span class="p">],</span>
                       <span class="s2">&quot;Enable_Local_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                       <span class="s2">&quot;Local_Migration_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;TSY_two_node_local_migration.bin&quot;</span><span class="p">,</span>
                       <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Thailand_Tha_Song_Yang_2_5arcmin_air_temperature_daily.bin&quot;</span><span class="p">,</span>
@@ -438,14 +424,14 @@
                       <span class="p">},</span>
 
     <span class="s2">&quot;Malariatherapy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Malariatherapy_demographics.compiled.json&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Malariatherapy_demographics.compiled.json&quot;</span><span class="p">],</span>
                        <span class="s2">&quot;Base_Population_Scale_Factor&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
                        <span class="s2">&quot;Enable_Vital_Dynamics&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                        <span class="s2">&quot;Climate_Model&quot;</span><span class="p">:</span> <span class="s2">&quot;CLIMATE_CONSTANT&quot;</span>  <span class="c1"># no mosquitoes in challenge trial setting</span>
                        <span class="p">},</span>
 
     <span class="s2">&quot;Birth_Cohort&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                     <span class="s2">&quot;Demographics_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;birth_cohort_demographics.compiled.json&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;birth_cohort_demographics.compiled.json&quot;</span><span class="p">],</span>
                      <span class="s1">&#39;Base_Population_Scale_Factor&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
                      <span class="s1">&#39;Enable_Vital_Dynamics&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># No births/deaths.  Just following a birth cohort.</span>
                      <span class="s2">&quot;Climate_Model&quot;</span><span class="p">:</span> <span class="s2">&quot;CLIMATE_CONSTANT&quot;</span>  <span class="c1"># no mosquitoes</span>
@@ -455,11 +441,11 @@
                   <span class="s2">&quot;Listed_Events&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;VaccinateNeighbors&quot;</span><span class="p">,</span> <span class="s2">&quot;Blackout&quot;</span><span class="p">,</span> <span class="s2">&quot;Distributing_AntimalariaDrug&quot;</span><span class="p">,</span> <span class="s1">&#39;TestedPositive&#39;</span><span class="p">,</span>
                                     <span class="s1">&#39;Give_Drugs&#39;</span><span class="p">,</span> <span class="s1">&#39;Spray_IRS&#39;</span><span class="p">,</span> <span class="s1">&#39;Drug_Campaign_Blackout&#39;</span><span class="p">,</span> <span class="s1">&#39;IRS_Blackout&#39;</span><span class="p">,</span> <span class="s1">&#39;Node_Sprayed&#39;</span><span class="p">,</span>
                                     <span class="s1">&#39;Received_Campaign_Drugs&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_Treatment&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_ITN&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_Vehicle&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;Received_Test&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_RCD_Drugs&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Diagnostic_Survey_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                    <span class="s1">&#39;Received_Test&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_RCD_Drugs&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_Survey&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Diagnostic_Survey_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                                                               <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)],</span>
                   <span class="s2">&quot;Report_Event_Recorder_Events&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;NewClinicalCase&quot;</span><span class="p">,</span> <span class="s1">&#39;Received_Campaign_Drugs&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_RCD_Drugs&#39;</span><span class="p">,</span>
                                                    <span class="s1">&#39;Received_Treatment&#39;</span><span class="p">,</span> <span class="s1">&#39;TestedPositive&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_ITN&#39;</span><span class="p">,</span>
-                                                   <span class="s1">&#39;Received_Test&#39;</span><span class="p">,</span> <span class="s1">&#39;Node_Sprayed&#39;</span><span class="p">],</span>
+                                                   <span class="s1">&#39;Received_Test&#39;</span><span class="p">,</span> <span class="s1">&#39;Node_Sprayed&#39;</span><span class="p">,</span> <span class="s1">&#39;Received_Survey&#39;</span><span class="p">],</span>
 
                   <span class="s2">&quot;Enable_Climate_Stochasticity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># daily in raw data series</span>
                   <span class="s2">&quot;Climate_Model&quot;</span><span class="p">:</span> <span class="s2">&quot;CLIMATE_BY_DATA&quot;</span><span class="p">,</span>
@@ -473,6 +459,7 @@
                   <span class="s2">&quot;Enable_Migration_Heterogeneity&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                   <span class="s2">&quot;Migration_Model&quot;</span><span class="p">:</span> <span class="s2">&quot;FIXED_RATE_MIGRATION&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;Enable_Local_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                  <span class="s2">&quot;Enable_Regional_Migration&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                   <span class="s2">&quot;Migration_Pattern&quot;</span><span class="p">:</span> <span class="s2">&quot;SINGLE_ROUND_TRIPS&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;Local_Migration_Roundtrip_Duration&quot;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
                   <span class="s2">&quot;Local_Migration_Roundtrip_Probability&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>

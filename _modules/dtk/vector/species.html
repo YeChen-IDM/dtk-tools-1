@@ -117,8 +117,8 @@
 <span class="n">param_block</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">8e8</span><span class="p">,</span>
-        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">8e7</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="n">e8</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="n">e7</span>
     <span class="p">},</span>
 
     <span class="s2">&quot;Aquatic_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mi">84200000000</span><span class="p">,</span>
@@ -133,7 +133,7 @@
     <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
 
-    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="c1"># VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes</span>
     <span class="s2">&quot;Infected_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mi">117000000000</span><span class="p">,</span>
     <span class="s2">&quot;Infected_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">8336</span><span class="p">,</span>
     <span class="s2">&quot;Infected_Egg_Batch_Factor&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
@@ -149,7 +149,7 @@
 <span class="n">funestus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_funestus_params</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">2e7</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="n">e7</span>
     <span class="p">},</span>
     <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
 <span class="p">}</span>
@@ -180,16 +180,25 @@
 <span class="c1"># An. maculatus</span>
 <span class="c1"># http://www.bioone.org/doi/full/10.3376/038.034.0108</span>
 <span class="c1"># http://www.map.ox.ac.uk/explore/mosquito-malaria-vectors/bionomics/anopheles-maculatus/</span>
+<span class="c1"># previous to 160722, maculatus block had</span>
+<span class="c1">#    &quot;Larval_Habitat_Types&quot;: {</span>
+<span class="c1">#        &quot;WATER_VEGETATION&quot;: 1e7</span>
+<span class="c1">#    },</span>
+<span class="c1">#    &quot;Anthropophily&quot;: 0.3,</span>
+<span class="c1">#    &quot;Indoor_Feeding_Fraction&quot;: 0.4,</span>
+<span class="c1"># on 160722, modified to Trung Trop Med Intl Health 2005 data from Ratanakiri</span>
+<span class="c1"># maculatus seasonal with rainfall (Durnez Malar J 2013)</span>
 <span class="n">maculatus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_maculatus_params</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e7</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e6</span>
     <span class="p">},</span>
     <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
     <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
-    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
     <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
     <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
     <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
@@ -199,21 +208,70 @@
 <span class="c1"># An. minimus</span>
 <span class="c1"># http://www.bioone.org/doi/abs/10.1603/033.046.0511</span>
 <span class="c1"># http://www.map.ox.ac.uk/explore/mosquito-malaria-vectors/bionomics/anopheles-minimus/</span>
+<span class="c1"># previous to 160722, minimus block had</span>
+<span class="c1">#    &quot;Larval_Habitat_Types&quot;: {</span>
+<span class="c1">#        &quot;WATER_VEGETATION&quot;: 1e7</span>
+<span class="c1">#    },</span>
+<span class="c1">#    &quot;Anthropophily&quot;: 0.93,</span>
+<span class="c1">#    &quot;Indoor_Feeding_Fraction&quot;: 0.95,</span>
+<span class="c1"># on 160722, modified to Trung Trop Med Intl Health 2005 data from Ratanakiri</span>
+<span class="c1"># minimus more present during drier periods after rainy season</span>
 <span class="n">minimus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
 <span class="n">mod_minimus_params</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e7</span> <span class="c1"># update habitat type?</span>
     <span class="p">},</span>
     <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
     <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span>
-    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
     <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
     <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
 <span class="p">}</span>
 <span class="n">minimus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_minimus_params</span><span class="p">)</span>
+
+<span class="c1"># An. dirus</span>
+<span class="c1"># Trung Trop Med Intl Health 2005</span>
+<span class="c1"># Durnez Malar J 2013</span>
+<span class="c1"># dirus more abundant during rainy season but also some constant portion in forest</span>
+<span class="n">dirus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_dirus_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e7</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e6</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
+<span class="p">}</span>
+<span class="n">dirus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_dirus_params</span><span class="p">)</span>
+
+
+<span class="c1"># An. albimanus</span>
+<span class="c1"># CDC Malar J 2016 review</span>
+<span class="n">albimanus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_albimanus_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c1"># seasonal with rainfall</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e7</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">e6</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="c1"># daily survival rate somewhere between 0.7 and 0.9</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="c1"># observed 2.6 to 5.2</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="c1"># ?</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span> <span class="c1"># ?</span>
+<span class="p">}</span>
+<span class="n">albimanus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_albimanus_params</span><span class="p">)</span>
 
 <span class="c1"># Dictionary of params by species name</span>
 <span class="n">vector_params_by_species</span> <span class="o">=</span> <span class="p">{</span>
@@ -222,7 +280,9 @@
     <span class="s2">&quot;farauti&quot;</span><span class="p">:</span> <span class="n">farauti_param_block</span><span class="p">,</span>
     <span class="s2">&quot;gambiae&quot;</span><span class="p">:</span> <span class="n">gambiae_param_block</span><span class="p">,</span>
     <span class="s2">&quot;maculatus&quot;</span><span class="p">:</span> <span class="n">maculatus_param_block</span><span class="p">,</span>
-    <span class="s2">&quot;minimus&quot;</span><span class="p">:</span> <span class="n">minimus_param_block</span>
+    <span class="s2">&quot;minimus&quot;</span><span class="p">:</span> <span class="n">minimus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;dirus&quot;</span><span class="p">:</span> <span class="n">dirus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;albimanus&quot;</span><span class="p">:</span> <span class="n">albimanus_param_block</span>
 <span class="p">}</span>
 
 
@@ -236,7 +296,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pp</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
-        <span class="n">pp</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector_params_by_species</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="n">pp</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">vector_params_by_species</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;MALARIA_SIM&quot;</span><span class="p">:</span>
             <span class="n">pp</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1">## gametocyte success modeled explicitly</span>
 
@@ -256,8 +316,8 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Unable to get parameter </span><span class="si">%s</span><span class="s1"> for species </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">species</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">None</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Unable to get parameter </span><span class="si">%s</span><span class="s1"> for species </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">species</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="scale_all_habitats"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.scale_all_habitats">[docs]</a><span class="k">def</span> <span class="nf">scale_all_habitats</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>

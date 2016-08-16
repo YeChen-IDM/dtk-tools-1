@@ -117,7 +117,7 @@
 <span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
-<span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="kn">import</span> <span class="n">SetupParser</span>
+<span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="k">import</span> <span class="n">SetupParser</span>
 
 
 <div class="viewcode-block" id="set_property"><a class="viewcode-back" href="../../../generic/properties.html#dtk.generic.properties.set_property">[docs]</a><span class="k">def</span> <span class="nf">set_property</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">initial</span><span class="p">):</span>
@@ -150,7 +150,7 @@
     <span class="k">return</span> <span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;Accessibility&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="add_properties_overlay"><a class="viewcode-back" href="../../../generic/properties.html#dtk.generic.properties.add_properties_overlay">[docs]</a><span class="k">def</span> <span class="nf">add_properties_overlay</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="add_properties_overlay"><a class="viewcode-back" href="../../../generic/properties.html#dtk.generic.properties.add_properties_overlay">[docs]</a><span class="k">def</span> <span class="nf">add_properties_overlay</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a property overlay with the given properties.</span>
 
@@ -160,14 +160,14 @@
 <span class="sd">    :param tag: Properties tag</span>
 <span class="sd">    :return: Nothing</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">directory</span> <span class="o">=</span> <span class="n">SetupParser</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input_root&#39;</span><span class="p">)</span>
 
     <span class="n">filenames</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Demographics_Filenames&#39;</span><span class="p">)</span>
     <span class="n">demogfiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">if</span> <span class="s1">&#39;demographics&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;add_properties_overlay function is expecting exactly one base demographics file.&#39;</span><span class="p">)</span>
 
     <span class="n">demog_filename</span> <span class="o">=</span> <span class="n">demogfiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

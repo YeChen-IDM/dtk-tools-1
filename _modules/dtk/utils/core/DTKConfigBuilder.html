@@ -115,15 +115,36 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span> <span class="c1"># find listed events by regex</span>
 
-<span class="kn">import</span> <span class="nn">dtk.generic.params</span> <span class="kn">as</span> <span class="nn">generic_params</span>
-<span class="kn">import</span> <span class="nn">dtk.malaria.params</span> <span class="kn">as</span> <span class="nn">malaria_params</span>
-<span class="kn">import</span> <span class="nn">dtk.vector.params</span> <span class="kn">as</span> <span class="nn">vector_params</span>
-<span class="kn">from</span> <span class="nn">dtk.interventions.empty_campaign</span> <span class="kn">import</span> <span class="n">empty_campaign</span>
-<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="kn">import</span> <span class="n">json2dict</span>
-<span class="kn">from</span> <span class="nn">dtk.utils.reports.CustomReport</span> <span class="kn">import</span> <span class="n">format</span> <span class="k">as</span> <span class="n">format_reports</span>
-<span class="kn">from</span> <span class="nn">simtools</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">simtools.SimConfigBuilder</span> <span class="kn">import</span> <span class="n">SimConfigBuilder</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.params</span> <span class="k">as</span> <span class="nn">generic_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.sir</span> <span class="k">as</span> <span class="nn">sir_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.sir_vaccinations_a</span> <span class="k">as</span> <span class="nn">sir_vaccinations_a_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.sir_vaccinations_b</span> <span class="k">as</span> <span class="nn">sir_vaccinations_b_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.sir_vaccinations_c</span> <span class="k">as</span> <span class="nn">sir_vaccinations_c_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.seir</span> <span class="k">as</span> <span class="nn">seir_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.seir_vitaldynamics</span> <span class="k">as</span> <span class="nn">seir_vitaldynamics_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.sirs</span> <span class="k">as</span> <span class="nn">sirs_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.seirs</span> <span class="k">as</span> <span class="nn">seirs_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.si</span> <span class="k">as</span> <span class="nn">si_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.sis</span> <span class="k">as</span> <span class="nn">sis_params</span>
+<span class="kn">import</span> <span class="nn">dtk.malaria.params</span> <span class="k">as</span> <span class="nn">malaria_params</span>
+<span class="kn">import</span> <span class="nn">dtk.vector.params</span> <span class="k">as</span> <span class="nn">vector_params</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.empty_campaign</span> <span class="k">import</span> <span class="n">empty_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.sir_initial_seeding</span> <span class="k">import</span> <span class="n">sir_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.sir_vaccinations_a_initial_seeding</span> <span class="k">import</span> <span class="n">sir_vaccinations_a_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.sir_vaccinations_b_initial_seeding</span> <span class="k">import</span> <span class="n">sir_vaccinations_b_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.sir_vaccinations_c_initial_seeding</span> <span class="k">import</span> <span class="n">sir_vaccinations_c_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.seir_initial_seeding</span> <span class="k">import</span> <span class="n">seir_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.seir_vitaldynamics</span> <span class="k">import</span> <span class="n">seir_vitaldynamics_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.sirs_initial_seeding</span> <span class="k">import</span> <span class="n">sirs_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.seirs</span> <span class="k">import</span> <span class="n">seirs_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.si_initial_seeding</span> <span class="k">import</span> <span class="n">si_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.sis_initial_seeding</span> <span class="k">import</span> <span class="n">sis_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="k">import</span> <span class="n">json2dict</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.reports.CustomReport</span> <span class="k">import</span> <span class="nb">format</span> <span class="k">as</span> <span class="n">format_reports</span>
+<span class="kn">from</span> <span class="nn">simtools</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">simtools.SimConfigBuilder</span> <span class="k">import</span> <span class="n">SimConfigBuilder</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -183,10 +204,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">emodules_map</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;interventions&#39;</span><span class="p">:</span> <span class="p">[],</span>
                              <span class="s1">&#39;disease_plugins&#39;</span><span class="p">:</span> <span class="p">[],</span>
                              <span class="s1">&#39;reporter_plugins&#39;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DTKConfigBuilder.from_defaults"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">from_defaults</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.from_defaults"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">from_defaults</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build up the default parameters for the specified simulation type.</span>
 
@@ -208,6 +229,17 @@
 <span class="sd">                * VECTOR_SIM</span>
 <span class="sd">                * VECTOR_SIM_VIVAX_SEMITROPICAL</span>
 <span class="sd">                * VECTOR_SIM_VIVAX_CHESSON</span>
+<span class="sd">                * GENERIC_SIM_SIR</span>
+<span class="sd">                * GENERIC_SIM_SIR_Vaccinations_A</span>
+<span class="sd">                * GENERIC_SIM_SIR_Vaccinations_B</span>
+<span class="sd">                * GENERIC_SIM_SIR_Vaccinations_C</span>
+<span class="sd">                * GENERIC_SIM_SEIR</span>
+<span class="sd">                * GENERIC_SIM_SEIR_VitalDynamics</span>
+<span class="sd">                * GENERIC_SIM_SIRS</span>
+<span class="sd">                * GENERIC_SIM_SEIRS</span>
+<span class="sd">                * GENERIC_SIM_SI</span>
+<span class="sd">                * GENERIC_SIM_SIS</span>
+
 
 <span class="sd">            kwargs (dict): Additional overrides of config parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -217,6 +249,7 @@
                 <span class="s2">&quot;Instantiating DTKConfigBuilder from defaults requires a sim_type argument, e.g. &#39;MALARIA_SIM&#39;.&quot;</span><span class="p">)</span>
 
         <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">generic_params</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
+        <span class="n">campaign</span> <span class="o">=</span> <span class="n">empty_campaign</span>
 
         <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;MALARIA_SIM&quot;</span><span class="p">:</span>
             <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vector_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
@@ -235,15 +268,65 @@
             <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vector_params</span><span class="o">.</span><span class="n">vivax_chesson_params</span><span class="p">)</span>
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;VECTOR_SIM&quot;</span>
 
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SIR&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sir_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">sir_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SIR_Vaccinations_A&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sir_vaccinations_a_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">sir_vaccinations_a_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SIR_Vaccinations_B&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sir_vaccinations_b_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">sir_vaccinations_b_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SIR_Vaccinations_C&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sir_vaccinations_c_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">sir_vaccinations_c_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SEIR&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">seir_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">seir_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SEIR_VitalDynamics&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">seir_vitaldynamics_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">seir_vitaldynamics_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SIRS&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sirs_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">sirs_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SEIRS&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">seirs_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">seirs_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SI&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">si_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">si_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;GENERIC_SIM_SIS&quot;</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sis_params</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">campaign</span> <span class="o">=</span> <span class="n">sis_campaign</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;GENERIC_SIM&quot;</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Don&#39;t recognize sim_type argument = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sim_type</span><span class="p">)</span>
 
         <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;Simulation_Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim_type</span>
 
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">empty_campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DTKConfigBuilder.from_files"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">[docs]</a>    <span class="k">def</span> <span class="nf">from_files</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.from_files"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">[docs]</a>    <span class="k">def</span> <span class="nf">from_files</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build up a simulation configuration from the path to an existing</span>
 <span class="sd">        config.json and optionally a campaign.json file on disk.</span>
@@ -405,7 +488,7 @@
 
         <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">CommandlineGenerator</span><span class="p">(</span><span class="n">exe_path</span><span class="p">,</span> <span class="n">eradication_options</span><span class="p">,</span> <span class="p">[])</span></div>
 
-<div class="viewcode-block" id="DTKConfigBuilder.stage_required_libraries"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">[docs]</a>    <span class="k">def</span> <span class="nf">stage_required_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dll_path</span><span class="p">,</span> <span class="n">staging_root</span><span class="p">,</span> <span class="n">assets_service</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.stage_required_libraries"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">[docs]</a>    <span class="k">def</span> <span class="nf">stage_required_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dll_path</span><span class="p">,</span> <span class="n">staging_root</span><span class="p">,</span> <span class="n">assets_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stage the required DLLs.</span>
 
@@ -425,7 +508,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dlls</span><span class="p">:</span>
             <span class="c1"># Try top retrieve the dll from the staged dlls</span>
-            <span class="n">staged_dll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">staged_dlls</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">staged_dll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">staged_dlls</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">staged_dll</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">assets_service</span><span class="p">:</span>
@@ -435,11 +518,27 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If the assets service is used, assume that the dll is staged already</span>
                     <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">staging_root</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">)</span>
+
+                <span class="c1"># Translate just in case</span>
+                <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">translate_COMPS_path</span><span class="p">(</span><span class="n">staged_dll</span><span class="p">)</span>
+
                 <span class="c1"># caching to avoid repeat md5 and os calls</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">staged_dlls</span><span class="p">[(</span><span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">staged_dll</span>
 
             <span class="c1"># Add the dll to the emodules_map</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">emodules_map</span><span class="p">[</span><span class="n">dll_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">staged_dll</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DTKConfigBuilder.check_custom_events"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.check_custom_events">[docs]</a>    <span class="k">def</span> <span class="nf">check_custom_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Return difference between config and campaign</span>
+
+        <span class="n">broadcast_events_from_campaign</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">r&quot;[&#39;</span><span class="se">\&quot;</span><span class="s2">]Broadcast_Event[&#39;</span><span class="se">\&quot;</span><span class="s2">]:\s[&#39;</span><span class="se">\&quot;</span><span class="s2">](.*?)[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">,</span>
+                                                    <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">)),</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+        <span class="n">event_triggers_from_campaign</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">r&quot;[&#39;</span><span class="se">\&quot;</span><span class="s2">]Event_Trigger[&#39;</span><span class="se">\&quot;</span><span class="s2">]:\s[&#39;</span><span class="se">\&quot;</span><span class="s2">](.*?)[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">,</span>
+                                                  <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">)),</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">event_triggers_from_campaign</span> <span class="o">+</span> <span class="n">broadcast_events_from_campaign</span><span class="p">)</span>
+                    <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Listed_Events&#39;</span><span class="p">]))</span></div>
 
 <div class="viewcode-block" id="DTKConfigBuilder.file_writer"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">[docs]</a>    <span class="k">def</span> <span class="nf">file_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_fn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -466,14 +565,13 @@
 <span class="sd">                        f.write(content)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">dump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-        <span class="n">dump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="n">write_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Campaign_Filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">))</span>
+        <span class="n">write_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Campaign_Filename&#39;</span><span class="p">],</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_reports</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s1">&#39;Custom_Reports_Filename&#39;</span><span class="p">,</span> <span class="s1">&#39;custom_reports.json&#39;</span><span class="p">)</span>
-            <span class="n">write_fn</span><span class="p">(</span><span class="s1">&#39;custom_reports&#39;</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="n">format_reports</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_reports</span><span class="p">)))</span>
+            <span class="n">write_fn</span><span class="p">(</span><span class="s1">&#39;custom_reports.json&#39;</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="n">format_reports</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_reports</span><span class="p">)))</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">demog_overlays</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">append_overlay</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.json&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
@@ -482,9 +580,12 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">write_fn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
 
-        <span class="n">write_fn</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">))</span>
+        <span class="c1"># Add missing item from campaign individual events into Listed_Events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Listed_Events&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_custom_events</span><span class="p">())</span>
 
-        <span class="n">write_fn</span><span class="p">(</span><span class="s1">&#39;emodules_map&#39;</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emodules_map</span><span class="p">))</span></div></div>
+        <span class="n">write_fn</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">))</span>
+
+        <span class="n">write_fn</span><span class="p">(</span><span class="s1">&#39;emodules_map.json&#39;</span><span class="p">,</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emodules_map</span><span class="p">))</span></div></div>
 </pre></div>
 
           </div>

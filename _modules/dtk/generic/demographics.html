@@ -128,6 +128,7 @@
     <span class="s2">&quot;Enable_Demographics_Initial&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;Enable_Demographics_Other&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;Enable_Demographics_Reporting&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Enable_Demographics_Builtin&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
 
     <span class="s2">&quot;Enable_Immunity_Initialization_Distribution&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># compatibility with EMOD v2.0 and earlier</span>
     <span class="s2">&quot;Immunity_Initialization_Distribution_Type&quot;</span><span class="p">:</span> <span class="s2">&quot;DISTRIBUTION_OFF&quot;</span><span class="p">,</span>
@@ -254,12 +255,12 @@
         <span class="n">apply_to_defaults_or_nodes</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">set_attributes</span><span class="p">,</span> <span class="n">dist_type</span><span class="p">,</span> <span class="n">par1</span><span class="p">,</span> <span class="n">par2</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
-        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
+        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
 
 
 <span class="c1"># the following two methods need a refactor</span>
 <span class="c1"># we can have a single demographics file object and adjust attribute depending on usage</span>
-<div class="viewcode-block" id="set_static_demographics"><a class="viewcode-back" href="../../../generic/demographics.html#dtk.generic.demographics.set_static_demographics">[docs]</a><span class="k">def</span> <span class="nf">set_static_demographics</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">use_existing</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="set_static_demographics"><a class="viewcode-back" href="../../../generic/demographics.html#dtk.generic.demographics.set_static_demographics">[docs]</a><span class="k">def</span> <span class="nf">set_static_demographics</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">use_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a static demographics based on the demographics file specified in the config file</span>
 <span class="sd">    of the :py:class:`DTKConfigBuilder` object passed to the function.</span>
@@ -311,6 +312,9 @@
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">set_attributes</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;IndividualAttributes&#39;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;IndividualAttributes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="n">d</span><span class="p">[</span><span class="s1">&#39;IndividualAttributes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;MortalityDistribution&quot;</span><span class="p">:</span> <span class="n">mod_mortality</span><span class="p">,</span>
              <span class="s2">&quot;AgeDistributionFlag&quot;</span><span class="p">:</span> <span class="n">distribution_types</span><span class="p">[</span><span class="s2">&quot;EXPONENTIAL_DISTRIBUTION&quot;</span><span class="p">],</span>
@@ -321,10 +325,10 @@
 
     <span class="n">output_file_path</span> <span class="o">=</span> <span class="n">demog_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;.static.json&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
-        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
+        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="set_growing_demographics"><a class="viewcode-back" href="../../../generic/demographics.html#dtk.generic.demographics.set_growing_demographics">[docs]</a><span class="k">def</span> <span class="nf">set_growing_demographics</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">use_existing</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="set_growing_demographics"><a class="viewcode-back" href="../../../generic/demographics.html#dtk.generic.demographics.set_growing_demographics">[docs]</a><span class="k">def</span> <span class="nf">set_growing_demographics</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">use_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function creates a growing population. It works the same way as the :any:`set_static_demographics` but with</span>
 <span class="sd">    a birth rate more important than the death rate which leads to a growing population.</span>
@@ -379,7 +383,7 @@
 
     <span class="n">output_file_path</span> <span class="o">=</span> <span class="n">demog_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;.growing.json&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
-        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
+        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
 </pre></div>
 
           </div>

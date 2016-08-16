@@ -112,7 +112,9 @@
           <div class="document clearer body">
             
   <h1>Source code for dtk.interventions.irs</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39; OLD</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="sd">&#39;&#39;&#39; OLD</span>
 <span class="sd"># IRS parameters</span>
 <span class="sd">irs_housingmod = {&quot;class&quot;: &quot;IRSHousingModification&quot;,</span>
 <span class="sd">                  &quot;Blocking_Rate&quot;: 0.0,  # i.e. repellency</span>
@@ -147,8 +149,8 @@
                     <span class="s2">&quot;Cost_To_Consumer&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> 
                     <span class="s2">&quot;Habitat_Target&quot;</span><span class="p">:</span> <span class="s2">&quot;ALL_HABITATS&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;Killing_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">365</span><span class="p">,</span> 
-                        <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> 
+                        <span class="s2">&quot;Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> 
+                        <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> 
                         <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;WaningEffectExponential&quot;</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;Spray_Kill_Target&quot;</span><span class="p">:</span> <span class="s2">&quot;SpaceSpray_Indoor&quot;</span><span class="p">,</span> 
@@ -160,7 +162,7 @@
     <span class="s2">&quot;Broadcast_Event&quot;</span><span class="p">:</span> <span class="s2">&quot;Node_Sprayed&quot;</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="add_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="add_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an IRS intervention to the config_builder passed.</span>
 
@@ -195,7 +197,7 @@
         
 
         <span class="n">IRS_event</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span><span class="p">,</span>
-                     <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+                     <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span>
                      <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
                          <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
                          <span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">coverage_by_age</span><span class="p">[</span><span class="s2">&quot;coverage&quot;</span><span class="p">],</span>
@@ -228,7 +230,7 @@
 
         <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">IRS_event</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="add_node_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_node_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_node_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">initial_killing</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">box_duration</span><span class="o">=</span><span class="mi">365</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="add_node_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_node_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_node_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">initial_killing</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">box_duration</span><span class="o">=</span><span class="mi">365</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[]):</span>
 
     <span class="n">irs_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node_irs_config</span><span class="p">)</span>
     <span class="n">irs_config</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_duration</span>
@@ -244,7 +246,7 @@
                     <span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span>
                     <span class="p">},</span> 
-                    <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span> 
+                    <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> 
                     <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Node Level IRS&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span>
                 <span class="p">}</span>

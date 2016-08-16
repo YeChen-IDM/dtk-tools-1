@@ -114,9 +114,9 @@
   <h1>Source code for dtk.malaria.immunity</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="kn">import</span> <span class="n">SetupParser</span>
-<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="kn">import</span> <span class="n">json2dict</span>
-<span class="kn">from</span> <span class="nn">dtk.vector.study_sites</span> <span class="kn">import</span> <span class="n">StudySite</span><span class="p">,</span> <span class="n">set_habitat_scale</span>
+<span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="k">import</span> <span class="n">SetupParser</span>
+<span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="k">import</span> <span class="n">json2dict</span>
+<span class="kn">from</span> <span class="nn">dtk.vector.study_sites</span> <span class="k">import</span> <span class="n">StudySite</span><span class="p">,</span> <span class="n">set_habitat_scale</span>
 
 <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;Antibody_CSP_Decay_Days&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
@@ -144,7 +144,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="add_immune_overlays"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.add_immune_overlays">[docs]</a><span class="k">def</span> <span class="nf">add_immune_overlays</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="add_immune_overlays"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.add_immune_overlays">[docs]</a><span class="k">def</span> <span class="nf">add_immune_overlays</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an immunity overlay.</span>
 
@@ -161,7 +161,7 @@
     <span class="n">demogfiles</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;add_immune_init function is expecting only a single demographics file.&#39;</span><span class="p">)</span>
 
     <span class="n">demog_filename</span> <span class="o">=</span> <span class="n">demogfiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -190,7 +190,7 @@
     <span class="n">cb</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s2">&quot;Immunity_Initialization_Distribution_Type&quot;</span><span class="p">,</span> <span class="s2">&quot;DISTRIBUTION_COMPLEX&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="add_immune_init"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.add_immune_init">[docs]</a><span class="k">def</span> <span class="nf">add_immune_init</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">x_temp_habitats</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="add_immune_init"><a class="viewcode-back" href="../../../malaria/immunity.html#dtk.malaria.immunity.add_immune_init">[docs]</a><span class="k">def</span> <span class="nf">add_immune_init</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">x_temp_habitats</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initializes the immunity based on habitat scaling.</span>
 

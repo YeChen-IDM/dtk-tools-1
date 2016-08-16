@@ -128,7 +128,7 @@
                <span class="s2">&quot;Cost_To_Consumer&quot;</span><span class="p">:</span> <span class="mf">3.75</span>
 <span class="p">}</span>
 
-<div class="viewcode-block" id="add_ITN"><a class="viewcode-back" href="../../../interventions/itn.html#dtk.interventions.itn.add_ITN">[docs]</a><span class="k">def</span> <span class="nf">add_ITN</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span> <span class="n">perfect</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="add_ITN"><a class="viewcode-back" href="../../../interventions/itn.html#dtk.interventions.itn.add_ITN">[docs]</a><span class="k">def</span> <span class="nf">add_ITN</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span> <span class="n">perfect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an ITN intervention to the config_builder passed.</span>
 <span class="sd">    :param config_builder: The :py:class:`DTKConfigBuilder &lt;dtk.utils.core.DTKConfigBuilder&gt;` holding the campaign that will receive the ITN event</span>
@@ -167,7 +167,7 @@
     <span class="k">for</span> <span class="n">coverage_by_age</span> <span class="ow">in</span> <span class="n">coverage_by_ages</span><span class="p">:</span>
 
         <span class="n">ITN_event</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span><span class="p">,</span>
-                      <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+                      <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span>
                       <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
                           <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
                           <span class="s2">&quot;Target_Residents_Only&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
