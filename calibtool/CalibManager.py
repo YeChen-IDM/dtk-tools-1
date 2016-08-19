@@ -437,8 +437,9 @@ class CalibManager(object):
         siminfo_df = siminfo_df.round(dictround).rename(columns={'id': 'outputs'})
 
         # Merge the info with the results to be able to have parameters -> simulations ids
-        m = pd.merge(results_df, siminfo_df,
-                     on=pnames,
+        m = pd.merge(results_df.reset_index(), siminfo_df[['__sample_index__', 'outputs']],
+                     left_on='sample',
+                     right_on='__sample_index__',
                      indicator=True)
 
         # Group the results by parameters and transform the ids into an array
