@@ -60,7 +60,8 @@ class CalibManager(object):
         self.num_to_plot = num_to_plot
         self.max_iterations = max_iterations
         self.location = self.setup.get('type')
-        self.suite_id = None
+        self.local_suite_id = None
+        self.comps_suite_id = None
         self.all_results = None
         self.exp_manager = None
         self.plotters = plotters
@@ -219,13 +220,15 @@ class CalibManager(object):
 
         if self.iteration_state.simulations:
             logger.info('Reloading simulation data from cached iteration (%s) state.' % self.iteration_state.iteration)
-            self.exp_manager = ExperimentManagerFactory.from_data(self.iteration_state.simulations, self.location)
+            self.exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
         else:
             if 'location' in kwargs:
                 kwargs.pop('location')
 
             self.exp_manager = ExperimentManagerFactory.from_setup(self.setup, self.location, **kwargs)
-            if not self.suite_id:
+
+            # Generate the suite ID if not present
+            if (self.location == "LOCAL" and not self.local_suite_id) or (self.location=="HPC" and not self.comps_suite_id):
                 self.generate_suite_id(self.exp_manager)
 
             exp_builder = ModBuilder.from_combos(
@@ -240,7 +243,7 @@ class CalibManager(object):
                 config_builder=self.config_builder,
                 exp_name='%s_iter%d' % (self.name, self.iteration),
                 exp_builder=exp_builder,
-                suite_id=self.suite_id)
+                suite_id=self.local_suite_id if self.location == "LOCAL" else self.comps_suite_id)
 
             self.iteration_state.simulations = self.exp_manager.experiment.toJSON()['simulations']
             self.iteration_state.experiment_id = self.exp_manager.experiment.exp_id
@@ -295,8 +298,6 @@ class CalibManager(object):
 
             # Test if we are all done
             if self.exp_manager.status_finished(states):
-                # Wait when we are all done to make sure all the output files have time to get written
-                time.sleep(sleep_time)
                 break
             else:
                 if verbose:
@@ -308,6 +309,8 @@ class CalibManager(object):
         logger.info("Iteration %s done (took %s)" % (self.iteration, verbose_timedelta(iteration_time_elapsed)))
         self.exp_manager.print_status(states, msgs)
 
+        # Wait when we are all done to make sure all the output files have time to get written
+        time.sleep(sleep_time)
 
     def analyze_iteration(self):
         """
@@ -318,10 +321,9 @@ class CalibManager(object):
         if self.iteration_state.results:
             logger.info('Reloading results from cached iteration state.')
             return self.iteration_state.results['total']
-        print self.iteration_state.experiment_id
+
         exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
 
-        print exp_manager.experiment.id
         for site in self.sites:
             for analyzer in site.analyzers:
                 logger.debug(site, analyzer)
@@ -385,7 +387,10 @@ class CalibManager(object):
         Get a new Suite ID from the LOCAL/HPC ExperimentManager
         and cache to calibration with this updated info.
         """
-        self.suite_id = exp_manager.create_suite(self.name)
+        if self.location == "LOCAL":
+            self.local_suite_id = exp_manager.create_suite(self.name)
+        elif self.location == "HPC":
+            self.comps_suite_id = exp_manager.create_suite(self.name)
         self.cache_calibration()
 
     def cache_calibration(self, **kwargs):
@@ -399,7 +404,8 @@ class CalibManager(object):
         #       and frozen scipy.stats functions in MultiVariatePrior.function for self.next_point
         state = {'name': self.name,
                  'location': self.location,
-                 'suite_id': self.suite_id,
+                 'local_suite_id': self.local_suite_id,
+                 'comps_suite_id': self.comps_suite_id,
                  'iteration': self.iteration,
                  'param_names': self.param_names(),
                  'sites': self.site_analyzer_names(),
@@ -408,6 +414,15 @@ class CalibManager(object):
                  'selected_block': self.setup.selected_block}
         state.update(kwargs)
         json.dump(state, open(os.path.join(self.name, 'CalibManager.json'), 'wb'), indent=4, cls=NumpyEncoder)
+
+    def backup_calibration(self):
+        """
+        Backup CalibManager.json for resume action
+        """
+        calibration_path = os.path.join(self.name, 'CalibManager.json')
+        if os.path.exists(calibration_path):
+            backup_id = 'backup_' + re.sub('[ :.-]', '_', str(datetime.now().replace(microsecond=0)))
+            shutil.copy(calibration_path, os.path.join(self.name, 'CalibManager_%s.json' % backup_id))
 
     def write_LL_csv(self, experiment):
         """
@@ -455,7 +470,7 @@ class CalibManager(object):
         # Retrieve the mapping between id - path
         if self.location == "HPC":
             from simtools.OutputParser import CompsDTKOutputParser
-            sims_paths = CompsDTKOutputParser.createSimDirectoryMap(suite_id=self.suite_id, save=False)
+            sims_paths = CompsDTKOutputParser.createSimDirectoryMap(suite_id=self.comps_suite_id, save=False)
         else :
             sims_paths = dict()
 
@@ -503,7 +518,7 @@ class CalibManager(object):
 
         iter_state_path = os.path.join(iter_directory, 'IterationState.json')
         if backup_existing and os.path.exists(iter_state_path):
-            backup_id = 'backup_' + re.sub('[ :.-]', '_', str(datetime.now()))
+            backup_id = 'backup_' + re.sub('[ :.-]', '_', str(datetime.now().replace(microsecond=0)))
             os.rename(iter_state_path, os.path.join(iter_directory, 'IterationState_%s.json' % backup_id))
 
         self.iteration_state.to_file(iter_state_path)
@@ -539,22 +554,47 @@ class CalibManager(object):
         self.all_results.set_index('sample', inplace=True)
 
         self.all_results = self.all_results[self.all_results.iteration <= iteration]
-        logger.info('Restored results from iteration %d', iteration)
+        # logger.info('Restored results from iteration %d', iteration)
         logger.debug(self.all_results)
         self.cache_calibration()
 
     def check_leftover(self):
         """
-        Handle the case: process got interrupted but it still runs on remote
+            - Handle the case: process got interrupted but it still runs on remote
+            - Handle location change case: may resume from commission instead
         """
+        # Step 1: Checking possible location changes
         try:
-            # Retrieve the experiment manager
-            self.exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
+            exp_id = self.iteration_state.experiment_id
+            exp = DataStore.get_experiment(exp_id)
         except Exception as ex:
-            logger.info(ex)
+            logger.info("Cannot restore Experiment '%s'. Exiting...", exp_id)
+            exit()
+
+        # If location has been changed, will double check user for a special case before proceed...
+        if self.location != exp.location and self.iter_step in ['analyze', 'next_point']:
+            var = raw_input("Location has been changed from '%s' to '%s'. Resume will start from commission instead, do you want to continue? [Y/N]:  " % (exp.location, self.location))
+            if var.upper() == 'Y':
+                self.iter_step = 'commission'
+            else:
+                logger.info("Answer is '%s'. Exiting...", var.upper())
+                exit()
+
+        # Step 2: Checking possible leftovers
+        try:
+            # Save the selected block the user wants
+            user_selected_block = self.setup.selected_block
+            # Retrieve the experiment manager. Note: it changed selected_block
+            self.exp_manager = ExperimentManagerFactory.from_experiment(exp)
+            # Restore the selected block
+            self.setup.selected_block = user_selected_block
+        except Exception as ex:
+            # logger.info(ex)
+            logger.info('Proceed without checking the possible leftovers.')
             return
 
-        if not self.exp_manager:
+        # Don't do the leftover checking for a special case
+        if self.iteration == 0 and self.iter_step == 'commission':
             return
 
         # Make sure it is finished
@@ -564,10 +604,12 @@ class CalibManager(object):
             # check the status
             states = self.exp_manager.get_simulation_status()[0]
         except Exception as ex:
-            logger.info(ex)
+            # logger.info(ex)
+            logger.info('Proceed without checking the possible leftovers.')
             return
 
         if not states:
+            logger.info('Proceed without checking the possible leftovers.')
             return
 
         if not self.exp_manager.status_succeeded(states):
@@ -598,11 +640,7 @@ class CalibManager(object):
         # Store iteration #:
         self.iteration_state.iteration = iteration
 
-        # Clear up next_point for iteration 0
-        if self.iteration == 0:
-            self.iteration_state.next_point = {}
-
-        # Check leftover (in case lost connection)
+        # Check leftover (in case lost connection) and also consider possible location change.
         self.check_leftover()
 
         # Adjust resuming point based on input options
@@ -613,24 +651,9 @@ class CalibManager(object):
         if not self.iteration_state.simulations:
             # need to resume from commission
             self.iteration_state.resume_point = 1
-            self.iteration_state.simulations = {}
-            self.iteration_state.results = {}
+            # Cleanup iteration state
+            self.iteration_state.reset_state()
             return
-
-        # # Retrieve the experiment manager
-        # self.exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
-        # states = self.exp_manager.get_simulation_status()[0]
-        # if self.exp_manager.any_failed(states) or self.exp_manager.any_canceled(states):
-        #     self.iteration_state.resume_point = 1
-        #     self.iteration_state.simulations = {}
-        #     self.iteration_state.results = {}
-        #     return
-        #
-        # if not self.exp_manager.succeeded():
-        #     # Still running but did not fail
-        #     self.iteration_state.results = {}
-        #     self.exp_manager.wait_for_finished(verbose=True)
-
 
         # Assume simulations exits
         if not self.iteration_state.results:
@@ -639,9 +662,10 @@ class CalibManager(object):
             self.iteration_state.results = {}
             return
 
-        # Assume both simulations and results exit
+        # Assume both simulations and results exist
         # Need to resume from next_point
         self.iteration_state.resume_point = 3
+        # To resume from resume_point, we need to update next_point
         self.update_next_point(self.iteration_state.results['total'])
 
     def adjust_resume_point(self):
@@ -652,6 +676,7 @@ class CalibManager(object):
             pass
         elif self.iter_step == 'commission':
             self.iteration_state.simulations = {}
+            self.iteration_state.results = {}
         elif self.iter_step == 'analyze':
             self.iteration_state.results = {}
         elif self.iter_step == 'next_point':
@@ -739,22 +764,23 @@ class CalibManager(object):
           * Restore the proper results for resume
           * Finally got through the iteration loop
         """
-        self.iter_step = iter_step.lower() if iter_step is not None else ''
-
         if not os.path.isdir(self.name):
             raise Exception('Unable to find existing calibration in directory: %s' % self.name)
+
+        # Make a backup of Calibration.json
+        self.backup_calibration()
+
+        # Keep iter_step which will be used later to determine the Resuming Point
+        self.iter_step = iter_step.lower() if iter_step is not None else ''
 
         # Keep the simulation type: LOCAL, HPC, ...
         self.location = self.setup.get('type')
 
         calib_data = self.read_calib_data()
+        self.local_suite_id = calib_data.get('local_suite_id')
+        self.comps_suite_id = calib_data.get('comps_suite_id')
         iteration = self.find_best_iteration_for_resume(iteration, calib_data)
         self.prepare_resume_point_for_iteration(iteration)
-
-        # print 'iteration, resume_point: (%s, %s)' % (self.iteration, self.iteration_state.resume_point)
-        # exit()
-
-        self.suite_id = calib_data.get('suite_id')
 
         if self.iteration_state.resume_point < 3:
             # for resume_point < 3, it will combine current results with previous results
@@ -763,6 +789,7 @@ class CalibManager(object):
             # for resume_point = 3, it will use the current results and resume from next iteration
             self.restore_results(calib_data.get('results'), iteration)
 
+        # Enter iteration loop
         self.run_iterations(**kwargs)
 
     def replot_calibration(self, **kwargs):
@@ -920,7 +947,6 @@ class CalibManager(object):
 
         # Get the count of iterations and save the suite_id
         iter_count = calib_data.get('iteration')
-        suite_id = calib_data.get('suite_id')
 
         # Go through each already ran iterations
         for i in range(0, iter_count+1):
@@ -943,7 +969,8 @@ class CalibManager(object):
 
         # Before leaving -> increase the iteration / set back the suite_id
         self.iteration_state.iteration += 1
-        self.suite_id = suite_id
+        self.local_suite_id = calib_data.get('local_suite_id')
+        self.comps_suite_id = calib_data.get('comps_suite_id')
         self.location = calib_data['location']
 
         # Also finalize
