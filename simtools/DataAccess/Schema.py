@@ -5,6 +5,7 @@ import os
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
+from sqlalchemy import Integer
 from sqlalchemy import Enum
 from sqlalchemy import ForeignKey
 from sqlalchemy import PickleType
@@ -19,7 +20,8 @@ class Simulation(Base):
     __tablename__ = "simulations"
 
     id = Column(String, primary_key=True)
-    status = Column(Enum('Waiting', 'Commissioned', 'Running', 'Succeeded', 'Failed',  'Canceled'))
+    status = Column(Enum('Waiting', 'Commissioned', 'Running', 'Succeeded', 'Failed',  'Canceled', 'CancelRequested',
+                         "Retry", "CommissionRequested", "Provisioning", "Created"))
     message = Column(String)
     experiment = relationship("Experiment", back_populates="simulations")
     experiment_id = Column(String, ForeignKey('experiments.exp_id'))
@@ -60,6 +62,7 @@ class Experiment(Base):
     working_directory = Column(String, default=os.getcwd())
     date_created = Column(DateTime(timezone=True), default=datetime.datetime.now())
     endpoint = Column(String)
+    experiment_runner_id = Column(Integer)
 
     simulations = relationship("Simulation", back_populates='experiment', cascade="all, delete-orphan", order_by="Simulation.date_created")
 
@@ -71,13 +74,20 @@ class Experiment(Base):
         return self.exp_name + "_" + self.exp_id
 
     def get_path(self):
-        return os.path.join(self.sim_root, self.id)
+        if self.location == "LOCAL":
+            return os.path.join(self.sim_root, self.id)
 
     def contains_simulation(self, simid):
         for sim in self.simulations:
             if sim.id == simid:
                 return True
         return False
+
+    def is_done(self):
+        for sim in self.simulations:
+            if sim.status not in ('Succeeded', 'Failed','Canceled'):
+                return False
+        return True
 
     def toJSON(self):
         ret = {}
