@@ -9,9 +9,9 @@ from hashlib import md5
 
 import cStringIO
 
-from simtools.SetupParser import SetupParser
-
 logger = logging.getLogger(__name__)
+
+max_exp_name_len = 100
 
 
 @contextlib.contextmanager
@@ -49,6 +49,36 @@ def nostdout(stdout = False, stderr=False):
     logger.propagate = True
     logging.disable(previous_level)
 
+
+def caller_name(skip=2):
+    """
+    Get a name of a caller in the format module.class.method
+
+    `skip` specifies how many levels of stack to skip while getting caller
+    name. skip=1 means "who calls me", skip=2 "who calls my caller" etc.
+
+    An empty string is returned if skipped levels exceed stack height
+    """
+    import inspect
+    stack = inspect.stack()
+    start = 0 + skip
+    if len(stack) < start + 1:
+      return ''
+    parentframe = stack[start][0]
+
+    name = []
+    module = inspect.getmodule(parentframe)
+    # `modname` can be None when frame is executed directly in console
+    if module:
+        name.append(module.__name__)
+    # detect classname
+    if 'self' in parentframe.f_locals:
+        name.append(parentframe.f_locals['self'].__class__.__name__)
+    codename = parentframe.f_code.co_name
+    if codename != '<module>':  # top level usually
+        name.append( codename ) # function or a method
+    del parentframe
+    return ".".join(name)
 
 def COMPS_login(endpoint):
     from COMPS import Client
@@ -102,6 +132,7 @@ def translate_COMPS_path(path, setup=None):
 
     # Check if we have a setup
     if not setup:
+        from simtools.SetupParser import SetupParser
         setup = SetupParser()
 
     # Retrieve the variable to translate
@@ -219,6 +250,15 @@ def override_HPC_settings(setup, **kwargs):
                 setup.set(variable, value)
             else:
                 logger.warning('Trying to override HPC setting with unknown %s: %s', variable, value)
+
+def validate_exp_name(exp_name):
+    if len(exp_name) > max_exp_name_len:
+        logger.info(
+            "The experiment name '%s' exceeds the max length %s, please adjust your experiment name. Exiting...",
+            exp_name, max_exp_name_len)
+        return False
+    else:
+        return True
 
 class CommandlineGenerator(object):
     """

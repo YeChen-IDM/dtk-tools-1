@@ -94,6 +94,10 @@ class BaseExperimentManager:
     def get_monitor(self):
         pass
 
+    @abstractmethod
+    def check_input_files(self, input_files):
+        pass
+
     def get_property(self, prop):
         return self.setup.get(prop)
 
@@ -103,7 +107,7 @@ class BaseExperimentManager:
     def get_simulation_status(self):
         """
         Query the status of simulations in the currently managed experiment.
-        For example: 'Running', 'Finished', 'Succeeded', 'Failed', 'Canceled', 'Unknown'
+        For example: 'Running', 'Succeeded', 'Failed', 'Canceled', 'Unknown'
         """
         logger.debug("Status of simulations run on '%s':" % self.location)
         states, msgs = self.get_monitor().query()
@@ -121,8 +125,46 @@ class BaseExperimentManager:
         Create an experiment with simulations modified according to the specified experiment builder.
         Commission simulations and cache meta-data to local file.
         """
+        # Check experiment name as early as possible
+        if not utils.validate_exp_name(exp_name):
+            exit()
+
+        # Check input files existence
+        if not self.validate_input_files(config_builder):
+            exit()
+
         self.create_simulations(config_builder, exp_name, exp_builder, suite_id=suite_id, verbose=not self.quiet)
         self.commission_simulations()
+
+    def validate_input_files(self, config_builder):
+        """
+        Check input files and make sure there exist
+        Note: we by pass the 'Campaign_Filename'
+        """
+        # By-pass input file checking if using assets_service
+        if self.assets_service:
+            return True
+
+        input_files = config_builder.get_input_file_paths()
+        missing_files = self.check_input_files(input_files)
+
+        # Py-passing 'Campaign_Filename' for now.
+        if 'Campaign_Filename' in missing_files:
+            logger.info("By-passing file '%s'...", missing_files['Campaign_Filename'])
+            missing_files.pop('Campaign_Filename')
+
+        if len(missing_files) > 0:
+            print 'Missing files list:'
+            print json.dumps(missing_files, indent=2)
+            var = raw_input("Above shows the missing input files, do you want to continue? [Y/N]:  ")
+            if var.upper() == 'Y':
+                logger.info("Answer is '%s'. Continue...", var.upper())
+                return True
+            else:
+                logger.info("Answer is '%s'. Exiting...", var.upper())
+                return False
+
+        return True
 
     def create_simulations(self, config_builder, exp_name='test', exp_builder=SingleSimulationBuilder(), suite_id=None, verbose=True):
         """
@@ -226,16 +268,18 @@ class BaseExperimentManager:
             # Wait for successful cancellation.
             self.wait_for_finished(verbose=True)
 
-        # Delete experiment
-        DataStore.delete_experiment(self.experiment)
-
     def wait_for_finished(self, verbose=False, init_sleep=0.1, sleep_time=3):
         getch = helpers.find_getch()
         while True:
             time.sleep(init_sleep)
 
             # Get the new status
-            states, msgs = self.get_simulation_status()
+            try:
+                states, msgs = self.get_simulation_status()
+            except:
+                print "Exception occurred while retrieving status"
+                return
+
             if self.status_finished(states):
                 break
             else:
@@ -322,14 +366,14 @@ class BaseExperimentManager:
                 logger.warning('No job in experiment with ID = %s' % id)
                 continue
 
-            if state not in ['Finished', 'Succeeded', 'Failed', 'Canceled', 'Unknown']:
+            if state not in ['Succeeded', 'Failed', 'Canceled', 'Unknown']:
                 self.kill_job(id)
             else:
                 logger.warning("JobID %s is already in a '%s' state." % (str(id), state))
 
     @staticmethod
     def status_succeeded(states):
-        return all(v in ['Finished', 'Succeeded'] for v in states.itervalues())
+        return all(v in ['Succeeded'] for v in states.itervalues())
 
     def succeeded(self):
         return self.status_succeeded(self.get_simulation_status()[0])
@@ -351,7 +395,7 @@ class BaseExperimentManager:
 
     @staticmethod
     def status_finished(states):
-        return all(v in ['Finished', 'Succeeded', 'Failed', 'Canceled'] for v in states.itervalues())
+        return all(v in ['Succeeded', 'Failed', 'Canceled'] for v in states.itervalues())
 
     def finished(self):
         return self.status_finished(self.get_simulation_status()[0])

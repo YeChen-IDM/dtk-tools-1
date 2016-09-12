@@ -28,6 +28,26 @@ class CompsExperimentManager(BaseExperimentManager):
         self.sims_created = 0
         self.assets_service = self.setup.getboolean('use_comps_asset_svc')
 
+    def check_input_files(self, input_files):
+        """
+        Check file exist and return the missing files as dict
+        """
+        input_root = self.setup.get('input_root')
+        input_root_real = utils.translate_COMPS_path(input_root)
+
+        missing_files = {}
+        for (filename, filepath) in input_files.iteritems():
+            if isinstance(filepath, basestring):
+                if not os.path.exists(os.path.join(input_root_real, filepath)):
+                    missing_files[filename] = filepath
+            elif isinstance(filepath, list):
+                missing_files[filename] = [f for f in filepath if not os.path.exists(os.path.join(input_root_real, f))]
+                # Remove empty list
+                if len(missing_files[filename]) == 0:
+                    missing_files.pop(filename)
+
+        return missing_files
+
     def get_monitor(self):
         # Runner finished and updated the experiment_runner_id to <null>
         if not self.experiment.experiment_runner_id and self.experiment.is_done():
@@ -80,7 +100,7 @@ class CompsExperimentManager(BaseExperimentManager):
         tags = self.exp_builder.metadata
         # Append the environment to the tag
         tags['environment'] = self.setup.get('environment')
-        tags.update(self.exp_builder.tags if self.exp_builder.tags else {})
+        tags.update(self.exp_builder.tags if hasattr(self.exp_builder, 'tags') else {})
         self.commissioner.create_simulation(self.config_builder.get_param('Config_Name'), files, tags)
 
         self.sims_created += 1

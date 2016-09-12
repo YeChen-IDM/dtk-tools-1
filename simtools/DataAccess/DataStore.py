@@ -1,17 +1,15 @@
+import datetime
 import json
 import logging
-
-import datetime
-
-from sqlalchemy import bindparam
-from sqlalchemy import or_
-from sqlalchemy import update
-from sqlalchemy.orm import joinedload
 
 from simtools.DataAccess import session_scope
 from simtools.DataAccess.Schema import Experiment, Simulation
 from simtools.utils import remove_null_values
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import bindparam
+from sqlalchemy import or_
+from sqlalchemy import update
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
 logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,7 +31,7 @@ def dumper(obj):
         if isinstance(obj, set):
             return list(obj)
         if isinstance(obj, datetime.datetime):
-            return obj.isoformat()
+            return str(obj)
         return obj.__dict__
 
 
@@ -117,7 +115,7 @@ class DataStore:
         with session_scope() as session:
             experiments = session.query(Experiment).distinct(Experiment.exp_id)\
                 .join(Experiment.simulations)\
-                .filter(or_(Simulation.status.in_(("Running", "Waiting")), Simulation.status.is_(None)))
+                .filter(~Simulation.status.in_(('Succeeded', 'Failed', 'Canceled')))
             session.expunge_all()
 
         return experiments
@@ -150,3 +148,80 @@ class DataStore:
 
             if pid:
                 simulation.pid = pid if pid > 0 else None
+
+    @classmethod
+    def delete_experiments_by_suite(cls, suite_ids):
+        """
+        Delete those experiments which are associated with suite_ids
+        """
+        with session_scope() as session:
+            num = session.query(Experiment).filter(Experiment.suite_id.in_(suite_ids)).delete(synchronize_session='fetch')
+            # print '%s experiment(s) deleted.' % num
+
+    @classmethod
+    def clear_leftover(cls, suite_ids, exp_ids):
+        """
+        Delete those experiments which are associated with suite_id and not in exp_ids
+        """
+        exp_orphan_list = cls.list_leftover(suite_ids, exp_ids)
+        cls.delete_experiments(exp_orphan_list)
+
+    @classmethod
+    def list_leftover(cls, suite_ids, exp_ids):
+        """
+        List those experiments which are associated with suite_id and not in exp_ids
+        """
+        exp_list = cls.get_experiments_by_suite(suite_ids)
+        exp_list_ids = [exp.exp_id for exp in exp_list]
+
+        # Calculate orphans
+        exp_orphan_ids = list(set(exp_list_ids) - set(exp_ids))
+        exp_orphan_list = [exp for exp in exp_list if exp.exp_id in exp_orphan_ids]
+
+        return exp_orphan_list
+
+    @classmethod
+    def get_experiments_by_suite(cls, suite_ids):
+        """
+        Get the experiments which are associated with suite_id
+        """
+        exp_list = []
+        with session_scope() as session:
+            exp_list = session.query(Experiment).filter(Experiment.suite_id.in_(suite_ids)).all()
+            session.expunge_all()
+
+        return exp_list
+
+    @classmethod
+    def delete_experiments(cls, exp_list, verbose=False):
+        """
+        Delete experiments given from input
+        """
+        exp_ids = [exp.exp_id for exp in exp_list]
+        with session_scope() as session:
+            num = session.query(Experiment).filter(Experiment.exp_id.in_(exp_ids)).delete(synchronize_session='fetch')
+            if verbose:
+                print '%s experiment(s) deleted.' % num
+
+
+    @classmethod
+    def get_recent_experiment_by_filter(cls, num=20, is_all=False, name=None, location=None):
+        with session_scope() as session:
+            experiment = session.query(Experiment) \
+                .options(joinedload('simulations')) \
+                .order_by(Experiment.date_created.desc())
+
+            if name:
+                experiment = experiment.filter(Experiment.exp_name.like('%%%s%%' % name))
+
+            if location:
+                experiment = experiment.filter(Experiment.location == location)
+
+            if is_all:
+                experiment = experiment.all()
+            else:
+                experiment = experiment.limit(num).all()
+
+            session.expunge_all()
+        return experiment
+

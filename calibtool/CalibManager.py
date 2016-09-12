@@ -73,11 +73,19 @@ class CalibManager(object):
         """
         Create and run a complete multi-iteration calibration suite.
         """
+        # Check experiment name as early as possible
+        if not utils.validate_exp_name(self.name):
+            exit()
+
         self.location = self.setup.get('type')
         if 'location' in kwargs:
             kwargs.pop('location')
 
+        # Save the selected block the user wants
+        user_selected_block = self.setup.selected_block
         self.create_calibration(self.location, **kwargs)
+        # Restore the selected block
+        self.setup.selected_block = user_selected_block
         self.run_iterations(**kwargs)
 
     def create_calibration(self, location, **kwargs):
@@ -568,8 +576,16 @@ class CalibManager(object):
             exp_id = self.iteration_state.experiment_id
             exp = DataStore.get_experiment(exp_id)
         except Exception as ex:
-            logger.info("Cannot restore Experiment '%s'. Exiting...", exp_id)
-            exit()
+            logger.info("Cannot restore Experiment 'exp_id: %s'. Force to resume from commission...", exp_id if exp_id else 'None')
+            # force to resume from commission
+            self.iter_step = 'commission'
+            return
+
+        if exp is None:
+            logger.info("Cannot restore Experiment 'exp_id: %s'. Force to resume from commission...", exp_id if exp_id else 'None')
+            # force to resume from commission
+            self.iter_step = 'commission'
+            return
 
         # If location has been changed, will double check user for a special case before proceed...
         if self.location != exp.location and self.iter_step in ['analyze', 'next_point']:
@@ -591,10 +607,12 @@ class CalibManager(object):
         except Exception as ex:
             # logger.info(ex)
             logger.info('Proceed without checking the possible leftovers.')
+            # Restore the selected block
+            self.setup.selected_block = user_selected_block
             return
 
         # Don't do the leftover checking for a special case
-        if self.iteration == 0 and self.iter_step == 'commission':
+        if self.iter_step == 'commission':
             return
 
         # Make sure it is finished
@@ -615,6 +633,7 @@ class CalibManager(object):
         if not self.exp_manager.status_succeeded(states):
             # Force to set resuming point to 1 later
             self.iteration_state.simulations = {}
+            self.iter_step == 'commission'
         else:
             # Resuming point (2 or 3) will be determined from following logic
             pass
@@ -673,7 +692,8 @@ class CalibManager(object):
         Consider user's input and determine the resuming point
         """
         if self.iter_step not in ['commission', 'analyze', 'next_point']:
-            pass
+            if self.iter_step:
+                logger.info("Invalid iter_step '%s', ignored.", self.iter_step)
         elif self.iter_step == 'commission':
             self.iteration_state.simulations = {}
             self.iteration_state.results = {}
@@ -767,7 +787,7 @@ class CalibManager(object):
         if not os.path.isdir(self.name):
             raise Exception('Unable to find existing calibration in directory: %s' % self.name)
 
-        # Make a backup of Calibration.json
+        # Make a backup of CalibManager.json
         self.backup_calibration()
 
         # Keep iter_step which will be used later to determine the Resuming Point
@@ -789,8 +809,14 @@ class CalibManager(object):
             # for resume_point = 3, it will use the current results and resume from next iteration
             self.restore_results(calib_data.get('results'), iteration)
 
-        # Enter iteration loop
+        # enter iteration loop
         self.run_iterations(**kwargs)
+
+        # check possible leftover experiments
+        self.check_orphan_experiments()
+
+        # delete all backup file for CalibManger and each of iterations
+        self.cleanup_backup_files()
 
     def replot_calibration(self, **kwargs):
         """
@@ -924,6 +950,9 @@ class CalibManager(object):
                 except:
                     continue
 
+            # Delete all associated experiments in db
+            DataStore.delete_experiments_by_suite([calib_data.get('local_suite_id'), calib_data.get('comps_suite_id')])
+
         # Then delete the whole directory
         calib_dir = os.path.abspath(self.name)
         if os.path.exists(calib_dir):
@@ -985,6 +1014,156 @@ class CalibManager(object):
             else:
                 return None
 
+    def get_experiment_from_iteration(self, iteration=None, force_metadata=False):
+        """
+        Retrieve experiment for a given iteration
+        """
+        exp = None
+
+        # Only check iteration for resume cases
+        if force_metadata:
+            iteration = self.adjust_iteration(iteration)
+            iteration_cache = os.path.join(self.name, 'iter%d' % iteration, 'IterationState.json')
+            it = IterationState.from_file(iteration_cache)
+
+            exp = DataStore.get_experiment(it.experiment_id)
+
+        return exp
+
+    def adjust_iteration(self, iteration=None, calib_data=None):
+        """
+        Validate iteration against latest_iteration
+        return adjusted iteration
+        """
+        # If calib_data is None or Empty, load data
+        if calib_data is None or not calib_data:
+            calib_data = self.read_calib_data()
+
+        # Get latest iteration #
+        latest_iteration = calib_data.get('iteration', None)
+
+        # Handle special case
+        if latest_iteration is None:
+            return 0
+
+        # If no iteration passed in, take latest_iteration as instead
+        if iteration is None:
+            iteration = latest_iteration
+
+        # Adjust input iteration
+        if latest_iteration < iteration:
+            iteration = latest_iteration
+
+        return iteration
+
+    def check_orphan_experiments(self, ask=True):
+        """
+            - Display all orphan experiments for this calibration
+            - Provide user option to clean up
+        """
+        if not ask:
+            self.clear_orphan_experiments()
+            return
+
+        # Continue if ask == True
+        exp_orphan_list = self.list_orphan_experiments()
+        if exp_orphan_list is None or len(exp_orphan_list) == 0:
+            return
+
+        orphan_str_list = ['- %s - %s' % (exp.exp_id, exp.exp_name) for exp in exp_orphan_list]
+        print '\nOrphan Experiment List:\n'
+        print '\n'.join(orphan_str_list)
+        print '\n'
+
+        DataStore.delete_experiments(exp_orphan_list)
+        if len(exp_orphan_list) > 1:
+            logger.info('Note: the detected orphan experiments have been deleted.')
+        else:
+            logger.info('Note: the detected orphan experiment has been deleted.')
+
+    def clear_orphan_experiments(self):
+        """
+        Cleanup the experiments in db, which are associated with THIS calibration's
+        suite_id and exp_ids
+        """
+        # make sure data exists
+        if not os.path.isdir(self.name):
+            logger.info('Unable to find existing calibration in directory (%s), no experiments cleanup is processed.', self.name)
+            return
+
+        suite_ids, exp_ids = self.get_experiments()
+        DataStore.clear_leftover(suite_ids, exp_ids)
+
+    def cleanup_backup_files(self):
+        """
+        Cleanup the backup files for current calibration
+        """
+        def delete_files(file_list):
+            # print '\n'.join(file_list)
+            for f in file_list:
+                if os.path.exists(f):
+                    try:
+                        os.remove(f)
+                    except OSError:
+                        logger.error("Failed to delete %s" % f)
+
+        iter_count = self.iteration
+        if iter_count is None:
+            try:
+                calib_data = self.read_calib_data()
+                iter_count = calib_data.get('iteration', 0)
+            except Exception:
+                logger.info('Calib data cannot be read, no backup files are deleted.')
+                return
+
+        # Step 1: delete backup files for each of the iterations
+        for i in range(0, iter_count + 1):
+            # Get the iteration backup files
+            iteration_cache = os.path.join(self.name, 'iter%d' % i, 'IterationState_backup_*.json')
+            backup_files = glob.glob(iteration_cache)
+            if backup_files is None or len(backup_files) == 0:
+                continue
+
+            delete_files(backup_files)
+
+        # Step 2: delete backup files for CalibManger.json
+        # Get the CalibManager backup files
+        calib_manager_cache = os.path.join(self.name, 'CalibManager_backup_*.json')
+        backup_files = glob.glob(calib_manager_cache)
+        if backup_files is None or len(backup_files) == 0:
+            return
+
+        delete_files(backup_files)
+
+    def list_orphan_experiments(self):
+        """
+        Get orphan experiment list for this calibration
+        """
+        suite_ids, exp_ids = self.get_experiments()
+        exp_orphan_list = DataStore.list_leftover(suite_ids, exp_ids)
+        return exp_orphan_list
+
+    def get_experiments(self):
+        """
+        Retrieve suite_ids and their associated exp_ids
+        """
+        # restore the existing calibration data
+        calib_data = self.read_calib_data()
+        latest_iteration = calib_data.get('iteration')
+
+        exp_ids = []
+        for i in range(0, latest_iteration + 1):
+            iter_dir = os.path.join(self.name, 'iter%d' % i)
+            iter_path = os.path.join(iter_dir, 'IterationState.json')
+            if not os.path.exists(iter_path):
+                continue
+
+            iter_data = json.load(open(iter_path, 'rb'))
+            exp_id = iter_data.get('experiment_id', None)
+            if exp_id:
+                exp_ids.append(exp_id)
+
+        return [calib_data.get('local_suite_id'), calib_data.get('comps_suite_id')], exp_ids
 
     @property
     def iteration(self):
