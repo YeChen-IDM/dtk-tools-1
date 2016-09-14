@@ -147,6 +147,25 @@ habitats = {&quot;arabiensis&quot;: {&quot;TEMPORARY_RAINFALL&quot;: 1.7e9, &quo
 <code class="descclassname">dtk.vector.species.</code><code class="descname">set_species_param</code><span class="sig-paren">(</span><em>cb</em>, <em>species</em>, <em>parameter</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dtk/vector/species.html#set_species_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.vector.species.set_species_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="function">
+<dt id="dtk.vector.species.update_species_param">
+<code class="descclassname">dtk.vector.species.</code><code class="descname">update_species_param</code><span class="sig-paren">(</span><em>cb</em>, <em>species</em>, <em>parameter</em>, <em>value</em>, <em>overwrite</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dtk/vector/species.html#update_species_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.vector.species.update_species_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a 'Vector_Species_Param' variable in a config file; return a length-one dict with a numeric value.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
+<li><strong>cb</strong> -- DTKConfigBuilder object with a 'config' attribute.</li>
+<li><strong>species</strong> -- (string) vector species whose parameter will be updated.</li>
+<li><strong>parameter</strong> -- (string) 'Vector_Species_Param' variable to be updated.</li>
+<li><strong>value</strong> -- (float, dict) New value for 'parameter'.</li>
+</ul>
+</dd>
+</dl>
+<p>Note that the function only returns the first key-value pair in 'value'.
+:param overwrite: (logical) Relevant only if 'value' is a dict.
+If True, will replace the entire original parameter with whatever is passed in 'value'. If False, will change only the elements specified in 'value'.
+:return: a dict whose key traces the config parameters from 'species' onward (including the key of 'value' if 'value' is a dict) and whose value is equal to the updated config value.</p>
+</dd></dl>
+
 </div>
 
 

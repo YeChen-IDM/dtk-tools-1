@@ -148,6 +148,9 @@
 <tr class="row-odd"><td><a class="reference internal" href="#dtk-cmd-status"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">status</span></code></a></td>
 <td><a class="reference internal" href="#dtk-cmd-stdout"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">stdout</span></code></a></td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="#dtk-cmd-list"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">list</span></code></a></td>
+<td>&nbsp;</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -444,6 +447,41 @@ For example:</p>
 <dd></dd></dl>
 
 <p><code class="docutils literal"><span class="pre">dtk</span> <span class="pre">stdout</span></code> by default will only display simulations of a finished experiment. If you wish to display the outputs while the experiment is running, use this flag.</p>
+</div>
+<div class="section" id="list">
+<h2><code class="docutils literal"><span class="pre">list</span></code><a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h2>
+<dl class="dtk-cmd">
+<dt id="dtk-cmd-list">
+<code class="descname">dtk list {none|name}</code><a class="headerlink" href="#dtk-cmd-list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>list 20 <em>most recent</em> experiment containing specified <strong>name</strong> in the experiment name (or just the 20 most recent). For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="nb">list</span> <span class="n">TestExperiment</span>
+</pre></div>
+</div>
+<dl class="dtk-cmd-option">
+<dt id="cmdoption-list--">
+<code class="descname">--</code><code class="descclassname">&lt;location&gt;</code><a class="headerlink" href="#cmdoption-list--" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>list 20 <em>most recent</em> experiment by matched specified <strong>location</strong> in the experiment location. For example, to list experiments with HPC as a location:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="nb">list</span> <span class="o">--</span><span class="n">HPC</span>
+</pre></div>
+</div>
+<dl class="dtk-cmd-option">
+<dt id="cmdoption-list--number">
+<span id="cmdoption-list-n"></span><code class="descname">--number</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list--number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Use any number following by the command option to <strong>limit</strong> the number of <em>most recent</em> experiments to display. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="nb">list</span> <span class="o">-</span><span class="n">n</span> <span class="mi">100</span>
+</pre></div>
+</div>
+<p>Use * to retrieve all experiments from local database. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="nb">list</span> <span class="o">-</span><span class="n">n</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">dtk</span> <span class="pre">list</span></code> will only list experiments based on local database data that may not reflect the current status of the running experiments.</p>
 </div>
 </div>
 

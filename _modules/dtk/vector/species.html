@@ -113,6 +113,7 @@
             
   <h1>Source code for dtk.vector.species</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="n">param_block</span> <span class="o">=</span> <span class="p">{</span>
 
@@ -273,6 +274,35 @@
 <span class="p">}</span>
 <span class="n">albimanus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_albimanus_params</span><span class="p">)</span>
 
+<span class="c1"># An. aegypti</span>
+<span class="c1"># Dengue</span>
+<span class="n">aegypti_param_block</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mf">9752291.727</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mf">5525.492</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Mortality_Rate&quot;</span><span class="p">:</span> <span class="mf">0.12</span><span class="p">,</span>
+    <span class="s2">&quot;Cycle_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mf">4.120591E10</span><span class="p">,</span>
+    <span class="s2">&quot;Cycle_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mf">7.740230E3</span><span class="p">,</span>
+    <span class="s2">&quot;Cycle_Arrhenius_Reduction_Factor&quot;</span><span class="p">:</span> <span class="mf">0.58</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Survival_Rate&quot;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">1.125e10</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Immature_Duration&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mf">4.784476E12</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">9550</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Egg_Batch_Factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Infectious_Human_Feed_Mortality_Factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Nighttime_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
+<span class="p">}</span>
+
+
 <span class="c1"># Dictionary of params by species name</span>
 <span class="n">vector_params_by_species</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;arabiensis&quot;</span><span class="p">:</span> <span class="n">arabiensis_param_block</span><span class="p">,</span>
@@ -282,7 +312,8 @@
     <span class="s2">&quot;maculatus&quot;</span><span class="p">:</span> <span class="n">maculatus_param_block</span><span class="p">,</span>
     <span class="s2">&quot;minimus&quot;</span><span class="p">:</span> <span class="n">minimus_param_block</span><span class="p">,</span>
     <span class="s2">&quot;dirus&quot;</span><span class="p">:</span> <span class="n">dirus_param_block</span><span class="p">,</span>
-    <span class="s2">&quot;albimanus&quot;</span><span class="p">:</span> <span class="n">albimanus_param_block</span>
+    <span class="s2">&quot;albimanus&quot;</span><span class="p">:</span> <span class="n">albimanus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;aegypti&quot;</span><span class="p">:</span> <span class="n">aegypti_param_block</span>
 <span class="p">}</span>
 
 
@@ -310,6 +341,39 @@
 <div class="viewcode-block" id="set_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_species_param">[docs]</a><span class="k">def</span> <span class="nf">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">]):</span> <span class="n">value</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="update_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.update_species_param">[docs]</a><span class="k">def</span> <span class="nf">update_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Update a &#39;Vector_Species_Param&#39; variable in a config file; return a length-one dict with a numeric value.</span>
+
+<span class="sd">    :param cb: DTKConfigBuilder object with a &#39;config&#39; attribute.</span>
+<span class="sd">    :param species: (string) vector species whose parameter will be updated.</span>
+<span class="sd">    :param parameter: (string) &#39;Vector_Species_Param&#39; variable to be updated.</span>
+<span class="sd">    :param value: (float, dict) New value for &#39;parameter&#39;.</span>
+<span class="sd">    Note that the function only returns the first key-value pair in &#39;value&#39;.</span>
+<span class="sd">    :param overwrite: (logical) Relevant only if &#39;value&#39; is a dict.</span>
+<span class="sd">    If True, will replace the entire original parameter with whatever is passed in &#39;value&#39;. If False, will change only the elements specified in &#39;value&#39;.</span>
+<span class="sd">    :return: a dict whose key traces the config parameters from &#39;species&#39; onward (including the key of &#39;value&#39; if &#39;value&#39; is a dict) and whose value is equal to the updated config value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="c1"># update values in &#39;parameter&#39; without deleting what&#39;s already there.</span>
+            <span class="c1"># i.e: update the &quot;TEMPORARY RAINFALL&quot; value in a &quot;Larval_Habitat_Types&quot; object</span>
+            <span class="c1"># without eliminating the &quot;CONSTANT&quot; value</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;value is a dict of length&gt;1, returning only the first value.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]):</span> <span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">]):</span> <span class="n">value</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="get_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.get_species_param">[docs]</a><span class="k">def</span> <span class="nf">get_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
