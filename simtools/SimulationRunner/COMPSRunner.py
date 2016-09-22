@@ -1,53 +1,60 @@
-import json
 import os
 import time
 
 from simtools.DataAccess.DataStore import DataStore
-from simtools.Monitor import CompsSimulationMonitor
 from simtools.ExperimentManager.CompsExperimentManager import CompsExperimentManager
-if __name__ == "__main__":
+from simtools.Monitor import CompsSimulationMonitor
+from simtools.SimulationRunner.BaseSimulationRunner import BaseSimulationRunner
 
-    import sys
 
-    # Retrieve the info from the command line
-    exp_id = sys.argv[1]
+class COMPSSimulationRunner(BaseSimulationRunner):
+    def __init__(self, experiment, states, success, commission=True):
+        super(COMPSSimulationRunner, self).__init__(experiment, states, success)
 
-    # Retrieve the experiment
-    current_exp = DataStore.get_experiment(exp_id)
+        if commission:
+            self.run()
+        else:
+            self.monitor()
 
-    # Imports for COMPS
-    os.environ['COMPS_REST_HOST'] = current_exp.endpoint
-    from pyCOMPS import pyCOMPS
+    def run(self):
+        # Imports for COMPS
+        os.environ['COMPS_REST_HOST'] = self.experiment.endpoint
 
-    # Until done, update the status
-    last_states = dict()
-    for simulation in current_exp.simulations:
-        last_states[simulation.id] = simulation.status
+        # Commission the experiment
+        from COMPS.Data import Experiment
+        e = Experiment.GetById(self.experiment.exp_id)
+        e.Commission()
 
-    sims_update = list()
+        self.monitor()
 
-    while True:
-        try:
-            states, msgs = CompsSimulationMonitor(current_exp.exp_id, current_exp.suite_id, current_exp.endpoint).query()
-        except:
-            break
+    def monitor(self):
+        # Until done, update the status
+        last_states = dict()
+        for simulation in self.experiment.simulations:
+            last_states[simulation.id] = simulation.status
 
-        last_states_set = last_states
-        diff_list = [key for key in set(last_states_set).intersection(states) if last_states[key] != states[key]]
-        if len(diff_list) > 0:
-            for key in diff_list:
-                sims_update.append({"sid": key, "status": states[key]})
+        # Until done, update the status
+        while True:
+            try:
+                states, _ = CompsSimulationMonitor(self.experiment.exp_id, self.experiment.suite_id,
+                                                   self.experiment.endpoint).query()
+            except Exception as e:
+                print e
+                break
 
-            last_states = states
+            diff_list = [key for key in set(last_states).intersection(states) if last_states[key] != states[key]]
+            if len(diff_list) > 0:
+                for key in diff_list:
+                    # Create the simulation to send to the update
+                    self.states[key] = DataStore.create_simulation(status=states[key])
 
-            DataStore.batch_simulations_update(sims_update)
-            # Empty the batch
-            sims_update = list()
+                    if states[key] == "Succeeded":
+                        simulation = DataStore.get_simulation(key)
+                        self.success(simulation)
 
-        if CompsExperimentManager.status_finished(states):
-            current_exp = DataStore.get_experiment(exp_id)
-            current_exp.experiment_runner_id = None
-            DataStore.save_experiment(current_exp, verbose=False)
-            break
+                last_states = states
 
-        time.sleep(5)
+            if CompsExperimentManager.status_finished(states):
+                break
+
+            time.sleep(5)

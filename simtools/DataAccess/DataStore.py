@@ -3,13 +3,11 @@ import json
 import logging
 
 from simtools.DataAccess import session_scope
-from simtools.DataAccess.Schema import Experiment, Simulation
+from simtools.DataAccess.Schema import Experiment, Simulation, Analyzer, Settings
 from simtools.utils import remove_null_values
 from sqlalchemy import bindparam
-from sqlalchemy import or_
 from sqlalchemy import update
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
 
 logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,13 +37,19 @@ class DataStore:
     """
     Class to abstract access to the data.
     """
-
     @classmethod
     def batch_simulations_update(cls, batch):
         if len(batch) == 0: return
+
         with session_scope() as session:
-            stmt = update(Simulation).where(Simulation.id == bindparam("sid")).values(status=bindparam("status"))
+            stmt = update(Simulation).where(Simulation.id == bindparam("sid")).values(status=bindparam("status"), message=bindparam("message"), pid=bindparam("pid"))
             session.execute(stmt, batch)
+    @classmethod
+    def get_simulation_states(cls,simids):
+        with session_scope() as session:
+            states = session.query(Simulation.id, Simulation.status).filter(Simulation.id.in_(simids)).all()
+            session.expunge_all()
+        return states
 
     @classmethod
     def create_simulation(cls, **kwargs):
@@ -56,11 +60,15 @@ class DataStore:
         return Experiment(**kwargs)
 
     @classmethod
+    def create_analyzer(cls, **kwargs):
+        return Analyzer(**kwargs)
+
+    @classmethod
     def get_experiment(cls, exp_id):
         with session_scope() as session:
             # Get the experiment
             # Also load the associated simulations eagerly
-            experiment = session.query(Experiment).options(joinedload('simulations').joinedload('experiment'))\
+            experiment = session.query(Experiment).options(joinedload('simulations').joinedload('experiment').joinedload('analyzers'))\
                                                   .filter(Experiment.exp_id == exp_id).one_or_none()
 
             # Detach the object from the session
@@ -79,7 +87,6 @@ class DataStore:
             for exp in batch:
                 DataStore.save_experiment(exp, False, session)
 
-
     @classmethod
     def save_experiment(cls, experiment, verbose=True, session=None):
         if verbose:
@@ -89,6 +96,23 @@ class DataStore:
 
         with session_scope(session) as session:
             session.merge(experiment)
+
+    @classmethod
+    def get_setting(cls,setting):
+        with session_scope() as session:
+            setting = session.query(Settings).filter(Settings.key == setting).one_or_none()
+            session.expunge_all()
+
+        return setting
+
+    @classmethod
+    def save_setting(cls, setting):
+        with session_scope() as session:
+            session.merge(setting)
+
+    @classmethod
+    def create_setting(cls, **kwargs):
+        return Settings(**kwargs)
 
     @classmethod
     def get_simulation(cls, sim_id):
@@ -104,18 +128,23 @@ class DataStore:
         with session_scope() as session:
             experiment = session.query(Experiment)\
                 .filter(Experiment.id.like('%%%s%%' % id_or_name)) \
-                .options(joinedload('simulations')) \
+                .options(joinedload('simulations').joinedload('experiment').joinedload('analyzers')) \
                 .order_by(Experiment.date_created.desc()).first()
 
             session.expunge_all()
         return experiment
 
     @classmethod
-    def get_active_experiments(cls):
+    def get_active_experiments(cls, location=None):
         with session_scope() as session:
-            experiments = session.query(Experiment).distinct(Experiment.exp_id)\
-                .join(Experiment.simulations)\
+            experiments = session.query(Experiment).distinct(Experiment.exp_id) \
+                .join(Experiment.simulations) \
+                .options(joinedload('simulations').joinedload('experiment').joinedload('analyzers')) \
                 .filter(~Simulation.status.in_(('Succeeded', 'Failed', 'Canceled')))
+            if location:
+                experiments = experiments.filter(Experiment.location == location)
+
+            experiments = experiments.all()
             session.expunge_all()
 
         return experiments
@@ -137,9 +166,9 @@ class DataStore:
             session.delete(session.query(Experiment).filter(Experiment.id == experiment.id).one())
 
     @classmethod
-    def change_simulation_state(cls, simulation, message=None, status=None, pid=None):
-        with session_scope() as session:
-            simulation = session.query(Simulation).filter(Simulation.id == simulation.id).one()
+    def change_simulation_state(cls, sim, message=None, status=None, pid=None, session=None):
+        with session_scope(session) as session:
+            simulation = session.query(Simulation).filter(Simulation.id == sim.id).one()
             if message:
                 simulation.message = message
 
@@ -202,7 +231,6 @@ class DataStore:
             num = session.query(Experiment).filter(Experiment.exp_id.in_(exp_ids)).delete(synchronize_session='fetch')
             if verbose:
                 print '%s experiment(s) deleted.' % num
-
 
     @classmethod
     def get_recent_experiment_by_filter(cls, num=20, is_all=False, name=None, location=None):

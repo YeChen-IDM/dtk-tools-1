@@ -164,9 +164,6 @@ class TestSetupParser(unittest.TestCase):
         self.assertIsNotNone(sp.get('bin_staging_root'))
         self.assertIsNotNone(sp.get('compress_assets'))
 
-        # But not all of them (we dont want LOCAL)
-        self.assertRaises(ValueError, sp.get, 'max_local_sims')
-
         # Test if the default are overlayed from cwd file
         self.assertEqual(sp.get('max_threads'), str(0))
 
@@ -235,6 +232,8 @@ class TestLocalExperimentManager(unittest.TestCase):
         self.assertListEqual(states.values(), ['Waiting'] * self.nsims)
 
         local_manager.hard_delete()
+        import time
+        time.sleep(3)
 
 
 if __name__ == '__main__':
