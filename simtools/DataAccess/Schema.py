@@ -10,10 +10,27 @@ from sqlalchemy import Enum
 from sqlalchemy import ForeignKey
 from sqlalchemy import PickleType
 from sqlalchemy import String
+from sqlalchemy import Binary
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from simtools.DataAccess import Base, engine
+
+
+class Analyzer(Base):
+    __tablename__ = "analyzers"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    analyzer = Column(Binary)
+    experiment_id = Column(String, ForeignKey('experiments.exp_id'))
+    experiment = relationship("Experiment", back_populates="analyzers")
+
+
+class Settings(Base):
+    __tablename__ = "settings"
+    key = Column(String, primary_key=True)
+    value = Column(String)
 
 
 class Simulation(Base):
@@ -21,7 +38,7 @@ class Simulation(Base):
 
     id = Column(String, primary_key=True)
     status = Column(Enum('Waiting', 'Commissioned', 'Running', 'Succeeded', 'Failed',  'Canceled', 'CancelRequested',
-                         "Retry", "CommissionRequested", "Provisioning", "Created"))
+                         "Retry", "CommissionRequested", "Provisioning", "Created"), default='Waiting')
     message = Column(String)
     experiment = relationship("Experiment", back_populates="simulations")
     experiment_id = Column(String, ForeignKey('experiments.exp_id'))
@@ -62,9 +79,9 @@ class Experiment(Base):
     working_directory = Column(String, default=os.getcwd())
     date_created = Column(DateTime(timezone=True), default=datetime.datetime.now())
     endpoint = Column(String)
-    experiment_runner_id = Column(Integer)
 
     simulations = relationship("Simulation", back_populates='experiment', cascade="all, delete-orphan", order_by="Simulation.date_created")
+    analyzers = relationship("Analyzer", back_populates='experiment', cascade="all, delete-orphan")
 
     def __repr__(self):
         return "Experiment %s" % self.id
@@ -102,6 +119,12 @@ class Experiment(Base):
                 ret['simulations'] = {}
                 for sim in value:
                     ret['simulations'][sim.id] = sim.tags
+                continue
+
+            if name == 'analyzers':
+                ret['analyzers'] = []
+                for a in value:
+                    ret['analyzers'].append(a.name)
                 continue
 
             # By default just add to the dict

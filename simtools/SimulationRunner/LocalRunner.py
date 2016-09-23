@@ -1,65 +1,90 @@
 import os
 import shlex
 import subprocess
-import threading
 import time
-from multiprocessing import Queue
 
+import psutil
 from simtools.DataAccess.DataStore import DataStore
+from simtools.SimulationRunner.BaseSimulationRunner import BaseSimulationRunner
 
 
-class SimulationCommissioner(threading.Thread):
+class LocalSimulationRunner(BaseSimulationRunner):
     """
     Run one simulation.
     """
-    def __init__(self, simulation, experiment, thread_queue):
-        threading.Thread.__init__(self)
-        self.simulation = simulation
-        self.experiment = experiment
+    def __init__(self, simulation, experiment, thread_queue, states, success):
+        super(LocalSimulationRunner, self).__init__(experiment, states, success)
         self.queue = thread_queue
-
+        self.simulation = simulation
         self.sim_dir = self.simulation.get_path()
 
-    def run(self):
-        # Make sure the status is not set.
-        # If it is, dont touch this simulation
-        if self.check_state() != "Waiting":
+        if self.check_state() == "Waiting":
+            self.run()
+        else:
             self.queue.get()
-            return
+            if self.simulation.status in ('Failed', 'Succeeded', 'Cancelled'):
+                return
 
-        with open(os.path.join(self.sim_dir, "StdOut.txt"), "w") as out:
-            with open(os.path.join(self.sim_dir, "StdErr.txt"), "w") as err:
-                # On windows we want to pass the command to popen as a string
-                # On Unix, we want to pass it as a sequence
-                # See: https://docs.python.org/2/library/subprocess.html#subprocess.Popen
-                if os.name == "nt":
-                    command = self.experiment.command_line
-                else:
-                    command = shlex.split(self.experiment.command_line)
+            self.monitor()
 
-                # Launch the command
-                p = subprocess.Popen(command, cwd=self.sim_dir, shell=False, stdout=out, stderr=err)
+    def run(self):
+        try:
+            with open(os.path.join(self.sim_dir, "StdOut.txt"), "w") as out:
+                with open(os.path.join(self.sim_dir, "StdErr.txt"), "w") as err:
+                    # On windows we want to pass the command to popen as a string
+                    # On Unix, we want to pass it as a sequence
+                    # See: https://docs.python.org/2/library/subprocess.html#subprocess.Popen
+                    if os.name == "nt":
+                        command = self.experiment.command_line
+                    else:
+                        command = shlex.split(self.experiment.command_line)
 
-                # We are now running
-                DataStore.change_simulation_state(self.simulation, status="Running", pid=p.pid)
+                    # Launch the command
+                    p = subprocess.Popen(command, cwd=self.sim_dir, shell=False, stdout=out, stderr=err)
 
-                # Wait the end of the process
-                # We use poll to be able to update the status
-                while p.poll() is None:
-                    DataStore.change_simulation_state(self.simulation, message=self.last_status_line())
-                    time.sleep(3)
+                    # We are now running
+                    self.simulation.pid = p.pid
+                    self.simulation.status = "Running"
+                    self.update_status()
 
-                # When poll returns None, the process is done, test if succeeded or failed
-                last_message = self.last_status_line()
-                if "Done" in self.last_status_line():
-                    DataStore.change_simulation_state(self.simulation, status="Succeeded",  pid=-1, message=last_message)
-                else:
-                    # If we exited with a Canceled status, dont update to Failed
-                    if not self.check_state() == 'Canceled':
-                        DataStore.change_simulation_state(self.simulation, status="Failed", pid=-1, message=last_message)
+            self.monitor()
+        except Exception as e:
+            print "Error encountered while running the simulation."
+            print e
+        finally:
+            # Free up an item in the queue
+            self.queue.get()
 
-                # Free up an item in the queue
-                self.queue.get()
+    def monitor(self):
+        # Wait the end of the process
+        # We use poll to be able to update the status
+        if self.simulation.pid:
+            pid = int(self.simulation.pid)
+            while psutil.pid_exists(pid) and psutil.Process(pid).name() == 'Eradication.exe':
+                self.simulation.message = self.last_status_line()
+                self.update_status()
+
+                time.sleep(4)
+
+        # When poll returns None, the process is done, test if succeeded or failed
+        last_message = self.last_status_line()
+        last_state = self.check_state()
+        if "Done" in last_message:
+            self.simulation.status = "Succeeded"
+            # Wise to wait a little bit to make sure files are written
+            self.success(self.simulation)
+        else:
+            # If we exited with a Canceled status, dont update to Failed
+            if not last_state == 'Canceled':
+                self.simulation.status = "Failed"
+
+        # Set the final simulation state
+        self.simulation.message = last_message
+        self.simulation.pid = None
+        self.update_status()
+
+    def update_status(self):
+        self.states[self.simulation.id] = self.simulation
 
     def last_status_line(self):
         """
@@ -82,24 +107,4 @@ class SimulationCommissioner(threading.Thread):
         """
         self.simulation = DataStore.get_simulation(self.simulation.id)
         return self.simulation.status
-
-
-if __name__ == "__main__":
-    import sys
-
-    # Retrieve the info from the command line
-    queue_size = int(sys.argv[1])
-    exp_id = sys.argv[2]
-
-    # Create the queue
-    queue = Queue(maxsize=queue_size)
-
-    # Retrieve the experiment
-    current_exp = DataStore.get_experiment(exp_id)
-
-    # Go through the paths and commission
-    for sim in current_exp.simulations:
-        queue.put('run1')
-        t = SimulationCommissioner(sim, current_exp, queue)
-        t.start()
 
