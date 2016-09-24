@@ -116,6 +116,10 @@ def run(args, unknownArgs):
 
 
 def status(args, unknownArgs):
+    # No matter what check the overseer
+    from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
+    BaseExperimentManager.check_overseer()
+    
     if args.active:
         logger.info('Getting status of all active experiments.')
         active_experiments = DataStore.get_active_experiments()
@@ -423,8 +427,7 @@ def create_experiment(exp_id, sp, verbose=False):
                                                  date_created=creation_date,
                                                  location='HPC',
                                                  selected_block='HPC',
-                                                 endpoint=sp.get('server_endpoint'),
-                                                 working_directory=os.getcwd())
+                                                 endpoint=sp.get('server_endpoint'))
 
     # Note: experiment may be new or comes from local db
     # Get associated simulations of the experiment
