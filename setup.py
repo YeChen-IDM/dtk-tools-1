@@ -4,6 +4,7 @@ import os
 import platform
 import shutil
 import sys
+from collections import OrderedDict
 from urlparse import urlparse
 from ConfigParser import ConfigParser
 from distutils.version import LooseVersion
@@ -21,55 +22,55 @@ requirements = {
         'platform': ['win'],
         'version': '2.2',
         'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/curses-2.2-cp27-none-win_amd64.whl'
-    },
-    'matplotlib': {
-        'platform': ['win', 'lin', 'mac'],
-        'version': '1.5.3',
-        'test': '>=',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/matplotlib-1.5.3-cp27-cp27m-win_amd64.whl'
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/curses-2.2-cp27-none-win_amd64.whl'
     },
     'numpy': {
         'platform': ['win', 'lin', 'mac'],
-        'version': '1.11.1',
-        'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/numpy-1.11.1+mkl-cp27-cp27m-win_amd64.whl'
-    },
-    'pandas': {
-        'platform': ['win', 'lin', 'mac'],
-        'version': '0.18.1',
-        'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/pandas-0.18.1-cp27-cp27m-win_amd64.whl'
-    },
-    'psutil': {
-        'platform': ['win', 'lin', 'mac'],
-        'version': '4.3.1',
-        'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/psutil-4.3.1-cp27-cp27m-win_amd64.whl'
-    },
-    'python-snappy': {
-        'platform': ['win', 'lin'],
-        'version': '0.5',
-        'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/python_snappy-0.5-cp27-none-win_amd64.whl'
+        'version': '1.11.2rc1+mkl',
+        'test': '>=',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/numpy-1.11.2rc1%2Bmkl-cp27-cp27m-win_amd64.whl'
     },
     'scipy': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.18.1',
         'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/scipy-0.18.1-cp27-cp27m-win_amd64.whl'
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/scipy-0.18.1-cp27-cp27m-win_amd64.whl'
+    },
+    'matplotlib': {
+        'platform': ['win', 'lin', 'mac'],
+        'version': '1.5.3',
+        'test': '>=',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/matplotlib-1.5.3-cp27-cp27m-win_amd64.whl'
+    },
+    'pandas': {
+        'platform': ['win', 'lin', 'mac'],
+        'version': '0.18.1',
+        'test': '==',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/pandas-0.18.1-cp27-cp27m-win_amd64.whl'
+    },
+    'psutil': {
+        'platform': ['win', 'lin', 'mac'],
+        'version': '4.3.1',
+        'test': '==',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/psutil-4.3.1-cp27-cp27m-win_amd64.whl'
+    },
+    'python-snappy': {
+        'platform': ['win', 'lin'],
+        'version': '0.5',
+        'test': '==',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/python_snappy-0.5-cp27-none-win_amd64.whl'
     },
     'seaborn': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.7.1',
         'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/seaborn-0.7.1-py2.py3-none-any.whl'
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/seaborn-0.7.1-py2.py3-none-any.whl'
     },
     'statsmodels': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.6.1',
         'test': '==',
-        'wheel': 'http://www.lfd.uci.edu/%7Egohlke/pythonlibs/dp2ng7en/statsmodels-0.6.1-cp27-none-win_amd64.whl'
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/statsmodels-0.6.1-cp27-none-win_amd64.whl'
     },
     'SQLAlchemy': {
         'platform': ['win', 'lin', 'mac'],
@@ -98,6 +99,9 @@ requirements = {
 }
 
 
+order_requirements = ['curses', 'numpy',  'scipy', 'matplotlib']
+
+
 def get_installed_packages():
     """
     Check packages in system
@@ -113,25 +117,15 @@ def download_file(url):
     """
     Download package
     """
-    import requests
+    import urllib2
 
     local_file = get_local_file_path(url)
 
-    with requests.Session() as s:
-        headers = {
-                   'host': 'www.lfd.uci.edu',
-                   'Connection': 'keep-alive',
-                   'Upgrade-Insecure-Requests': '1',
-                   'Accept-Language': 'en-US,en;q=0.8',
-                   'Accept-Encoding': 'gzip, deflate, sdch',
-                   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                   'Referer': 'http://www.lfd.uci.edu/~gohlke/pythonlibs/',
-                   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36'
-                   }
-
-        r = s.get(url, headers=headers)
-        with open(local_file, "wb") as code:
-            code.write(r.content)
+    req = urllib2.Request(url)
+    resp = urllib2.urlopen(req)
+    data = resp.read()
+    with open(local_file, "wb") as code:
+        code.write(data)
 
     return local_file
 
@@ -268,7 +262,10 @@ def build_package_str(my_os, name, val):
         else:
             package_str = name
     elif my_os in ['mac', 'lin']:
-        package_str = "%s%s%s" % (name, val['test'], val['version'])
+        if val.get('test', None) and val.get('version', None):
+            package_str = "%s%s%s" % (name, val['test'], val['version'])
+        else:
+            package_str = "%s" % name
 
     return package_str
 
@@ -277,17 +274,18 @@ def get_os():
     """
     Retrieve OS
     """
+    ar = platform.architecture()
+    sy = platform.system()
+
     my_os = None
     # OS: windows
-    if platform.architecture() == ('64bit', 'WindowsPE') or platform.system() == 'Windows':
+    if ar == ('64bit', 'WindowsPE') or sy == 'Windows':
         my_os = 'win'
-
     # OS: Mac
-    if platform.architecture() == ('64bit', '') or platform.system() == 'Darwin':
+    elif ar == ('64bit', '') or sy == 'Darwin':
         my_os = 'mac'
-
     # OS: Linux
-    if platform.architecture() == ('64bit', 'ELF') or platform.system() == 'Linux':
+    elif ar == ('64bit', 'ELF') or sy == 'Linux':
         my_os = 'lin'
 
     return my_os
@@ -307,17 +305,24 @@ def get_requirements_by_os(my_os):
 
     # OS: Linux. No version for some packages
     if my_os in ['lin']:
-        if 'version' in reqs['numpy']:
-            reqs['numpy'].pop('version')
-        if 'test' in reqs['numpy']:
-            reqs['numpy'].pop('test')
+        for name in ['numpy', 'scipy']:
+            if 'version' in reqs[name]:
+                reqs[name].pop('version')
+            if 'test' in reqs[name]:
+                reqs[name].pop('test')
 
-        if 'version' in reqs['scipy']:
-            reqs['scipy'].pop('version')
-        if 'test' in reqs['scipy']:
-            reqs['scipy'].pop('test')
+    # Keep packages in order
+    reqs_OrderedDict = OrderedDict()
 
-    return reqs
+    for i in range(len(order_requirements)):
+        name = order_requirements[i]
+        if name in reqs:
+            reqs_OrderedDict[name] = reqs.pop(name)
+
+    for (name, val) in reqs.iteritems():
+        reqs_OrderedDict[name] = val
+
+    return reqs_OrderedDict
 
 
 def install_linux_pre_requisites():
@@ -436,10 +441,25 @@ def handle_init():
     cp.write(open(example_simtools, 'w'))
 
 
+def upgrade_pip(my_os):
+    """
+    Upgrade pip before install other packages
+    """
+    import subprocess
+
+    if my_os in ['mac', 'lin']:
+        subprocess.call("pip install -U pip", shell=True)
+    elif my_os in ['win']:
+        subprocess.call("python -m pip install --upgrade pip", shell=True)
+
+
 def main():
     # Check OS
     my_os = get_os()
     print 'os: %s' % my_os
+
+    # Upgrade pip before install other packages
+    upgrade_pip(my_os)
 
     # Get OS-specific requirements
     reqs = get_requirements_by_os(my_os)
