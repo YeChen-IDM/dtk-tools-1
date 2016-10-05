@@ -20,10 +20,13 @@ class OptimTool(NextPointAlgorithm):
 
     def __init__(self, prior_fn,
                  x0 = [],
-                 initial_samples = 1e2,
+                 initial_samples = 1e2, # Should be a collection of samples for OptimTool, not a number of samples to draw from the prior
                  samples_per_iteration = 1e2,
                  current_state = {}
              ):
+
+        print "__init__"
+        print " --> initial_samples:\n", initial_samples
 
         super(OptimTool, self).__init__(prior_fn, initial_samples, samples_per_iteration, current_state)
         '''
@@ -43,10 +46,10 @@ class OptimTool(NextPointAlgorithm):
         '''
 
         self.X = x0
-        self.N = initial_samples
 
 
     def set_current_state(self, state):
+        print "set_current_state"
         '''
         Initialize the current state,
         either to initially empty defaults or the de-serialized state
@@ -71,6 +74,7 @@ class OptimTool(NextPointAlgorithm):
 
 
     def set_initial_samples(self, initial_samples):
+        print "set_initial_samples"
         super(OptimTool, self).set_initial_samples(initial_samples)
         '''
         if isinstance(initial_samples, (int, float)):  # allow float like 1e3
@@ -86,6 +90,7 @@ class OptimTool(NextPointAlgorithm):
 
 
     def update_iteration(self, iteration):
+        print "update_iteration"
         super(OptimTool, self).update_iteration(iteration)
         '''
         self.iteration = iteration
@@ -115,6 +120,7 @@ class OptimTool(NextPointAlgorithm):
         '''
 
     def update_samples(self):
+        print "update_samples"
         '''
         Perform linear regression.
         Compute goodness of fit.
@@ -133,16 +139,19 @@ class OptimTool(NextPointAlgorithm):
         '''
 
     def next_point_fn(self):
+        print "next_point_fn"
         # Pick points on hypersphere
         return multivariate_normal(mean=self.gaussian_centers[-1], cov=self.gaussian_covariances[-1])
 
     def end_condition(self):
+        print "end_condition"
         # Stopping Criterion:
         # Return True to stop, False to continue
         logger.info('Continuing iterations ...')
         return False
 
     def get_final_samples(self):
+        print "get_final_samples"
         '''
         Resample Stage:
         '''
@@ -164,6 +173,7 @@ class OptimTool(NextPointAlgorithm):
         '''
 
     def get_current_state(self) :
+        print "get_current_state"
         state = super(OptimTool, self).get_current_state()
         '''
         return dict(samples=self.samples, 
@@ -172,8 +182,6 @@ class OptimTool(NextPointAlgorithm):
                     results=self.results)
         '''
 
-        optimtool_state = dict( X = self.X,
-                                Sigma = self.Sigma,
-                                N = self.N  )
+        optimtool_state = dict( X = self.X )
         state.update(optimtool_state)
         return state

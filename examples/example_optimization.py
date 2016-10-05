@@ -50,21 +50,27 @@ def sample_point_fn(cb, param_values):
     return params_dict
 
 def sample_around(x, N, mu, sig):
-    # TODO
-    n = norm()
+    sn = norm(loc=1, scale=1)
 
-    points = []
+    deviation = []
     for i in range(N):
-        rvs = n.rvs(size = len(x))
+        rvs = sn.rvs(size = len(x))
         nrm = np.linalg.norm(rvs)
 
-        points.append( [r/nrm for r in rvs] )
+        deviation.append( [r/nrm for r in rvs] )
+
+    rad = norm(loc=mu, scale=sig)
+
+    points = []
+    for dev in deviation:
+        r = rad.rvs()
+        points.append( [x + r * p for x,p in zip(x0,dev)] )
 
     return points
 
 x0 = [0.5, 0.6, 0.8]
-mu_r = 1
-sigma_r = 0.1
+mu_r = 0.1
+sigma_r = 0.02
 
 print sample_around(x0, 5, mu_r, sigma_r)
 
@@ -75,7 +81,7 @@ next_point_kwargs = dict(
     )
 
 calib_manager = CalibManager(name='ExampleOptimization',
-                             setup=SetupParser(),
+                             setup=SetupParser('HPC'),  # Only way to get it on COMPS?!
                              config_builder=cb,
                              sample_point_fn=sample_point_fn,
                              sites=sites,
@@ -85,8 +91,9 @@ calib_manager = CalibManager(name='ExampleOptimization',
                              num_to_plot=5,
                              plotters=plotters)
 
-run_calib_args = {'selected_block': "EXAMPLE"}
+#run_calib_args = {'selected_block': "EXAMPLE"}
+run_calib_args = {'selected_block': "HPC"}
 
 if __name__ == "__main__":
-    run_calib_args.update(dict(location='LOCAL'))
+    run_calib_args.update(dict(location='HPC'))
     calib_manager.run_calibration(**run_calib_args)
