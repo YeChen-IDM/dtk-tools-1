@@ -184,6 +184,7 @@ class CalibManager(object):
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
                 self.update_next_point(results)
+                self.plot_iteration()
 
             if self.finished():
                 break
@@ -357,13 +358,14 @@ class CalibManager(object):
         logger.info(self.all_results[['iteration', 'total']].head(10))
         self.cache_calibration()
 
-        # Run all the plotters
-        map(lambda plotter: plotter.visualize(self), self.plotters)
-
         # Write the CSV
         self.write_LL_csv(exp_manager.experiment)
 
         return results.total.tolist()
+
+    def plot_iteration(self):
+        # Run all the plotters
+        map(lambda plotter: plotter.visualize(self), self.plotters)
 
     def update_next_point(self, results):
         """
@@ -995,6 +997,9 @@ class CalibManager(object):
 
             # update next point
             self.update_next_point(res)
+
+            # Plot the iteration at the end
+            self.plot_iteration()
 
         # Before leaving -> increase the iteration / set back the suite_id
         self.iteration_state.iteration += 1

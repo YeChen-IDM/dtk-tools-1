@@ -1,5 +1,6 @@
 import logging
 from sys import exit# as exit
+import os
 
 import numpy as np
 from scipy.stats import multivariate_normal
@@ -7,6 +8,7 @@ from scipy.spatial.distance import seuclidean
 from scipy.stats import uniform, norm
 
 import statsmodels.api as sm
+import matplotlib.pyplot as plt
 
 from calibtool.NextPointAlgorithm import NextPointAlgorithm
 
@@ -80,7 +82,7 @@ class OptimTool(NextPointAlgorithm):
         x0f = np.array([float(x) for x in self.x0])
         self.D = state.get('D', len(self.x0))
         self.x0 = state.get('x0', x0f)
-        self.X_center = state.get('X_center', np.ndarray((1,self.D), buffer=np.array(x0f)) )
+        self.X_center = state.get('X_center',  [x0f]) # np.ndarray((1,self.D), buffer=np.array(x0f))
 
         # These could vary by iteration ...
         self.mu_r = state.get('mu_r', self.mu_r)
@@ -148,9 +150,28 @@ class OptimTool(NextPointAlgorithm):
         print 'LATEST_SAMPLES:', self.latest_samples
         print 'RESULTS:', self.latest_results
 
-        mod = sm.OLS(self.latest_results, self.latest_samples)
-        res = mod.fit()
-        print res.summary()
+        #X = sm.add_constant(X)
+        mod = sm.OLS(self.latest_results, sm.add_constant(self.latest_samples) )
+        self.res = mod.fit()
+        print self.res.summary()
+
+        # Choose next X_center
+        if self.res.rsquared > 0.5:  # TODO: make parameter
+            m = self.res.params[1:] # Drop constant
+            print 'Good R^2 (%f), using params: '%self.res.rsquared, self.res.params
+            ascent_dir = m / np.linalg.norm( m )
+            new_center = self.X_center[-1] + self.mu_r * ascent_dir
+            self.X_center.append( new_center )
+        else:
+            max_idx = np.argmax(self.latest_results)
+            self.X_center.append( self.latest_samples[max_idx] )
+
+        if False:
+            plt.plot( self.latest_results, self.res.fittedvalues, 'o')
+            plt.plot( [min(self.latest_results), max(self.latest_results)], [min(self.latest_results), max(self.latest_results)], 'r-')
+            plt.title( self.res.rsquared )
+            plt.savefig( 'Regression_%d.png'%self.iteration )
+            plt.close()
 
 
     def update_results(self, results):
@@ -227,7 +248,7 @@ class OptimTool(NextPointAlgorithm):
         '''
         Resample Stage:
         '''
-        return dict(samples=self.samples)
+        return dict(samples=self.X_center[-1])
 
         '''
         nonzero_idxs = self.weights > 0
