@@ -4,6 +4,9 @@ from sys import exit# as exit
 import numpy as np
 from scipy.stats import multivariate_normal
 from scipy.spatial.distance import seuclidean
+from scipy.stats import uniform, norm
+
+import statsmodels.api as sm
 
 from calibtool.NextPointAlgorithm import NextPointAlgorithm
 
@@ -20,6 +23,8 @@ class OptimTool(NextPointAlgorithm):
 
     def __init__(self, prior_fn,
                  x0 = [],
+                 mu_r = 0.1,
+                 sigma_r = 0.02,
                  initial_samples = 1e2, # Should be a collection of samples for OptimTool, not a number of samples to draw from the prior
                  samples_per_iteration = 1e2,
                  current_state = {}
@@ -27,6 +32,10 @@ class OptimTool(NextPointAlgorithm):
 
         print "__init__"
         print " --> initial_samples:\n", initial_samples
+
+        self.x0 = x0 # Center of each iteration - resume?
+        self.mu_r = mu_r
+        self.sigma_r = sigma_r
 
         super(OptimTool, self).__init__(prior_fn, initial_samples, samples_per_iteration, current_state)
         '''
@@ -44,8 +53,6 @@ class OptimTool(NextPointAlgorithm):
                     self.__class__.__name__, self.samples.shape[0], 
                     self.n_dimensions, self.samples_per_iteration)
         '''
-
-        self.X = x0
 
 
     def set_current_state(self, state):
@@ -70,12 +77,19 @@ class OptimTool(NextPointAlgorithm):
         self.priors = state.get('priors', [])
         '''
 
-        self.n_initial_samples = state.get('x_curr', [])
+        x0f = np.array([float(x) for x in self.x0])
+        self.D = state.get('D', len(self.x0))
+        self.x0 = state.get('x0', x0f)
+        self.X_center = state.get('X_center', np.ndarray((1,self.D), buffer=np.array(x0f)) )
+
+        # These could vary by iteration ...
+        self.mu_r = state.get('mu_r', self.mu_r)
+        self.sigma_r = state.get('sigma_r', self.sigma_r)
 
 
     def set_initial_samples(self, initial_samples):
         print "set_initial_samples"
-        super(OptimTool, self).set_initial_samples(initial_samples)
+        #super(OptimTool, self).set_initial_samples(initial_samples)
         '''
         if isinstance(initial_samples, (int, float)):  # allow float like 1e3
             self.samples = self.sample_from_function(self.prior_fn, int(initial_samples))
@@ -87,6 +101,18 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('Initial samples:\n%s' % self.samples)
         self.latest_samples = self.samples[:]
         '''
+
+
+        if isinstance(initial_samples, (int, float)):  # allow float like 1e3
+            #self.samples = self.sample_from_function(self.prior_fn, int(initial_samples))
+            self.samples = self.choose_hypersphere_points(initial_samples)
+        elif isinstance(initial_samples, (list, np.ndarray)):
+            self.samples = np.array(initial_samples)
+        else:
+            raise Exception("The 'initial_samples' parameter must be a number or an array.")
+
+        logger.debug('Initial samples:\n%s' % self.samples)
+        self.latest_samples = self.samples[:]
 
 
     def update_iteration(self, iteration):
@@ -119,6 +145,25 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('Weights:\n%s', self.weights)
         '''
 
+        print 'LATEST_SAMPLES:', self.latest_samples
+        print 'RESULTS:', self.latest_results
+
+        mod = sm.OLS(self.latest_results, self.latest_samples)
+        res = mod.fit()
+        print res.summary()
+
+
+    def update_results(self, results):
+        print 'update_results'
+        super(OptimTool, self).update_results(results)
+        '''
+        self.results.extend(results)
+        logger.debug('Results:\n%s', self.results)
+        '''
+
+        self.latest_results = results
+
+
     def update_samples(self):
         print "update_samples"
         '''
@@ -126,7 +171,7 @@ class OptimTool(NextPointAlgorithm):
         Compute goodness of fit.
         '''
 
-        super(OptimTool, self).update_samples()
+        #super(OptimTool, self).update_samples()
         '''
         next_samples = self.sample_from_function(
             self.next_point_fn(), self.samples_per_iteration)
@@ -138,10 +183,37 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('All samples:\n%s', self.samples)
         '''
 
-    def next_point_fn(self):
-        print "next_point_fn"
+        self.latest_samples = self.choose_hypersphere_points(self.samples_per_iteration)
+
+        # Validate?
+        logger.debug('Next samples:\n%s', self.latest_samples)
+
+        self.samples = np.concatenate((self.samples, self.latest_samples))
+        logger.debug('All samples:\n%s', self.samples)
+
+        print 'UPDATED SAMPLES:\n',self.latest_samples
+
+
+    def choose_hypersphere_points(self, N):
         # Pick points on hypersphere
-        return multivariate_normal(mean=self.gaussian_centers[-1], cov=self.gaussian_covariances[-1])
+        sn = norm(loc=1, scale=1)
+
+        deviation = []
+        for i in range(N):
+            rvs = sn.rvs(size = self.D)
+            nrm = np.linalg.norm(rvs)
+
+            deviation.append( [r/nrm for r in rvs] )
+
+        rad = norm(loc = self.mu_r, scale = self.sigma_r)
+
+        samples = np.empty([N, self.D])
+        for i, dev in enumerate(deviation):
+            r = rad.rvs()
+            # X_center will be a list?  Look at end.
+            samples[i] = [x + r * p for x,p in zip(self.X_center[-1], dev)]
+        return samples
+        #return multivariate_normal(mean=self.gaussian_centers[-1], cov=self.gaussian_covariances[-1])
 
     def end_condition(self):
         print "end_condition"
@@ -182,6 +254,6 @@ class OptimTool(NextPointAlgorithm):
                     results=self.results)
         '''
 
-        optimtool_state = dict( X = self.X )
+        optimtool_state = dict( x0 = self.x0, X_center = self.X_center, D = self.D )
         state.update(optimtool_state)
         return state

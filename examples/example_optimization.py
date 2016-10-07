@@ -49,45 +49,26 @@ def sample_point_fn(cb, param_values):
     cb.set_param('Simulation_Duration',365)
     return params_dict
 
-def sample_around(x, N, mu, sig):
-    sn = norm(loc=1, scale=1)
-
-    deviation = []
-    for i in range(N):
-        rvs = sn.rvs(size = len(x))
-        nrm = np.linalg.norm(rvs)
-
-        deviation.append( [r/nrm for r in rvs] )
-
-    rad = norm(loc=mu, scale=sig)
-
-    points = []
-    for dev in deviation:
-        r = rad.rvs()
-        points.append( [x + r * p for x,p in zip(x0,dev)] )
-
-    return points
-
 x0 = [0.5, 0.6, 0.8]
 mu_r = 0.1
 sigma_r = 0.02
 
-print sample_around(x0, 5, mu_r, sigma_r)
-
 next_point_kwargs = dict(
         x0=x0,
-        initial_samples = sample_around(x0, 4, mu_r, sigma_r),
-        samples_per_iteration=4
+        mu_r = mu_r,
+        sigma_r = sigma_r,
+        initial_samples = 10,
+        samples_per_iteration = 2
     )
 
 calib_manager = CalibManager(name='ExampleOptimization',
-                             setup=SetupParser(),  # Only way to get it on COMPS?!
+                             setup=SetupParser(),
                              config_builder=cb,
                              sample_point_fn=sample_point_fn,
                              sites=sites,
                              next_point=OptimTool(prior, **next_point_kwargs),
-                             sim_runs_per_param_set=2,
-                             max_iterations=2,
+                             sim_runs_per_param_set=1, # <-- Replicates
+                             max_iterations=1,
                              num_to_plot=5,
                              plotters=plotters)
 
