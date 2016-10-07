@@ -81,7 +81,7 @@ next_point_kwargs = dict(
     )
 
 calib_manager = CalibManager(name='ExampleOptimization',
-                             setup=SetupParser('HPC'),  # Only way to get it on COMPS?!
+                             setup=SetupParser(),  # Only way to get it on COMPS?!
                              config_builder=cb,
                              sample_point_fn=sample_point_fn,
                              sites=sites,
@@ -92,8 +92,8 @@ calib_manager = CalibManager(name='ExampleOptimization',
                              plotters=plotters)
 
 #run_calib_args = {'selected_block': "EXAMPLE"}
-run_calib_args = {'selected_block': "HPC"}
+run_calib_args = {}
 
 if __name__ == "__main__":
-    run_calib_args.update(dict(location='HPC'))
+    run_calib_args.update(dict(location='LOCAL'))
     calib_manager.run_calibration(**run_calib_args)

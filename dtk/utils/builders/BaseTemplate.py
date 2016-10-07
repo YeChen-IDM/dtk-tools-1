@@ -142,8 +142,12 @@ class BaseTemplate(ITemplate):
         :param value: The value to place at expanded parameter loci.
         :return: Simulation tags
         """
+
         contents, key = self.get_param_handle(param)
-        if key in contents or allow_new_parameters:
+        if key in contents or \
+            (type(contents) is list and type(key) is int and len(contents) > key) or \
+            allow_new_parameters:
+
             contents[key] = self.cast_value(value)
             if include_filename_in_tag:
                 return {"[" + self.get_filename() + "] " + param: value}
