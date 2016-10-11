@@ -11,7 +11,15 @@ class COMPSSimulationRunner(BaseSimulationRunner):
     def __init__(self, experiment, states, success, commission=True):
         super(COMPSSimulationRunner, self).__init__(experiment, states, success)
 
-        if commission:
+        states, _ = CompsSimulationMonitor(self.experiment.exp_id, self.experiment.suite_id,
+                                           self.experiment.endpoint).query()
+        needs_commission = False
+        for state in states.values():
+            if state == "Created":
+                needs_commission = True
+                break
+
+        if commission and needs_commission:
             self.run()
         else:
             self.monitor()
