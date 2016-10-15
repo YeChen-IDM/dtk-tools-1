@@ -1,24 +1,24 @@
 import copy
 import json
-import logging
 import os
+import subprocess
+import sys
 import threading
 import time
 from abc import ABCMeta, abstractmethod
 from collections import Counter
-import subprocess
-import sys
+
 import dill
 import psutil
+from dtk import helpers
 from simtools import utils
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ModBuilder import SingleSimulationBuilder
 from simtools.Monitor import SimulationMonitor
 from simtools.SetupParser import SetupParser
-from dtk import helpers
+from simtools.utils import init_logging
 
-logging.basicConfig(format='%(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = init_logging('ExperimentManager')
 
 
 class BaseExperimentManager:
@@ -201,6 +201,30 @@ class BaseExperimentManager:
 
         if self.blocking:
             self.wait_for_finished(verbose=not self.quiet)
+
+    def find_missing_files(self, input_files, input_root):
+        """
+        Find the missing files
+        """
+        missing_files = {}
+        for (filename, filepath) in input_files.iteritems():
+            if isinstance(filepath, basestring):
+                filepath = filepath.strip()
+                # Skip empty files
+                if len(filepath) == 0:
+                    continue
+                # Only keep un-existing files
+                if not os.path.exists(os.path.join(input_root, filepath)):
+                    missing_files[filename] = filepath
+            elif isinstance(filepath, list):
+                # Skip empty and only keep un-existing files
+                missing_files[filename] = [f.strip() for f in filepath if len(f.strip()) > 0
+                                           and not os.path.exists(os.path.join(input_root, f.strip()))]
+                # Remove empty list
+                if len(missing_files[filename]) == 0:
+                    missing_files.pop(filename)
+
+        return missing_files
 
     def validate_input_files(self, config_builder):
         """
