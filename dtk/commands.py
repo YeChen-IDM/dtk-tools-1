@@ -18,7 +18,7 @@ from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManag
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
 
-logger = utils.init_logging('DTK Commands')
+logger = utils.init_logging('Commands')
 
 builtinAnalyzers = {
     'time_series': TimeseriesAnalyzer(select_function=sample_selection(), group_function=group_by_name('_site_'),
@@ -213,6 +213,10 @@ def exterminate(args, unknownArgs):
 
 def delete(args, unknownArgs):
     exp_manager = reload_experiment(args)
+    if exp_manager is None:
+        logger.info("The experiment doesn't exist. No action executed.")
+        return
+
     states, msgs = exp_manager.get_simulation_status()
     exp_manager.print_status(states, msgs)
 
@@ -227,10 +231,8 @@ def delete(args, unknownArgs):
         logger.info('No action taken.')
         return
 
-    if args.hard:
-        exp_manager.hard_delete()
-    else:
-        exp_manager.soft_delete()
+    exp_manager.delete_experiment(args.hard)
+    logger.info("Experiment '%s' has been successfully deleted.", exp_manager.experiment.exp_id)
 
 
 def clean(args, unknownArgs):
@@ -390,8 +392,10 @@ def sync(args, unknownArgs):
         DataStore.batch_save_experiments(exp_to_save)
         logger.info("%s experiments have been updated in the DB." % len(exp_to_save))
         logger.info("%s experiments have been deleted from the DB." % exp_deleted)
+        print("%s experiments have been updated in the DB." % len(exp_to_save))
+        print("%s experiments have been deleted from the DB." % exp_deleted)
     else:
-        logger.info("The database was already up to date.")
+        print("The database was already up to date.")
 
     # Start overseer
     BaseExperimentManager.check_overseer()
@@ -516,12 +520,15 @@ def analyze_from_script(args, sim_manager):
 
 
 def reload_experiment(args=None):
-    if args:
-        id = args.expId
+    """
+    Return the experiment (for given expId) or most recent experiment
+    """
+    exp_id = args.expId if args else None
+    exp = DataStore.get_most_recent_experiment(exp_id)
+    if exp is None:
+        return None
     else:
-        id = None
-
-    return ExperimentManagerFactory.from_experiment(DataStore.get_most_recent_experiment(id))
+        return ExperimentManagerFactory.from_experiment(exp)
 
 
 def reload_experiments(args=None):

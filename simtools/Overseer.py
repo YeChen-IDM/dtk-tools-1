@@ -1,30 +1,37 @@
 import logging
+import multiprocessing
 import threading
 import time
 from Queue import Queue
 from collections import OrderedDict
 
+import sys
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
 from simtools.utils import init_logging
 
 logger = init_logging('Overseer')
+lock = multiprocessing.Lock()
 
 def SimulationStateUpdater(states, loop=True):
     while True:
+        logger.debug("Simulation updated waiting loop")
+        logger.debug(states)
         if states:
-            batch = []
-            # First retrieve our simulation state
-            for db_state in DataStore.get_simulation_states(states.keys()):
-                if db_state[1] in ('Succeeded','Failed','Canceled'):
-                    continue
-                else:
-                    new_state = states[db_state[0]]
-                    batch.append({'sid':db_state[0], "status": new_state.status, "message":new_state.message, "pid":new_state.pid})
+            lock.acquire()
+            try:
+                batch = []
+                for id,sim in states.iteritems():
+                    batch.append({'sid':id, 'status':sim.status, 'message':sim.message,'pid':sim.pid})
 
-            DataStore.batch_simulations_update(batch)
-            states.clear()
+                DataStore.batch_simulations_update(batch)
+                states.clear()
+            except Exception as e:
+                logger.error("Exception in the status updater")
+                logger.error(e)
+            finally:
+                lock.release()
             if not loop: return
 
         time.sleep(5)
@@ -66,10 +73,11 @@ if __name__ == "__main__":
             if not managers.has_key(experiment.id):
                 logger.debug('Creation of manager for experiment id: %s' % experiment.id)
                 try:
+                    sys.path.append(experiment.working_directory)
                     manager = ExperimentManagerFactory.from_experiment(experiment)
                 except Exception as e:
-                    logger.critical('Exception in creation manager for experiment %s' % experiment.id)
-                    logger.critical(e)
+                    logger.error('Exception in creation manager for experiment %s' % experiment.id)
+                    logger.error(e)
                     exit()
                 managers[experiment.id] = manager
                 manager.maxThreadSemaphore = analysis_semaphore
@@ -80,7 +88,7 @@ if __name__ == "__main__":
             # If the runners have not been created -> create them
             if not manager.runner_created:
                 logger.debug('Commission simulations for experiment id: %s' % manager.experiment.id)
-                manager.commission_simulations(update_states)
+                manager.commission_simulations(update_states, lock)
                 logger.debug('Experiment done commissioning ? %s' % manager.runner_created)
                 continue
 
@@ -98,12 +106,12 @@ if __name__ == "__main__":
         # Cleanup the analyze thread list
         for ap in analysis_threads:
             if not ap.is_alive(): analysis_threads.remove(ap)
-        logger.debug("Analysis thread length: %s" % len(analysis_threads))
+        logger.debug("Analysis thread: %s" % analysis_threads)
 
         # No more active managers  -> Exit if our analzers threads are done
         # Do not use len() to not block anything
         if managers == OrderedDict() and analysis_threads == []: break
 
-        time.sleep(5)
+        time.sleep(10)
 
 logger.debug('No more work to do, exiting...')

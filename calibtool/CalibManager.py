@@ -1,3 +1,4 @@
+import copy
 import glob
 import json
 import logging
@@ -14,10 +15,11 @@ from simtools import utils
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.ModBuilder import ModBuilder
+from simtools.OutputParser import CompsDTKOutputParser
 from utils import NumpyEncoder
 from core.utils.time import verbose_timedelta
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("Calibration")
 
 
 class SampleIndexWrapper(object):
@@ -184,7 +186,6 @@ class CalibManager(object):
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
                 self.update_next_point(results)
-                self.plot_iteration()
 
             if self.finished():
                 break
@@ -258,8 +259,8 @@ class CalibManager(object):
                 config_builder=self.config_builder,
                 exp_name='%s_iter%d' % (self.name, self.iteration),
                 exp_builder=exp_builder,
-                suite_id=self.local_suite_id if self.location == "LOCAL" else self.comps_suite_id,
-                analyzers=analyzers)
+                suite_id=self.local_suite_id if self.location == "LOCAL" else self.comps_suite_id)
+                #,analyzers=analyzers)
 
             self.iteration_state.simulations = self.exp_manager.experiment.toJSON()['simulations']
             self.iteration_state.experiment_id = self.exp_manager.experiment.exp_id
@@ -267,7 +268,7 @@ class CalibManager(object):
 
         self.wait_for_finished()
 
-    def wait_for_finished(self, verbose=True, init_sleep=1.0, sleep_time = 3):
+    def wait_for_finished(self, verbose=True, init_sleep=1.0, sleep_time = 10):
         while True:
             time.sleep(init_sleep)
 
@@ -288,7 +289,8 @@ class CalibManager(object):
                 states, msgs = self.exp_manager.get_simulation_status()
             except Exception as ex:
                 # logger.info(ex)
-                logger.info('[%s] cannot get simulation status. Calibration cannot continue. Exiting...' % self.location)
+                logger.error('Cannot get simulation status. Calibration cannot continue. Exiting...' % self.location)
+                logger.error(ex)
                 exit()
 
             # Separate Failed from Canceled case, so that we can handle the following situation later:
@@ -342,12 +344,16 @@ class CalibManager(object):
         else:
             exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
 
-        try:
-            for a in exp_manager.analyzers:
-                a.load()
-        except:
-            # print "LOADING FAILED"
-            exp_manager.analyze_experiment()
+        # try:
+        #     for a in exp_manager.analyzers:
+        #         a.load()
+        # except:
+        #     # print "LOADING FAILED"
+        #     exp_manager.analyze_experiment()
+        for site in self.sites:
+            for analyzer in site.analyzers:
+                exp_manager.add_analyzer(analyzer)
+        exp_manager.analyze_experiment()
 
         cached_analyses = {a.uid(): a.cache() for a in exp_manager.analyzers}
         logger.debug(cached_analyses)
@@ -368,14 +374,13 @@ class CalibManager(object):
         logger.info(self.all_results[['iteration', 'total']].head(10))
         self.cache_calibration()
 
+        # Run all the plotters
+        map(lambda plotter: plotter.visualize(self), self.plotters)
+
         # Write the CSV
         self.write_LL_csv(exp_manager.experiment)
 
         return results.total.tolist()
-
-    def plot_iteration(self):
-        # Run all the plotters
-        map(lambda plotter: plotter.visualize(self), self.plotters)
 
     def update_next_point(self, results):
         """
@@ -448,54 +453,31 @@ class CalibManager(object):
         """
         Write the LL_summary.csv with what is in the CalibManager
         """
+        return
         # Deep copy all_results and pnames to not disturb the calibration
-        import copy
         pnames = copy.deepcopy(self.param_names())
         all_results = self.all_results.copy(True)
 
-        # Prepare the dictionary for rounding
-        dictround = {}
-        for p in pnames:
-            dictround[p] = 8
+        # Index the likelihood-results DataFrame on (iteration, sample) to join with simulation info
+        results_df = all_results.reset_index().set_index(['iteration', 'sample'])
 
-        # Get the results DataFrame rounded and reset the index so we can conserve the sample column when merging
-        results_df = all_results.round(dictround).reset_index(level=0)
+        # Get the simulation info from the iteration state
+        siminfo_df = pd.DataFrame.from_dict(self.iteration_state.simulations, orient='index')
+        siminfo_df.index.name = 'simid'
+        siminfo_df['iteration'] = self.iteration
+        siminfo_df = siminfo_df.rename(columns={'__sample_index__': 'sample'}).reset_index()
 
-        # Get the simIds
-        sims = list()
-        for simid, values in self.iteration_state.simulations.iteritems():
-            values['id'] = simid
-            sims.append(values)
+        # Group simIDs by sample point and merge back into results
+        grouped_simids_df = siminfo_df.groupby(['iteration', 'sample']).simid.agg(lambda x: tuple(x))
+        results_df = results_df.join(grouped_simids_df, how='right')  # right: only this iteration with new sim info
 
-        # Put the simulation info in a dataframe and round it
-        siminfo_df = pd.DataFrame(sims)
-        siminfo_df = siminfo_df.round(dictround).rename(columns={'id': 'outputs'})
+        # TODO: merge in parameter values also from siminfo_df (sample points and simulation tags need not be the same)
 
-        # Merge the info with the results to be able to have parameters -> simulations ids
-        m = pd.merge(results_df.reset_index(), siminfo_df[['__sample_index__', 'outputs']],
-                     left_on='sample',
-                     right_on='__sample_index__',
-                     indicator=True)
-
-        # Group the results by parameters and transform the ids into an array
-        grouped = m.groupby(by=pnames, sort=False)
-        df = grouped['outputs'].aggregate(lambda x: tuple(x))
-
-        # Get back a DataFrame from the GroupObject
-        df = df.reset_index()
-
-        # Merge back with the results
-        results_df = pd.merge(df, results_df, on=pnames)
-
-        # Retrieve the mapping between id - path
+        # Retrieve the mapping between simID and output file path
         if self.location == "HPC":
-            from simtools.OutputParser import CompsDTKOutputParser
             sims_paths = CompsDTKOutputParser.createSimDirectoryMap(suite_id=self.comps_suite_id, save=False)
-        else :
-            sims_paths = dict()
-
-            for sim in experiment.simulations:
-                sims_paths[sim.id] = os.path.join(experiment.get_path(), sim.id)
+        else:
+            sims_paths = {sim.id: os.path.join(experiment.get_path(), sim.id) for sim in experiment.simulations}
 
         # Transform the ids in actual paths
         def find_path(el):
@@ -504,25 +486,15 @@ class CalibManager(object):
                 paths.append(sims_paths[e])
             return ",".join(paths)
 
-        results_df['outputs'] = results_df['outputs'].apply(find_path)
+        results_df['outputs'] = results_df['simid'].apply(find_path)
+        del results_df['simid']
 
-        # Defines the column order
-        col_order = ['iteration', 'sample', 'total']
-        col_order.extend(results_df.keys()[len(pnames)+2:-2])   # The analyzers
-        col_order.extend(pnames)
-        col_order.extend(['outputs'])
-
-        # Concatenate the current csv
+        # Concatenate with any existing data from previous iterations and dump to file
         csv_path = os.path.join(self.name, 'LL_all.csv')
         if os.path.exists(csv_path):
-            # We need to get the same column order from the csv that the results_df to append them correctly
-            current = pd.read_csv(open(csv_path, 'r'))[col_order]
-            results_df = results_df.append(current, ignore_index = True)
-
-        # Write the csv
-        csv = results_df.sort_values(by='total', ascending=True)[col_order].to_csv(header=True, index=False)
-        with open(csv_path, 'w') as fp:
-            fp.writelines(csv)
+            current = pd.read_csv(csv_path, index_col=['iteration', 'sample'])
+            results_df = pd.concat([current, results_df])
+        results_df.sort_values(by='total', ascending=True).to_csv(csv_path)
 
     def cache_iteration_state(self, backup_existing=False):
         """
@@ -979,6 +951,9 @@ class CalibManager(object):
         """
         calib_data = self.read_calib_data()
 
+        # Override our setup with what is in the file
+        self.setup.override_block(calib_data['selected_block'])
+
         if calib_data['location'] == 'HPC':
             utils.COMPS_login(self.setup.get('server_endpoint'))
 
@@ -988,9 +963,12 @@ class CalibManager(object):
 
         # Get the count of iterations and save the suite_id
         iter_count = calib_data.get('iteration')
+        logger.info("Reanalyze will go through %s iterations." % iter_count)
 
         # Go through each already ran iterations
         for i in range(0, iter_count+1):
+            logger.info("\n")
+            logger.info("Reanalyze Iteration %s" % i)
             # Create the path for the iteration dir
             iter_directory = os.path.join(self.name, 'iter%d' % i)
 
@@ -1008,11 +986,9 @@ class CalibManager(object):
             # update next point
             self.update_next_point(res)
 
-            # Plot the iteration at the end
-            self.plot_iteration()
+            logger.info("Iteration %s reanalyzed." % i)
 
-        # Before leaving -> increase the iteration / set back the suite_id
-        self.iteration_state.iteration += 1
+        # Before leaving -> set back the suite_id
         self.local_suite_id = calib_data.get('local_suite_id')
         self.comps_suite_id = calib_data.get('comps_suite_id')
         self.location = calib_data['location']

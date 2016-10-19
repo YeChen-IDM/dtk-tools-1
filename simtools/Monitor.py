@@ -1,10 +1,10 @@
 import json
-import logging
+from collections import Counter
 
 import utils
 from simtools.DataAccess.DataStore import DataStore
 
-logger = logging.getLogger(__name__)
+logger = utils.init_logging('Monitor')
 
 
 class SimulationMonitor(object):
@@ -14,14 +14,18 @@ class SimulationMonitor(object):
     """
 
     def __init__(self, exp_id):
+        logger.debug("Create a LOCAL Monitor with exp_id=%s" % exp_id)
         self.exp_id = exp_id
 
     def query(self):
+        logger.debug("Query the LOCAL Monitor for Experiment %s" % self.exp_id)
         states, msgs = {}, {}
         experiment = DataStore.get_experiment(self.exp_id)
         for sim in experiment.simulations:
             states[sim.id] = sim.status if sim.status else "Waiting"
             msgs[sim.id] = sim.message if sim.message else ""
+        logger.debug("States returned")
+        logger.debug(json.dumps(dict(Counter(states.values())), indent=3))
         return states, msgs
 
 
@@ -32,12 +36,14 @@ class CompsSimulationMonitor(SimulationMonitor):
     """
 
     def __init__(self, exp_id, suite_id, endpoint):
+        logger.debug("Create a COMPS Monitor with exp_id=%s, suite_id=%s, endpoint=%s" % (exp_id,suite_id,endpoint))
         self.exp_id = exp_id
         self.suite_id = suite_id
         self.server_endpoint = endpoint
 
     def query(self):
-        from COMPS.Data import Experiment, Suite, QueryCriteria, Simulation
+        logger.debug("Query the HPC Monitor for Experiment %s" % self.exp_id)
+        from COMPS.Data import Suite, QueryCriteria, Simulation
         utils.COMPS_login(self.server_endpoint)
 
         def sims_from_experiment(e):
@@ -70,7 +76,15 @@ class CompsSimulationMonitor(SimulationMonitor):
         states, msgs = {}, {}
         for sim in sims:
             id_string = sim.getId().toString()
-            states[id_string] = sim.getState().toString()
+            state_string = sim.getState().toString()
+            if state_string not in ('Waiting', 'Commissioned', 'Running', 'Succeeded', 'Failed',  'Canceled', 'CancelRequested',
+                         "Retry", "CommissionRequested", "Provisioning", "Created"):
+                logger.warn("Failed to retrieve correct status for simulation %s. Status returned: %s" % state_string)
+                continue
+            states[id_string] = state_string
             msgs[id_string] = ''
+
+        logger.debug("States returned")
+        logger.debug(json.dumps(dict(Counter(states.values())), indent=3))
 
         return states, msgs

@@ -1,7 +1,6 @@
 import os
 import time
 
-from simtools import utils
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.CompsExperimentManager import CompsExperimentManager
 from simtools.Monitor import CompsSimulationMonitor
@@ -13,19 +12,11 @@ logger = init_logging('Runner')
 
 class COMPSSimulationRunner(BaseSimulationRunner):
 
-    def __init__(self, experiment, states, success, commission=True):
+    def __init__(self, experiment, states, success, lock, commission=True):
         logger.debug('Create COMPSSimulationRunner with experiment: %s, commission: %s'% (experiment.id,commission))
-        super(COMPSSimulationRunner, self).__init__(experiment, states, success)
+        super(COMPSSimulationRunner, self).__init__(experiment, states, success, lock)
 
-        states, _ = CompsSimulationMonitor(self.experiment.exp_id, self.experiment.suite_id,
-                                           self.experiment.endpoint).query()
-        needs_commission = False
-        for state in states.values():
-            if state == "Created":
-                needs_commission = True
-                break
-
-        if commission and needs_commission:
+        if commission:
             self.run()
         else:
             self.monitor()
@@ -49,18 +40,17 @@ class COMPSSimulationRunner(BaseSimulationRunner):
         for simulation in self.experiment.simulations:
             last_states[simulation.id] = simulation.status
 
+        # Create the monitor
+        monitor = CompsSimulationMonitor(self.experiment.exp_id, self.experiment.suite_id, self.experiment.endpoint)
+
         # Until done, update the status
         while True:
             logger.debug('COMPS - Waiting loop')
-            # Make sure we are logged in
-            utils.COMPS_login(self.experiment.endpoint)
-
             try:
-                states, _ = CompsSimulationMonitor(self.experiment.exp_id, self.experiment.suite_id,
-                                                   self.experiment.endpoint).query()
+                states, _ = monitor.query()
             except Exception as e:
-                logger.critical('Exception in the COMPS Monitor for experiment %s' % self.experiment.id)
-                logger.critical(e)
+                logger.error('Exception in the COMPS Monitor for experiment %s' % self.experiment.id)
+                logger.error(e)
                 break
 
             diff_list = [key for key in set(last_states).intersection(states) if last_states[key] != states[key]]
@@ -68,13 +58,21 @@ class COMPSSimulationRunner(BaseSimulationRunner):
             logger.debug(diff_list)
 
             if len(diff_list) > 0:
-                for key in diff_list:
-                    # Create the simulation to send to the update
-                    self.states[key] = DataStore.create_simulation(status=states[key])
+                try:
+                    self.lock.acquire()
+                    for key in diff_list:
+                        # Create the simulation to send to the update
+                        self.states[key] = DataStore.create_simulation(status=states[key])
 
-                    if states[key] == "Succeeded":
-                        simulation = DataStore.get_simulation(key)
-                        self.success(simulation)
+                        if states[key] == "Succeeded":
+                            logger.debug("Simulation %s has succeeded, calling ths success callback" % key)
+                            simulation = DataStore.get_simulation(key)
+                            self.success(simulation)
+                            logger.debug("Callback done for %s" % key)
+                except Exception as e:
+                    logger.error(e)
+                finally:
+                    self.lock.release()
 
                 last_states = states
 
@@ -82,4 +80,4 @@ class COMPSSimulationRunner(BaseSimulationRunner):
                 logger.debug('Stop monitoring for experiment %s because all simulations finished' % self.experiment.id)
                 break
 
-            time.sleep(5)
+            time.sleep(15)

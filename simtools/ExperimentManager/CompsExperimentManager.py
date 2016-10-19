@@ -1,10 +1,9 @@
-import os
-
 from simtools import utils
 from simtools.Commisioner import CompsSimulationCommissioner
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
 from simtools.OutputParser import CompsDTKOutputParser
+from simtools.utils import init_logging
 
 
 class CompsExperimentManager(BaseExperimentManager):
@@ -91,12 +90,12 @@ class CompsExperimentManager(BaseExperimentManager):
             c.join()
         self.collect_sim_metadata()
 
-    def commission_simulations(self, states={}):
+    def commission_simulations(self, states={}, lock=None):
         import threading
         from simtools.SimulationRunner.COMPSRunner import COMPSSimulationRunner
-
         t1 = threading.Thread(target=COMPSSimulationRunner, args=(self.experiment, states,
-                                                                  self.success_callback))
+                                                                  self.success_callback,lock,
+                                                                  not self.done_commissioning()))
         t1.daemon = True
         t1.start()
         self.runner_created = True

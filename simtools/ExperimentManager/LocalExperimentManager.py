@@ -1,23 +1,18 @@
-import logging
 import os
 import re
 import shutil
 import signal
-import subprocess
-import sys
 import threading
 import time
 from datetime import datetime
-import platform
 
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
-from simtools.Monitor import SimulationMonitor
 from simtools.OutputParser import SimulationOutputParser
 from simtools.SimulationRunner.LocalRunner import LocalSimulationRunner
+from simtools.utils import init_logging
 
-logging.basicConfig(format='%(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = init_logging("ExperimentManager")
 
 
 class LocalExperimentManager(BaseExperimentManager):
@@ -33,14 +28,14 @@ class LocalExperimentManager(BaseExperimentManager):
         self.simulations_commissioned = 0
         BaseExperimentManager.__init__(self, model_file, experiment, setup)
 
-    def commission_simulations(self, states={}):
+    def commission_simulations(self, states={},lock=None):
         if not self.local_queue:
             from Queue import Queue
             self.local_queue = Queue()
         while not self.local_queue.full() and self.simulations_commissioned < len(self.experiment.simulations):
             self.local_queue.put('run 1')
             simulation = self.experiment.simulations[self.simulations_commissioned]
-            t1 = threading.Thread(target=LocalSimulationRunner, args=(simulation, self.experiment, self.local_queue, states, self.success_callback))
+            t1 = threading.Thread(target=LocalSimulationRunner, args=(simulation, self.experiment, self.local_queue, states, self.success_callback,lock))
             t1.daemon = True
             t1.start()
             self.simulations_commissioned += 1
