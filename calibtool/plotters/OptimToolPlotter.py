@@ -1,6 +1,8 @@
 import logging
 import os
 
+import gc   # TEMP
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -48,21 +50,32 @@ class OptimToolPlotter(BasePlotter):
             rsquared = calib_manager.next_point.rsquared[calib_manager.iteration]
 
             fig, ax = plt.subplots()
-            plt.plot( latest_results, fitted_values, 'o')
+            plt.plot( latest_results, fitted_values, 'o', figure=fig)
             plt.plot( [min(latest_results), max(latest_results)], [min(latest_results), max(latest_results)], 'r-')
             plt.title( rsquared )
             plt.savefig( os.path.join(self.directory, 'Optimization_Regression.pdf'))
-            plt.close()
+
+            fig.clf()
+            plt.close(fig)
+
+            del fig, ax
 
 ### BY ITERATION ###
 
-        fig, ax = plt.subplots()
         all_results = calib_manager.all_results.copy().reset_index(drop=True)#.set_index(['iteration', 'sample'])
-        sns.violinplot(x='iteration', y='total', data=all_results, ax = ax)
+        fig, ax = plt.subplots()
+        g = sns.violinplot(x='iteration', y='total', data=all_results, ax = ax)
 #, hue=None, data=res, order=None, hue_order=None, bw='scott', cut=2, scale='area', scale_hue=True, gridsize=100, width=0.8, inner='box', split=False, dodge=True, orient=None, linewidth=None, color=None, palette=None, saturation=0.75, ax=None, **kwargs))
         # sample is index
         # cols of iteration, total, Dielmo_ClinicalIncidenceByAgeCohortAnalyzer, and x labels
         plt.savefig( os.path.join(self.directory, 'Optimization_Progress.pdf'))
+
+
+        fig.clf()
+        plt.close(fig)
+        del g, fig, ax
+
+        gc.collect()
 
         print 'OptimToolPlotter: [ DONE ]'
 
