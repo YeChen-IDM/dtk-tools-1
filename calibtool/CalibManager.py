@@ -186,6 +186,7 @@ class CalibManager(object):
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
                 self.update_next_point(results)
+                self.plot_iteration()
 
             if self.finished():
                 break
@@ -268,6 +269,8 @@ class CalibManager(object):
 
         self.wait_for_finished()
 
+        print "DONE COMMISSION_ITERATION"
+
     def wait_for_finished(self, verbose=True, init_sleep=1.0, sleep_time = 10):
         while True:
             time.sleep(init_sleep)
@@ -330,6 +333,8 @@ class CalibManager(object):
         # Wait when we are all done to make sure all the output files have time to get written
         time.sleep(sleep_time)
 
+        print "DONE WAIT_FOR_FINISHED"
+
     def analyze_iteration(self):
         """
         Analyze the output of completed simulations by using the relevant analyzers by site.
@@ -353,7 +358,9 @@ class CalibManager(object):
         for site in self.sites:
             for analyzer in site.analyzers:
                 exp_manager.add_analyzer(analyzer)
+        print "BEGIN ANALYZE_EXPERIMENT"
         exp_manager.analyze_experiment()
+        print "DONE ANALYZE_EXPERIMENT"
 
         cached_analyses = {a.uid(): a.cache() for a in exp_manager.analyzers}
         logger.debug(cached_analyses)
@@ -374,13 +381,15 @@ class CalibManager(object):
         logger.info(self.all_results[['iteration', 'total']].head(10))
         self.cache_calibration()
 
-        # Run all the plotters
-        map(lambda plotter: plotter.visualize(self), self.plotters)
-
         # Write the CSV
         self.write_LL_csv(exp_manager.experiment)
 
         return results.total.tolist()
+
+    def plot_iteration(self):
+        # Run all the plotters
+        map(lambda plotter: plotter.visualize(self), self.plotters)
+
 
     def update_next_point(self, results):
         """
@@ -986,6 +995,9 @@ class CalibManager(object):
             # update next point
             self.update_next_point(res)
 
+            # Call all plotters
+            self.plot_iteration()
+
             logger.info("Iteration %s reanalyzed." % i)
 
         # Before leaving -> set back the suite_id
@@ -1168,7 +1180,7 @@ class CalibManager(object):
         return IterationState.from_file(os.path.join(iter_directory, 'IterationState.json'))
 
     def param_names(self):
-        return self.next_point.prior_fn.params
+        return self.next_point.get_param_names()
 
     def site_analyzer_names(self):
         return {site.name: [a.name for a in site.analyzers] for site in self.sites}

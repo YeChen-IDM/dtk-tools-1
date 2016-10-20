@@ -3,6 +3,7 @@
 
 import numpy as np
 from scipy.stats import uniform, norm
+import collections
 
 from calibtool.CalibManager import CalibManager
 from calibtool.Prior import MultiVariatePrior
@@ -27,13 +28,12 @@ sites = [DTKCalibFactory.get_site('Dielmo', analyzers=[analyzer]),
 print 'TEMP: only Dielmo'
 sites = [sites[0]]
 
-cb.add_input_file('test.q',"test")
+#cb.add_input_file('test.q',"test")
 
-prior = MultiVariatePrior.by_param(
-    x_Temporary_Larval_Habitat      = uniform(loc=0.1, scale=1.8),  # from 0.1 to 1.9
-    MSP1_Merozoite_Kill_Fraction    = uniform(loc=0.4, scale=0.3),  # from 0.4 to 0.7
-    Nonspecific_Antigenicity_Factor = uniform(loc=0.1, scale=0.8)  # from 0.1 to 0.9
-)
+params = collections.OrderedDict()
+params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
+params['MSP1_Merozoite_Kill_Fraction'] = { 'Min': 0.4, 'Max': 0.7 }
+params['Nonspecific_Antigenicity_Factor'] = { 'Min': 0.1, 'Max': 0.9 }
 
 plotters = [LikelihoodPlotter(True), SiteDataPlotter(True), OptimToolPlotter()]
 
@@ -44,24 +44,23 @@ def sample_point_fn(cb, param_values):
     Note that more complicated logic, e.g. setting campaign event coverage or habitat abundance by species,
     can be encoded in a similar fashion using custom functions rather than the generic "set_param".
     """
-    #cb.input_files['test.q'] +=  str(param_values[0])
-
-    params_dict = dict(zip(prior.params, param_values))
+    params_dict = dict(zip(params.keys(), param_values))
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
     cb.set_param('Simulation_Duration',365)
     return params_dict
 
-x0 = [1, 0.55, 0.45]
-mu_r = 0.05
+x0 = [0.2, 0.45, 0.25]
+mu_r = 0.10
 sigma_r = 0.01
 
 next_point_kwargs = dict(
         x0=x0,
         mu_r = mu_r,
         sigma_r = sigma_r,
-        initial_samples = 8,
-        samples_per_iteration = 8
+        initial_samples = 32,
+        samples_per_iteration = 32,
+        center_repeats = 2
     )
 
 calib_manager = CalibManager(name='ExampleOptimization',
@@ -69,9 +68,9 @@ calib_manager = CalibManager(name='ExampleOptimization',
                              config_builder=cb,
                              sample_point_fn=sample_point_fn,
                              sites=sites,
-                             next_point=OptimTool(prior, **next_point_kwargs),
+                             next_point=OptimTool(params, **next_point_kwargs),
                              sim_runs_per_param_set=1, # <-- Replicates
-                             max_iterations=5,
+                             max_iterations=10,
                              num_to_plot=10,
                              plotters=plotters)
 

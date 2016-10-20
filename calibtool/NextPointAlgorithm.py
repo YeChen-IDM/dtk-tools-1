@@ -156,6 +156,9 @@ class NextPointAlgorithm(object):
 
         return next_samples
 
+    def get_param_names(self):
+        return self.prior_fn.params
+
     @staticmethod
     def sample_from_function(function, N):
         return np.array([function.rvs() for i in range(N)])

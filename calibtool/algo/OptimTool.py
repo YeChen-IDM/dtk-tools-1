@@ -23,21 +23,23 @@ class OptimTool(NextPointAlgorithm):
     The basic idea of OptimTool is
     '''
 
-    def __init__(self, prior_fn,
+    def __init__(self, params,
                  x0 = [],
                  mu_r = 0.1,
                  sigma_r = 0.02,
+                 center_repeats = 2,
                  initial_samples = 1e2, # Should be a collection of samples for OptimTool, not a number of samples to draw from the prior
                  samples_per_iteration = 1e2,
                  current_state = {}
              ):
 
-        print "__init__"
-        print " --> initial_samples:\n", initial_samples
-
         self.x0 = x0 # Center of each iteration - resume?
         self.mu_r = mu_r
         self.sigma_r = sigma_r
+        self.center_repeats = center_repeats
+
+        self.params = params
+        prior_fn = None # OptimTool does not use a prior_fn
 
         super(OptimTool, self).__init__(prior_fn, initial_samples, samples_per_iteration, current_state)
         '''
@@ -82,11 +84,15 @@ class OptimTool(NextPointAlgorithm):
         x0f = np.array([float(x) for x in self.x0])
         self.D = state.get('D', len(self.x0))
         self.x0 = state.get('x0', x0f)
-        self.X_center = state.get('X_center',  [x0f]) # np.ndarray((1,self.D), buffer=np.array(x0f))
+        self.X_center = state.get('X_center', [x0f]) # np.ndarray((1,self.D), buffer=np.array(x0f))
 
         # These could vary by iteration ...
         self.mu_r = state.get('mu_r', self.mu_r)
         self.sigma_r = state.get('sigma_r', self.sigma_r)
+        self.center_repeats = state.get('center_repeats', self.center_repeats)
+
+        self.fitted_values = state.get('fitted_values', [])
+        self.rsquared = state.get('rsquared', [])
 
 
     def set_initial_samples(self, initial_samples):
@@ -119,7 +125,7 @@ class OptimTool(NextPointAlgorithm):
 
     def update_iteration(self, iteration):
         print "update_iteration"
-        super(OptimTool, self).update_iteration(iteration)
+        #super(OptimTool, self).update_iteration(iteration)
         '''
         self.iteration = iteration
         logger.info('Updating %s at iteration %d:', self.__class__.__name__, iteration)
@@ -128,6 +134,10 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('Priors:\n%s', self.priors)
         '''
 
+        self.iteration = iteration
+        logger.info('Updating %s at iteration %d:', self.__class__.__name__, iteration)
+
+        print "TODO: bounds check here?"
 
 
         ''' from IMIS
@@ -152,24 +162,29 @@ class OptimTool(NextPointAlgorithm):
 
         #X = sm.add_constant(X)
         mod = sm.OLS(self.latest_results, sm.add_constant(self.latest_samples) )
-        self.res = mod.fit()
-        print self.res.summary()
+        mod_fit = mod.fit()
+        print mod_fit.summary()
+
+        self.fitted_values.append(mod_fit.fittedvalues)
+        self.rsquared.append(mod_fit.rsquared)
 
         # Choose next X_center
-        if self.res.rsquared > 0.5:  # TODO: make parameter
-            m = self.res.params[1:] # Drop constant
-            print 'Good R^2 (%f), using params: '%self.res.rsquared, self.res.params
+        if mod_fit.rsquared > 0.5:  # TODO: make parameter
+            m = mod_fit.params[1:] # Drop constant
+            print 'Good R^2 (%f), using params: '%mod_fit.rsquared, mod_fit.params
             ascent_dir = m / np.linalg.norm( m )
-            new_center = self.X_center[-1] + self.mu_r * ascent_dir
+            # Scale by param range
+            new_center = self.X_center[-1] + [self.mu_r*(v['Max']-v['Min'])*dx for dx,v in zip(ascent_dir, self.params.values())]
+            print "TODO: MAKE SURE NEW X_CENTER IS WITHIN CONSTRAINTS"
             self.X_center.append( new_center )
         else:
             max_idx = np.argmax(self.latest_results)
             self.X_center.append( self.latest_samples[max_idx] )
 
         if False:
-            plt.plot( self.latest_results, self.res.fittedvalues, 'o')
+            plt.plot( self.latest_results, mod_fit.fittedvalues, 'o')
             plt.plot( [min(self.latest_results), max(self.latest_results)], [min(self.latest_results), max(self.latest_results)], 'r-')
-            plt.title( self.res.rsquared )
+            plt.title( mod_fit.rsquared )
             plt.savefig( 'Regression_%d.png'%self.iteration )
             plt.close()
 
@@ -219,8 +234,10 @@ class OptimTool(NextPointAlgorithm):
         # Pick points on hypersphere
         sn = norm(loc=1, scale=1)
 
+        assert(N > self.center_repeats)
+
         deviation = []
-        for i in range(N):
+        for i in range(N - self.center_repeats):
             rvs = sn.rvs(size = self.D)
             nrm = np.linalg.norm(rvs)
 
@@ -229,12 +246,13 @@ class OptimTool(NextPointAlgorithm):
         rad = norm(loc = self.mu_r, scale = self.sigma_r)
 
         samples = np.empty([N, self.D])
+        samples[:self.center_repeats] = self.X_center[-1]
         for i, dev in enumerate(deviation):
             r = rad.rvs()
-            # X_center will be a list?  Look at end.
-            samples[i] = [x + r * p for x,p in zip(self.X_center[-1], dev)]
+            # Scale by param range
+            samples[self.center_repeats + i] = [x + r * p * (v['Max']-v['Min']) for x,p,v in zip(self.X_center[-1], dev, self.params.values())]
+
         return samples
-        #return multivariate_normal(mean=self.gaussian_centers[-1], cov=self.gaussian_covariances[-1])
 
     def end_condition(self):
         print "end_condition"
@@ -275,6 +293,16 @@ class OptimTool(NextPointAlgorithm):
                     results=self.results)
         '''
 
-        optimtool_state = dict( x0 = self.x0, X_center = self.X_center, D = self.D )
+        optimtool_state = dict(
+            x0 = self.x0,
+            X_center = self.X_center,
+            D = self.D,
+            center_repeats = self.center_repeats,
+            fitted_values = self.fitted_values,
+            rsquared = self.rsquared,
+        )
         state.update(optimtool_state)
         return state
+
+    def get_param_names(self):
+        return self.params.keys()
