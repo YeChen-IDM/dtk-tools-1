@@ -25,7 +25,8 @@ class IterationState(object):
             setattr(self, k, v)
 
     def reset_state(self):
-        self.parameters = {}
+        self.parameters_for_this_iteration = {}
+        self.parameters_for_next_iteration = {}
         self.next_point = {}
         self.simulations = {}
         self.experiment_id = None
@@ -33,7 +34,7 @@ class IterationState(object):
         self.results = []
 
     def reset_to_step(self, iter_step=None):
-        last_state_by_step = [('commission', ('parameters',)),
+        last_state_by_step = [('commission', ('parameters_for_this_iteration','parameters_for_next_iteration')),
                               ('analyze', ('simulations',)),
                               ('next_point', ('results', 'analyzers'))]
 
@@ -71,7 +72,7 @@ class IterationState(object):
         results_df = pd.DataFrame.from_dict(self.results, orient='columns')
         results_df.index.name = 'sample'
 
-        params_df = pd.DataFrame(self.parameters['values'], columns=self.parameters['names'])
+        params_df = pd.DataFrame(self.parameters_for_this_iteration['values'], columns=self.parameters_for_this_iteration['names'])
 
         sims_df = pd.DataFrame.from_dict(self.simulations, orient='index')
         grouped = sims_df.groupby('__sample_index__', sort=True)

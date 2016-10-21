@@ -3,7 +3,9 @@ import os
 
 import gc   # TEMP
 
+import pandas as pd
 import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
 from calibtool.plotters.BasePlotter import BasePlotter
@@ -38,71 +40,94 @@ class OptimToolPlotter(BasePlotter):
 
         print 'CM.ITER', calib_manager.iteration
         print 'IS.NP', calib_manager.iteration_state.next_point
-        exit()
+        print 'IS.NP.FV', calib_manager.iteration_state.next_point['fitted_values_dict']
 
-        if calib_manager.iteration_state.next_point.fitted_values:
-            print len(calib_manager.next_point.fitted_values)
-        exit()
+        param_names = calib_manager.param_names()
+        results = calib_manager.all_results
+        print 'RESULTS:\n', results
+        results_this_iteration = results.reset_index().set_index('iteration').loc[calib_manager.iteration].sort_values('sample')
+        latest_results = results_this_iteration['total'].values
+        latest_samples = results_this_iteration[param_names].values
+        D = latest_samples.shape[1]
 
-        if calib_manager.iteration not in results_by_iteration.index.unique():
-            return
-        #results_by_iteration = calib_manager.all_results.reset_index().set_index(['iteration'])
+        fitted_values_df = pd.DataFrame.from_dict(calib_manager.iteration_state.next_point['fitted_values_dict'])
 
-        if calib_manager.next_point.fitted_values and calib_manager.next_point.rsquared:
-            fitted_values = calib_manager.next_point.fitted_values[calib_manager.iteration]
-            fitted_values_df = pd.DataFrame(fitted_values)
-            fitted_values_df.index.name = 'sample'
+        print 'MERGE'*10
+        print 'ALL:', calib_manager.all_results.reset_index()
+        print 'FV:', fitted_values_df.reset_index()
+        merged = pd.DataFrame.merge( calib_manager.all_results.reset_index(), fitted_values_df.reset_index()[['sample', 'iteration', 'Fitted']], on=['sample', 'iteration'])
 
-        latest_results = results_by_iteration.loc[calib_manager.iteration, 'total'].values
+        #data = merged.set_index('iteration').loc[calib_manager.iteration]
+        data = merged.set_index('iteration')
+        print 'DATA INDEX:', data.index.unique()
+        print 'CM ITERATION:', calib_manager.iteration
+        data = data.loc[calib_manager.iteration]
+        print data
 
-        print calib_manager.next_point.fitted_values
-        print calib_manager.next_point.rsquared
-        print calib_manager.iteration
+        rsquared_all = calib_manager.iteration_state.next_point['rsquared']
+        rsquared = rsquared_all[ calib_manager.iteration ]
 
+        X_center_all = calib_manager.iteration_state.next_point['X_center']
+        print 'X_center_all', X_center_all
+        X_center = X_center_all[ calib_manager.iteration ]
+        print 'X_center', X_center
 
-### REGRESSION ###
-        if calib_manager.next_point.fitted_values and calib_manager.next_point.rsquared:
-            fitted_values = calib_manager.next_point.fitted_values[calib_manager.iteration]
-            rsquared = calib_manager.next_point.rsquared[calib_manager.iteration]
+        ### REGRESSION ###
+        fig, ax = plt.subplots()
+        plt.plot( data['total'], data['Fitted'], 'o', figure=fig)
+        plt.plot( [min(latest_results), max(latest_results)], [min(latest_results), max(latest_results)], 'r-')
+        plt.xlabel('Simulation Output')
+        plt.ylabel('Linear Regression')
+        plt.title( rsquared )
+        plt.savefig( os.path.join(self.directory, 'Optimization_Regression.pdf'))
+
+        fig.clf()
+        plt.close(fig)
+
+        del fig, ax
+
+### STATE ###
+        if D == 1:
+            data_sorted = data.sort_values(param_names)
+            sorted_samples = data_sorted[param_names]
+            sorted_results = data_sorted['total']
+            sorted_fitted = data_sorted['Fitted']
 
             fig, ax = plt.subplots()
-            plt.plot( latest_results, fitted_values, 'o', figure=fig)
-            plt.plot( [min(latest_results), max(latest_results)], [min(latest_results), max(latest_results)], 'r-')
+            plt.plot( sorted_samples, sorted_results, 'ko', figure=fig)
+            yl = ax.get_ylim()
+            plt.plot( 2*[calib_manager.next_point.X_center[calib_manager.iteration]], yl, 'b-', figure=fig)
+
+            plt.plot( sorted_samples, sorted_fitted, 'r-', figure=fig)
+
             plt.title( rsquared )
-            plt.savefig( os.path.join(self.directory, 'Optimization_Regression.pdf'))
+            plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
 
             fig.clf()
             plt.close(fig)
 
             del fig, ax
 
-### STATE ###
-        param_names = calib_manager.param_names()
+        elif D == 2:
+            x0 = data[param_names[0]]
+            x1 = data[param_names[1]]
+            y = data['total']
+            y_fit = data['Fitted']
 
-        results_this_iter = results_by_iteration.loc[calib_manager.iteration]
-        latest_samples = results_by_iteration.loc[calib_manager.iteration, param_names].values
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter( x0, x1, y, c='k', marker='o', figure=fig)
+            #ax.scatter( X_center[0], X_center[1], y[0], c='b', marker='x', figure=fig)
 
-        fig, ax = plt.subplots()
-        plt.plot( latest_samples, latest_results, 'ko', figure=fig)
-        yl = ax.get_ylim()
-        plt.plot( [calib_manager.next_point.X_center[calib_manager.iteration], calib_manager.next_point.X_center[calib_manager.iteration]], yl, 'b-', figure=fig)
-        if calib_manager.next_point.fitted_values and calib_manager.next_point.rsquared:
-            results_this_iter['Fitted Values'] = calib_manager.next_point.fitted_values[calib_manager.iteration]
-            print 'PN', param_names
-            print 'RTI:BEFORE',results_this_iter
-            results_this_iter.sort_values(by=param_names, inplace=True)
-            print 'RTI:AFTER',results_this_iter
-            print zip(results_this_iter[param_names], results_this_iter['Fitted Values'])
-            plt.plot( results_this_iter[param_names], results_this_iter['Fitted Values'], 'r-', figure=fig)
+            ax.scatter( x0, x1, y_fit, c='r', marker='d', figure=fig)
 
-            rsquared = calib_manager.next_point.rsquared[calib_manager.iteration]
             plt.title( rsquared )
-        plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
+            plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
 
-        fig.clf()
-        plt.close(fig)
+            fig.clf()
+            plt.close(fig)
 
-        del fig, ax
+            del fig, ax
 
 
 

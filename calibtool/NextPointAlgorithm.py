@@ -120,7 +120,7 @@ class NextPointAlgorithm(object):
         logger.info('Continuing NextPointAlgorithm iterations...')
         return False
 
-    def get_next_samples(self):
+    def get_next_samples(self): # --> get_points_for_this_iteration
         return self.latest_samples
 
     def get_final_samples(self):

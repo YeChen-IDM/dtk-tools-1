@@ -179,13 +179,13 @@ class CalibManager(object):
 
             # Start from simulation
             if self.iteration_state.resume_point <= 1:
-                next_params = self.get_next_parameters()
+                next_params = self.get_points_for_this_iteration() #get_next_parameters()
                 self.commission_iteration(next_params, **kwargs)
 
             # Start from analyze
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
-                self.update_next_point(results)
+                self.choose_and_cache_inputs_for_next_iteration(results) # update_next_point
 
                 self.plot_iteration()
 
@@ -209,19 +209,22 @@ class CalibManager(object):
 
         self.finalize_calibration()
 
-    def get_next_parameters(self):
+    def get_points_for_this_iteration(self):
         """
         Query the next-point algorithm for the next set of sample points.
         """
-        if self.iteration_state.parameters:
+        points_for_this_iteration_computed_on_previous_iteration = []
+        if self.iteration_state.parameters_for_next_iteration:
             logger.info('Reloading next set of sample points from cached iteration state.')
-            next_params = self.iteration_state.parameters['values']
-        else:
-            next_params = self.next_point.get_next_samples()
-            self.iteration_state.parameters = {'names': self.param_names(), 'values': next_params.tolist()}
-            self.iteration_state.next_point = self.next_point.get_current_state()
-            self.cache_iteration_state(backup_existing=True)
-        return next_params
+            points_for_this_iteration_computed_on_previous_iteration = self.iteration_state.parameters_for_next_iteration['values']
+
+        points_for_this_iteration = self.next_point.get_points_for_this_iteration(points_for_this_iteration_computed_on_previous_iteration)    # get_next_samples
+
+        self.iteration_state.parameters_for_this_iteration = {'names': self.param_names(), 'values': points_for_this_iteration.tolist()}
+        self.iteration_state.next_point = self.next_point.get_current_state()
+        self.cache_iteration_state(backup_existing=True)
+
+        return points_for_this_iteration
 
     def commission_iteration(self, next_params, **kwargs):
         """
@@ -392,14 +395,20 @@ class CalibManager(object):
         map(lambda plotter: plotter.visualize(self), self.plotters)
 
 
-    def update_next_point(self, results):
+    def choose_and_cache_inputs_for_next_iteration(self, results):   # update_next_point
         """
         Pass the latest evaluated results back to the next-point algorithm,
         which will update its state to either truncate the calibration 
         or generate the next set of sample points.
         """
-        self.next_point.update_results(results)
-        self.next_point.update_state(self.iteration)
+
+        #self.next_point.update_results(results)
+        #self.next_point.update_state(self.iteration)
+        points_for_next_iteration = self.next_point.choose_inputs_for_next_iteration(self.iteration, results)
+
+        self.iteration_state.parameters_for_next_iteration = {'names': self.param_names(), 'values': points_for_next_iteration.tolist()}
+        self.iteration_state.next_point = self.next_point.get_current_state()
+        self.cache_iteration_state(backup_existing=True)
 
     def finished(self):
         """ The next-point algorithm has reached its truncation condition. """
@@ -679,7 +688,7 @@ class CalibManager(object):
         # Need to resume from next_point
         self.iteration_state.resume_point = 3
         # To resume from resume_point, we need to update next_point
-        self.update_next_point(self.iteration_state.results['total'])
+        self.choose_and_cache_inputs_for_next_iteration(self.iteration_state.results['total'])
 
     def adjust_resume_point(self):
         """
@@ -705,7 +714,7 @@ class CalibManager(object):
             # Restore IterationState
             self.iteration_state = IterationState.restore_state(self.name, i)
             # Update next point
-            self.update_next_point(self.iteration_state.results['total'])
+            self.choose_and_cache_inputs_for_next_iteration(self.iteration_state.results['total'])
             i += 1
 
     def find_best_iteration_for_resume(self, iteration=None, calib_data=None):
@@ -994,7 +1003,7 @@ class CalibManager(object):
             res = self.analyze_iteration()
 
             # update next point
-            self.update_next_point(res)
+            self.choose_and_cache_inputs_for_next_iteration(res)
 
             # Call all plotters
             self.plot_iteration()

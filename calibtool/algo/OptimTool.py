@@ -92,12 +92,12 @@ class OptimTool(NextPointAlgorithm):
         self.sigma_r = state.get('sigma_r', self.sigma_r)
         self.center_repeats = state.get('center_repeats', self.center_repeats)
 
-        #self.fitted_values_df = state.get('fitted_values_df', pd.DataFrame(columns=[['Iteration', 'Fitted'] + self.get_param_names()]) )
+        #self.fitted_values_df = state.get('fitted_values_df', pd.DataFrame(columns=[['iteration', 'Fitted'] + self.get_param_names()]) )
 
-        tmp = state.get('fitted_values_df', None)
+        tmp = state.get('fitted_values_dict', None)
         if tmp is None:
-            self.fitted_values_df = pd.DataFrame(columns=[['Iteration', 'Fitted'] + self.get_param_names()])
-            self.fitted_values_df['Iteration'] = self.fitted_values_df['Iteration'].astype(int)
+            self.fitted_values_df = pd.DataFrame(columns=[['iteration', 'sample', 'Fitted'] + self.get_param_names()])
+            self.fitted_values_df['iteration'] = self.fitted_values_df['iteration'].astype(int)
         else:
             self.fitted_values_df = pd.DataFrame.from_dict(tmp, orient='list')
 
@@ -131,8 +131,23 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('Initial samples:\n%s' % self.samples)
         self.latest_samples = self.samples[:]
 
+    def get_points_for_this_iteration(self, values_selected_on_previous_iteration):
+        if values_selected_on_previous_iteration:
+            return values_selected_on_previous_iteration
 
-    def update_iteration(self, iteration):
+        # Probably the first iteration, for which we have already called choose_hypersphere_points in set_initial_samples
+        return self.latest_samples
+
+
+    def choose_inputs_for_next_iteration(self, iteration, results):
+        '''
+        For an iteration manager to pass back the results of analyses
+        on simulations by sample point to the next-point algorithm,
+        for example the log-likelihoods of a calibration suite.
+        '''
+
+        self.results.append(results)
+        logger.debug('Results:\n%s', self.results)
         print "update_iteration"
         #super(OptimTool, self).update_iteration(iteration)
         '''
@@ -162,7 +177,9 @@ class OptimTool(NextPointAlgorithm):
         samples_df = pd.DataFrame(self.latest_samples, columns=self.get_param_names())
         fitted_df = pd.DataFrame(mod_fit.fittedvalues, columns=['Fitted'])
         fitted_values_this_iter = pd.concat([samples_df, fitted_df], axis=1)
-        fitted_values_this_iter['Iteration'] = iteration
+        fitted_values_this_iter['iteration'] = iteration
+        fitted_values_this_iter.index.name='sample'
+        fitted_values_this_iter.reset_index(inplace=True)
         self.fitted_values_df = pd.concat([self.fitted_values_df, fitted_values_this_iter])
 
         self.rsquared.append(mod_fit.rsquared)
@@ -187,18 +204,6 @@ class OptimTool(NextPointAlgorithm):
             plt.savefig( 'Regression_%d.png'%self.iteration )
             plt.close()
 
-    def update_results(self, results):
-        '''
-        For an iteration manager to pass back the results of analyses
-        on simulations by sample point to the next-point algorithm,
-        for example the log-likelihoods of a calibration suite.
-        '''
-
-        self.results.append(results)
-        logger.debug('Results:\n%s', self.results)
-
-
-    def update_samples(self):
         print "update_samples"
         '''
         Perform linear regression.
@@ -226,6 +231,8 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('All samples:\n%s', self.samples)
 
         print 'UPDATED SAMPLES:\n',self.latest_samples
+
+        return self.latest_samples
 
 
     def choose_hypersphere_points(self, N):
@@ -276,7 +283,7 @@ class OptimTool(NextPointAlgorithm):
             X_center = self.X_center,
             D = self.D,
             center_repeats = self.center_repeats,
-            fitted_values_df = self.fitted_values_df.to_dict(orient='list'),
+            fitted_values_dict = self.fitted_values_df.to_dict(orient='list'),
             rsquared = self.rsquared,
         )
         state.update(optimtool_state)

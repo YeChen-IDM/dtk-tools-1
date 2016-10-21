@@ -28,10 +28,11 @@ sites = [DTKCalibFactory.get_site('Dielmo', analyzers=[analyzer]),
 print 'TEMP: only Dielmo'
 sites = [sites[0]]
 
-#cb.add_input_file('test.q',"test")
+# GUESS:
+x0 = [0.45, 0.65]
 
 params = collections.OrderedDict()
-##params['MSP1_Merozoite_Kill_Fraction'] = { 'Min': 0.4, 'Max': 0.7 }
+params['MSP1_Merozoite_Kill_Fraction'] = { 'Min': 0.4, 'Max': 0.7 }
 params['Clinical_Fever_Threshold_High'] = { 'Min': 0.5, 'Max': 2.5 }
 
 #params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
@@ -63,7 +64,6 @@ def sample_point_fn(cb, param_values):
     cb.set_param('Simulation_Duration', 5*365)
     return params_dict
 
-x0 = [0.65]
 mu_r = 0.05
 sigma_r = 0.01
 

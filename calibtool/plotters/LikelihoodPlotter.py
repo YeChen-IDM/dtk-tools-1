@@ -76,7 +76,7 @@ class LikelihoodPlotter(BasePlotter):
         for iter, values in iterations:
             sorted_values = values.sort_values(by=param)
             plt.plot(sorted_values[param], sorted_values[total],
-                     color=colors[iter],
+                     color=colors[int(iter)],
                      linewidth=(iter + 1) / (n_iterations + 1.) * 2,
                      alpha=(iter + 1) / (n_iterations + 1.),
                      **kwargs)
