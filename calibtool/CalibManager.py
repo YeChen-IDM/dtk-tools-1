@@ -186,6 +186,7 @@ class CalibManager(object):
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
                 self.update_next_point(results)
+
                 self.plot_iteration()
 
             if self.finished():

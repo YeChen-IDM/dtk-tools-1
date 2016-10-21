@@ -157,6 +157,9 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('Weights:\n%s', self.weights)
         '''
 
+        self.latest_results = relf.results[-1]
+
+        print 'ITERATION:', self.iteration
         print 'LATEST_SAMPLES:', self.latest_samples
         print 'RESULTS:', self.latest_results
 
@@ -166,6 +169,8 @@ class OptimTool(NextPointAlgorithm):
         print mod_fit.summary()
 
         self.fitted_values.append(mod_fit.fittedvalues)
+        print dir(mod_fit.fittedvalues)
+        print zip(mod_fit.fittedvalues, [mod_fit.params[0] + mod_fit.params[1]*s for s in self.latest_samples])
         self.rsquared.append(mod_fit.rsquared)
 
         # Choose next X_center
@@ -189,15 +194,15 @@ class OptimTool(NextPointAlgorithm):
             plt.close()
 
 
-    def update_results(self, results):
-        print 'update_results'
-        super(OptimTool, self).update_results(results)
-        '''
-        self.results.extend(results)
-        logger.debug('Results:\n%s', self.results)
-        '''
+#   def update_results(self, results):
+#       print 'update_results'
+#       super(OptimTool, self).update_results(results)
+#       '''
+#       self.results.extend(results)
+#       logger.debug('Results:\n%s', self.results)
+#       '''
 
-        self.latest_results = results
+#       self.latest_results = results
 
 
     def update_samples(self):
@@ -232,7 +237,7 @@ class OptimTool(NextPointAlgorithm):
 
     def choose_hypersphere_points(self, N):
         # Pick points on hypersphere
-        sn = norm(loc=1, scale=1)
+        sn = norm(loc=0, scale=1)
 
         assert(N > self.center_repeats)
 

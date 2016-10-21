@@ -31,9 +31,22 @@ sites = [sites[0]]
 #cb.add_input_file('test.q',"test")
 
 params = collections.OrderedDict()
-params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
-params['MSP1_Merozoite_Kill_Fraction'] = { 'Min': 0.4, 'Max': 0.7 }
-params['Nonspecific_Antigenicity_Factor'] = { 'Min': 0.1, 'Max': 0.9 }
+##params['MSP1_Merozoite_Kill_Fraction'] = { 'Min': 0.4, 'Max': 0.7 }
+params['Clinical_Fever_Threshold_High'] = { 'Min': 0.5, 'Max': 2.5 }
+
+#params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
+#params['Nonspecific_Antigenicity_Factor'] = { 'Min': 0.1, 'Max': 0.9 }
+
+# Fever multiplier
+
+# Antigen_Switch_Rate (1e-10 to 1e-8, log)
+# Falciparum_PfEMP1_Variants (900 to 1700, linear int)
+
+# Falciparum_MSP_Variants (5 to 50, linear int)
+# MSP1_Merozoite_Kill_Fraction (0.4 to 0.7, linear) ***
+# "Clinical_Fever_Threshold_High": 1.5, [0.5, 2.5]  ***
+
+# OR "Min_Days_Between_Clinical_Incidents": 14, [ integer? ]
 
 plotters = [LikelihoodPlotter(True), SiteDataPlotter(True), OptimToolPlotter()]
 
@@ -47,11 +60,11 @@ def sample_point_fn(cb, param_values):
     params_dict = dict(zip(params.keys(), param_values))
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
-    cb.set_param('Simulation_Duration',365)
+    cb.set_param('Simulation_Duration', 5*365)
     return params_dict
 
-x0 = [0.2, 0.45, 0.25]
-mu_r = 0.10
+x0 = [0.65]
+mu_r = 0.05
 sigma_r = 0.01
 
 next_point_kwargs = dict(

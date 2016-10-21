@@ -32,12 +32,28 @@ class OptimToolPlotter(BasePlotter):
         self.site_analyzer_names = calib_manager.site_analyzer_names()
 
         #latest_results = calib_manager.next_point.latest_results
-        latest_results = calib_manager.all_results.reset_index(drop=True).set_index(['iteration'])
+        print calib_manager.all_results
+        print calib_manager.all_results.reset_index()
+        print calib_manager.all_results.shape
 
-        if calib_manager.iteration not in latest_results.index.unique():
+        print 'CM.ITER', calib_manager.iteration
+        print 'IS.NP', calib_manager.iteration_state.next_point
+        exit()
+
+        if calib_manager.iteration_state.next_point.fitted_values:
+            print len(calib_manager.next_point.fitted_values)
+        exit()
+
+        if calib_manager.iteration not in results_by_iteration.index.unique():
             return
+        #results_by_iteration = calib_manager.all_results.reset_index().set_index(['iteration'])
 
-        latest_results = latest_results.loc[calib_manager.iteration, 'total'].values
+        if calib_manager.next_point.fitted_values and calib_manager.next_point.rsquared:
+            fitted_values = calib_manager.next_point.fitted_values[calib_manager.iteration]
+            fitted_values_df = pd.DataFrame(fitted_values)
+            fitted_values_df.index.name = 'sample'
+
+        latest_results = results_by_iteration.loc[calib_manager.iteration, 'total'].values
 
         print calib_manager.next_point.fitted_values
         print calib_manager.next_point.rsquared
@@ -60,6 +76,39 @@ class OptimToolPlotter(BasePlotter):
 
             del fig, ax
 
+### STATE ###
+        param_names = calib_manager.param_names()
+
+        results_this_iter = results_by_iteration.loc[calib_manager.iteration]
+        latest_samples = results_by_iteration.loc[calib_manager.iteration, param_names].values
+
+        fig, ax = plt.subplots()
+        plt.plot( latest_samples, latest_results, 'ko', figure=fig)
+        yl = ax.get_ylim()
+        plt.plot( [calib_manager.next_point.X_center[calib_manager.iteration], calib_manager.next_point.X_center[calib_manager.iteration]], yl, 'b-', figure=fig)
+        if calib_manager.next_point.fitted_values and calib_manager.next_point.rsquared:
+            results_this_iter['Fitted Values'] = calib_manager.next_point.fitted_values[calib_manager.iteration]
+            print 'PN', param_names
+            print 'RTI:BEFORE',results_this_iter
+            results_this_iter.sort_values(by=param_names, inplace=True)
+            print 'RTI:AFTER',results_this_iter
+            print zip(results_this_iter[param_names], results_this_iter['Fitted Values'])
+            plt.plot( results_this_iter[param_names], results_this_iter['Fitted Values'], 'r-', figure=fig)
+
+            rsquared = calib_manager.next_point.rsquared[calib_manager.iteration]
+            plt.title( rsquared )
+        plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
+
+        fig.clf()
+        plt.close(fig)
+
+        del fig, ax
+
+
+
+
+
+
 ### BY ITERATION ###
 
         all_results = calib_manager.all_results.copy().reset_index(drop=True)#.set_index(['iteration', 'sample'])
@@ -74,6 +123,11 @@ class OptimToolPlotter(BasePlotter):
         fig.clf()
         plt.close(fig)
         del g, fig, ax
+
+
+
+        
+
 
         gc.collect()
 
