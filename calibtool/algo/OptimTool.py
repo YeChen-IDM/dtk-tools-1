@@ -3,6 +3,7 @@ from sys import exit# as exit
 import os
 
 import numpy as np
+import pandas as pd
 from scipy.stats import multivariate_normal
 from scipy.spatial.distance import seuclidean
 from scipy.stats import uniform, norm
@@ -91,7 +92,15 @@ class OptimTool(NextPointAlgorithm):
         self.sigma_r = state.get('sigma_r', self.sigma_r)
         self.center_repeats = state.get('center_repeats', self.center_repeats)
 
-        self.fitted_values = state.get('fitted_values', [])
+        #self.fitted_values_df = state.get('fitted_values_df', pd.DataFrame(columns=[['Iteration', 'Fitted'] + self.get_param_names()]) )
+
+        tmp = state.get('fitted_values_df', None)
+        if tmp is None:
+            self.fitted_values_df = pd.DataFrame(columns=[['Iteration', 'Fitted'] + self.get_param_names()])
+            self.fitted_values_df['Iteration'] = self.fitted_values_df['Iteration'].astype(int)
+        else:
+            self.fitted_values_df = pd.DataFrame.from_dict(tmp, orient='list')
+
         self.rsquared = state.get('rsquared', [])
 
 
@@ -139,38 +148,23 @@ class OptimTool(NextPointAlgorithm):
 
         print "TODO: bounds check here?"
 
-
-        ''' from IMIS
-        if not self.iteration :
-            sampling_envelope = self.priors
-        else:
-            w = float(self.n_initial_samples) / self.samples_per_iteration
-            stack = np.vstack([[np.multiply(self.priors, w)], self.gaussian_probs])
-            logger.debug('Stack weighted prior + gaussian sample prob %s:\n%s', stack.shape, stack)
-            norm = (w + self.D + (self.iteration - 2))
-            sampling_envelope = np.sum(stack, 0) / norm
-
-        logger.debug('Sampling envelope:\n%s', sampling_envelope)
-
-        self.weights = [p * l / e for (p, l, e) in zip(self.priors, self.results, sampling_envelope)] # TODO: perform in log space
-        self.weights /= np.sum(self.weights)
-        logger.debug('Weights:\n%s', self.weights)
-        '''
-
-        self.latest_results = relf.results[-1]
+        print 'RESULTS:', self.results
+        self.latest_results = self.results[-1]
 
         print 'ITERATION:', self.iteration
-        print 'LATEST_SAMPLES:', self.latest_samples
-        print 'RESULTS:', self.latest_results
+        print 'LATEST SAMPLES:', self.latest_samples
+        print 'LATEST RESULTS:', self.latest_results
 
-        #X = sm.add_constant(X)
         mod = sm.OLS(self.latest_results, sm.add_constant(self.latest_samples) )
         mod_fit = mod.fit()
         print mod_fit.summary()
 
-        self.fitted_values.append(mod_fit.fittedvalues)
-        print dir(mod_fit.fittedvalues)
-        print zip(mod_fit.fittedvalues, [mod_fit.params[0] + mod_fit.params[1]*s for s in self.latest_samples])
+        samples_df = pd.DataFrame(self.latest_samples, columns=self.get_param_names())
+        fitted_df = pd.DataFrame(mod_fit.fittedvalues, columns=['Fitted'])
+        fitted_values_this_iter = pd.concat([samples_df, fitted_df], axis=1)
+        fitted_values_this_iter['Iteration'] = iteration
+        self.fitted_values_df = pd.concat([self.fitted_values_df, fitted_values_this_iter])
+
         self.rsquared.append(mod_fit.rsquared)
 
         # Choose next X_center
@@ -193,16 +187,15 @@ class OptimTool(NextPointAlgorithm):
             plt.savefig( 'Regression_%d.png'%self.iteration )
             plt.close()
 
+    def update_results(self, results):
+        '''
+        For an iteration manager to pass back the results of analyses
+        on simulations by sample point to the next-point algorithm,
+        for example the log-likelihoods of a calibration suite.
+        '''
 
-#   def update_results(self, results):
-#       print 'update_results'
-#       super(OptimTool, self).update_results(results)
-#       '''
-#       self.results.extend(results)
-#       logger.debug('Results:\n%s', self.results)
-#       '''
-
-#       self.latest_results = results
+        self.results.append(results)
+        logger.debug('Results:\n%s', self.results)
 
 
     def update_samples(self):
@@ -273,37 +266,17 @@ class OptimTool(NextPointAlgorithm):
         '''
         return dict(samples=self.X_center[-1])
 
-        '''
-        nonzero_idxs = self.weights > 0
-        idxs = [i for i, w in enumerate(self.weights[nonzero_idxs])]
-        try:
-            resample_idxs = np.random.choice(idxs, self.n_resamples, replace=True, p=self.weights[nonzero_idxs])
-        except ValueError:
-            # To isolate dtk-tools issue #96
-            print(nonzero_idxs)
-            print(self.weights)
-            print(idxs)
-            raise
-
-        return dict(samples=self.samples[resample_idxs], weights=self.weights[resample_idxs])
-        '''
 
     def get_current_state(self) :
         print "get_current_state"
         state = super(OptimTool, self).get_current_state()
-        '''
-        return dict(samples=self.samples, 
-                    latest_samples=self.latest_samples,
-                    priors=self.priors,
-                    results=self.results)
-        '''
 
         optimtool_state = dict(
             x0 = self.x0,
             X_center = self.X_center,
             D = self.D,
             center_repeats = self.center_repeats,
-            fitted_values = self.fitted_values,
+            fitted_values_df = self.fitted_values_df.to_dict(orient='list'),
             rsquared = self.rsquared,
         )
         state.update(optimtool_state)
