@@ -126,11 +126,17 @@ class NextPointAlgorithm(object):
     def get_final_samples(self):
         return dict(samples=self.samples)
 
-    def get_current_state(self):
+    def get_state(self):
         return dict(samples=self.samples, 
                     latest_samples=self.latest_samples,
                     priors=self.priors,
                     results=self.results)
+
+    def set_state(self, state):
+        self.sample = state.samples
+        self.latest_sample = state.latest_samples
+        self.priors = state.priors
+        self.results = state.results
 
     def next_point_fn(self):
         ''' The base implementation will resample from the prior function. '''

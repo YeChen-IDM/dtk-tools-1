@@ -285,9 +285,9 @@ class OptimTool(NextPointAlgorithm):
         return dict(samples=self.X_center[-1])
 
 
-    def get_current_state(self) :
-        print "get_current_state"
-        state = super(OptimTool, self).get_current_state()
+    def get_state(self) :
+        print "get_state"
+        state = super(OptimTool, self).get_state()
 
         optimtool_state = dict(
             x0 = self.x0,
@@ -301,6 +301,20 @@ class OptimTool(NextPointAlgorithm):
         )
         state.update(optimtool_state)
         return state
+
+    def set_state(self, state):
+        print "set_state"
+        super(OptimTool, self).set_state()
+
+        self.x0 = state.x0
+        self.X_center = state.X_center
+        self.D = state.D
+        self.center_repeats = state.center_repeats
+        self.samples = state.samples
+        self.fitted_values_df = pd.DataFrame.from_dict(state.fitted_values_dict, orient='list'),
+        self.rsquared = state.rsquared
+        self.regression_parameters = state.regression_parameters
+
 
     def get_param_names(self):
         return self.params.keys()

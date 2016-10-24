@@ -4,6 +4,7 @@
 import numpy as np
 from scipy.stats import uniform, norm
 import collections
+import random
 
 from calibtool.CalibManager import CalibManager
 from calibtool.Prior import MultiVariatePrior
@@ -62,6 +63,7 @@ def sample_point_fn(cb, param_values):
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
     cb.set_param('Simulation_Duration', 10*365)
+    cb.set_param('Run_Number', random.randint(0, 1e6) )  # Pick a random random seed
     return params_dict
 
 mu_r = 0.05
