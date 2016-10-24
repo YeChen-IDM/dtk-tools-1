@@ -1,11 +1,13 @@
 import logging
 import os
 
-import gc   # TEMP
+import numpy as np
+import gc   # TEMP?
 
 import pandas as pd
 import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 import matplotlib.pyplot as plt
 
 from calibtool.plotters.BasePlotter import BasePlotter
@@ -33,18 +35,8 @@ class OptimToolPlotter(BasePlotter):
         self.param_names = calib_manager.param_names()
         self.site_analyzer_names = calib_manager.site_analyzer_names()
 
-        #latest_results = calib_manager.next_point.latest_results
-        print calib_manager.all_results
-        print calib_manager.all_results.reset_index()
-        print calib_manager.all_results.shape
-
-        print 'CM.ITER', calib_manager.iteration
-        print 'IS.NP', calib_manager.iteration_state.next_point
-        print 'IS.NP.FV', calib_manager.iteration_state.next_point['fitted_values_dict']
-
         param_names = calib_manager.param_names()
         results = calib_manager.all_results
-        print 'RESULTS:\n', results
         results_this_iteration = results.reset_index().set_index('iteration').loc[calib_manager.iteration].sort_values('sample')
         latest_results = results_this_iteration['total'].values
         latest_samples = results_this_iteration[param_names].values
@@ -52,30 +44,25 @@ class OptimToolPlotter(BasePlotter):
 
         fitted_values_df = pd.DataFrame.from_dict(calib_manager.iteration_state.next_point['fitted_values_dict'])
 
-        print 'MERGE'*10
-        print 'ALL:', calib_manager.all_results.reset_index()
-        print 'FV:', fitted_values_df.reset_index()
         merged = pd.DataFrame.merge( calib_manager.all_results.reset_index(), fitted_values_df.reset_index()[['sample', 'iteration', 'Fitted']], on=['sample', 'iteration'])
 
         #data = merged.set_index('iteration').loc[calib_manager.iteration]
         data = merged.set_index('iteration')
-        print 'DATA INDEX:', data.index.unique()
-        print 'CM ITERATION:', calib_manager.iteration
         data = data.loc[calib_manager.iteration]
-        print data
 
         rsquared_all = calib_manager.iteration_state.next_point['rsquared']
         rsquared = rsquared_all[ calib_manager.iteration ]
 
+        regression_parameters = calib_manager.iteration_state.next_point['regression_parameters']
+
         X_center_all = calib_manager.iteration_state.next_point['X_center']
         print 'X_center_all', X_center_all
         X_center = X_center_all[ calib_manager.iteration ]
-        print 'X_center', X_center
 
         ### REGRESSION ###
         fig, ax = plt.subplots()
-        plt.plot( data['total'], data['Fitted'], 'o', figure=fig)
-        plt.plot( [min(latest_results), max(latest_results)], [min(latest_results), max(latest_results)], 'r-')
+        h1 = plt.plot( data['total'], data['Fitted'], 'o', figure=fig)
+        h2 = plt.plot( [min(latest_results), max(latest_results)], [min(latest_results), max(latest_results)], 'r-')
         plt.xlabel('Simulation Output')
         plt.ylabel('Linear Regression')
         plt.title( rsquared )
@@ -84,7 +71,7 @@ class OptimToolPlotter(BasePlotter):
         fig.clf()
         plt.close(fig)
 
-        del fig, ax
+        del h1, h2, ax, fig
 
 ### STATE ###
         if D == 1:
@@ -94,11 +81,11 @@ class OptimToolPlotter(BasePlotter):
             sorted_fitted = data_sorted['Fitted']
 
             fig, ax = plt.subplots()
-            plt.plot( sorted_samples, sorted_results, 'ko', figure=fig)
+            h1 = plt.plot( sorted_samples, sorted_results, 'ko', figure=fig)
             yl = ax.get_ylim()
-            plt.plot( 2*[calib_manager.next_point.X_center[calib_manager.iteration]], yl, 'b-', figure=fig)
+            h2 = plt.plot( 2*[calib_manager.next_point.X_center[calib_manager.iteration]], yl, 'b-', figure=fig)
 
-            plt.plot( sorted_samples, sorted_fitted, 'r-', figure=fig)
+            h3 = plt.plot( sorted_samples, sorted_fitted, 'r-', figure=fig)
 
             plt.title( rsquared )
             plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
@@ -106,28 +93,59 @@ class OptimToolPlotter(BasePlotter):
             fig.clf()
             plt.close(fig)
 
-            del fig, ax
+            del h1, h2, h3, ax, fig
 
         elif D == 2:
             x0 = data[param_names[0]]
             x1 = data[param_names[1]]
             y = data['total']
             y_fit = data['Fitted']
+            rp = regression_parameters[calib_manager.iteration]
 
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
-            ax.scatter( x0, x1, y, c='k', marker='o', figure=fig)
-            #ax.scatter( X_center[0], X_center[1], y[0], c='b', marker='x', figure=fig)
+            h1 = ax.scatter( x0, x1, y, c='k', marker='o', figure=fig)
+            i=int(calib_manager.iteration)
+            h2 = ax.scatter( X_center_all[i][0], 
+                        X_center_all[i][1], 
+                        rp[0] + rp[1]*X_center_all[i][0] + rp[2]*X_center_all[i][1],
+                        c='b', marker='.', s=200, figure=fig)
 
-            ax.scatter( x0, x1, y_fit, c='r', marker='d', figure=fig)
+            h3 = ax.plot(    [xc[0] for xc in X_center_all[i:i+2]],
+                        [xc[1] for xc in X_center_all[i:i+2]], 
+                        [
+                            rp[0] + rp[1]*X_center_all[i][0] + rp[2]*X_center_all[i][1],
+                            rp[0] + rp[1]*X_center_all[i+1][0] + rp[2]*X_center_all[i+1][1]
+                        ], c='b', figure=fig)
+
+
+            h4 = ax.scatter( x0, x1, y_fit, c='r', marker='d', figure=fig)
+
+            xl = ax.get_xlim()
+            yl = ax.get_ylim()
+
+            x_surf=np.linspace(xl[0], xl[1], 25)                # generate a mesh
+            y_surf=np.linspace(yl[0], yl[1], 25)
+            x_surf, y_surf = np.meshgrid(x_surf, y_surf)
+            z_surf = rp[0] + rp[1]*x_surf + rp[2]*y_surf
+            h5 = ax.plot_surface(x_surf, y_surf, z_surf, cmap=cm.hot, rstride=1, cstride=1,
+                linewidth=0, antialiased=True, edgecolor=(0,0,0,0), alpha=0.5)
+
+            h6 = plt.contour(x_surf, y_surf, z_surf, 10,
+                  #[-1, -0.1, 0, 0.1],
+                  alpha=0.5,
+                  cmap=plt.cm.bone)
+
 
             plt.title( rsquared )
             plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
 
+            #plt.show()
+
             fig.clf()
             plt.close(fig)
 
-            del fig, ax
+            del h1, h2, h3, h4, h5, h6, ax, fig
 
 
 
@@ -147,12 +165,7 @@ class OptimToolPlotter(BasePlotter):
 
         fig.clf()
         plt.close(fig)
-        del g, fig, ax
-
-
-
-        
-
+        del g, ax, fig
 
         gc.collect()
 

@@ -82,6 +82,16 @@ class OptimTool(NextPointAlgorithm):
         self.priors = state.get('priors', [])
         '''
 
+        print state
+        self.samples = state.get('samples', np.array([]))
+        self.latest_samples = state.get('latest_samples', np.array([]))
+        print self.samples
+
+        if (self.samples.size > 0) ^ (self.latest_samples.size > 0):
+            raise Exception('Both samples (size=%d) and latest_samples (size=%d) '
+                            'should be empty or already initialized.',
+                            self.samples.size, self.latest_samples.size)
+
         x0f = np.array([float(x) for x in self.x0])
         self.D = state.get('D', len(self.x0))
         self.x0 = state.get('x0', x0f)
@@ -102,6 +112,8 @@ class OptimTool(NextPointAlgorithm):
             self.fitted_values_df = pd.DataFrame.from_dict(tmp, orient='list')
 
         self.rsquared = state.get('rsquared', [])
+        self.regression_parameters = state.get('regression_parameters', [])
+
 
 
     def set_initial_samples(self, initial_samples):
@@ -131,9 +143,11 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('Initial samples:\n%s' % self.samples)
         self.latest_samples = self.samples[:]
 
-    def get_points_for_this_iteration(self, values_selected_on_previous_iteration):
-        if values_selected_on_previous_iteration:
-            return values_selected_on_previous_iteration
+    def get_points_for_this_iteration(self, points_selected_on_previous_iteration):
+        # points_selected_on_previous_iteration should be the same as self.samples_for_next_iteration
+        if points_selected_on_previous_iteration:
+            self.latest_samples = np.array(points_selected_on_previous_iteration) #self.samples_for_next_iteration
+            return self.latest_samples #points_selected_on_previous_iteration
 
         # Probably the first iteration, for which we have already called choose_hypersphere_points in set_initial_samples
         return self.latest_samples
@@ -167,8 +181,8 @@ class OptimTool(NextPointAlgorithm):
         self.latest_results = self.results[-1]
 
         print 'ITERATION:', self.iteration
-        print 'LATEST SAMPLES:', self.latest_samples
-        print 'LATEST RESULTS:', self.latest_results
+        print 'LATEST SAMPLES:', len(self.latest_samples), self.latest_samples
+        print 'LATEST RESULTS:', len(self.latest_results), self.latest_results
 
         mod = sm.OLS(self.latest_results, sm.add_constant(self.latest_samples) )
         mod_fit = mod.fit()
@@ -183,26 +197,23 @@ class OptimTool(NextPointAlgorithm):
         self.fitted_values_df = pd.concat([self.fitted_values_df, fitted_values_this_iter])
 
         self.rsquared.append(mod_fit.rsquared)
+        self.regression_parameters.append(mod_fit.params)
 
         # Choose next X_center
         if mod_fit.rsquared > 0.5:  # TODO: make parameter
-            m = mod_fit.params[1:] # Drop constant
             print 'Good R^2 (%f), using params: '%mod_fit.rsquared, mod_fit.params
-            ascent_dir = m / np.linalg.norm( m )
-            # Scale by param range
-            new_center = self.X_center[-1] + [self.mu_r*(v['Max']-v['Min'])*dx for dx,v in zip(ascent_dir, self.params.values())]
+            P = mod_fit.params[1:] # Drop constant
+            den = np.sqrt( sum([ (v['Max']-v['Min'])**2 * p**2  for p,v in zip(P, self.params.values()) ]) )
+
+            new_center = [c + (v['Max']-v['Min'])**2 * p * self.mu_r / den for c,p,v in zip(self.X_center[-1], P, self.params.values()) ]
+
             print "TODO: MAKE SURE NEW X_CENTER IS WITHIN CONSTRAINTS"
             self.X_center.append( new_center )
         else:
+            print 'Bad R^2 (%f)'%mod_fit.rsquared
             max_idx = np.argmax(self.latest_results)
+            'Stepping to argmax of %f at:'%self.latest_results[max_idx], self.latest_samples[max_idx]
             self.X_center.append( self.latest_samples[max_idx] )
-
-        if False:
-            plt.plot( self.latest_results, mod_fit.fittedvalues, 'o')
-            plt.plot( [min(self.latest_results), max(self.latest_results)], [min(self.latest_results), max(self.latest_results)], 'r-')
-            plt.title( mod_fit.rsquared )
-            plt.savefig( 'Regression_%d.png'%self.iteration )
-            plt.close()
 
         print "update_samples"
         '''
@@ -222,17 +233,17 @@ class OptimTool(NextPointAlgorithm):
         logger.debug('All samples:\n%s', self.samples)
         '''
 
-        self.latest_samples = self.choose_hypersphere_points(self.samples_per_iteration)
+        self.samples_for_next_iteration = self.choose_hypersphere_points(self.samples_per_iteration)
 
         # Validate?
-        logger.debug('Next samples:\n%s', self.latest_samples)
+        logger.debug('Next samples:\n%s', self.samples_for_next_iteration)
 
-        self.samples = np.concatenate((self.samples, self.latest_samples))
+        self.samples = np.concatenate((self.samples, self.samples_for_next_iteration))
         logger.debug('All samples:\n%s', self.samples)
 
-        print 'UPDATED SAMPLES:\n',self.latest_samples
+        print 'UPDATED SAMPLES:\n',self.samples_for_next_iteration
 
-        return self.latest_samples
+        return self.samples_for_next_iteration
 
 
     def choose_hypersphere_points(self, N):
@@ -283,8 +294,10 @@ class OptimTool(NextPointAlgorithm):
             X_center = self.X_center,
             D = self.D,
             center_repeats = self.center_repeats,
+            samples = self.samples,
             fitted_values_dict = self.fitted_values_df.to_dict(orient='list'),
             rsquared = self.rsquared,
+            regression_parameters = self.regression_parameters,
         )
         state.update(optimtool_state)
         return state

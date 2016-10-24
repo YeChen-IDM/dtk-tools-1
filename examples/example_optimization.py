@@ -49,7 +49,7 @@ params['Clinical_Fever_Threshold_High'] = { 'Min': 0.5, 'Max': 2.5 }
 
 # OR "Min_Days_Between_Clinical_Incidents": 14, [ integer? ]
 
-plotters = [LikelihoodPlotter(True), SiteDataPlotter(True), OptimToolPlotter()]
+plotters = [LikelihoodPlotter(True), SiteDataPlotter(True), OptimToolPlotter()] # OTP must be last!!!
 
 def sample_point_fn(cb, param_values):
     """
@@ -61,7 +61,7 @@ def sample_point_fn(cb, param_values):
     params_dict = dict(zip(params.keys(), param_values))
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
-    cb.set_param('Simulation_Duration', 5*365)
+    cb.set_param('Simulation_Duration', 10*365)
     return params_dict
 
 mu_r = 0.05
@@ -76,14 +76,14 @@ next_point_kwargs = dict(
         center_repeats = 2
     )
 
-calib_manager = CalibManager(name='ExampleOptimization',
+calib_manager = CalibManager(name='ExampleOptimization_ResumeTesting',
                              setup=SetupParser(),
                              config_builder=cb,
                              sample_point_fn=sample_point_fn,
                              sites=sites,
                              next_point=OptimTool(params, **next_point_kwargs),
                              sim_runs_per_param_set=1, # <-- Replicates
-                             max_iterations=10,
+                             max_iterations=11,
                              num_to_plot=10,
                              plotters=plotters)
 

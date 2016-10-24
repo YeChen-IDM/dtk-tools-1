@@ -1,3 +1,9 @@
+# What's the difference between CalibManager.json and IterationState.json?
+# How is next-point restored for replot and resume?
+
+
+
+
 import copy
 import glob
 import json
@@ -187,7 +193,7 @@ class CalibManager(object):
                 results = self.analyze_iteration()
                 self.choose_and_cache_inputs_for_next_iteration(results) # update_next_point
 
-                self.plot_iteration()
+            self.plot_iteration()
 
             if self.finished():
                 break
@@ -218,6 +224,7 @@ class CalibManager(object):
             logger.info('Reloading next set of sample points from cached iteration state.')
             points_for_this_iteration_computed_on_previous_iteration = self.iteration_state.parameters_for_next_iteration['values']
 
+        print 'points_for_this_iteration_computed_on_previous_iteration', points_for_this_iteration_computed_on_previous_iteration
         points_for_this_iteration = self.next_point.get_points_for_this_iteration(points_for_this_iteration_computed_on_previous_iteration)    # get_next_samples
 
         self.iteration_state.parameters_for_this_iteration = {'names': self.param_names(), 'values': points_for_this_iteration.tolist()}
@@ -567,7 +574,7 @@ class CalibManager(object):
         self.all_results = self.all_results[self.all_results.iteration <= iteration]
         # logger.info('Restored results from iteration %d', iteration)
         logger.debug(self.all_results)
-        self.cache_calibration()
+        self.cache_calibration()    # DJK: Why does restore cache?
 
     def check_leftover(self):
         """
@@ -654,7 +661,10 @@ class CalibManager(object):
 
         # Catch up the Next Point
         if iteration > 0:
+            print "restore_next_point_for_iteration"
             self.restore_next_point_for_iteration(self.iteration - 1)
+        else:
+            print "Iteration is 0 so not restoring next point"
 
         # Restore IterationState
         self.iteration_state = IterationState.restore_state(self.name, iteration)
@@ -713,6 +723,11 @@ class CalibManager(object):
         while i <= iteration:
             # Restore IterationState
             self.iteration_state = IterationState.restore_state(self.name, i)
+
+            # DJK: Have to fully restore next point, not just call one function!
+            print "RESTORE GET"
+            self.get_points_for_this_iteration() #get_next_parameters()
+
             # Update next point
             self.choose_and_cache_inputs_for_next_iteration(self.iteration_state.results['total'])
             i += 1
@@ -803,6 +818,9 @@ class CalibManager(object):
         self.local_suite_id = calib_data.get('local_suite_id')
         self.comps_suite_id = calib_data.get('comps_suite_id')
         iteration = self.find_best_iteration_for_resume(iteration, calib_data)
+
+        # DJK: Where is next point algorithm state restored for resume?
+        # DJK: NOTE the following DOES restore next point
         self.prepare_resume_point_for_iteration(iteration)
 
         if self.iteration_state.resume_point < 3:
