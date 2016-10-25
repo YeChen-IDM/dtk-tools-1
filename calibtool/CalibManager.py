@@ -219,10 +219,10 @@ class CalibManager(object):
         """
         Query the next-point algorithm for the next set of sample points.
         """
+        # DJK TODO: Consistentcy of parameters vs points
         points_for_this_iteration_computed_on_previous_iteration = []
-        if self.iteration_state.parameters_for_next_iteration:
-            logger.info('Reloading next set of sample points from cached iteration state.')
-            points_for_this_iteration_computed_on_previous_iteration = self.iteration_state.parameters_for_next_iteration['values']
+        if 'values' in self.iteration_state.parameters_for_this_iteration:
+            points_for_this_iteration_computed_on_previous_iteration = self.iteration_state.parameters_for_this_iteration['values']
 
         print 'points_for_this_iteration_computed_on_previous_iteration', points_for_this_iteration_computed_on_previous_iteration
         points_for_this_iteration = self.next_point.get_points_for_this_iteration(points_for_this_iteration_computed_on_previous_iteration)    # get_next_samples
@@ -609,7 +609,7 @@ class CalibManager(object):
         # Step 2: Checking possible leftovers
         try:
             # Save the selected block the user wants
-            user_selected_block = self.setup.selected_block
+            user_selected_block = self.setup.selected_block     # DJK: What does this do? Nothing?
             # Retrieve the experiment manager. Note: it changed selected_block
             self.exp_manager = ExperimentManagerFactory.from_experiment(exp)
             # Restore the selected block
@@ -660,17 +660,21 @@ class CalibManager(object):
         self.iteration_state.reset_state()
 
         # Catch up the Next Point
-        if iteration > 0:
-            print "restore_next_point_for_iteration"
-            self.restore_next_point_for_iteration(self.iteration - 1)
-        else:
-            print "Iteration is 0 so not restoring next point"
+        ###self.restore_next_point_for_iteration(self.iteration)
+        # Restore IterationState
+        self.iteration_state = IterationState.restore_state(self.name, iteration) # -1?
+
+        # DJK: Have to fully restore next point, not just call one function!
+        print iteration, "CALLING SET_STATE WITH:\n", self.iteration_state.next_point
+        self.next_point.set_state( self.iteration_state.next_point )
+        ###
 
         # Restore IterationState
-        self.iteration_state = IterationState.restore_state(self.name, iteration)
+        #self.iteration_state = IterationState.restore_state(self.name, iteration)
 
         # Store iteration #:
-        self.iteration_state.iteration = iteration
+        #self.iteration_state.iteration = iteration
+        assert(self.iteration_state.iteration == iteration)
 
         # Check leftover (in case lost connection) and also consider possible location change.
         self.check_leftover()
@@ -684,7 +688,7 @@ class CalibManager(object):
             # need to resume from commission
             self.iteration_state.resume_point = 1
             # Cleanup iteration state
-            self.iteration_state.reset_state()
+            self.iteration_state.reset_state()  # DJK: why reset?
             return
 
         # Assume simulations exits
@@ -699,6 +703,8 @@ class CalibManager(object):
         self.iteration_state.resume_point = 3
         # To resume from resume_point, we need to update next_point
         self.choose_and_cache_points_for_next_iteration(self.iteration_state.results['total'])
+
+        # DJK: What about plotting?  Check finalize? Etc?
 
     def adjust_resume_point(self):
         """
@@ -716,6 +722,7 @@ class CalibManager(object):
             pass
 
     def restore_next_point_for_iteration(self, iteration):
+        # TODO: DELETE
         """
         Restore next_point up to this iteration
         """
@@ -725,6 +732,7 @@ class CalibManager(object):
             self.iteration_state = IterationState.restore_state(self.name, i)
 
             # DJK: Have to fully restore next point, not just call one function!
+            print i, "CALLING SET_STATE WITH:\n", self.iteration_state.next_point
             self.next_point.set_state( self.iteration_state.next_point )
 
             #print "RESTORE GET"
@@ -822,15 +830,16 @@ class CalibManager(object):
         iteration = self.find_best_iteration_for_resume(iteration, calib_data)
 
         # DJK: Where is next point algorithm state restored for resume?
-        # DJK: NOTE the following DOES restore next point
+        # DJK: NOTE the following DOES restore next point - TODO: rename
         self.prepare_resume_point_for_iteration(iteration)
 
-        if self.iteration_state.resume_point < 3:
-            # for resume_point < 3, it will combine current results with previous results
-            self.restore_results(calib_data.get('results'), iteration - 1)
-        else:
-            # for resume_point = 3, it will use the current results and resume from next iteration
-            self.restore_results(calib_data.get('results'), iteration)
+        # DJK: Following will be handled in run_iterations
+        #if self.iteration_state.resume_point < 3:
+        #    # for resume_point < 3, it will combine current results with previous results
+        #    self.restore_results(calib_data.get('results'), iteration - 1)
+        #else:
+        #    # for resume_point = 3, it will use the current results and resume from next iteration
+        #    self.restore_results(calib_data.get('results'), iteration)
 
         # enter iteration loop
         self.run_iterations(**kwargs)
@@ -839,7 +848,7 @@ class CalibManager(object):
         self.check_orphan_experiments()
 
         # delete all backup file for CalibManger and each of iterations
-        self.cleanup_backup_files()
+        #self.cleanup_backup_files()    # DJK: May want to restore this line once it's all working
 
     def replot_calibration(self, **kwargs):
         """

@@ -73,8 +73,8 @@ next_point_kwargs = dict(
         x0=x0,
         mu_r = mu_r,
         sigma_r = sigma_r,
-        initial_samples = 32,
-        samples_per_iteration = 32,
+        initial_samples = 8,
+        samples_per_iteration = 8,
         center_repeats = 2
     )
 

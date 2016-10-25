@@ -133,10 +133,11 @@ class NextPointAlgorithm(object):
                     results=self.results)
 
     def set_state(self, state):
-        self.sample = state.samples
-        self.latest_sample = state.latest_samples
-        self.priors = state.priors
-        self.results = state.results
+        self.samples = state['samples']
+        self.latest_samples = state['latest_samples']
+        self.priors = state['priors']
+        self.results = state['results']
+
 
     def next_point_fn(self):
         ''' The base implementation will resample from the prior function. '''

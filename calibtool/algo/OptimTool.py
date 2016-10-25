@@ -141,16 +141,24 @@ class OptimTool(NextPointAlgorithm):
             raise Exception("The 'initial_samples' parameter must be a number or an array.")
 
         logger.debug('Initial samples:\n%s' % self.samples)
-        self.latest_samples = self.samples[:]
+        self.initial_samples = self.samples[:]  # TODO: Pandas
 
     def get_points_for_this_iteration(self, points_selected_on_previous_iteration):
         # points_selected_on_previous_iteration should be the same as self.samples_for_next_iteration
+        print "*"*80
+        print "IN get_points_for_this_iteration with points_selected_on_previous_iteration =", points_selected_on_previous_iteration
         if points_selected_on_previous_iteration:
             self.latest_samples = np.array(points_selected_on_previous_iteration) #self.samples_for_next_iteration
+
+            self.samples = np.concatenate((self.samples, self.latest_samples))
+            logger.debug('All samples:\n%s', self.samples)
+
             return self.latest_samples #points_selected_on_previous_iteration
 
         # Probably the first iteration, for which we have already called choose_hypersphere_points in set_initial_samples
-        return self.latest_samples
+        print 'USING INITIAL SAMPLES ' * 25
+        self.latest_samples = self.initial_samples
+        return self.initial_samples
 
 
     def choose_inputs_for_next_iteration(self, iteration, results):
@@ -238,9 +246,6 @@ class OptimTool(NextPointAlgorithm):
         # Validate?
         logger.debug('Next samples:\n%s', self.samples_for_next_iteration)
 
-        self.samples = np.concatenate((self.samples, self.samples_for_next_iteration))
-        logger.debug('All samples:\n%s', self.samples)
-
         print 'UPDATED SAMPLES:\n',self.samples_for_next_iteration
 
         return self.samples_for_next_iteration
@@ -294,7 +299,7 @@ class OptimTool(NextPointAlgorithm):
             X_center = self.X_center,
             D = self.D,
             center_repeats = self.center_repeats,
-            samples = self.samples,
+            initial_samples = self.initial_samples,
             fitted_values_dict = self.fitted_values_df.to_dict(orient='list'),
             rsquared = self.rsquared,
             regression_parameters = self.regression_parameters,
@@ -304,16 +309,16 @@ class OptimTool(NextPointAlgorithm):
 
     def set_state(self, state):
         print "set_state"
-        super(OptimTool, self).set_state()
+        super(OptimTool, self).set_state(state)
 
-        self.x0 = state.x0
-        self.X_center = state.X_center
-        self.D = state.D
-        self.center_repeats = state.center_repeats
-        self.samples = state.samples
-        self.fitted_values_df = pd.DataFrame.from_dict(state.fitted_values_dict, orient='list'),
-        self.rsquared = state.rsquared
-        self.regression_parameters = state.regression_parameters
+        self.x0 = state['x0']
+        self.X_center = state['X_center']
+        self.D = state['D']
+        self.center_repeats = state['center_repeats']
+        self.initial_samples = state['initial_samples']
+        self.fitted_values_df = pd.DataFrame.from_dict(state['fitted_values_dict'], orient='columns')
+        self.rsquared = state['rsquared']
+        self.regression_parameters = state['regression_parameters']
 
 
     def get_param_names(self):

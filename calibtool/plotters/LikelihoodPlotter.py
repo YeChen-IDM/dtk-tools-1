@@ -69,6 +69,13 @@ class LikelihoodPlotter(BasePlotter):
     def plot1d_by_iteration(self, results, param, total, **kwargs):
 
         iterations = results.groupby('iteration', sort=True)
+
+        print iterations
+        print len(iterations)
+        print results.index.unique()
+        print len(results.index.unique())
+        exit()
+
         n_iterations = len(iterations)
 
         colors = ['#4BB5C1'] * (n_iterations - 1) + ['#FF2D00']

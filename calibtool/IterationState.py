@@ -50,8 +50,11 @@ class IterationState(object):
                     attr.clear()
 
     def increment_iteration(self):
+        # Bring 'parameters for next iteration' from previous iteration to this iteration
+        parameters_for_next_iteration = self.parameters_for_next_iteration
         self.iteration += 1
         self.reset_state()
+        self.parameters_for_this_iteration = parameters_for_next_iteration
 
     @classmethod
     def from_file(cls, filepath):
