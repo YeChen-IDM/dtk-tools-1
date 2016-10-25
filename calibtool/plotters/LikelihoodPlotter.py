@@ -38,7 +38,6 @@ class LikelihoodPlotter(BasePlotter):
     def plot_by_parameter(self, site='', **kwargs):
 
         for param in self.param_names:
-
             fig = plt.figure('LL by parameter ' + param, figsize=(5, 4))
             ax = fig.add_subplot(111)
             plt.subplots_adjust(left=0.15, bottom=0.15)
@@ -67,15 +66,7 @@ class LikelihoodPlotter(BasePlotter):
             plt.close(fig)
 
     def plot1d_by_iteration(self, results, param, total, **kwargs):
-
-        iterations = results.groupby('iteration', sort=True)
-
-        print iterations
-        print len(iterations)
-        print results.index.unique()
-        print len(results.index.unique())
-        exit()
-
+        iterations = results.reset_index().groupby('iteration', sort=True)
         n_iterations = len(iterations)
 
         colors = ['#4BB5C1'] * (n_iterations - 1) + ['#FF2D00']

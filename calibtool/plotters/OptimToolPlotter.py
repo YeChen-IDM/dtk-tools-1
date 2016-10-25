@@ -56,7 +56,6 @@ class OptimToolPlotter(BasePlotter):
         regression_parameters = calib_manager.iteration_state.next_point['regression_parameters']
 
         X_center_all = calib_manager.iteration_state.next_point['X_center']
-        print 'X_center_all', X_center_all
         X_center = X_center_all[ calib_manager.iteration ]
 
         ### REGRESSION ###
@@ -73,7 +72,7 @@ class OptimToolPlotter(BasePlotter):
 
         del h1, h2, ax, fig
 
-### STATE ###
+        ### STATE ###
         if D == 1:
             data_sorted = data.sort_values(param_names)
             sorted_samples = data_sorted[param_names]
@@ -140,19 +139,26 @@ class OptimToolPlotter(BasePlotter):
             plt.title( rsquared )
             plt.savefig( os.path.join(self.directory, 'Optimization_Sample_Results.pdf'))
 
-            #plt.show()
-
             fig.clf()
             plt.close(fig)
 
             del h1, h2, h3, h4, h5, h6, ax, fig
 
 
+        ### PARAMETER PROGRESS ###
+        #print 'XCA', X_center_all
+        #nParams = len(self.param_names)
+        #g = sns.factorplot()
+        #for (i,p) in enumerate(self.param_names):
+        #    print p
+        #    xc = [x[i] for x in X_center_all]
+        #    print xc
+        #exit()
 
 
 
 
-### BY ITERATION ###
+        ### BY ITERATION ###
 
         all_results = calib_manager.all_results.copy().reset_index(drop=True)#.set_index(['iteration', 'sample'])
         fig, ax = plt.subplots()

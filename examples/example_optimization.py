@@ -73,8 +73,8 @@ next_point_kwargs = dict(
         x0=x0,
         mu_r = mu_r,
         sigma_r = sigma_r,
-        initial_samples = 8,
-        samples_per_iteration = 8,
+        initial_samples = 32,
+        samples_per_iteration = 32,
         center_repeats = 2
     )
 
@@ -85,8 +85,8 @@ calib_manager = CalibManager(name='ExampleOptimization_ResumeTesting',
                              sites=sites,
                              next_point=OptimTool(params, **next_point_kwargs),
                              sim_runs_per_param_set=1, # <-- Replicates
-                             max_iterations=11,
-                             num_to_plot=10,
+                             max_iterations=10,
+                             num_to_plot=3,
                              plotters=plotters)
 
 #run_calib_args = {'selected_block': "EXAMPLE"}

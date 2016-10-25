@@ -216,6 +216,8 @@ class OptimTool(NextPointAlgorithm):
             new_center = [c + (v['Max']-v['Min'])**2 * p * self.mu_r / den for c,p,v in zip(self.X_center[-1], P, self.params.values()) ]
 
             print "TODO: MAKE SURE NEW X_CENTER IS WITHIN CONSTRAINTS"
+            print (len(self.X_center), iteration+1)
+            assert( len(self.X_center) == iteration+1 )
             self.X_center.append( new_center )
         else:
             print 'Bad R^2 (%f)'%mod_fit.rsquared

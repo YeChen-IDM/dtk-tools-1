@@ -193,8 +193,10 @@ class CalibManager(object):
                 results = self.analyze_iteration()
                 self.choose_and_cache_points_for_next_iteration(results) # update_next_point
 
+            print 'plot_iteration'
             self.plot_iteration()
 
+            print 'finished'
             if self.finished():
                 break
 
@@ -840,6 +842,8 @@ class CalibManager(object):
         #else:
         #    # for resume_point = 3, it will use the current results and resume from next iteration
         #    self.restore_results(calib_data.get('results'), iteration)
+
+        self.restore_results(calib_data.get('results'), iteration)
 
         # enter iteration loop
         self.run_iterations(**kwargs)
