@@ -297,6 +297,7 @@ class OptimTool(NextPointAlgorithm):
         state = super(OptimTool, self).get_state()
 
         optimtool_state = dict(
+            params = self.params,
             x0 = self.x0,
             X_center = self.X_center,
             D = self.D,
@@ -313,6 +314,7 @@ class OptimTool(NextPointAlgorithm):
         print "set_state"
         super(OptimTool, self).set_state(state)
 
+        self.params = state['params']
         self.x0 = state['x0']
         self.X_center = state['X_center']
         self.D = state['D']

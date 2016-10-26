@@ -85,7 +85,7 @@ calib_manager = CalibManager(name='ExampleOptimization_ResumeTesting',
                              sites=sites,
                              next_point=OptimTool(params, **next_point_kwargs),
                              sim_runs_per_param_set=1, # <-- Replicates
-                             max_iterations=10,
+                             max_iterations=11,
                              num_to_plot=3,
                              plotters=plotters)
 

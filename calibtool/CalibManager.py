@@ -1,9 +1,3 @@
-# What's the difference between CalibManager.json and IterationState.json?
-# How is next-point restored for replot and resume?
-
-
-
-
 import copy
 import glob
 import json
@@ -146,6 +140,8 @@ class CalibManager(object):
             raise Exception('Unable to find metadata in %s/IterationState.json' % iter_directory)
 
     def get_resume_map(self):
+        # DJK: This looks like a dictionary
+        # DJK: Why don't we proactively set resume_point instead of trying to determine it post-hoc?
         ret = ''
         if self.iteration_state.resume_point == 0:
             ret = 'Normal'
@@ -170,6 +166,7 @@ class CalibManager(object):
              and either truncating or generating next sample points.
         """
         # Start the calibration time
+        # DJK: On resume, calibration_start will be over-written.  Is it worth trying to add up the total time?  How much time was algorithm vs. simulation/HPC?
         self.calibration_start = datetime.now().replace(microsecond=0)
 
         while self.iteration < self.max_iterations:
@@ -180,18 +177,20 @@ class CalibManager(object):
             logger.info('---- Starting Iteration %d ----', self.iteration)
 
             # Output verbose resume point
-            if self.iteration_state.resume_point > 0:
+            if self.iteration_state.resume_point > 0:   # DJK: Use labels instead of numbers for resume_point
                 logger.info('-- Resuming Point %d (%s) --', self.iteration_state.resume_point, self.get_resume_map())
 
             # Start from simulation
             if self.iteration_state.resume_point <= 1:
                 next_params = self.get_and_cache_points_for_this_iteration() #get_next_parameters()
                 self.commission_iteration(next_params, **kwargs)
+                # DJK: set resume_point to 2
 
             # Start from analyze
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
                 self.choose_and_cache_points_for_next_iteration(results) # update_next_point
+                # DJK: set resume_point to 3
 
             print 'plot_iteration'
             self.plot_iteration()
@@ -420,7 +419,7 @@ class CalibManager(object):
         self.cache_iteration_state(backup_existing=True)
 
     def finished(self):
-        """ The next-point algorithm has reached its truncation condition. """
+        """ The next-point algorithm has reached its termination condition. """
         return self.next_point.end_condition()
 
     def increment_iteration(self):

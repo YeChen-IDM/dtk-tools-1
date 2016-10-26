@@ -26,6 +26,14 @@ class OptimToolPlotter(BasePlotter):
         print 'OptimToolPlotter: INIT'
         super(OptimToolPlotter, self).__init__( False )
 
+    def plot_state_evolution(self, **kwargs):
+        print 'K', kwargs
+        data = kwargs.pop('data')
+        print 'D', data
+        plt.plot(data['Iteration'], data['Value'], color='k', marker='o')
+        plt.plot(data['Iteration'], data['Min'], color='r')
+        plt.plot(data['Iteration'], data['Max'], color='r')
+
     def visualize(self, calib_manager):
         print 'OptimToolPlotter: VISUALIZE'
         self.all_results = calib_manager.all_results
@@ -35,11 +43,37 @@ class OptimToolPlotter(BasePlotter):
         self.param_names = calib_manager.param_names()
         self.site_analyzer_names = calib_manager.site_analyzer_names()
 
-        param_names = calib_manager.param_names()
+        X_center_all = calib_manager.iteration_state.next_point['X_center']
+        X_center = X_center_all[ calib_manager.iteration ]
+
+        ### STATE EVOLUTION ###
+        params = calib_manager.iteration_state.next_point['params']
+        state_evolution = pd.DataFrame(columns = ['Parameter', 'Iteration', 'Value', 'Min', 'Max'])
+        state_evolution['Iteration'] = state_evolution['Iteration'].astype(int)
+        for (i,p) in enumerate(self.param_names):
+            xc = [x[i] for x in X_center_all]
+            sd = pd.DataFrame( xc, columns=['Value'] )
+            sd.index.name = 'Iteration'
+            sd['Parameter'] = p
+            sd['Min'] = params[p]['Min']
+            sd['Max'] = params[p]['Max']
+            state_evolution = pd.concat([state_evolution, sd.reset_index()])
+
+        g = sns.FacetGrid(state_evolution, row=None, col='Parameter', hue=None, col_wrap=2, sharex=False, sharey=False, size=3, aspect=1, palette=None, row_order=None, col_order=None, hue_order=None, hue_kws=None, dropna=True, legend_out=True, despine=True, margin_titles=True, xlim=None, ylim=None, subplot_kws=None, gridspec_kws=None)
+        g.map_dataframe(self.plot_state_evolution).set_titles('{col_name}')
+        plt.savefig( os.path.join(self.directory, 'Optimization_State_Evolution.pdf'))
+
+
         results = calib_manager.all_results
-        results_this_iteration = results.reset_index().set_index('iteration').loc[calib_manager.iteration].sort_values('sample')
+        results_by_iteration = results.reset_index().set_index('iteration')
+
+        if calib_manager.iteration not in results_by_iteration.index.unique():
+            print 'No results for iteration %d yet, skipping some plots in OptimToolPlotter.' % calib_manager.iteration
+            return
+
+        results_this_iteration = results_by_iteration.loc[calib_manager.iteration].sort_values('sample')
         latest_results = results_this_iteration['total'].values
-        latest_samples = results_this_iteration[param_names].values
+        latest_samples = results_this_iteration[self.param_names].values
         D = latest_samples.shape[1]
 
         fitted_values_df = pd.DataFrame.from_dict(calib_manager.iteration_state.next_point['fitted_values_dict'])
@@ -54,9 +88,6 @@ class OptimToolPlotter(BasePlotter):
         rsquared = rsquared_all[ calib_manager.iteration ]
 
         regression_parameters = calib_manager.iteration_state.next_point['regression_parameters']
-
-        X_center_all = calib_manager.iteration_state.next_point['X_center']
-        X_center = X_center_all[ calib_manager.iteration ]
 
         ### REGRESSION ###
         fig, ax = plt.subplots()
@@ -74,8 +105,8 @@ class OptimToolPlotter(BasePlotter):
 
         ### STATE ###
         if D == 1:
-            data_sorted = data.sort_values(param_names)
-            sorted_samples = data_sorted[param_names]
+            data_sorted = data.sort_values(self.param_names)
+            sorted_samples = data_sorted[self.param_names]
             sorted_results = data_sorted['total']
             sorted_fitted = data_sorted['Fitted']
 
@@ -95,8 +126,8 @@ class OptimToolPlotter(BasePlotter):
             del h1, h2, h3, ax, fig
 
         elif D == 2:
-            x0 = data[param_names[0]]
-            x1 = data[param_names[1]]
+            x0 = data[self.param_names[0]]
+            x1 = data[self.param_names[1]]
             y = data['total']
             y_fit = data['Fitted']
             rp = regression_parameters[calib_manager.iteration]
@@ -143,18 +174,6 @@ class OptimToolPlotter(BasePlotter):
             plt.close(fig)
 
             del h1, h2, h3, h4, h5, h6, ax, fig
-
-
-        ### PARAMETER PROGRESS ###
-        #print 'XCA', X_center_all
-        #nParams = len(self.param_names)
-        #g = sns.factorplot()
-        #for (i,p) in enumerate(self.param_names):
-        #    print p
-        #    xc = [x[i] for x in X_center_all]
-        #    print xc
-        #exit()
-
 
 
 
