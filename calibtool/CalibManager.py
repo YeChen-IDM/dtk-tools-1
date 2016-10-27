@@ -182,14 +182,14 @@ class CalibManager(object):
 
             # Start from simulation
             if self.iteration_state.resume_point <= 1:
-                next_params = self.get_and_cache_points_for_this_iteration() #get_next_parameters()
+                next_params = self.get_and_cache_samples_for_this_iteration() #get_next_parameters()
                 self.commission_iteration(next_params, **kwargs)
                 # DJK: set resume_point to 2
 
             # Start from analyze
             if self.iteration_state.resume_point <= 2:
                 results = self.analyze_iteration()
-                self.choose_and_cache_points_for_next_iteration(results) # update_next_point
+                self.choose_and_cache_samples_for_next_iteration(results) # update_next_point
                 # DJK: set resume_point to 3
 
             print 'plot_iteration'
@@ -216,23 +216,18 @@ class CalibManager(object):
 
         self.finalize_calibration()
 
-    def get_and_cache_points_for_this_iteration(self):
+    def get_and_cache_samples_for_this_iteration(self):
         """
         Query the next-point algorithm for the next set of sample points.
         """
         # DJK TODO: Consistentcy of parameters vs points
-        points_for_this_iteration_computed_on_previous_iteration = []
-        if 'values' in self.iteration_state.parameters_for_this_iteration:
-            points_for_this_iteration_computed_on_previous_iteration = self.iteration_state.parameters_for_this_iteration['values']
+        samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # get_next_samples
 
-        print 'points_for_this_iteration_computed_on_previous_iteration', points_for_this_iteration_computed_on_previous_iteration
-        points_for_this_iteration = self.next_point.get_points_for_this_iteration(points_for_this_iteration_computed_on_previous_iteration)    # get_next_samples
-
-        self.iteration_state.parameters_for_this_iteration = {'names': self.param_names(), 'values': points_for_this_iteration.tolist()}
+        self.iteration_state.samples_for_this_iteration = {'names': self.param_names(), 'values': samples_for_this_iteration.tolist()}
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
 
-        return points_for_this_iteration
+        return samples_for_this_iteration
 
     def commission_iteration(self, next_params, **kwargs):
         """
@@ -280,8 +275,6 @@ class CalibManager(object):
             self.cache_iteration_state()
 
         self.wait_for_finished()
-
-        print "DONE COMMISSION_ITERATION"
 
     def wait_for_finished(self, verbose=True, init_sleep=1.0, sleep_time = 10):
         while True:
@@ -345,8 +338,6 @@ class CalibManager(object):
         # Wait when we are all done to make sure all the output files have time to get written
         time.sleep(sleep_time)
 
-        print "DONE WAIT_FOR_FINISHED"
-
     def analyze_iteration(self):
         """
         Analyze the output of completed simulations by using the relevant analyzers by site.
@@ -370,9 +361,7 @@ class CalibManager(object):
         for site in self.sites:
             for analyzer in site.analyzers:
                 exp_manager.add_analyzer(analyzer)
-        print "BEGIN ANALYZE_EXPERIMENT"
         exp_manager.analyze_experiment()
-        print "DONE ANALYZE_EXPERIMENT"
 
         cached_analyses = {a.uid(): a.cache() for a in exp_manager.analyzers}
         logger.debug(cached_analyses)
@@ -403,7 +392,7 @@ class CalibManager(object):
         map(lambda plotter: plotter.visualize(self), self.plotters)
 
 
-    def choose_and_cache_points_for_next_iteration(self, results):   # update_next_point
+    def choose_and_cache_samples_for_next_iteration(self, results):   # update_next_point
         """
         Pass the latest evaluated results back to the next-point algorithm,
         which will update its state to either truncate the calibration 
@@ -412,7 +401,7 @@ class CalibManager(object):
 
         #self.next_point.update_results(results)
         #self.next_point.update_state(self.iteration)
-        points_for_next_iteration = self.next_point.choose_inputs_for_next_iteration(self.iteration, results)
+        points_for_next_iteration = self.next_point.choose_samples_for_next_iteration(self.iteration, results)
 
         self.iteration_state.parameters_for_next_iteration = {'names': self.param_names(), 'values': points_for_next_iteration.tolist()}
         self.iteration_state.next_point = self.next_point.get_state()
@@ -703,7 +692,7 @@ class CalibManager(object):
         # Need to resume from next_point
         self.iteration_state.resume_point = 3
         # To resume from resume_point, we need to update next_point
-        self.choose_and_cache_points_for_next_iteration(self.iteration_state.results['total'])
+        self.choose_and_cache_samples_for_next_iteration(self.iteration_state.results['total'])
 
         # DJK: What about plotting?  Check finalize? Etc?
 
@@ -737,10 +726,10 @@ class CalibManager(object):
             self.next_point.set_state( self.iteration_state.next_point )
 
             #print "RESTORE GET"
-            #self.get_and_cache_points_for_this_iteration() #get_next_parameters()
+            #self.get_and_cache_samples_for_this_iteration() #get_next_parameters()
 
             # Update next point
-            #self.choose_and_cache_points_for_next_iteration(self.iteration_state.results['total'])
+            #self.choose_and_cache_samples_for_next_iteration(self.iteration_state.results['total'])
             i += 1
 
     def find_best_iteration_for_resume(self, iteration=None, calib_data=None):
@@ -1035,7 +1024,7 @@ class CalibManager(object):
             res = self.analyze_iteration()
 
             # update next point
-            self.choose_and_cache_points_for_next_iteration(res)
+            self.choose_and_cache_samples_for_next_iteration(res)
 
             # Call all plotters
             self.plot_iteration()

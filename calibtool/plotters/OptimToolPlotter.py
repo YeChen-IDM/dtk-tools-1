@@ -36,18 +36,23 @@ class OptimToolPlotter(BasePlotter):
 
     def visualize(self, calib_manager):
         print 'OptimToolPlotter: VISUALIZE'
-        self.all_results = calib_manager.all_results
-        logger.debug(self.all_results)
 
         self.directory = calib_manager.iteration_directory()
         self.param_names = calib_manager.param_names()
         self.site_analyzer_names = calib_manager.site_analyzer_names()
 
-        X_center_all = calib_manager.iteration_state.next_point['X_center']
-        X_center = X_center_all[ calib_manager.iteration ]
+        np = calib_manager.iteration_state.next_point
+        data = pd.DataFrame.from_dict(np['data'])
+        print data.head()
+
+        X_center_all = pd.DataFrame.from_dict(np['X_center'])
+        print 'X_center_all', X_center_all.head()
+
+        meta = pd.DataFrame.from_dict(np['meta'])
+        print 'meta', meta.head()
 
         ### STATE EVOLUTION ###
-        params = calib_manager.iteration_state.next_point['params']
+        params = np['params']
         state_evolution = pd.DataFrame(columns = ['Parameter', 'Iteration', 'Value', 'Min', 'Max'])
         state_evolution['Iteration'] = state_evolution['Iteration'].astype(int)
         for (i,p) in enumerate(self.param_names):
@@ -76,7 +81,7 @@ class OptimToolPlotter(BasePlotter):
         latest_samples = results_this_iteration[self.param_names].values
         D = latest_samples.shape[1]
 
-        fitted_values_df = pd.DataFrame.from_dict(calib_manager.iteration_state.next_point['fitted_values_dict'])
+        fitted_values_df = pd.DataFrame.from_dict(np['fitted_values_dict'])
 
         merged = pd.DataFrame.merge( calib_manager.all_results.reset_index(), fitted_values_df.reset_index()[['sample', 'iteration', 'Fitted']], on=['sample', 'iteration'])
 
@@ -84,10 +89,10 @@ class OptimToolPlotter(BasePlotter):
         data = merged.set_index('iteration')
         data = data.loc[calib_manager.iteration]
 
-        rsquared_all = calib_manager.iteration_state.next_point['rsquared']
+        rsquared_all = np['rsquared']
         rsquared = rsquared_all[ calib_manager.iteration ]
 
-        regression_parameters = calib_manager.iteration_state.next_point['regression_parameters']
+        regression_parameters = np['regression_parameters']
 
         ### REGRESSION ###
         fig, ax = plt.subplots()

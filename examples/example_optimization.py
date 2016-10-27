@@ -30,11 +30,18 @@ print 'TEMP: only Dielmo'
 sites = [sites[0]]
 
 # GUESS:
-x0 = [0.45, 0.65]
-
-params = collections.OrderedDict()
-params['MSP1_Merozoite_Kill_Fraction'] = { 'Min': 0.4, 'Max': 0.7 }
-params['Clinical_Fever_Threshold_High'] = { 'Min': 0.5, 'Max': 2.5 }
+params = {
+    'MSP1_Merozoite_Kill_Fraction': {
+        'Guess': 0.45,
+        'Min': 0.4,
+        'Max': 0.7
+    },
+    'Clinical_Fever_Threshold_High': {
+        'Guess': 0.65,
+        'Min': 0.5,
+        'Max': 2.5
+    }
+}
 
 #params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
 #params['Nonspecific_Antigenicity_Factor'] = { 'Min': 0.1, 'Max': 0.9 }
@@ -60,17 +67,16 @@ def sample_point_fn(cb, param_values):
     can be encoded in a similar fashion using custom functions rather than the generic "set_param".
     """
     params_dict = dict(zip(params.keys(), param_values))
+    params_dict['Simulation_Duration'] = 1*365
+    params_dict['Run_Number'] = random.randint(0, 1e6)
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
-    cb.set_param('Simulation_Duration', 10*365)
-    cb.set_param('Run_Number', random.randint(0, 1e6) )  # Pick a random random seed
     return params_dict
 
 mu_r = 0.05
 sigma_r = 0.01
 
 next_point_kwargs = dict(
-        x0=x0,
         mu_r = mu_r,
         sigma_r = sigma_r,
         initial_samples = 32,
