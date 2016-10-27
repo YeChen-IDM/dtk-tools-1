@@ -7,7 +7,6 @@ import collections
 import random
 
 from calibtool.CalibManager import CalibManager
-from calibtool.Prior import MultiVariatePrior
 from calibtool.algo.OptimTool import OptimTool
 from calibtool.analyzers.DTKCalibFactory import DTKCalibFactory
 from calibtool.plotters.LikelihoodPlotter import LikelihoodPlotter
@@ -67,7 +66,7 @@ def sample_point_fn(cb, param_values):
     can be encoded in a similar fashion using custom functions rather than the generic "set_param".
     """
     params_dict = dict(zip(params.keys(), param_values))
-    params_dict['Simulation_Duration'] = 1*365
+    params_dict['Simulation_Duration'] = 10*365
     params_dict['Run_Number'] = random.randint(0, 1e6)
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
@@ -92,7 +91,7 @@ calib_manager = CalibManager(name='ExampleOptimization_ResumeTesting',
                              next_point=OptimTool(params, **next_point_kwargs),
                              sim_runs_per_param_set=1, # <-- Replicates
                              max_iterations=11,
-                             num_to_plot=3,
+                             num_to_plot=3,         # DJK: Should be parameter of plotter, not CM!
                              plotters=plotters)
 
 #run_calib_args = {'selected_block': "EXAMPLE"}

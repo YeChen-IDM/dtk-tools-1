@@ -55,7 +55,7 @@ class OptimTool(NextPointAlgorithm):
         #self.X_center['Iteration'] = 0
         iteration = 0
 
-        self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Value', 'Min', 'Max'])
+        self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Min', 'Max'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
         for param_name in self.get_param_names():
             self.state.loc[len(self.state)] = [iteration, param_name, params[param_name]['Guess'], params[param_name]['Min'], params[param_name]['Max']]
@@ -72,7 +72,7 @@ class OptimTool(NextPointAlgorithm):
         state_by_iter = self.state.reset_index(drop=True).set_index(['Iteration', 'Parameter'])
         assert( iteration in state_by_iter.index.get_level_values('Iteration') )
         state_this_iter = state_by_iter.loc[iteration]
-        return [ state_this_iter.loc[p]['Value'] for p in self.get_param_names() ]
+        return [ state_this_iter.loc[p]['Center'] for p in self.get_param_names() ]
 
 
     def add_samples(self, samples, iteration):
@@ -88,6 +88,29 @@ class OptimTool(NextPointAlgorithm):
     def get_samples_for_iteration(self, iteration):
         return self.data.query('Iteration == @ iteration').sort_values('Sample')[self.get_param_names()].values
 
+
+    def clamp(self, X, Xmin, Xmax):
+        # UGLY, but funcational.  TODO.
+        print 'IN', X
+        Xa = np.asmatrix(X) if not isinstance(X, np.ndarray) else X
+
+        Xa = np.asmatrix(X)
+        nRows = Xa.shape[0]
+        for (i,p) in enumerate( self.get_param_names() ):
+            Xa[:,i] = np.minimum( Xmax[p], np.maximum( Xmin[p], Xa[:,i] ) )
+
+        if isinstance(X, list):
+            Xout = Xa.tolist()
+            if nRows == 1:
+                Xout = Xout[0]
+        else:
+            Xout = Xa
+
+        print 'OUT', Xout
+
+        return Xout
+
+
     def choose_samples_for_next_iteration(self, iteration, results):
         logger.info('%s: Choosing samples at iteration %d:', self.__class__.__name__, iteration)
         logger.debug('Results:\n%s', results)
@@ -96,8 +119,7 @@ class OptimTool(NextPointAlgorithm):
         if iteration+1 in data_by_iter.index.unique():
             # Perhaps the results have changed? Check?
             # TODO: Change to logger (everywhere)
-            print '%s: Have already selected samples for the next interation, why call choose_samples_for_next_iteration?' % self.__class__.__name__
-            print data_by_iter.loc[iteration+1]
+            print "%s: I'm way ahead of you, samples for the next iteration were computed previously." % self.__class__.__name__
             return data_by_iter.loc[iteration+1, self.get_param_names()].values
 
         # TODO: Need to sort by sample?
@@ -134,23 +156,33 @@ class OptimTool(NextPointAlgorithm):
             old_center = self._get_X_center(iteration)
             new_center = [c + (v['Max']-v['Min'])**2 * p * self.mu_r / den for c,p,v in zip(old_center, params, self.params.values()) ]
 
-            print "TODO: MAKE SURE NEW X_CENTER IS WITHIN CONSTRAINTS"
         else:
             print 'Bad R^2 (%f)'%mod_fit.rsquared
             max_idx = np.argmax(latest_results)
             'Stepping to argmax of %f at:'%latest_results[max_idx], latest_samples[max_idx]
-            new_center = latest_samples[max_idx]
+            new_center = latest_samples[max_idx].tolist()
+
+
+        print "TODO: MAKE SURE NEW X_CENTER IS WITHIN CONSTRAINTS"
+
+        X_min = self.state.pivot('Iteration', 'Parameter', 'Min').loc[iteration, self.get_param_names()]
+        X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
+        new_center = self.clamp(new_center, X_min, X_max)
 
         new_state = pd.DataFrame( {
             'Iteration':[iteration+1]*self.n_dimensions,
             'Parameter': self.get_param_names(),
-            'Value': new_center.tolist(),
+            'Center': new_center,
             'Min': [v['Min'] for v in self.params.values()],
             'Max': [v['Max'] for v in self.params.values()]
         } )
 
         self.state = pd.concat( [self.state, new_state] )
+
+
         samples_for_next_iteration = self.sample_hypersphere(self.samples_per_iteration, new_center)
+
+        samples_for_next_iteration = self.clamp(samples_for_next_iteration, X_min, X_max)
 
         self.data.reset_index(inplace=True)
         self.add_samples( samples_for_next_iteration, iteration + 1 )
