@@ -1,4 +1,5 @@
 import argparse
+import csv
 import datetime
 import json
 import os
@@ -14,6 +15,7 @@ from dtk.utils.analyzers.group import group_by_name
 from dtk.utils.analyzers.plot import plot_grouped_lines
 from dtk.utils.setupui.SetupApplication import SetupApplication
 from simtools.DataAccess.DataStore import DataStore
+from simtools.DataAccess.LoggingDataStore import LoggingDataStore
 from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
@@ -163,6 +165,7 @@ def kill(args, unknownArgs):
         exp_manager = reload_experiment(args)
 
     logger.info("Killing Experiment %s" % exp_manager.experiment.id)
+    print "Killing Experiment %s" % exp_manager.experiment.id
     states, msgs = exp_manager.get_simulation_status()
     exp_manager.print_status(states, msgs, verbose=False)
 
@@ -173,10 +176,8 @@ def kill(args, unknownArgs):
 
     if args.simIds:
         logger.info('Killing job(s) with ids: ' + str(args.simIds))
-        params = {'ids': args.simIds}
     else:
         logger.info('No job IDs were specified.  Killing all jobs in selected experiment (or most recent).')
-        params = {'killall': True}
 
     choice = raw_input('Are you sure you want to continue with the selected action (Y/n)? ')
 
@@ -184,7 +185,8 @@ def kill(args, unknownArgs):
         logger.info('No action taken.')
         return
 
-    exp_manager.cancel_simulations(**params)
+    exp_manager.kill(args, unknownArgs)
+    print "'Kill' has been executed successfully."
 
 
 def exterminate(args, unknownArgs):
@@ -208,7 +210,9 @@ def exterminate(args, unknownArgs):
         return
 
     for exp_manager in exp_managers:
-        exp_manager.cancel_simulations(killall=True)
+        exp_manager.cancel_experiment()
+
+    print "'Exterminate' has been executed successfully."
 
 
 def delete(args, unknownArgs):
@@ -336,6 +340,45 @@ def analyze(args, unknownArgs):
 
 def analyze_list(args, unknownArgs):
     logger.error('\n' + '\n'.join(builtinAnalyzers.keys()))
+
+
+def log(args, unknownArgs):
+    # Take this opportunity to cleanup the logs
+    LoggingDataStore.cleanup()
+
+    # Check if complete
+    if args.complete:
+        records = [r.__dict__ for r in LoggingDataStore.get_all_records()]
+        with open('dtk_tools_log.csv', 'wb') as output_file:
+            dict_writer = csv.DictWriter(output_file,
+                                         fieldnames=[r for r in records[0].keys()if not r[0] == '_'],
+                                         extrasaction='ignore')
+            dict_writer.writeheader()
+            dict_writer.writerows(records)
+        print "Complete log written to dtk_tools_log.csv."
+        return
+
+    # Create the level
+    level = 0
+    if args.level == "INFO":
+        level = 20
+    elif args.level == "ERROR":
+        level = 30
+
+    modules = args.module if args.module else LoggingDataStore.get_all_modules()
+
+    print "Presenting the last %s entries for the modules %s and level %s" % (args.number, modules, args.level)
+    records = LoggingDataStore.get_records(level,modules,args.number)
+
+    records_str = "\n".join(map(str, records))
+    print records_str
+
+    if args.export:
+        with open(args.export, 'w') as fp:
+            fp.write(records_str)
+
+        print "Log written to %s" % args.export
+
 
 def sync(args, unknownArgs):
     """
@@ -532,14 +575,10 @@ def reload_experiment(args=None):
 
 
 def reload_experiments(args=None):
-    if args:
-        id = args.expId
-    else:
-        id = None
-
+    id = args.expId if args else None
     current_dir = args.current_dir if 'current_dir' in args else None
 
-    return map(lambda exp: ExperimentManagerFactory.from_experiment(exp), DataStore.get_experiments(id, current_dir))
+    return map(lambda exp: ExperimentManagerFactory.from_experiment(exp), DataStore.get_experiments_with_options(id, current_dir))
 
 
 def main():
@@ -663,6 +702,15 @@ def main():
     # 'dtk test' options
     parser_test = subparsers.add_parser('test', help='Launch the nosetests on the test folder.')
     parser_test.set_defaults(func=test)
+
+    # 'dtk log' options
+    parser_log = subparsers.add_parser('log', help="Allow to query and export the logs.")
+    parser_log.add_argument('-l', '--level', help="Only display logs for a certain level and above (DEBUG,INFO,ERROR)", dest="level", default="DEBUG")
+    parser_log.add_argument('-m', '--module', help="Only display logs for a given module.", dest="module", nargs='+')
+    parser_log.add_argument('-n', '--number', help="Limit the number of entries returned (default is 100).", dest="number", default=100)
+    parser_log.add_argument('-e', '--export', help="Export the log to the given file.", dest="export")
+    parser_log.add_argument('-c', '--complete', help="Export the complete log to a CSV file (dtk_tools_log.csv).", action='store_true')
+    parser_log.set_defaults(func=log)
 
     # run specified function passing in function-specific arguments
     args, unknownArgs = parser.parse_known_args()

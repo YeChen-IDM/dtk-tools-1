@@ -1,3 +1,5 @@
+import gc
+
 import logging
 import multiprocessing
 import threading
@@ -7,6 +9,7 @@ from collections import OrderedDict
 
 import sys
 from simtools.DataAccess.DataStore import DataStore
+from simtools.DataAccess.LoggingDataStore import LoggingDataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
 from simtools.utils import init_logging
@@ -23,6 +26,12 @@ def SimulationStateUpdater(states, loop=True):
             try:
                 batch = []
                 for id,sim in states.iteritems():
+                    if sim.status not in (
+                    'Waiting', 'Commissioned', 'Running', 'Succeeded', 'Failed', 'Canceled', 'CancelRequested',
+                    "Retry", "CommissionRequested", "Provisioning", "Created"):
+                        logger.warn(
+                            "Failed to retrieve correct status for simulation %s. Status returned: %s" % (sim.id,sim.status))
+                        continue
                     batch.append({'sid':id, 'status':sim.status, 'message':sim.message,'pid':sim.pid})
 
                 DataStore.batch_simulations_update(batch)
@@ -55,6 +64,10 @@ if __name__ == "__main__":
     t1 = threading.Thread(target=SimulationStateUpdater, args=(update_states, True))
     t1.daemon = True
     t1.start()
+
+    # Take this opportunity to cleanup the logs
+    t2 = multiprocessing.Process(target=LoggingDataStore.cleanup)
+    t2.start()
 
     # will hold the analyze threads
     analysis_threads = []
@@ -102,6 +115,7 @@ if __name__ == "__main__":
 
                 # After analysis delete the manager from the list
                 del managers[manager.experiment.id]
+                gc.collect()
 
         # Cleanup the analyze thread list
         for ap in analysis_threads:

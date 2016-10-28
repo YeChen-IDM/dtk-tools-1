@@ -1,11 +1,15 @@
 import datetime
 
-from simtools.DataAccess import session_scope, logger
+from simtools.DataAccess import session_scope
 from simtools.DataAccess.Schema import Simulation
 from sqlalchemy import and_
 from sqlalchemy import bindparam
 from sqlalchemy import not_
 from sqlalchemy import update
+
+from simtools.utils import init_logging
+
+logger = init_logging('DataAccess')
 
 class SimulationDataStore:
 
@@ -61,7 +65,7 @@ class SimulationDataStore:
     def get_simulation(cls, sim_id):
         logger.debug("Get simulation")
         with session_scope() as session:
-            simulation = session.query(Simulation).filter(Simulation.id == sim_id).one()
+            simulation = session.query(Simulation).filter(Simulation.id == sim_id).one_or_none()
             session.expunge_all()
 
         return simulation
