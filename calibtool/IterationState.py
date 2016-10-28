@@ -71,7 +71,10 @@ class IterationState(object):
         results_df = pd.DataFrame.from_dict(self.results, orient='columns')
         results_df.index.name = 'sample'
 
-        params_df = pd.DataFrame(self.samples_for_this_iteration['values'], columns=self.samples_for_this_iteration['names'])
+        params_df = pd.DataFrame.from_dict(self.samples_for_this_iteration, orient='columns')
+
+        for c in params_df.columns: # Argh
+            params_df[c] = params_df[c].astype( self.samples_for_this_iteration_dtypes[c] )
 
         sims_df = pd.DataFrame.from_dict(self.simulations, orient='index')
         grouped = sims_df.groupby('__sample_index__', sort=True)

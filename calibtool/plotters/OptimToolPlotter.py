@@ -27,12 +27,11 @@ class OptimToolPlotter(BasePlotter):
         super(OptimToolPlotter, self).__init__( False )
 
     def plot_state_evolution(self, **kwargs):
-        print 'K', kwargs
         data = kwargs.pop('data')
-        print 'D', data
-        plt.plot(data['Iteration'], data['Center'], color='k', marker='o')
-        plt.plot(data['Iteration'], data['Min'], color='r')
-        plt.plot(data['Iteration'], data['Max'], color='r')
+        it = data['Iteration'].astype(int)
+        plt.plot(it, data['Center'], color='k', marker='o')
+        plt.plot(it, data['Min'], color='r')
+        plt.plot(it, data['Max'], color='r')
 
     def visualize(self, calib_manager):
         print 'OptimToolPlotter: VISUALIZE'
@@ -45,16 +44,11 @@ class OptimToolPlotter(BasePlotter):
         data = pd.DataFrame.from_dict(npt['data'])
         data_by_iteration = data.set_index('Iteration')
         data_this_iter = data_by_iteration.loc[calib_manager.iteration]
-        print 'data:\n', data.head()
-        print 'data_this_iter:\n', data_this_iter.head()
 
-        meta = pd.DataFrame.from_dict(npt['meta'])
-        meta_by_iter = meta.pivot('Iteration', 'Parameter', 'Value')
-        print 'meta:\n', meta.head()
-        print 'meta_by_iter:\n', meta_by_iter.head()
+        regression = pd.DataFrame.from_dict(npt['regression'])
+        regression_by_iter = regression.pivot('Iteration', 'Parameter', 'Value')
 
         state = pd.DataFrame.from_dict(npt['state'])
-        print 'state:\n', state.head()
         state_pivot = state.pivot('Iteration', 'Parameter', 'Center')
         X_center_all = state.pivot('Iteration', 'Parameter', 'Center')[self.param_names].values
         X_center = X_center_all[calib_manager.iteration]
@@ -70,10 +64,11 @@ class OptimToolPlotter(BasePlotter):
         print 'STATE, check for iteration as FP?\n',state.head()
         cw = None if D < 3 else int(np.ceil(sqrt(D)))
         g = sns.FacetGrid(state, row=None, col='Parameter', hue=None, col_wrap=cw, sharex=False, sharey=False, size=3, aspect=1, palette=None, row_order=None, col_order=None, hue_order=None, hue_kws=None, dropna=True, legend_out=True, despine=True, margin_titles=True, xlim=None, ylim=None, subplot_kws=None, gridspec_kws=None)
-        g.map_dataframe(self.plot_state_evolution).set_titles('{col_name}')
+        g = g.map_dataframe(self.plot_state_evolution)
+        g = g.set_titles(col_template='{col_name}') # , size = 15
         g.savefig( os.path.join(self.directory, 'Optimization_State_Evolution.pdf'))
 
-        rsquared = meta_by_iter.loc[calib_manager.iteration, 'Rsquared']
+        rsquared = regression_by_iter.loc[calib_manager.iteration, 'Rsquared']
 
         ### REGRESSION ###
         fig, ax = plt.subplots()
@@ -116,13 +111,12 @@ class OptimToolPlotter(BasePlotter):
             x1 = data_this_iter[self.param_names[1]]
             y = latest_results
             y_fit = latest_fitted
-            rp = meta_by_iter.loc[calib_manager.iteration, ['Constant']+self.param_names].values
-            print type(rp), rp
+            rp = regression_by_iter.loc[calib_manager.iteration, ['Constant']+self.param_names].values
 
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
             h1 = ax.scatter( x0, x1, y, c='k', marker='o', figure=fig)
-            i=int(calib_manager.iteration)
+            i = int(calib_manager.iteration)
 
             h2 = ax.scatter( X_center_all[i][0], 
                         X_center_all[i][1], 
@@ -166,15 +160,11 @@ class OptimToolPlotter(BasePlotter):
 
 
         ### BY ITERATION ###
-
         all_results = calib_manager.all_results.copy().reset_index(drop=True)#.set_index(['iteration', 'sample'])
         fig, ax = plt.subplots()
         g = sns.violinplot(x='iteration', y='total', data=all_results, ax = ax)
 #, hue=None, data=res, order=None, hue_order=None, bw='scott', cut=2, scale='area', scale_hue=True, gridsize=100, width=0.8, inner='box', split=False, dodge=True, orient=None, linewidth=None, color=None, palette=None, saturation=0.75, ax=None, **kwargs))
-        # sample is index
-        # cols of iteration, total, Dielmo_ClinicalIncidenceByAgeCohortAnalyzer, and x labels
         plt.savefig( os.path.join(self.directory, 'Optimization_Progress.pdf'))
-
 
         fig.clf()
         plt.close(fig)

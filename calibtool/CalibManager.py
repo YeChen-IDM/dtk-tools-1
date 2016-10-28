@@ -28,12 +28,12 @@ class SampleIndexWrapper(object):
     on sample-point index when called in a iteration over sample points
     """
 
-    def __init__(self, sample_point_fn):
-        self.sample_point_fn = sample_point_fn
+    def __init__(self, map_sample_to_model_input_fn):
+        self.map_sample_to_model_input_fn = map_sample_to_model_input_fn
 
     def __call__(self, idx):
         def func(cb, *args, **kwargs):
-            params_dict = self.sample_point_fn(cb, *args, **kwargs)
+            params_dict = self.map_sample_to_model_input_fn(cb, *args, **kwargs)
             params_dict.update(cb.set_param('__sample_index__', idx))
             return params_dict
 
@@ -47,14 +47,14 @@ class CalibManager(object):
     or HPC simulations for a set of random seeds, sample points, and site configurations.
     """
 
-    def __init__(self, setup, config_builder, sample_point_fn, sites, next_point,
-                 name='calib_test', iteration_state=IterationState(),
+    def __init__(self, setup, config_builder, map_sample_to_model_input_fn,
+                 sites, next_point, name='calib_test', iteration_state=IterationState(),
                  sim_runs_per_param_set=1, num_to_plot=10, max_iterations=5, plotters=list()):
 
         self.name = name
         self.setup = setup
         self.config_builder = config_builder
-        self.sample_point_fn = SampleIndexWrapper(sample_point_fn)
+        self.map_sample_to_model_input_fn = SampleIndexWrapper(map_sample_to_model_input_fn)
         self.sites = sites
         self.next_point = next_point
         self.iteration_state = iteration_state
@@ -193,12 +193,12 @@ class CalibManager(object):
                 self.choose_and_cache_samples_for_next_iteration(results) # update_next_point
                 # DJK: set resume_point to 3
 
-            # Need another resume point after next point is done
+            # DJK: Need another resume point after next point is done
 
             print 'plot_iteration'
             self.plot_iteration()
 
-            # Another resume point after plotting?
+            # DJK: Another resume point after plotting?
 
             print 'finished'
             if self.finished():
@@ -226,9 +226,15 @@ class CalibManager(object):
         Query the next-point algorithm for the next set of sample points.
         """
         # DJK TODO: Consistentcy of parameters vs points --> SAMPLES
+        # DJK: The following is now a dataframe so that datatype can be preserved
         samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # get_next_samples
+        assert( isinstance(samples_for_this_iteration, pd.DataFrame) )
 
-        self.iteration_state.samples_for_this_iteration = {'names': self.param_names(), 'values': samples_for_this_iteration.tolist()}  # DJK: Names and values is too simple
+        dtypes = {name:str(data.dtype) for name, data in samples_for_this_iteration.iteritems()}
+        self.iteration_state.samples_for_this_iteration_dtypes = dtypes # Argh
+
+        self.iteration_state.samples_for_this_iteration = samples_for_this_iteration.to_dict(orient='list')
+
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
 
@@ -260,8 +266,12 @@ class CalibManager(object):
                  for i in range(self.sim_runs_per_param_set)],
                 [ModBuilder.ModFn(site.setup_fn)
                  for site in self.sites],
-                [ModBuilder.ModFn(self.sample_point_fn(idx), sample_point)
-                 for idx, sample_point in enumerate(next_params)])
+                # itertuples preserves datatype
+                # First tuple element is index (use this instead of enumerate)
+                # Because parameter names are not necessarily valid python identifiers, have to build my own dictionary here
+                [ModBuilder.ModFn(self.map_sample_to_model_input_fn(sample[0]),
+                    {k:v for k,v in zip(self.param_names(), sample[1:])})
+                 for sample in next_params.itertuples()])
 
             analyzers = []
             for site in self.sites:
@@ -380,13 +390,14 @@ class CalibManager(object):
 
         self.iteration_state.analyzers = cached_analyses
         self.iteration_state.results = cached_results
-        self.cache_iteration_state()
 
         iteration_summary = self.iteration_state.summary_table()
 
         self.all_results = pd.concat((self.all_results, iteration_summary)).sort_values(by='total', ascending=False)
         logger.info(self.all_results[['iteration', 'total']].head(10))
+
         self.cache_calibration()
+        self.cache_iteration_state()    # After, in case of issues in generating all_results
 
         # Write the CSV
         self.write_LL_csv(exp_manager.experiment)
@@ -409,7 +420,6 @@ class CalibManager(object):
         #self.next_point.update_state(self.iteration)
         points_for_next_iteration = self.next_point.choose_samples_for_next_iteration(self.iteration, results)
 
-        ###self.iteration_state.parameters_for_next_iteration = {'names': self.param_names(), 'values': points_for_next_iteration.tolist()} # DJK FIX
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
 
@@ -657,21 +667,12 @@ class CalibManager(object):
         self.iteration_state.reset_state()
 
         # Catch up the Next Point
-        ###self.restore_next_point_for_iteration(self.iteration)
-        # Restore IterationState
-        self.iteration_state = IterationState.restore_state(self.name, iteration) # -1?
-
-        # DJK: Have to fully restore next point, not just call one function!
-        print iteration, "CALLING SET_STATE WITH:\n", self.iteration_state.next_point
+        self.iteration_state = IterationState.restore_state(self.name, iteration)
         self.next_point.set_state( self.iteration_state.next_point )
-        ###
-
-        # Restore IterationState
-        #self.iteration_state = IterationState.restore_state(self.name, iteration)
 
         # Store iteration #:
         #self.iteration_state.iteration = iteration
-        assert(self.iteration_state.iteration == iteration)
+        #assert(self.iteration_state.iteration == iteration)
 
         # Check leftover (in case lost connection) and also consider possible location change.
         self.check_leftover()   # BR: This should go away!  leftovers = sims that are still running for current iteration

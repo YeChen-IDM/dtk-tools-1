@@ -24,80 +24,75 @@ class OptimTool(NextPointAlgorithm):
     The basic idea of OptimTool is
     '''
 
-    def __init__(self, components,
+    def __init__(self, params, constrain_sample_fn,
                 mu_r = 0.1,
                 sigma_r = 0.02,
                 center_repeats = 2,
-                initial_samples = 1e2, # Should be number of samples to draw from the hypersphere
                 samples_per_iteration = 1e2,
                 rsquared_thresh = 0.5 # Above this value, the ascent direction is used.  Below, it's best result.
             ):
+
+        self.params = params # TODO: Check min <= center <= max
+        self.constrain_sample_fn = constrain_sample_fn
 
         self.mu_r = mu_r
         self.sigma_r = sigma_r
         self.center_repeats = center_repeats
         self.rsquared_thresh = rsquared_thresh
 
-        self.n_dimensions = len(components)
-        self.components = components
+        self.n_dimensions = len(params)
 
         assert( self.n_dimensions == len(self.get_param_names()) )
 
         self.samples_per_iteration = int(samples_per_iteration)
 
-        self.data = pd.DataFrame(columns=[['Iteration', 'Sample', 'Results', 'Fitted'] + self.get_param_names()])
+        self.data = pd.DataFrame(columns=[['Iteration', '__sample_index__', 'Results', 'Fitted'] + self.get_param_names()])
         self.data['Iteration'] = self.data['Iteration'].astype(int)
-        self.data['Sample'] = self.data['Sample'].astype(int)
+        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
 
-        self.meta = pd.DataFrame(columns=['Iteration', 'Parameter', 'Value'])   # Parameters: Rsquared, Regression_Parameters
-        self.meta['Iteration'] = self.meta['Iteration'].astype(int)
+        self.regression = pd.DataFrame(columns=['Iteration', 'Parameter', 'Value'])   # Parameters: Rsquared, Regression_Parameters
+        self.regression['Iteration'] = self.regression['Iteration'].astype(int)
 
-        #self.X_center = pd.DataFrame([X_guess], columns=self.get_param_names())   # Parameters: Rsquared, Regression_Parameters
-        #self.X_center['Iteration'] = 0
-        iteration = 0
-
-        self.state = pd.DataFrame(columns=['Iteration', 'Component Name', 'Input Number', 'Center', 'Min', 'Max'])
+        self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Min', 'Max'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
-        self.state['Input Number'] = self.state['Input Number'].astype(int)
 
-        #for param_name in self.get_param_names():
-        #    self.state.loc[len(self.state)] = [iteration, param_name, params[param_name]['Guess'], params[param_name]['Min'], params[param_name]['Max']]
-        for c in self.components:
-            for i in range(c.dim_in):
-                self.state.loc[len(self.state)] = [iteration, c.name, i, c.x_current[i], c.lower_bound[i], c.upper_bound[i]]
+        iteration = 0
+        for param in self.params:
+            print (iteration, param['Name'], param['Guess'], param['Min'], param['Max'])
+            self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], param['Min'], param['Max']]
 
-        initial_samples = self.sample_hypersphere(initial_samples, self._get_X_center(iteration))
-
-        self.add_samples( initial_samples, iteration=0 )
+        X_center = self._get_X_center(iteration)
+        initial_samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration, samples_per_iteration, X_center)
 
         logger.info('%s instance with %d initial %d-dimensional samples and %d per iteration',
                     self.__class__.__name__, self.data.shape[0],
                     self.n_dimensions, self.samples_per_iteration)
 
+
     def _get_X_center(self, iteration):
-        state_by_iter = self.state.reset_index(drop=True).set_index(['Iteration', 'Component Name', 'Input Number'])
+        state_by_iter = self.state.reset_index(drop=True).set_index(['Iteration', 'Parameter'])
         assert( iteration in state_by_iter.index.get_level_values('Iteration') )
         state_this_iter = state_by_iter.loc[iteration]
-        return [ state_this_iter.loc[p]['Center'] for p in self.get_param_names() ] # DJK: what about input number?
+        return [ state_this_iter.loc[p]['Center'] for p in self.get_param_names() ]
 
 
     def add_samples(self, samples, iteration):
         samples_df = pd.DataFrame( samples, columns = self.get_param_names() )
-        samples_df.index.name = 'Sample'
+        samples_df.index.name = '__sample_index__'
         samples_df['Iteration'] = iteration
         samples_df.reset_index(inplace=True)
 
         self.data = pd.concat([self.data, samples_df])
 
-        logger.debug('Samples:\n%s' % samples_df[self.get_param_names()].values)
+        logger.debug('__sample_index__:\n%s' % samples_df[self.get_param_names()].values)
+
 
     def get_samples_for_iteration(self, iteration):
-        return self.data.query('Iteration == @ iteration').sort_values('Sample')[self.get_param_names()].values
+        return self.data.query('Iteration == @ iteration').sort_values('__sample_index__')[self.get_param_names()]
 
 
     def clamp(self, X, Xmin, Xmax):
         # UGLY, but functional: TODO cleanup!
-        print 'IN', X
         Xa = np.asmatrix(X) if not isinstance(X, np.ndarray) else X
 
         Xa = np.asmatrix(X)
@@ -111,8 +106,6 @@ class OptimTool(NextPointAlgorithm):
                 Xout = Xout[0]
         else:
             Xout = Xa
-
-        print 'OUT', Xout
 
         return Xout
 
@@ -146,21 +139,14 @@ class OptimTool(NextPointAlgorithm):
 
         self.data.loc[iteration, 'Fitted'] = mod_fit.fittedvalues
 
-        # TODO: Cleaner:
-        r2_df = pd.DataFrame( [[iteration, 'Rsquared', mod_fit.rsquared]], columns=['Iteration', 'Parameter', 'Value'] )
-        self.meta = pd.concat([self.meta, r2_df])
-        for (p,v) in zip( ['Constant'] + self.get_param_names(), mod_fit.params): # mod.endog_names
-            regression_param_df = pd.DataFrame( [[iteration, p, v]], columns=['Iteration', 'Parameter', 'Value'] )
-            self.meta = pd.concat([self.meta, regression_param_df])
-
         # Choose next X_center
         if mod_fit.rsquared > self.rsquared_thresh:
             print 'Good R^2 (%f), using params: '%mod_fit.rsquared, mod_fit.params
-            params = mod_fit.params[1:] # Drop constant
-            den = np.sqrt( sum([ (v['Max']-v['Min'])**2 * p**2  for p,v in zip(params, self.params.values()) ]) )
+            coef = mod_fit.params[1:] # Drop constant
+            den = np.sqrt( sum([ (p['Max']-p['Min'])**2 * c**2  for c,p in zip(coef, self.params) ]) )
 
             old_center = self._get_X_center(iteration)
-            new_center = [c + (v['Max']-v['Min'])**2 * p * self.mu_r / den for c,p,v in zip(old_center, params, self.params.values()) ]
+            new_center = [x + (p['Max']-p['Min'])**2 * c * self.mu_r / den for x,c,p in zip(old_center, coef, self.params) ]
 
         else:
             print 'Bad R^2 (%f)'%mod_fit.rsquared
@@ -168,34 +154,63 @@ class OptimTool(NextPointAlgorithm):
             'Stepping to argmax of %f at:'%latest_results[max_idx], latest_samples[max_idx]
             new_center = latest_samples[max_idx].tolist()
 
+        r2_df = pd.DataFrame( [[iteration, 'Rsquared', mod_fit.rsquared]], columns=['Iteration', 'Parameter', 'Value'] )
+        thresh_df = pd.DataFrame( [[iteration, 'Rsquared_Threshold', self.rsquared_thresh]], columns=['Iteration', 'Parameter', 'Value'] )
+        self.regression = pd.concat([self.regression, r2_df, thresh_df])
+        for (p,v) in zip( ['Constant'] + self.get_param_names(), mod_fit.params): # mod.endog_names
+            regression_param_df = pd.DataFrame( [[iteration, p, v]], columns=['Iteration', 'Parameter', 'Value'] )
+            self.regression = pd.concat([self.regression, regression_param_df])
 
+        # CLAMP
         X_min = self.state.pivot('Iteration', 'Parameter', 'Min').loc[iteration, self.get_param_names()]
         X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
         new_center = self.clamp(new_center, X_min, X_max)
+
+        # USER CONSTRAINT FN
+        new_center_dict = self.constrain_sample_fn( {k:v for k,v in zip(self.get_param_names(), new_center)} )
+        new_center = np.array( [new_center_dict[p] for p in self.get_param_names()] )
 
         new_state = pd.DataFrame( {
             'Iteration':[iteration+1]*self.n_dimensions,
             'Parameter': self.get_param_names(),
             'Center': new_center,
-            'Min': [v['Min'] for v in self.params.values()],
-            'Max': [v['Max'] for v in self.params.values()]
+            'Min': [p['Min'] for p in self.params],
+            'Max': [p['Max'] for p in self.params]
         } )
 
         self.state = pd.concat( [self.state, new_state] )
 
+        samples_for_next_iteration = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration+1, self.samples_per_iteration, new_center)
 
-        samples_for_next_iteration = self.sample_hypersphere(self.samples_per_iteration, new_center)
-
-        samples_for_next_iteration = self.clamp(samples_for_next_iteration, X_min, X_max)
-
-        self.data.reset_index(inplace=True)
-        self.add_samples( samples_for_next_iteration, iteration + 1 )
-
-        # Validate?
         logger.debug('Next samples:\n%s', samples_for_next_iteration)
         print 'UPDATED SAMPLES:\n', samples_for_next_iteration
 
         return samples_for_next_iteration
+
+
+    def choose_and_clamp_hypersphere_samples_for_iteration(self, iteration, N, X_center):
+
+        samples = self.sample_hypersphere(N, X_center)
+
+        # CLAMP
+        X_min = self.state.pivot('Iteration', 'Parameter', 'Min').loc[iteration, self.get_param_names()]
+        X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
+        samples = self.clamp(samples, X_min, X_max)
+
+        self.data.reset_index(inplace=True)
+        self.add_samples( samples, iteration )
+
+        # USER CONSTRAINT FN
+        self.data = self.data.set_index('Iteration')
+        tmp = self.data.loc[iteration].apply( self.constrain_sample_fn, axis=1)
+        print tmp.tail()
+
+        self.data.loc[iteration] = self.data.loc[iteration].apply( self.constrain_sample_fn, axis=1)
+        self.data.reset_index(inplace=True)
+        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
+
+        data_by_iter = self.data.reset_index().set_index('Iteration')
+        return data_by_iter.loc[iteration]
 
 
     def sample_hypersphere(self, N, X_center):
@@ -204,21 +219,21 @@ class OptimTool(NextPointAlgorithm):
 
         assert(N > self.center_repeats)
 
-        deviation = []
+        deviations = []
         for i in range(N - self.center_repeats):
             rvs = sn.rvs(size = self.n_dimensions)
             nrm = np.linalg.norm(rvs)
 
-            deviation.append( [r/nrm for r in rvs] )
+            deviations.append( [r/nrm for r in rvs] )
 
         rad = norm(loc = self.mu_r, scale = self.sigma_r)
 
         samples = np.empty([N, self.n_dimensions])
         samples[:self.center_repeats] = X_center
-        for i, dev in enumerate(deviation):
+        for i, deviation in enumerate(deviations):
             r = rad.rvs()
             # Scale by param range
-            samples[self.center_repeats + i] = [x + r * p * (v['Max']-v['Min']) for x,p,lower,upper in zip(X_center, dev, self.params.values())]
+            samples[self.center_repeats + i] = [x + r * d * (param['Max']-param['Min']) for x, d, param in zip(X_center, deviation, self.params)]
 
         return samples
 
@@ -251,8 +266,13 @@ class OptimTool(NextPointAlgorithm):
             samples_per_iteration = self.samples_per_iteration,
 
             data = self.data.to_dict(orient='list'),
-            meta = self.meta.to_dict(orient='list'),
-            state = self.state.to_dict(orient='list')
+            data_dtypes = {name:str(data.dtype) for name, data in self.data.iteritems()},
+
+            regression = self.regression.to_dict(orient='list'),
+            regression_dtypes = {name:str(data.dtype) for name, data in self.regression.iteritems()},
+
+            state = self.state.to_dict(orient='list'),
+            state_dtypes = {name:str(data.dtype) for name, data in self.state.iteritems()}
         )
         return optimtool_state
 
@@ -265,11 +285,22 @@ class OptimTool(NextPointAlgorithm):
         self.params = state['params']
         self.samples_per_iteration = state['samples_per_iteration']
 
+        data_dtypes =state['data_dtypes']
         self.data = pd.DataFrame.from_dict(state['data'], orient='columns')
-        self.meta = pd.DataFrame.from_dict(state['meta'], orient='columns')
+        for c in self.data.columns: # Argh
+            self.data[c] = self.data[c].astype( data_dtypes[c] )
+
+        regression_dtypes =state['regression_dtypes']
+        self.regression = pd.DataFrame.from_dict(state['regression'], orient='columns')
+        for c in self.regression.columns: # Argh
+            self.regression[c] = self.regression[c].astype( regression_dtypes[c] )
+
+        state_dtypes =state['state_dtypes']
         self.state = pd.DataFrame.from_dict(state['state'], orient='columns')
+        for c in self.state.columns: # Argh
+            self.state[c] = self.state[c].astype( state_dtypes[c] )
 
 
     def get_param_names(self):
-        #return self.params.keys()
-        return [c.name for c in self.components]
+        return [p['Name'] for p in self.params]
+        #return [c.name for c in self.components]

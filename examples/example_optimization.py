@@ -25,102 +25,97 @@ analyzer = DTKCalibFactory.get_analyzer(
 
 sites = [DTKCalibFactory.get_site('Dielmo', analyzers=[analyzer]),
          DTKCalibFactory.get_site('Ndiop', analyzers=[analyzer])]
-
-
-print 'TEMP: only Dielmo'
+print 'Dielmo only for now'
 sites = [sites[0]]
 
-# TODO: Convert to array of objects
+# TODO: 'Frozen': False
 params = [
-    SimpleComponent(
-        name = 'MSP1 Merozoite Kill Fraction',
-        x_initial = 0.45,
-        lower_bound = 0.4,
-        upper_bound = 0.7,
-        is_dynamic = True,
-        json_paths = [ 'MSP1_Merozoite_Kill_Fraction' ],
-        labels = [ 'MSP1 Merozoite Kill Fraction' ]
-    ),
-    SimpleComponent(
-        name = 'Clinical Fever Threshold High',
-        x_initial = 2.4,
-        lower_bound = 0.5,
-        upper_bound = 2.5,
-        is_dynamic = True,
-        json_paths = [ 'Clinical_Fever_Threshold_High' ],
-        labels = [ 'Clinical Fever Threshold High' ]
-    )
+    {
+        'Name': 'Falciparum MSP Variants',
+        'MapTo': 'Falciparum_MSP_Variants',
+        'Guess': 100,
+        'Min': 0,
+        'Max': 1000
+    },
+    {
+        'Name': 'MSP1 Merozoite Kill Fraction',
+        'MapTo': 'MSP1_Merozoite_Kill_Fraction',
+        'Guess': 0.45,
+        'Min': 0.4,
+        'Max': 0.7
+    }
 ]
-
-#   {
-#       'Name': 'Clinical_Fever_Threshold_High',
-#       'Guess': 2.4,
-#       'Min': 0.5,
-#       'Max': 2.5
-#   }
-
-
-#params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
-#params['Nonspecific_Antigenicity_Factor'] = { 'Min': 0.1, 'Max': 0.9 }
-
-# Fever multiplier
+'''
+    {
+        'Name': 'Clinical Fever Threshold High',
+        'MapTo': 'Clinical_Fever_Threshold_High',
+        'Guess': 1.75,
+        'Min': 0.5,
+        'Max': 2.5
+    },
+'''
 
 # Antigen_Switch_Rate (1e-10 to 1e-8, log)
 # Falciparum_PfEMP1_Variants (900 to 1700, linear int)
-
 # Falciparum_MSP_Variants (5 to 50, linear int)
-# MSP1_Merozoite_Kill_Fraction (0.4 to 0.7, linear) ***
-# "Clinical_Fever_Threshold_High": 1.5, [0.5, 2.5]  ***
-
 # OR "Min_Days_Between_Clinical_Incidents": 14, [ integer? ]
 
-plotters = [LikelihoodPlotter(True), SiteDataPlotter(True), OptimToolPlotter()] # OTP must be last!!!
+# Build optimization parameter name --> model input parameter from params above
+mapping = { p['Name']:p['MapTo'] for p in params }
 
-def sample_point_fn(cb, param_values):
-    """
-    A simple example function that takes a list of sample-point values
-    and sets parameters accordingly using the parameter names from the prior.
-    Note that more complicated logic, e.g. setting campaign event coverage or habitat abundance by species,
-    can be encoded in a similar fashion using custom functions rather than the generic "set_param".
-    """
+def constrain_sample( sample ):
 
-    params_dict = dict(zip(params.keys(), param_values))
-    params_dict['Simulation_Duration'] = 1*365
-    params_dict['Run_Number'] = random.randint(0, 1e6)
+    # Convert Falciparum MSP Variants to nearest integer
+    sample['Falciparum MSP Variants'] = int( round(sample['Falciparum MSP Variants']) )
 
-    print 'K', params.keys()
-    print 'V', param_values
-    print params_dict
+    # Clinical Fever Threshold High <  MSP1 Merozoite Kill Fraction
+    '''
+    if 'Clinical Fever Threshold High' in sample and 'MSP1 Merozoite Kill Fraction' in sample:
+        sample['Clinical Fever Threshold High'] = \
+            min( sample['Clinical Fever Threshold High'], sample['MSP1 Merozoite Kill Fraction'] )
+    '''
 
-    print 'TEMP!'
-    assert( params_dict['Clinical_Fever_Threshold_High'] > params_dict['MSP1_Merozoite_Kill_Fraction'] )
+    return sample
 
+plotters = [    LikelihoodPlotter(combine_sites=True), 
+                SiteDataPlotter(num_to_plot=10, combine_sites=True),
+                OptimToolPlotter()] # OTP must be last because it calls gc.collect()
 
-    for param, value in params_dict.iteritems():
-        cb.set_param(param,value)
-    return params_dict
+def map_sample_to_model_input(cb, sample):
+    sample['Simulation_Duration'] = 10*365
+    sample['Run_Number'] = random.randint(0, 1e6)
 
-mu_r = 0.05
-sigma_r = 0.01
+    tags = {}
+    for name, value in sample.iteritems():
+        print (name, value)
+        if name in mapping:
+            map_to_name = mapping[name]
+            if map_to_name is 'Custom':
+                print 'TODO: Handle custom mapping for', map_to_name
+            else:
+                tags.update( cb.set_param(map_to_name, value) )
+        else:
+            tags.update( cb.set_param(name, value) )
 
-next_point_kwargs = dict(
-        mu_r = mu_r,
-        sigma_r = sigma_r,
-        initial_samples = 32,
-        samples_per_iteration = 32,
-        center_repeats = 2
-    )
+    return tags
 
-calib_manager = CalibManager(name='ExampleOptimization_ResumeTesting',
-                             setup=SetupParser(),
-                             config_builder=cb,
-                             sample_point_fn=sample_point_fn,
-                             sites=sites,
-                             next_point=OptimTool(params, **next_point_kwargs),
-                             sim_runs_per_param_set=1, # <-- Replicates
-                             max_iterations=11,
-                             num_to_plot=3,         # DJK: Should be parameter of plotter, not CM!
-                             plotters=plotters)
+optimtool = OptimTool(params, 
+    constrain_sample, # <-- WILL NOT BE SAVED IN ITERATION STATE
+    mu_r = 0.05,      # <-- Mean percent of parameter range for numerical derivatve.  CAREFUL with integer parameters!
+    sigma_r = 0.01,   # <-- stdev of above
+    samples_per_iteration = 32,
+    center_repeats = 2
+)
+
+calib_manager = CalibManager(name='ExampleOptimization',
+                             setup = SetupParser(),
+                             config_builder = cb,
+                             map_sample_to_model_input_fn = map_sample_to_model_input,
+                             sites = sites,
+                             next_point = optimtool,
+                             sim_runs_per_param_set = 1, # <-- Replicates
+                             max_iterations = 10,        # <-- Iterations
+                             plotters = plotters)
 
 #run_calib_args = {'selected_block': "EXAMPLE"}
 run_calib_args = {}
