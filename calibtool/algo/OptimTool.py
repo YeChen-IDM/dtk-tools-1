@@ -24,7 +24,7 @@ class OptimTool(NextPointAlgorithm):
     The basic idea of OptimTool is
     '''
 
-    def __init__(self, params,
+    def __init__(self, components,
                 mu_r = 0.1,
                 sigma_r = 0.02,
                 center_repeats = 2,
@@ -38,8 +38,9 @@ class OptimTool(NextPointAlgorithm):
         self.center_repeats = center_repeats
         self.rsquared_thresh = rsquared_thresh
 
-        self.n_dimensions = len(params)
-        self.params = params
+        self.n_dimensions = len(components)
+        self.components = components
+
         assert( self.n_dimensions == len(self.get_param_names()) )
 
         self.samples_per_iteration = int(samples_per_iteration)
@@ -55,10 +56,15 @@ class OptimTool(NextPointAlgorithm):
         #self.X_center['Iteration'] = 0
         iteration = 0
 
-        self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Min', 'Max'])
+        self.state = pd.DataFrame(columns=['Iteration', 'Component Name', 'Input Number', 'Center', 'Min', 'Max'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
-        for param_name in self.get_param_names():
-            self.state.loc[len(self.state)] = [iteration, param_name, params[param_name]['Guess'], params[param_name]['Min'], params[param_name]['Max']]
+        self.state['Input Number'] = self.state['Input Number'].astype(int)
+
+        #for param_name in self.get_param_names():
+        #    self.state.loc[len(self.state)] = [iteration, param_name, params[param_name]['Guess'], params[param_name]['Min'], params[param_name]['Max']]
+        for c in self.components:
+            for i in range(c.dim_in):
+                self.state.loc[len(self.state)] = [iteration, c.name, i, c.x_current[i], c.lower_bound[i], c.upper_bound[i]]
 
         initial_samples = self.sample_hypersphere(initial_samples, self._get_X_center(iteration))
 
@@ -69,10 +75,10 @@ class OptimTool(NextPointAlgorithm):
                     self.n_dimensions, self.samples_per_iteration)
 
     def _get_X_center(self, iteration):
-        state_by_iter = self.state.reset_index(drop=True).set_index(['Iteration', 'Parameter'])
+        state_by_iter = self.state.reset_index(drop=True).set_index(['Iteration', 'Component Name', 'Input Number'])
         assert( iteration in state_by_iter.index.get_level_values('Iteration') )
         state_this_iter = state_by_iter.loc[iteration]
-        return [ state_this_iter.loc[p]['Center'] for p in self.get_param_names() ]
+        return [ state_this_iter.loc[p]['Center'] for p in self.get_param_names() ] # DJK: what about input number?
 
 
     def add_samples(self, samples, iteration):
@@ -90,7 +96,7 @@ class OptimTool(NextPointAlgorithm):
 
 
     def clamp(self, X, Xmin, Xmax):
-        # UGLY, but funcational.  TODO.
+        # UGLY, but functional: TODO cleanup!
         print 'IN', X
         Xa = np.asmatrix(X) if not isinstance(X, np.ndarray) else X
 
@@ -163,8 +169,6 @@ class OptimTool(NextPointAlgorithm):
             new_center = latest_samples[max_idx].tolist()
 
 
-        print "TODO: MAKE SURE NEW X_CENTER IS WITHIN CONSTRAINTS"
-
         X_min = self.state.pivot('Iteration', 'Parameter', 'Min').loc[iteration, self.get_param_names()]
         X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
         new_center = self.clamp(new_center, X_min, X_max)
@@ -214,7 +218,7 @@ class OptimTool(NextPointAlgorithm):
         for i, dev in enumerate(deviation):
             r = rad.rvs()
             # Scale by param range
-            samples[self.center_repeats + i] = [x + r * p * (v['Max']-v['Min']) for x,p,v in zip(X_center, dev, self.params.values())]
+            samples[self.center_repeats + i] = [x + r * p * (v['Max']-v['Min']) for x,p,lower,upper in zip(X_center, dev, self.params.values())]
 
         return samples
 
@@ -267,4 +271,5 @@ class OptimTool(NextPointAlgorithm):
 
 
     def get_param_names(self):
-        return self.params.keys()
+        #return self.params.keys()
+        return [c.name for c in self.components]

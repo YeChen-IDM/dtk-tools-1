@@ -188,12 +188,17 @@ class CalibManager(object):
 
             # Start from analyze
             if self.iteration_state.resume_point <= 2:
+                # DJK: Wait for finished here?
                 results = self.analyze_iteration()
                 self.choose_and_cache_samples_for_next_iteration(results) # update_next_point
                 # DJK: set resume_point to 3
 
+            # Need another resume point after next point is done
+
             print 'plot_iteration'
             self.plot_iteration()
+
+            # Another resume point after plotting?
 
             print 'finished'
             if self.finished():
@@ -220,16 +225,17 @@ class CalibManager(object):
         """
         Query the next-point algorithm for the next set of sample points.
         """
-        # DJK TODO: Consistentcy of parameters vs points
+        # DJK TODO: Consistentcy of parameters vs points --> SAMPLES
         samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # get_next_samples
 
-        self.iteration_state.samples_for_this_iteration = {'names': self.param_names(), 'values': samples_for_this_iteration.tolist()}
+        self.iteration_state.samples_for_this_iteration = {'names': self.param_names(), 'values': samples_for_this_iteration.tolist()}  # DJK: Names and values is too simple
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
 
         return samples_for_this_iteration
 
     def commission_iteration(self, next_params, **kwargs):
+        # DJK: This needs to be encapsulated so we can commission other models or even deterministic functions
         """
         Commission an experiment of simulations constructed from a list of combinations of
         random seeds, calibration sites, and the next sample points.
@@ -403,7 +409,7 @@ class CalibManager(object):
         #self.next_point.update_state(self.iteration)
         points_for_next_iteration = self.next_point.choose_samples_for_next_iteration(self.iteration, results)
 
-        self.iteration_state.parameters_for_next_iteration = {'names': self.param_names(), 'values': points_for_next_iteration.tolist()}
+        ###self.iteration_state.parameters_for_next_iteration = {'names': self.param_names(), 'values': points_for_next_iteration.tolist()} # DJK FIX
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
 
@@ -564,13 +570,14 @@ class CalibManager(object):
         self.all_results = self.all_results[self.all_results.iteration <= iteration]
         # logger.info('Restored results from iteration %d', iteration)
         logger.debug(self.all_results)
-        self.cache_calibration()    # DJK: Why does restore cache?
 
     def check_leftover(self):
         """
             - Handle the case: process got interrupted but it still runs on remote
             - Handle location change case: may resume from commission instead
         """
+        # DJK - this seems to hard for now
+
         # Step 1: Checking possible location changes
         try:
             exp_id = self.iteration_state.experiment_id
@@ -599,7 +606,7 @@ class CalibManager(object):
         # Step 2: Checking possible leftovers
         try:
             # Save the selected block the user wants
-            user_selected_block = self.setup.selected_block     # DJK: What does this do? Nothing?
+            user_selected_block = self.setup.selected_block
             # Retrieve the experiment manager. Note: it changed selected_block
             self.exp_manager = ExperimentManagerFactory.from_experiment(exp)
             # Restore the selected block
@@ -667,7 +674,7 @@ class CalibManager(object):
         assert(self.iteration_state.iteration == iteration)
 
         # Check leftover (in case lost connection) and also consider possible location change.
-        self.check_leftover()
+        self.check_leftover()   # BR: This should go away!  leftovers = sims that are still running for current iteration
 
         # Adjust resuming point based on input options
         if self.iter_step:
@@ -678,7 +685,7 @@ class CalibManager(object):
             # need to resume from commission
             self.iteration_state.resume_point = 1
             # Cleanup iteration state
-            self.iteration_state.reset_state()  # DJK: why reset?
+            self.iteration_state.reset_state()  # DJK: why reset?  Doesn't this make resume_point = 0?
             return
 
         # Assume simulations exits

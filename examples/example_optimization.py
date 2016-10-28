@@ -13,6 +13,8 @@ from calibtool.plotters.LikelihoodPlotter import LikelihoodPlotter
 from calibtool.plotters.SiteDataPlotter import SiteDataPlotter
 from calibtool.plotters.OptimToolPlotter import OptimToolPlotter
 
+from calibtool.algo.OptimizationComponents.SimpleComponent import SimpleComponent
+
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from simtools.SetupParser import SetupParser
 
@@ -28,19 +30,35 @@ sites = [DTKCalibFactory.get_site('Dielmo', analyzers=[analyzer]),
 print 'TEMP: only Dielmo'
 sites = [sites[0]]
 
-# GUESS:
-params = {
-    'MSP1_Merozoite_Kill_Fraction': {
-        'Guess': 0.45,
-        'Min': 0.4,
-        'Max': 0.7
-    },
-    'Clinical_Fever_Threshold_High': {
-        'Guess': 0.65,
-        'Min': 0.5,
-        'Max': 2.5
-    }
-}
+# TODO: Convert to array of objects
+params = [
+    SimpleComponent(
+        name = 'MSP1 Merozoite Kill Fraction',
+        x_initial = 0.45,
+        lower_bound = 0.4,
+        upper_bound = 0.7,
+        is_dynamic = True,
+        json_paths = [ 'MSP1_Merozoite_Kill_Fraction' ],
+        labels = [ 'MSP1 Merozoite Kill Fraction' ]
+    ),
+    SimpleComponent(
+        name = 'Clinical Fever Threshold High',
+        x_initial = 2.4,
+        lower_bound = 0.5,
+        upper_bound = 2.5,
+        is_dynamic = True,
+        json_paths = [ 'Clinical_Fever_Threshold_High' ],
+        labels = [ 'Clinical Fever Threshold High' ]
+    )
+]
+
+#   {
+#       'Name': 'Clinical_Fever_Threshold_High',
+#       'Guess': 2.4,
+#       'Min': 0.5,
+#       'Max': 2.5
+#   }
+
 
 #params['x_Temporary_Larval_Habitat'] = { 'Min': 0.1, 'Max': 1.9 }
 #params['Nonspecific_Antigenicity_Factor'] = { 'Min': 0.1, 'Max': 0.9 }
@@ -65,9 +83,19 @@ def sample_point_fn(cb, param_values):
     Note that more complicated logic, e.g. setting campaign event coverage or habitat abundance by species,
     can be encoded in a similar fashion using custom functions rather than the generic "set_param".
     """
+
     params_dict = dict(zip(params.keys(), param_values))
-    params_dict['Simulation_Duration'] = 10*365
+    params_dict['Simulation_Duration'] = 1*365
     params_dict['Run_Number'] = random.randint(0, 1e6)
+
+    print 'K', params.keys()
+    print 'V', param_values
+    print params_dict
+
+    print 'TEMP!'
+    assert( params_dict['Clinical_Fever_Threshold_High'] > params_dict['MSP1_Merozoite_Kill_Fraction'] )
+
+
     for param, value in params_dict.iteritems():
         cb.set_param(param,value)
     return params_dict
