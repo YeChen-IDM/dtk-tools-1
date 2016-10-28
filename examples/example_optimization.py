@@ -31,11 +31,11 @@ sites = [sites[0]]
 # TODO: 'Frozen': False
 params = [
     {
-        'Name': 'Falciparum MSP Variants',
-        'MapTo': 'Falciparum_MSP_Variants',
-        'Guess': 100,
-        'Min': 0,
-        'Max': 1000
+        'Name': 'Falciparum PfEMP1 Variants',
+        'MapTo': 'Falciparum_PfEMP1_Variants',
+        'Guess': 900,
+        'Min': 900, # 0
+        'Max': 1700 # 1e5
     },
     {
         'Name': 'MSP1 Merozoite Kill Fraction',
@@ -66,7 +66,7 @@ mapping = { p['Name']:p['MapTo'] for p in params }
 def constrain_sample( sample ):
 
     # Convert Falciparum MSP Variants to nearest integer
-    sample['Falciparum MSP Variants'] = int( round(sample['Falciparum MSP Variants']) )
+    sample['Falciparum PfEMP1 Variants'] = int( round(sample['Falciparum PfEMP1 Variants']) )
 
     # Clinical Fever Threshold High <  MSP1 Merozoite Kill Fraction
     '''
