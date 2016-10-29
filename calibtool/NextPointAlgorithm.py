@@ -120,17 +120,24 @@ class NextPointAlgorithm(object):
         logger.info('Continuing NextPointAlgorithm iterations...')
         return False
 
-    def get_next_samples(self):
+    def get_next_samples(self): # --> get_points_for_this_iteration
         return self.latest_samples
 
     def get_final_samples(self):
         return dict(samples=self.samples)
 
-    def get_current_state(self):
+    def get_state(self):
         return dict(samples=self.samples, 
                     latest_samples=self.latest_samples,
                     priors=self.priors,
                     results=self.results)
+
+    def set_state(self, state):
+        self.samples = state['samples']
+        self.latest_samples = state['latest_samples']
+        self.priors = state['priors']
+        self.results = state['results']
+
 
     def next_point_fn(self):
         ''' The base implementation will resample from the prior function. '''
@@ -155,6 +162,9 @@ class NextPointAlgorithm(object):
             attempt += 1
 
         return next_samples
+
+    def get_param_names(self):
+        return self.prior_fn.params
 
     @staticmethod
     def sample_from_function(function, N):
