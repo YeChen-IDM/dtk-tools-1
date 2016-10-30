@@ -252,7 +252,6 @@ class OptimTool(NextPointAlgorithm):
         state_by_iteration = self.state.set_index('Iteration')
         last_iter = sorted(state_by_iteration.index.unique())[-1]
 
-        #return dict( samples = self.X_center[-1] )
         return self._get_X_center(last_iter)
 
     def get_state(self) :
@@ -303,4 +302,4 @@ class OptimTool(NextPointAlgorithm):
 
     def get_param_names(self):
         return [p['Name'] for p in self.params]
-        #return [c.name for c in self.components]
+
