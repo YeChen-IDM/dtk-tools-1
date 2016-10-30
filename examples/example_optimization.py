@@ -13,8 +13,6 @@ from calibtool.plotters.LikelihoodPlotter import LikelihoodPlotter
 from calibtool.plotters.SiteDataPlotter import SiteDataPlotter
 from calibtool.plotters.OptimToolPlotter import OptimToolPlotter
 
-from calibtool.algo.OptimizationComponents.SimpleComponent import SimpleComponent
-
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from simtools.SetupParser import SetupParser
 
