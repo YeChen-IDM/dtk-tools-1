@@ -29,7 +29,7 @@ sites = [sites[0]]
 # TODO: 'Frozen': False
 params = [
     {
-        'Name': 'Min Days_Between_Clinical_Incidents',
+        'Name': 'Min Days Between Clinical Incidents',
         'MapTo': 'Min_Days_Between_Clinical_Incidents',
         'Guess': 20,
         'Min': 0, # 0
