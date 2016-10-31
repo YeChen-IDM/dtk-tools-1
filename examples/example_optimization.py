@@ -71,7 +71,7 @@ mapping = { p['Name']:p['MapTo'] for p in params }
 def constrain_sample( sample ):
 
     # Convert Falciparum MSP Variants to nearest integer
-    sample['Min Days_Between_Clinical_Incidents'] = int( round(sample['Min Days_Between_Clinical_Incidents']) )
+    sample['Min Days Between Clinical Incidents'] = int( round(sample['Min Days Between Clinical Incidents']) )
 
     # Clinical Fever Threshold High <  MSP1 Merozoite Kill Fraction
     '''
