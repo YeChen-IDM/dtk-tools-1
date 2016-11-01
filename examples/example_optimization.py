@@ -92,7 +92,6 @@ def map_sample_to_model_input(cb, sample):
 
     tags = {}
     for name, value in sample.iteritems():
-        print (name, value)
         if name in mapping:
             map_to_name = mapping[name]
             if map_to_name is 'Custom':

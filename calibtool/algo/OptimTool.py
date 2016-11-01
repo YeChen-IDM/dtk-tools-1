@@ -254,16 +254,15 @@ class OptimTool(NextPointAlgorithm):
 
         return self._get_X_center(last_iter)
 
+    def prep_for_dict(self, df):
+        # Needed for Windows compatibility
+        nulls = df.isnull()
+        if nulls.values.any():
+            df[ nulls ] = None
+        return df.to_dict(orient='list')
+
+
     def get_state(self) :
-        #data_for_dict = self.data.where((self.data.notnull()), None)
-        #regression_for_dict = self.regression.where((self.regression.notnull()), None)
-        #state_for_dict = self.state.where((self.state.notnull()), None)
-
-        # DJK: Check that this is necessary on Windows
-        self.data[ self.data.isnull() ] = None
-        self.regression[ self.regression.isnull() ] = None
-        self.state[ self.state.isnull() ] = None
-
         optimtool_state = dict(
             mu_r = self.mu_r,
             sigma_r = self.sigma_r,
@@ -273,13 +272,13 @@ class OptimTool(NextPointAlgorithm):
             params = self.params,
             samples_per_iteration = self.samples_per_iteration,
 
-            data = self.data.to_dict(orient='list'),
+            data = self.prep_for_dict( self.data ),
             data_dtypes = {name:str(data.dtype) for name, data in self.data.iteritems()},
 
-            regression = self.regression.to_dict(orient='list'),
+            regression = self.prep_for_dict( self.regression ),
             regression_dtypes = {name:str(data.dtype) for name, data in self.regression.iteritems()},
 
-            state = self.state.to_dict(orient='list'),
+            state = self.prep_for_dict( self.state ),
             state_dtypes = {name:str(data.dtype) for name, data in self.state.iteritems()}
         )
         return optimtool_state
