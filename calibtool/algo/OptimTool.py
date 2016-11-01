@@ -256,6 +256,15 @@ class OptimTool(NextPointAlgorithm):
         return self._get_X_center(last_iter)
 
     def get_state(self) :
+        #data_for_dict = self.data.where((self.data.notnull()), None)
+        #regression_for_dict = self.regression.where((self.regression.notnull()), None)
+        #state_for_dict = self.state.where((self.state.notnull()), None)
+
+        # DJK: Check that this is necessary on Windows
+        self.data[ self.data.isnull() ] = None
+        self.regression[ self.regression.isnull() ] = None
+        self.state[ self.state.isnull() ] = None
+
         optimtool_state = dict(
             mu_r = self.mu_r,
             sigma_r = self.sigma_r,
