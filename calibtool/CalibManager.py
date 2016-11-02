@@ -16,7 +16,7 @@ from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.ModBuilder import ModBuilder
 from simtools.OutputParser import CompsDTKOutputParser
-from utils import NumpyEncoder
+from simtools.utils import NumpyEncoder
 from core.utils.time import verbose_timedelta
 
 logger = logging.getLogger("Calibration")
@@ -233,6 +233,7 @@ class CalibManager(object):
         dtypes = {name:str(data.dtype) for name, data in samples_for_this_iteration.iteritems()}
         self.iteration_state.samples_for_this_iteration_dtypes = dtypes # Argh
 
+        samples_for_this_iteration[ samples_for_this_iteration.isnull() ] = None # DJK: Check that this is necessary on Windows
         self.iteration_state.samples_for_this_iteration = samples_for_this_iteration.to_dict(orient='list')
 
         self.iteration_state.next_point = self.next_point.get_state()
