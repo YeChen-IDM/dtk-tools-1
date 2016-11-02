@@ -203,7 +203,6 @@ class OptimTool(NextPointAlgorithm):
         # USER CONSTRAINT FN
         self.data = self.data.set_index('Iteration')
         tmp = self.data.loc[iteration].apply( self.constrain_sample_fn, axis=1)
-        print tmp.tail()
 
         self.data.loc[iteration] = self.data.loc[iteration].apply( self.constrain_sample_fn, axis=1)
         self.data.reset_index(inplace=True)
@@ -252,15 +251,8 @@ class OptimTool(NextPointAlgorithm):
         state_by_iteration = self.state.set_index('Iteration')
         last_iter = sorted(state_by_iteration.index.unique())[-1]
 
+        #return dict( samples = self.X_center[-1] )
         return self._get_X_center(last_iter)
-
-    def prep_for_dict(self, df):
-        # Needed for Windows compatibility
-        nulls = df.isnull()
-        if nulls.values.any():
-            df[ nulls ] = None
-        return df.to_dict(orient='list')
-
 
     def get_state(self) :
         optimtool_state = dict(
@@ -272,13 +264,14 @@ class OptimTool(NextPointAlgorithm):
             params = self.params,
             samples_per_iteration = self.samples_per_iteration,
 
-            data = self.prep_for_dict( self.data ),
+            # TODO: d.where((pd.notnull(d)), None)
+            data = self.data.to_dict(orient='list'),
             data_dtypes = {name:str(data.dtype) for name, data in self.data.iteritems()},
 
-            regression = self.prep_for_dict( self.regression ),
+            regression = self.regression.to_dict(orient='list'),
             regression_dtypes = {name:str(data.dtype) for name, data in self.regression.iteritems()},
 
-            state = self.prep_for_dict( self.state ),
+            state = self.state.to_dict(orient='list'),
             state_dtypes = {name:str(data.dtype) for name, data in self.state.iteritems()}
         )
         return optimtool_state
@@ -310,4 +303,4 @@ class OptimTool(NextPointAlgorithm):
 
     def get_param_names(self):
         return [p['Name'] for p in self.params]
-
+        #return [c.name for c in self.components]
