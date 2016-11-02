@@ -129,6 +129,8 @@ class BaseShelveAnalyzer(BaseAnalyzer):
 
         self.shelve_write('status', 'finalize')
         self.shelve.close()
+        self.shelve = None
+        self.shelve_file = None
 
 
     def shelve_write(self, key, value):

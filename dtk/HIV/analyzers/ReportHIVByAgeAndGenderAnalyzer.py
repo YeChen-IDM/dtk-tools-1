@@ -109,7 +109,7 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
         sim_id = sim_metadata['sim_id']
         self.sim_ids.append(sim_id)
 
-        if not self.shelve_file:    # Want this in the base class, bu tdon't know exp_id at __init__
+        if not self.shelve_file:    # Want this in the base class, but don't know exp_id at __init__
             self.shelve_file = os.path.join(self.workdir, '%s.db' % self.__class__.__name__) # USE ID instead?
 
         ret = super(ReportHIVByAgeAndGenderAnalyzer, self).filter(self.shelve_file, sim_metadata)
@@ -191,6 +191,7 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
             print "finalize"
 
         super(ReportHIVByAgeAndGenderAnalyzer, self).finalize() # Closes the shelve file
+        self.sim_ids = []
 
         sns.set_style("whitegrid")
 

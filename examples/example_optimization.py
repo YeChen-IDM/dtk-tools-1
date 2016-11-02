@@ -31,27 +31,35 @@ sites = [sites[0]]
 # TODO: 'Frozen': False
 params = [
     {
-        'Name': 'Falciparum PfEMP1 Variants',
-        'MapTo': 'Falciparum_PfEMP1_Variants',
-        'Guess': 1500,
-        'Min': 900, # 0
-        'Max': 1700 # 1e5
+        'Name': 'Min Days Between Clinical Incidents',
+        'MapTo': 'Min_Days_Between_Clinical_Incidents',
+        'Guess': 25,
+        'Min': 1,
+        'Max': 50
     },
-    {
-        'Name': 'MSP1 Merozoite Kill Fraction',
-        'MapTo': 'MSP1_Merozoite_Kill_Fraction',
-        'Guess': 0.65,
-        'Min': 0.4,
-        'Max': 0.7
-    }
-]
-'''
+
     {
         'Name': 'Clinical Fever Threshold High',
         'MapTo': 'Clinical_Fever_Threshold_High',
         'Guess': 1.75,
         'Min': 0.5,
         'Max': 2.5
+    }
+]
+'''
+    {
+        'Name': 'MSP1 Merozoite Kill Fraction',
+        'MapTo': 'MSP1_Merozoite_Kill_Fraction',
+        'Guess': 0.65,
+        'Min': 0.4,
+        'Max': 0.7
+    },
+    {
+        'Name': 'Falciparum PfEMP1 Variants',
+        'MapTo': 'Falciparum_PfEMP1_Variants',
+        'Guess': 1500,
+        'Min': 900, # 0
+        'Max': 1700 # 1e5
     },
 '''
 
@@ -66,7 +74,7 @@ mapping = { p['Name']:p['MapTo'] for p in params }
 def constrain_sample( sample ):
 
     # Convert Falciparum MSP Variants to nearest integer
-    sample['Falciparum PfEMP1 Variants'] = int( round(sample['Falciparum PfEMP1 Variants']) )
+    sample['Min Days Between Clinical Incidents'] = int( round(sample['Min Days Between Clinical Incidents']) )
 
     # Clinical Fever Threshold High <  MSP1 Merozoite Kill Fraction
     '''
