@@ -497,6 +497,8 @@ class CalibManager(object):
 
         # TODO: merge in parameter values also from siminfo_df (sample points and simulation tags need not be the same)
 
+        print 'WARNING: COMMENT TO BYPASS PATHS!!!!!\n' * 10 # DJK TEMP!!!!!!
+        '''
         # Retrieve the mapping between simID and output file path
         if self.location == "HPC":
             sims_paths = CompsDTKOutputParser.createSimDirectoryMap(suite_id=self.comps_suite_id, save=False)
@@ -512,6 +514,7 @@ class CalibManager(object):
 
         results_df['outputs'] = results_df['simid'].apply(find_path)
         del results_df['simid']
+        '''
 
         # Concatenate with any existing data from previous iterations and dump to file
         csv_path = os.path.join(self.name, 'LL_all.csv')

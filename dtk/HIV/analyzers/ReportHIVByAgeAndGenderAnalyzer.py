@@ -40,6 +40,7 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
         self.reference_population = reference_population
         self.age_min = age_min
         self.age_max = age_max
+        self.pop_scaling = None
 
         # For computing person-years
         self.report_timestep_in_years = 0.5
@@ -142,12 +143,12 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
 
         sim_pop = pdata.copy().groupby(['Year', 'Age'])['Population'].sum().loc[self.reference_year].loc[self.age_min:self.age_max].sum()
 
-        pop_scaling = self.reference_population / float(sim_pop)
+        self.pop_scaling = self.reference_population / float(sim_pop)
         if self.verbose:
-            print 'Population scaling is', pop_scaling
+            print 'Population scaling is', self.pop_scaling
         scale_cols = [sc for sc in ['Population', 'Infected', 'Newly Infected', 'On_ART', 'Died', 'Died_from_HIV', 'Transmitters', 'HasIntervention(PrEP)', 'Received_PrEP'] if sc in pdata.columns]
 
-        pdata[scale_cols] *= pop_scaling
+        pdata[scale_cols] *= self.pop_scaling
         #######################################################################
 
         ### ANNUALIZATION #####################################################
