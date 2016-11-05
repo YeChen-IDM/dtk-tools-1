@@ -62,7 +62,7 @@ class OptimToolPlotter(BasePlotter):
 
         ### STATE EVOLUTION ###
         print 'STATE, check for iteration as FP?\n',state.head()
-        cw = None if D < 3 else int(np.ceil(sqrt(D)))
+        cw = None if D < 3 else int(np.ceil(np.sqrt(D)))
         g = sns.FacetGrid(state, row=None, col='Parameter', hue=None, col_wrap=cw, sharex=False, sharey=False, size=3, aspect=1, palette=None, row_order=None, col_order=None, hue_order=None, hue_kws=None, dropna=True, legend_out=True, despine=True, margin_titles=True, xlim=None, ylim=None, subplot_kws=None, gridspec_kws=None)
         g = g.map_dataframe(self.plot_state_evolution)
         g = g.set_titles(col_template='{col_name}') # , size = 15
