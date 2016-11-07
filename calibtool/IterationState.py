@@ -59,7 +59,6 @@ class IterationState(object):
 
     def to_file(self, filepath):
         with open(filepath, 'w') as f:
-            print 'SELF.__DICT__:\n', self.__dict__
             json.dump(self.__dict__, f, indent=4, cls=NumpyEncoder)
 
     def summary_table(self):
