@@ -6,6 +6,9 @@ import gc   # TEMP?
 
 import pandas as pd
 import seaborn as sns
+
+import matplotlib
+matplotlib.use('Agg')
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.pyplot as plt
@@ -67,6 +70,7 @@ class OptimToolPlotter(BasePlotter):
         g = g.map_dataframe(self.plot_state_evolution)
         g = g.set_titles(col_template='{col_name}') # , size = 15
         g.savefig( os.path.join(self.directory, 'Optimization_State_Evolution.pdf'))
+        plt.close()
 
         rsquared = regression_by_iter.loc[calib_manager.iteration, 'Rsquared']
 
