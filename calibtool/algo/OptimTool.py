@@ -254,7 +254,17 @@ class OptimTool(NextPointAlgorithm):
         #return dict( samples = self.X_center[-1] )
         return self._get_X_center(last_iter)
 
-    def get_state(self) :
+    def prep_for_dict(self, df):
+        # Needed for Windows compatibility
+        #nulls = df.isnull()
+        #if nulls.values.any():
+        #    df[nulls] = None
+        #return df.to_dict(orient='list')
+
+        return df.where(~df.isnull(), other=None).to_dict(orient='list')
+
+    def get_state(self):
+
         optimtool_state = dict(
             mu_r = self.mu_r,
             sigma_r = self.sigma_r,
@@ -264,14 +274,13 @@ class OptimTool(NextPointAlgorithm):
             params = self.params,
             samples_per_iteration = self.samples_per_iteration,
 
-            # TODO: d.where((pd.notnull(d)), None)
-            data = self.data.to_dict(orient='list'),
+            data = self.prep_for_dict(self.data),
             data_dtypes = {name:str(data.dtype) for name, data in self.data.iteritems()},
 
-            regression = self.regression.to_dict(orient='list'),
+            regression = self.prep_for_dict(self.regression),
             regression_dtypes = {name:str(data.dtype) for name, data in self.regression.iteritems()},
 
-            state = self.state.to_dict(orient='list'),
+            state = self.prep_for_dict(self.state),
             state_dtypes = {name:str(data.dtype) for name, data in self.state.iteritems()}
         )
         return optimtool_state
