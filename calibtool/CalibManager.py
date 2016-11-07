@@ -233,8 +233,9 @@ class CalibManager(object):
         dtypes = {name:str(data.dtype) for name, data in samples_for_this_iteration.iteritems()}
         self.iteration_state.samples_for_this_iteration_dtypes = dtypes # Argh
 
-        samples_for_this_iteration[ samples_for_this_iteration.isnull() ] = None # DJK: Check that this is necessary on Windows
-        self.iteration_state.samples_for_this_iteration = samples_for_this_iteration.to_dict(orient='list')
+        #samples_for_this_iteration[ samples_for_this_iteration.isnull() ] = None # DJK: Check that this is necessary on Windows
+        samples_NaN_to_Null = samples_for_this_iteration.where(~samples_for_this_iteration.isnull(), other=None)
+        self.iteration_state.samples_for_this_iteration = samples_NaN_to_Null.to_dict(orient='list')
 
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
