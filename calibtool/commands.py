@@ -70,9 +70,11 @@ def resume(args, unknownArgs):
 
 
 def reanalyze(args, unknownArgs):
-    manager, calib_args = get_calib_manager_args(args, unknownArgs)
-    manager.reanalyze()
-
+    manager, calib_args = get_calib_manager_args(args, unknownArgs, force_metadata=True)
+    if args.iteration is not None:
+        manager.reanalyze_iteration(args.iteration)
+    else:
+        manager.reanalyze()
 
 def cleanup(args, unknownArgs):
     mod = load_config_module(args.config_name)
@@ -132,6 +134,7 @@ def main():
     # 'calibtool reanalyze' options
     parser_reanalyze = subparsers.add_parser('reanalyze', help='Rerun the analyzers of a calibration')
     parser_reanalyze.add_argument(dest='config_name', default=None, help='Name of configuration python script for custom running of calibration.')
+    parser_reanalyze.add_argument('--iteration', default=None, type=int, help='Resume calibration from iteration number (default is last cached state).')
     parser_reanalyze.set_defaults(func=reanalyze)
 
     # 'calibtool cleanup' options

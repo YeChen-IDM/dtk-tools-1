@@ -998,6 +998,32 @@ class CalibManager(object):
             except OSError:
                 logger.error("Failed to delete %s" % calib_dir)
 
+    def reanalyze_iteration(self, i):
+        logger.info("\n")
+        logger.info("Reanalyze Iteration %s" % i)
+        # Create the path for the iteration dir
+        iter_directory = os.path.join(self.name, 'iter%d' % i)
+
+        # Create the state for the current iteration
+        self.iteration_state = self.retrieve_iteration_state(iter_directory)
+        self.iteration_state.iteration = i
+
+        # Empty the results and analyzers
+        self.iteration_state.results = {}
+        self.iteration_state.analyzers = {}
+
+        # Analyze again!
+        res = self.analyze_iteration()
+
+        # update next point
+        self.choose_and_cache_samples_for_next_iteration(res)
+
+        # Call all plotters
+        self.plot_iteration()
+
+        logger.info("Iteration %s reanalyzed." % i)
+
+
     def reanalyze(self):
         """
         Reanalyze the current calibration
@@ -1020,29 +1046,7 @@ class CalibManager(object):
 
         # Go through each already ran iterations
         for i in range(0, iter_count+1):
-            logger.info("\n")
-            logger.info("Reanalyze Iteration %s" % i)
-            # Create the path for the iteration dir
-            iter_directory = os.path.join(self.name, 'iter%d' % i)
-
-            # Create the state for the current iteration
-            self.iteration_state = self.retrieve_iteration_state(iter_directory)
-            self.iteration_state.iteration = i
-
-            # Empty the results and analyzers
-            self.iteration_state.results = {}
-            self.iteration_state.analyzers = {}
-
-            # Analyze again!
-            res = self.analyze_iteration()
-
-            # update next point
-            self.choose_and_cache_samples_for_next_iteration(res)
-
-            # Call all plotters
-            self.plot_iteration()
-
-            logger.info("Iteration %s reanalyzed." % i)
+            self.reanalyze_iteration(i)
 
         # Before leaving -> set back the suite_id
         self.local_suite_id = calib_data.get('local_suite_id')

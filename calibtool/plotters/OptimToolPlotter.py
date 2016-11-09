@@ -7,8 +7,6 @@ import gc   # TEMP?
 import pandas as pd
 import seaborn as sns
 
-import matplotlib
-matplotlib.use('Agg')
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.pyplot as plt
