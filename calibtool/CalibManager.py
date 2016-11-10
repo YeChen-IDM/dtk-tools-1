@@ -1042,7 +1042,7 @@ class CalibManager(object):
 
         # Get the count of iterations and save the suite_id
         iter_count = calib_data.get('iteration')
-        logger.info("Reanalyze will go through %s iterations." % iter_count)
+        logger.info("Reanalyze will go through %s iterations." % iter_count+1)
 
         # Go through each already ran iterations
         for i in range(0, iter_count+1):
