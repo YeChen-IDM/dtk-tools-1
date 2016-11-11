@@ -88,7 +88,7 @@ class OptimTool(NextPointAlgorithm):
 
 
     def get_samples_for_iteration(self, iteration):
-        return self.data.query('Iteration == @ iteration').sort_values('__sample_index__')[self.get_param_names()]
+        return self.data.query('Iteration == @iteration').sort_values('__sample_index__')[self.get_param_names()]
 
 
     def clamp(self, X, Xmin, Xmax):
@@ -312,4 +312,3 @@ class OptimTool(NextPointAlgorithm):
 
     def get_param_names(self):
         return [p['Name'] for p in self.params]
-        #return [c.name for c in self.components]

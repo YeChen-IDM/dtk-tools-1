@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 from importlib import import_module
+from dateutil import parser
 
 import simtools.utils as utils
 from dtk.utils.analyzers import ProgressAnalyzer, sample_selection
@@ -471,7 +472,7 @@ def create_experiment(exp_id, sp, verbose=False):
     # Case: experiment doesn't exist in local db
     if not experiment:
         # Cast the creation_date
-        creation_date = datetime.datetime.strptime(exp.getDateCreated().toString(), "%a %b %d %H:%M:%S PDT %Y")
+        creation_date = parser.parse(exp.getDateCreated().toString()).replace(tzinfo=None)
         experiment = DataStore.create_experiment(exp_id=exp.getId().toString(),
                                                  suite_id=exp.getSuiteId().toString() if exp.getSuiteId() else None,
                                                  exp_name=exp.getName(),
@@ -501,7 +502,7 @@ def create_experiment(exp_id, sp, verbose=False):
             tags[key] = sim.getTags().get(key)
 
         # Prepare the date
-        creation_date = datetime.datetime.strptime(sim.getDateCreated().toString(), "%a %b %d %H:%M:%S PDT %Y")
+        creation_date = parser.parse(sim.getDateCreated().toString()).replace(tzinfo=None)
 
         # Create the simulation
         simulation = DataStore.create_simulation(id=sim.getId().toString(),

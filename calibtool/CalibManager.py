@@ -8,6 +8,7 @@ import re
 import shutil
 import time
 import pandas as pd
+import subprocess
 from datetime import datetime
 from calibtool.plotters import SiteDataPlotter
 from IterationState import IterationState
@@ -360,7 +361,14 @@ class CalibManager(object):
         if self.exp_manager:
             exp_manager = self.exp_manager
         else:
-            exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
+            exp = DataStore.get_experiment(self.iteration_state.experiment_id)
+            if exp == None:
+                logger.info('Experiment with id %s not found in local database, trying sync.' % self.iteration_state.experiment_id)
+                subprocess.call(['dtk', 'sync', '--id', '"' + str(self.iteration_state.experiment_id) + '"'])
+                exp = DataStore.get_experiment(self.iteration_state.experiment_id)
+                if exp == None:
+                    raise Exception('Unable to sync experiment with id %s'%self.iteration_state.experiment_id)
+            exp_manager = ExperimentManagerFactory.from_experiment(exp)
 
         # try:
         #     for a in exp_manager.analyzers:
