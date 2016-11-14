@@ -228,7 +228,8 @@ class CalibManager(object):
         """
         # DJK TODO: Consistentcy of parameters vs points --> SAMPLES
         # DJK: The following is now a dataframe so that datatype can be preserved
-        samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # get_next_samples
+        samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # DJK: was get_next_samples
+        samples_for_this_iteration.reset_index(drop=True, inplace=True) # Make sure the index, which will become __sample_index__, start at 0
         assert( isinstance(samples_for_this_iteration, pd.DataFrame) )
 
         dtypes = {name:str(data.dtype) for name, data in samples_for_this_iteration.iteritems()}
@@ -423,7 +424,7 @@ class CalibManager(object):
         points_for_next_iteration = self.next_point.choose_samples_for_next_iteration(self.iteration, results)
 
         self.iteration_state.next_point = self.next_point.get_state()
-        self.cache_iteration_state(backup_existing=True)
+        self.cache_iteration_state(backup_existing=False) # DJK: Need True for any reason still?
 
     def finished(self):
         """ The next-point algorithm has reached its termination condition. """
@@ -552,14 +553,11 @@ class CalibManager(object):
         self.iteration_state.to_file(iter_state_path)
 
     def serialize_results(self):
-        """
-        Prepare summary results for serialization.
-        N.B. we cast also the sample index and iteration to int32
-             to avoid a NumpyEncoder issue with np.int64
-        """
+        if self.all_results is None:
+            return []
 
         if not isinstance(self.all_results, pd.DataFrame):
-            return None
+            raise Exception('all_results must be a pandas DataFrame')
 
         self.all_results.index.name = 'sample'
         data = self.all_results.reset_index()
@@ -580,6 +578,8 @@ class CalibManager(object):
 
         self.all_results = pd.DataFrame.from_dict(results, orient='columns')
         self.all_results.set_index('sample', inplace=True)
+
+        print 'AR:\n', self.all_results
 
         self.all_results = self.all_results[self.all_results.iteration <= iteration]
         # logger.info('Restored results from iteration %d', iteration)
@@ -895,6 +895,8 @@ class CalibManager(object):
             iter_directory = os.path.join(self.name, 'iter%d' % i)
             self.iteration_state = self.retrieve_iteration_state(iter_directory)
 
+            #self.next_point.set_state( self.iteration_state.next_point ) # DJK: New, restore next point?
+
             # restore all_results for current iteration
             self.restore_results_for_replot(results, i)
 
@@ -1014,6 +1016,8 @@ class CalibManager(object):
 
         # Create the state for the current iteration
         self.iteration_state = self.retrieve_iteration_state(iter_directory)
+        self.next_point.set_state( self.iteration_state.next_point ) # DJK: New, restore next point?
+
         self.iteration_state.iteration = i
 
         # Empty the results and analyzers

@@ -88,7 +88,7 @@ class OptimTool(NextPointAlgorithm):
 
 
     def get_samples_for_iteration(self, iteration):
-        return self.data.query('Iteration == @iteration').sort_values('__sample_index__')[self.get_param_names()]
+        return self.data.query('Iteration == @iteration').sort_values('__sample_index__')[self.get_param_names()] # Query makes a copy
 
 
     def clamp(self, X, Xmin, Xmax):
@@ -123,6 +123,15 @@ class OptimTool(NextPointAlgorithm):
 
         # TODO: Need to sort by sample?
         self.data = self.data.set_index('Iteration')
+        print results
+        print len(results)
+        print self.data.tail()
+        print iteration
+        print self.data.loc[iteration]
+
+        print 'RESULTS:\n', results
+        print 'DATA.LOC:\n', self.data.loc[iteration,'Results']
+        print 'ITERATION:', iteration
         self.data.loc[iteration,'Results'] = results
 
         latest_samples = self.data.loc[iteration, self.get_param_names()].values
@@ -264,6 +273,8 @@ class OptimTool(NextPointAlgorithm):
         return df.where(~df.isnull(), other=None).to_dict(orient='list')
 
     def get_state(self):
+
+        print 'OTDATA:\n', self.data
 
         optimtool_state = dict(
             mu_r = self.mu_r,
