@@ -32,25 +32,11 @@ class OptimTool(NextPointAlgorithm):
                 rsquared_thresh = 0.5 # Above this value, the ascent direction is used.  Below, it's best result.
             ):
 
-        self.params = params # TODO: Check min <= center <= max
+        self.args = locals()     # Store inputs in case set_state is called later and we want to override with new (user) args
+        del self.args['self']
+        self.need_resolve = False
+
         self.constrain_sample_fn = constrain_sample_fn
-
-        self.mu_r = mu_r
-        self.sigma_r = sigma_r
-        self.center_repeats = center_repeats
-        self.rsquared_thresh = rsquared_thresh
-
-        self.n_dimensions = len(params)
-
-        self.mutable = []
-
-        assert( self.n_dimensions == len(self.get_param_names()) )
-
-        self.samples_per_iteration = int(samples_per_iteration)
-
-        self.data = pd.DataFrame(columns=[['Iteration', '__sample_index__', 'Results', 'Fitted'] + self.get_param_names()])
-        self.data['Iteration'] = self.data['Iteration'].astype(int)
-        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
 
         self.regression = pd.DataFrame(columns=['Iteration', 'Parameter', 'Value'])   # Parameters: Rsquared, Regression_Parameters
         self.regression['Iteration'] = self.regression['Iteration'].astype(int)
@@ -58,17 +44,26 @@ class OptimTool(NextPointAlgorithm):
         self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Min', 'Max', 'Dynamic'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
 
-        iteration = 0
-        for param in self.params:
-            print (iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic'])
-            self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic']]
+        self.params = params # TODO: Check min <= center <= max
+        self.mu_r = mu_r
+        self.sigma_r = sigma_r
+        self.center_repeats = center_repeats
+        self.rsquared_thresh = rsquared_thresh
+        self.samples_per_iteration = int(samples_per_iteration)
 
-        X_center = self._get_X_center(iteration)
-        initial_samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration, samples_per_iteration, X_center)
 
-        logger.info('%s instance with %d initial %d-dimensional samples and %d per iteration',
-                    self.__class__.__name__, self.data.shape[0],
-                    self.n_dimensions, self.samples_per_iteration)
+    def resolve_args(self, iteration):
+        # Have args from user and from set_state.
+        # Note this is called only right before commissioning a new iteration, likely from 'resume'
+        print 'resolve_args', iteration
+
+        # TODO: be more sensitive with params, user could have added or removed variables, need to adjust
+        self.params = self.args('params') # TODO: Check min <= center <= max
+        self.mu_r = self.args('mu_r')
+        self.sigma_r = self.args('sigma_r')
+        self.center_repeats = self.args('center_repeats')
+        self.rsquared_thresh = self.args('rsquared_thresh')
+        self.samples_per_iteration = int(self.args('samples_per_iteration'))
 
 
     def _get_X_center(self, iteration):
@@ -83,22 +78,26 @@ class OptimTool(NextPointAlgorithm):
         samples_df.index.name = '__sample_index__'
         samples_df['Iteration'] = iteration
         samples_df.reset_index(inplace=True)
-
         self.data = pd.concat([self.data, samples_df])
 
         logger.debug('__sample_index__:\n%s' % samples_df[self.get_param_names()].values)
 
 
     def get_samples_for_iteration(self, iteration):
-        # These sample will be commissioned, so mark is immutable
-        print '*'*80
-        print 'Setting iteration %d as immutable' % iteration
-        print self.mutable
-        self.mutable[iteration] = False
-        print self.mutable
-        print '*'*80
+        # Update args
+        if self.need_resolve:
+            resolve_args(self, iteration)
 
-        return self.data.query('Iteration == @iteration').sort_values('__sample_index__')[self.get_param_names()] # Query makes a copy
+        if iteration == 0:
+            # Choose initial samples
+            samples = self.choose_initial_samples()
+        else:
+            # Regress inputs and results from previous iteration
+            # Move X_center, choose hypersphere, save in dataframe
+            samples = self.choose_samples_via_gradient_ascent(iteration)
+
+        #return self.data.query('Iteration == @iteration').sort_values('__sample_index__')[self.get_param_names()] # Query makes a copy
+        return samples
 
     def clamp(self, X, Xmin, Xmax):
         # UGLY, but functional: TODO cleanup!
@@ -119,25 +118,14 @@ class OptimTool(NextPointAlgorithm):
         return Xout
 
 
-    def choose_samples_for_next_iteration(self, iteration, results):
+    def set_results_for_iteration(self, iteration, results):
         logger.info('%s: Choosing samples at iteration %d:', self.__class__.__name__, iteration)
         logger.debug('Results:\n%s', results)
 
         data_by_iter = self.data.set_index('Iteration')
         if iteration+1 in data_by_iter.index.unique():
-            # Been here before, see if iteration is mutable:
-            if not self.mutable[iteration]:
-                # Check if results have changed
-                if any( [a!=b for a,b in zip(results, data_by_iter.loc[iteration, 'Results'])] ):
-                    # Throw an exception if the results differ
-                    raise Exception('OptimTool does not allow results to change for previous iterations')
-                else:
-                    # TODO: Change to logger (everywhere)
-                    print "%s: I'm way ahead of you, samples for the next iteration were computed previously." % self.__class__.__name__
-                    return data_by_iter.loc[iteration+1, self.get_param_names()].values
-
-            # Iteration is mutable, so reset
-            self.data = data_by_iter.loc[:iteration].reset_index()
+            # Been here before, reset
+            data_by_iter = data_by_iter.loc[:iteration]
 
             regression_by_iter = self.regression.set_index('Iteration')
             self.regression = regression_by_iter.loc[:iteration-1].reset_index()
@@ -145,9 +133,30 @@ class OptimTool(NextPointAlgorithm):
             state_by_iter = self.state.set_index('Iteration')
             self.state = state_by_iter.loc[:iteration].reset_index()
 
-        # TODO: Need to sort by sample?
-        self.data = data_by_iter
-        self.data.loc[iteration,'Results'] = results
+        # Store results ... even if changed
+        data_by_iter.loc[iteration,'Results'] = results
+        self.data = data_by_iter.reset_index()
+
+
+    def choose_initial_samples(self):
+        self.data = pd.DataFrame(columns=[['Iteration', '__sample_index__', 'Results', 'Fitted'] + self.get_param_names()])
+        self.data['Iteration'] = self.data['Iteration'].astype(int)
+        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
+
+        self.n_dimensions = len(self.params)
+
+        iteration = 0
+        for param in self.params:
+            print (iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic'])
+            self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic']]
+
+        X_center = self._get_X_center(iteration)
+        initial_samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration, X_center)
+
+        return initial_samples
+
+
+    def choose_samples_via_gradient_ascent(self, iteration):
 
         dynamic_params = [p['Name'] for p in self.params if p['Dynamic']]
 
@@ -243,16 +252,17 @@ class OptimTool(NextPointAlgorithm):
 
         self.state = pd.concat( [self.state, new_state] )
 
-        samples_for_next_iteration = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration+1, self.samples_per_iteration, new_center)
+        samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration+1, new_center)
 
         logger.debug('Next samples:\n%s', samples_for_next_iteration)
-        #print 'UPDATED SAMPLES:\n', samples_for_next_iteration
 
-        return samples_for_next_iteration
+        return samples
 
 
-    def choose_and_clamp_hypersphere_samples_for_iteration(self, iteration, N, X_center):
+    def choose_and_clamp_hypersphere_samples_for_iteration(self, iteration, X_center):
+        # TODO: This function does too much, break up
 
+        N = self.samples_per_iteration
         samples = self.sample_hypersphere(N, X_center)
 
         # Move static parameters to X_center
@@ -265,25 +275,11 @@ class OptimTool(NextPointAlgorithm):
         X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
         samples = self.clamp(samples, X_min, X_max)
 
+        with pd.option_context("display.max_columns", 500):
+            print self.data.head()
+
         self.data.reset_index(inplace=True)
         self.add_samples( samples, iteration )
-
-        assert( len(self.mutable) >= iteration )
-
-        if len(self.mutable) == iteration:
-            print '*'*80
-            print 'Appending iteration %d as mutable' % iteration
-            print self.mutable
-            self.mutable.append(True)
-            print self.mutable
-            print '*'*80
-        else:
-            print '*'*80
-            print 'Setting iteration %d as mutable' % iteration
-            print self.mutable
-            self.mutable[iteration] = True
-            print self.mutable
-            print '*'*80
 
         # USER CONSTRAINT FN
         self.data = self.data.set_index('Iteration')
@@ -294,6 +290,10 @@ class OptimTool(NextPointAlgorithm):
         self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
 
         data_by_iter = self.data.reset_index().set_index('Iteration')
+
+        with pd.option_context("display.max_columns", 500):
+            print data_by_iter.loc[iteration].head()
+
         return data_by_iter.loc[iteration]
 
 
@@ -355,7 +355,6 @@ class OptimTool(NextPointAlgorithm):
             sigma_r = self.sigma_r,
             center_repeats = self.center_repeats,
             rsquared_thresh = self.rsquared_thresh,
-            mutable = self.mutable,
             n_dimensions = self.n_dimensions,
             params = self.params,
             samples_per_iteration = self.samples_per_iteration,
@@ -371,14 +370,15 @@ class OptimTool(NextPointAlgorithm):
         )
         return optimtool_state
 
-    def set_state(self, state):
+    def set_state(self, state, iteration):
+        print 'set_state\n'*25
+
         self.mu_r = state['mu_r']
         self.sigma_r = state['sigma_r']
         self.center_repeats = state['center_repeats']
         self.rsquared_thresh = state['rsquared_thresh']
-        self.mutable = state['mutable']
         self.n_dimensions = state['n_dimensions']
-        self.params = state['params']
+        self.params = state['params']   # NOTE: This line will override any updated user params passed to __init__
         self.samples_per_iteration = state['samples_per_iteration']
 
         data_dtypes =state['data_dtypes']
@@ -396,6 +396,8 @@ class OptimTool(NextPointAlgorithm):
         for c in self.state.columns: # Argh
             self.state[c] = self.state[c].astype( state_dtypes[c] )
 
+        self.need_resolve = True
 
     def get_param_names(self):
         return [p['Name'] for p in self.params]
+

@@ -40,6 +40,9 @@ class OptimToolPlotter(BasePlotter):
         plt.plot(all_it, data['Min'], color='r')
         plt.plot(all_it, data['Max'], color='r')
 
+        plt.margins(0.05)
+        plt.autoscale(tight=False)
+
     def visualize(self, calib_manager):
         print 'OptimToolPlotter: VISUALIZE'
 
