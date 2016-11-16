@@ -29,10 +29,16 @@ class OptimToolPlotter(BasePlotter):
 
     def plot_state_evolution(self, **kwargs):
         data = kwargs.pop('data')
-        it = data['Iteration'].astype(int)
-        plt.plot(it, data['Center'], color='k', marker='o')
-        plt.plot(it, data['Min'], color='r')
-        plt.plot(it, data['Max'], color='r')
+        all_it = data['Iteration'].astype(int)
+
+        dynamic = data.query('Dynamic == True')
+        static = data.query('Dynamic == False')
+
+        plt.plot(all_it, data['Center'], color='k', marker=None)
+        plt.plot(dynamic['Iteration'].astype(int), dynamic['Center'], 'ko', zorder=100)
+        plt.plot(static['Iteration'].astype(int), static['Center'], color='0.75', marker='o', zorder=100)
+        plt.plot(all_it, data['Min'], color='r')
+        plt.plot(all_it, data['Max'], color='r')
 
     def visualize(self, calib_manager):
         print 'OptimToolPlotter: VISUALIZE'
@@ -47,6 +53,7 @@ class OptimToolPlotter(BasePlotter):
         data_this_iter = data_by_iteration.loc[calib_manager.iteration]
 
         regression = pd.DataFrame.from_dict(npt['regression'])
+
         regression_by_iter = regression.pivot('Iteration', 'Parameter', 'Value')
 
         state = pd.DataFrame.from_dict(npt['state'])
@@ -62,7 +69,6 @@ class OptimToolPlotter(BasePlotter):
         latest_fitted = data_this_iter['Fitted'].values  # Sort by sample?
 
         ### STATE EVOLUTION ###
-        print 'STATE, check for iteration as FP?\n',state.head()
         cw = None if D < 3 else int(np.ceil(np.sqrt(D)))
         g = sns.FacetGrid(state, row=None, col='Parameter', hue=None, col_wrap=cw, sharex=False, sharey=False, size=3, aspect=1, palette=None, row_order=None, col_order=None, hue_order=None, hue_kws=None, dropna=True, legend_out=True, despine=True, margin_titles=True, xlim=None, ylim=None, subplot_kws=None, gridspec_kws=None)
         g = g.map_dataframe(self.plot_state_evolution)
