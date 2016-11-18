@@ -19,7 +19,10 @@ class SiteDataPlotter(BasePlotter):
         super(SiteDataPlotter, self).__init__(combine_sites, prior_fn)
         self.num_to_plot = num_to_plot
 
-    def visualize(self, calib_manager):
+    def visualize(self, calib_manager, stage):
+        if stage is not 'Post_Analyze':
+            return  # Only plot once results are available
+
         self.all_results = calib_manager.all_results.reset_index()
         logger.debug(self.all_results)
 

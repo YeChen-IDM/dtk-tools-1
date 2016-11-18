@@ -23,13 +23,7 @@ def get_calib_manager_args(args, unknownArgs, force_metadata=False):
     manager = mod.calib_manager
     calib_args = mod.run_calib_args
 
-    # force_metadata == True for resume case
-    exp = manager.get_experiment_from_iteration(args.iteration if force_metadata else None, force_metadata)
-
-    # update selected_block
-    if ('selected_block' not in calib_args or not calib_args['selected_block']) or force_metadata:
-        if exp:
-            calib_args['selected_block'] = exp.selected_block
+    # DJK: This function previously attempted to recover the 'selected_block' from the latest IterationState.json cache.  However, this functionality was buggy and required many bespoke lines of code in CalibManager.  A better solution is needed if this feature is required.
 
     # update ini
     manager_data = manager.read_calib_data(True)
@@ -70,9 +64,11 @@ def resume(args, unknownArgs):
 
 
 def reanalyze(args, unknownArgs):
-    manager, calib_args = get_calib_manager_args(args, unknownArgs)
-    manager.reanalyze()
-
+    manager, calib_args = get_calib_manager_args(args, unknownArgs, force_metadata=True)
+    if args.iteration is not None:
+        manager.reanalyze_iteration(args.iteration)
+    else:
+        manager.reanalyze()
 
 def cleanup(args, unknownArgs):
     mod = load_config_module(args.config_name)
@@ -91,19 +87,8 @@ def kill(args, unknownArgs):
 
 
 def replot(args, unknownArgs):
-    mod = load_config_module(args.config_name)
-    manager = mod.calib_manager
-    run_calib_args = mod.run_calib_args
-
-    # Consider delete-only option
-    if len(unknownArgs) == 0:
-        run_calib_args['delete'] = None
-    elif len(unknownArgs) == 1:
-        run_calib_args['delete'] = unknownArgs[0][2:].upper()
-    else:
-        raise Exception('Too many unknown arguments: please see help.')
-
-    manager.replot_calibration(**run_calib_args)
+    manager, calib_args = get_calib_manager_args(args, unknownArgs, force_metadata=True)
+    manager.replot(args.iteration)
 
 
 def main():
@@ -132,6 +117,7 @@ def main():
     # 'calibtool reanalyze' options
     parser_reanalyze = subparsers.add_parser('reanalyze', help='Rerun the analyzers of a calibration')
     parser_reanalyze.add_argument(dest='config_name', default=None, help='Name of configuration python script for custom running of calibration.')
+    parser_reanalyze.add_argument('--iteration', default=None, type=int, help='Resume calibration from iteration number (default is last cached state).')
     parser_reanalyze.set_defaults(func=reanalyze)
 
     # 'calibtool cleanup' options
@@ -147,9 +133,10 @@ def main():
     parser_cleanup.set_defaults(func=kill)
 
     # 'calibtool plotter' options
-    parser_resume = subparsers.add_parser('replot', help='Re-plot a calibration configured by plotter-options')
-    parser_resume.add_argument(dest='config_name', default=None, help='Name of configuration python script for custom running of calibration.')
-    parser_resume.set_defaults(func=replot)
+    parser_replot = subparsers.add_parser('replot', help='Re-plot a calibration configured by plotter-options')
+    parser_replot.add_argument(dest='config_name', default=None, help='Name of configuration python script for custom running of calibration.')
+    parser_replot.add_argument('--iteration', default=None, type=int, help='Replot calibration for one iteration (default is to iterate over all).')
+    parser_replot.set_defaults(func=replot)
 
     # run specified function passing in function-specific arguments
     args, unknownArgs = parser.parse_known_args()

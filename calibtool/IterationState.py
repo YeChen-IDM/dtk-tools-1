@@ -3,7 +3,7 @@ import logging
 import os
 import pandas as pd
 
-from utils import NumpyEncoder, json_numpy_obj_hook
+from simtools.utils import NumpyEncoder, json_numpy_obj_hook
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class IterationState(object):
 
     def to_file(self, filepath):
         with open(filepath, 'w') as f:
-            json.dump(self.__dict__, f, indent=4, cls=NumpyEncoder)  # for np.array from NextPointAlgorithm
+            json.dump(self.__dict__, f, indent=4, cls=NumpyEncoder)
 
     def summary_table(self):
         '''

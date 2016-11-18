@@ -8,6 +8,8 @@ import re
 import shutil
 import time
 import pandas as pd
+import subprocess
+import gc   # To clean up after plotting
 from datetime import datetime
 from calibtool.plotters import SiteDataPlotter
 from IterationState import IterationState
@@ -16,7 +18,7 @@ from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.ModBuilder import ModBuilder
 from simtools.OutputParser import CompsDTKOutputParser
-from utils import NumpyEncoder
+from simtools.utils import NumpyEncoder
 from core.utils.time import verbose_timedelta
 
 logger = logging.getLogger("Calibration")
@@ -121,7 +123,7 @@ class CalibManager(object):
                 self.resume_from_iteration(location=location, **kwargs)
                 exit()     # avoid calling self.run_iterations(**kwargs)
             elif var == "P":
-                self.replot_calibration(**kwargs)
+                self.replot(iteration=None)
                 exit()     # avoid calling self.run_iterations(**kwargs)
 
 
@@ -182,23 +184,25 @@ class CalibManager(object):
 
             # Start from simulation
             if self.iteration_state.resume_point <= 1:
-                next_params = self.get_and_cache_samples_for_this_iteration() #get_next_parameters()
+                next_params = self.get_and_cache_samples_for_this_iteration() #DJK: was get_next_parameters()
                 self.commission_iteration(next_params, **kwargs)
                 # DJK: set resume_point to 2
 
+            print 'plot_iteration: Post_Commission'
+            self.plot_iteration(stage='Post_Commission')
+
             # Start from analyze
             if self.iteration_state.resume_point <= 2:
-                # DJK: Wait for finished here?
+                self.wait_for_finished() # DJK: Moved wait for finished here
+
                 results = self.analyze_iteration()
-                self.choose_and_cache_samples_for_next_iteration(results) # update_next_point
+                self.give_results_to_next_point_and_cache(results) # update_next_point
                 # DJK: set resume_point to 3
 
-            # DJK: Need another resume point after next point is done
+            # DJK: Need another resume point after next point is done?
 
-            print 'plot_iteration'
-            self.plot_iteration()
-
-            # DJK: Another resume point after plotting?
+            print 'plot_iteration: Post_Analyze'
+            self.plot_iteration(stage='Post_Analyze')
 
             print 'finished'
             if self.finished():
@@ -225,15 +229,18 @@ class CalibManager(object):
         """
         Query the next-point algorithm for the next set of sample points.
         """
-        # DJK TODO: Consistentcy of parameters vs points --> SAMPLES
-        # DJK: The following is now a dataframe so that datatype can be preserved
-        samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # get_next_samples
+        # DJK TODO: Consistentcy of parameters vs points --> USE SAMPLES
+        # DJK: The following is now a dataframe so that datatype can be preserved (ideally, it's challenging with pandas)
+        samples_for_this_iteration = self.next_point.get_samples_for_iteration(self.iteration)    # DJK: was get_next_samples
+        samples_for_this_iteration.reset_index(drop=True, inplace=True) # Make sure the index, which will become __sample_index__, starts at 0
         assert( isinstance(samples_for_this_iteration, pd.DataFrame) )
 
         dtypes = {name:str(data.dtype) for name, data in samples_for_this_iteration.iteritems()}
         self.iteration_state.samples_for_this_iteration_dtypes = dtypes # Argh
 
-        self.iteration_state.samples_for_this_iteration = samples_for_this_iteration.to_dict(orient='list')
+        #samples_for_this_iteration[ samples_for_this_iteration.isnull() ] = None # DJK: Is this is necessary on Windows?
+        samples_NaN_to_Null = samples_for_this_iteration.where(~samples_for_this_iteration.isnull(), other=None)
+        self.iteration_state.samples_for_this_iteration = samples_NaN_to_Null.to_dict(orient='list')
 
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
@@ -268,7 +275,7 @@ class CalibManager(object):
                 # First tuple element is index (use this instead of enumerate)
                 # Because parameter names are not necessarily valid python identifiers, have to build my own dictionary here
                 [ModBuilder.ModFn(self.map_sample_to_model_input_fn(sample[0]),
-                    {k:v for k,v in zip(self.param_names(), sample[1:])})
+                    {k:v for k,v in zip(next_params.columns.values, sample[1:])})
                  for sample in next_params.itertuples()])
 
             self.exp_manager.run_simulations(
@@ -282,9 +289,7 @@ class CalibManager(object):
             self.iteration_state.experiment_id = self.exp_manager.experiment.exp_id
             self.cache_iteration_state()
 
-        self.wait_for_finished()
-
-    def wait_for_finished(self, verbose=True, init_sleep=1.0, sleep_time = 10):
+    def wait_for_finished(self, verbose=True, init_sleep=1.0, sleep_time=10):
         while True:
             time.sleep(init_sleep)
 
@@ -358,7 +363,14 @@ class CalibManager(object):
         if self.exp_manager:
             exp_manager = self.exp_manager
         else:
-            exp_manager = ExperimentManagerFactory.from_experiment(DataStore.get_experiment(self.iteration_state.experiment_id))
+            exp = DataStore.get_experiment(self.iteration_state.experiment_id)
+            if exp == None:
+                logger.info('Experiment with id %s not found in local database, trying sync.' % self.iteration_state.experiment_id)
+                subprocess.call(['dtk', 'sync', '--id', '"' + str(self.iteration_state.experiment_id) + '"'])
+                exp = DataStore.get_experiment(self.iteration_state.experiment_id)
+                if exp == None:
+                    raise Exception('Unable to sync experiment with id %s'%self.iteration_state.experiment_id)
+            exp_manager = ExperimentManagerFactory.from_experiment(exp)
 
         # try:
         #     for a in exp_manager.analyzers:
@@ -396,24 +408,23 @@ class CalibManager(object):
 
         return results.total.tolist()
 
-    def plot_iteration(self):
+    def plot_iteration(self, stage):
         # Run all the plotters
-        map(lambda plotter: plotter.visualize(self), self.plotters)
+        map(lambda plotter: plotter.visualize(self, stage), self.plotters)
+        gc.collect()
 
 
-    def choose_and_cache_samples_for_next_iteration(self, results):   # update_next_point
+    def give_results_to_next_point_and_cache(self, results):   # update_next_point
         """
         Pass the latest evaluated results back to the next-point algorithm,
         which will update its state to either truncate the calibration 
         or generate the next set of sample points.
         """
 
-        #self.next_point.update_results(results)
-        #self.next_point.update_state(self.iteration)
-        points_for_next_iteration = self.next_point.choose_samples_for_next_iteration(self.iteration, results)
+        points_for_next_iteration = self.next_point.set_results_for_iteration(self.iteration, results)
 
         self.iteration_state.next_point = self.next_point.get_state()
-        self.cache_iteration_state(backup_existing=True)
+        self.cache_iteration_state(backup_existing=False) # DJK: Need True for any reason still?
 
     def finished(self):
         """ The next-point algorithm has reached its termination condition. """
@@ -429,7 +440,11 @@ class CalibManager(object):
         """ Get the final samples (and any associated information like weights) from algo. """
         final_samples = self.next_point.get_final_samples()
         logger.debug('Final samples:\n%s', pprint.pformat(final_samples))
-        self.cache_calibration(final_samples=final_samples)
+
+        dtypes = {name:str(data.dtype) for name, data in final_samples.iteritems()}
+        final_samples_NaN_to_Null = final_samples.where(~final_samples.isnull(), other=None)
+
+        self.cache_calibration(final_samples=final_samples_NaN_to_Null.to_dict(orient='list'), final_samples_dtypes=dtypes)
 
     def generate_suite_id(self, exp_manager):
         """
@@ -477,6 +492,9 @@ class CalibManager(object):
         """
         Write the LL_summary.csv with what is in the CalibManager
         """
+        # DJK: RENAME LL everywhere.  It's whatever the analyzer(s) return, e.g. cost per life saved
+        # DJK: That brings up an interesting issue about how to combine analyzers results.  For now, we sum.  But that might not be sufficiently general - think about this.
+
         # Deep copy all_results and pnames to not disturb the calibration
         pnames = copy.deepcopy(self.param_names())
         all_results = self.all_results.copy(True)
@@ -496,6 +514,9 @@ class CalibManager(object):
 
         # TODO: merge in parameter values also from siminfo_df (sample points and simulation tags need not be the same)
 
+        # DJK: The following does not appear to work?  Perhaps it's because I use COMPS asset service?
+        print 'WARNING: COMMENT TO BYPASS PATHS!!!!!\n'
+        '''
         # Retrieve the mapping between simID and output file path
         if self.location == "HPC":
             sims_paths = CompsDTKOutputParser.createSimDirectoryMap(suite_id=self.comps_suite_id, save=False)
@@ -511,6 +532,7 @@ class CalibManager(object):
 
         results_df['outputs'] = results_df['simid'].apply(find_path)
         del results_df['simid']
+        '''
 
         # Concatenate with any existing data from previous iterations and dump to file
         csv_path = os.path.join(self.name, 'LL_all.csv')
@@ -539,14 +561,11 @@ class CalibManager(object):
         self.iteration_state.to_file(iter_state_path)
 
     def serialize_results(self):
-        """
-        Prepare summary results for serialization.
-        N.B. we cast also the sample index and iteration to int32
-             to avoid a NumpyEncoder issue with np.int64
-        """
+        if self.all_results is None:
+            return []
 
         if not isinstance(self.all_results, pd.DataFrame):
-            return None
+            raise Exception('all_results must be a pandas DataFrame')
 
         self.all_results.index.name = 'sample'
         data = self.all_results.reset_index()
@@ -577,7 +596,7 @@ class CalibManager(object):
             - Handle the case: process got interrupted but it still runs on remote
             - Handle location change case: may resume from commission instead
         """
-        # DJK - this seems to hard for now
+        # DJK - this seems too hard for now, is this necessary?
 
         # Step 1: Checking possible location changes
         try:
@@ -623,6 +642,9 @@ class CalibManager(object):
         if self.iter_step == 'commission':
             return
 
+        print 'plot_iteration: Post_Commission'
+        self.plot_iteration(stage='Post_Commission')
+
         # Make sure it is finished
         self.exp_manager.wait_for_finished(verbose=True)
 
@@ -646,7 +668,7 @@ class CalibManager(object):
             # Resuming point (2 or 3) will be determined from following logic
             pass
 
-    def prepare_resume_point_for_iteration(self, iteration=None):
+    def prepare_resume_point_for_iteration(self, iteration):
         """
         Setup resume point the point to resume the iteration:
            * commission -- commission a new iteration of simulations based on existing next_params
@@ -659,7 +681,7 @@ class CalibManager(object):
 
         # Catch up the Next Point
         self.iteration_state = IterationState.restore_state(self.name, iteration)
-        self.next_point.set_state( self.iteration_state.next_point )
+        self.next_point.set_state( self.iteration_state.next_point, iteration )
 
         # Store iteration #:
         #self.iteration_state.iteration = iteration
@@ -691,9 +713,8 @@ class CalibManager(object):
         # Need to resume from next_point
         self.iteration_state.resume_point = 3
         # To resume from resume_point, we need to update next_point
-        self.choose_and_cache_samples_for_next_iteration(self.iteration_state.results['total'])
+        self.give_results_to_next_point_and_cache(self.iteration_state.results['total'])
 
-        # DJK: What about plotting?  Check finalize? Etc?
 
     def adjust_resume_point(self):
         """
@@ -709,27 +730,6 @@ class CalibManager(object):
             self.iteration_state.results = {}
         elif self.iter_step == 'next_point':
             pass
-
-    def restore_next_point_for_iteration(self, iteration):
-        # TODO: DELETE
-        """
-        Restore next_point up to this iteration
-        """
-        i = 0
-        while i <= iteration:
-            # Restore IterationState
-            self.iteration_state = IterationState.restore_state(self.name, i)
-
-            # DJK: Have to fully restore next point, not just call one function!
-            print i, "CALLING SET_STATE WITH:\n", self.iteration_state.next_point
-            self.next_point.set_state( self.iteration_state.next_point )
-
-            #print "RESTORE GET"
-            #self.get_and_cache_samples_for_this_iteration() #get_next_parameters()
-
-            # Update next point
-            #self.choose_and_cache_samples_for_next_iteration(self.iteration_state.results['total'])
-            i += 1
 
     def find_best_iteration_for_resume(self, iteration=None, calib_data=None):
         """
@@ -818,18 +818,7 @@ class CalibManager(object):
         self.comps_suite_id = calib_data.get('comps_suite_id')
         iteration = self.find_best_iteration_for_resume(iteration, calib_data)
 
-        # DJK: Where is next point algorithm state restored for resume?
-        # DJK: NOTE the following DOES restore next point - TODO: rename
         self.prepare_resume_point_for_iteration(iteration)
-
-        # DJK: Following will be handled in run_iterations
-        #if self.iteration_state.resume_point < 3:
-        #    # for resume_point < 3, it will combine current results with previous results
-        #    self.restore_results(calib_data.get('results'), iteration - 1)
-        #else:
-        #    # for resume_point = 3, it will use the current results and resume from next iteration
-        #    self.restore_results(calib_data.get('results'), iteration)
-
         self.restore_results(calib_data.get('results'), iteration)
 
         # enter iteration loop
@@ -841,82 +830,59 @@ class CalibManager(object):
         # delete all backup file for CalibManger and each of iterations
         #self.cleanup_backup_files()    # DJK: May want to restore this line once it's all working
 
-    def replot_calibration(self, **kwargs):
-        """
-        Cleanup the existing plots, then re-do the plottering
-        """
+    def replot(self, iteration):
+        # DJK: change this to replot all and leverage below per-iteration function
         logger.info('Start Re-Plot Process!')
 
-        # make sure data exists for plottering
+        # make sure data exists for plotting
         if not os.path.isdir(self.name):
             raise Exception('Unable to find existing calibration in directory: %s' % self.name)
-
-        self.replot_calibration_for_iteration(**kwargs)
-
-    def replot_calibration_for_iteration(self, **kwargs):
-        """
-        start iteration loop
-        for each existing iteration, results all_results
-        """
 
         # restore the existing calibration data
         calib_data = self.read_calib_data()
 
         # restore calibration results
         results = calib_data.get('results')
-
-        latest_iteration = calib_data.get('iteration')
-        logger.info('latest_iteration = %s' % latest_iteration)
-
-        # before iteration loop
-        self.all_results = None
-
-        # consider delete-only plot option
-        delete_only = kwargs.get('delete') == 'DELETE'
-
-        # re-do plottering for each of the iterations
-        for i in range(0, latest_iteration + 1):
-            logger.info('Re-plottering for iteration: %d' % i)
-
-            # restore current iteration state
-            iter_directory = os.path.join(self.name, 'iter%d' % i)
-            self.iteration_state = self.retrieve_iteration_state(iter_directory)
-
-            # restore all_results for current iteration
-            self.restore_results_for_replot(results, i)
-
-            # cleanup the existing plots of the current iteration before generate new plots
-            map(lambda plotter: plotter.cleanup_plot(self), self.plotters)
-
-            # consider the delete-only option
-            if not delete_only:
-                self.replot_for_iteration(i, latest_iteration)
-
-    def replot_for_iteration(self, iteration, latest_iteration):
-        """
-        for the iteration given,
-        re-plot and avoid duplicated re-plot
-        """
-        for plotter in self.plotters:
-            case1 = not isinstance(plotter, SiteDataPlotter.SiteDataPlotter)
-            case2 = isinstance(plotter, SiteDataPlotter.SiteDataPlotter) and iteration == latest_iteration
-            if case1 or case2:
-                plotter.visualize(self)
-
-    def restore_results_for_replot(self, results, iteration):
-        """
-        Restore summary results from serialized state.
-        """
-
         if not results:
             logger.info('No iteration cached results to reload from CalibManager.')
             return
 
         # restore results as DataFrame
-        self.all_results = pd.DataFrame.from_dict(results, orient='columns')
+        local_all_results = pd.DataFrame.from_dict(results, orient='columns')
 
-        # finally restore all_results for current iteration
-        self.all_results = self.all_results[self.all_results.iteration <= iteration]
+        latest_iteration = calib_data.get('iteration')
+        logger.info('latest_iteration = %s' % latest_iteration)
+
+        if iteration is not None:
+            assert( iteration <= latest_iteration )
+            self.replot_iteration(iteration, latest_iteration, local_all_results)
+            return
+
+        # replot for each iteration up to latest
+        for i in range(0, latest_iteration + 1):
+            self.replot_iteration(i, latest_iteration, local_all_results)
+
+    def replot_iteration(self, iteration, latest_iteration, local_all_results):
+        # DJK: Don't like passing in latest_iteration just for the SiteDataPlotter - better solution?
+        # replot for each iteration up to latest
+        logger.info('Re-plotting for iteration: %d' % iteration)
+
+        # restore current iteration state
+        iter_directory = os.path.join(self.name, 'iter%d' % iteration)
+        self.iteration_state = self.retrieve_iteration_state(iter_directory)
+
+        # restore next point
+        self.next_point.set_state( self.iteration_state.next_point, iteration )
+
+        # restore all_results for current iteration
+        self.all_results = local_all_results[local_all_results.iteration <= iteration]
+
+        for plotter in self.plotters:
+            if isinstance(plotter, SiteDataPlotter.SiteDataPlotter) and iteration != latest_iteration:
+                continue
+            plotter.visualize(self, stage='Post_Commission')
+            plotter.visualize(self, stage='Post_Analyze')
+            gc.collect() # Have to clean up after matplotlib is done
 
     def load_experiment_from_iteration(self, iteration=None):
         """
@@ -1011,33 +977,11 @@ class CalibManager(object):
 
         # Get the count of iterations and save the suite_id
         iter_count = calib_data.get('iteration')
-        logger.info("Reanalyze will go through %s iterations." % iter_count)
+        logger.info("Reanalyze will go through %s iterations." % (iter_count+1))
 
         # Go through each already ran iterations
         for i in range(0, iter_count+1):
-            logger.info("\n")
-            logger.info("Reanalyze Iteration %s" % i)
-            # Create the path for the iteration dir
-            iter_directory = os.path.join(self.name, 'iter%d' % i)
-
-            # Create the state for the current iteration
-            self.iteration_state = self.retrieve_iteration_state(iter_directory)
-            self.iteration_state.iteration = i
-
-            # Empty the results and analyzers
-            self.iteration_state.results = {}
-            self.iteration_state.analyzers = {}
-
-            # Analyze again!
-            res = self.analyze_iteration()
-
-            # update next point
-            self.choose_and_cache_samples_for_next_iteration(res)
-
-            # Call all plotters
-            self.plot_iteration()
-
-            logger.info("Iteration %s reanalyzed." % i)
+            self.reanalyze_iteration(i)
 
         # Before leaving -> set back the suite_id
         self.local_suite_id = calib_data.get('local_suite_id')
@@ -1046,6 +990,38 @@ class CalibManager(object):
 
         # Also finalize
         self.finalize_calibration()
+
+
+    def reanalyze_iteration(self, iteration):
+        logger.info("\n")
+        logger.info("Reanalyze Iteration %s" % iteration)
+        # Create the path for the iteration dir
+        iter_directory = os.path.join(self.name, 'iter%d' % iteration)
+
+        # Create the state for the current iteration
+        self.iteration_state = self.retrieve_iteration_state(iter_directory)
+        self.next_point.set_state( self.iteration_state.next_point, iteration ) # DJK: New, restore next point?
+
+        self.iteration_state.iteration = iteration
+
+        # Empty the results and analyzers
+        self.iteration_state.results = {}
+        self.iteration_state.analyzers = {}
+
+        self.plot_iteration(stage='Post_Commission')
+
+        # Analyze again!
+        res = self.analyze_iteration()
+
+        # update next point
+        self.give_results_to_next_point_and_cache(res) # DJK: really need to do this?
+
+        # Call all plotters
+        self.plot_iteration(stage='Post_Analyze')
+
+        logger.info("Iteration %s reanalyzed." % iteration)
+
+
 
     def read_calib_data(self, force=False):
         try:
@@ -1056,47 +1032,6 @@ class CalibManager(object):
             else:
                 return None
 
-    def get_experiment_from_iteration(self, iteration=None, force_metadata=False):
-        """
-        Retrieve experiment for a given iteration
-        """
-        exp = None
-
-        # Only check iteration for resume cases
-        if force_metadata:
-            iteration = self.adjust_iteration(iteration)
-            iteration_cache = os.path.join(self.name, 'iter%d' % iteration, 'IterationState.json')
-            it = IterationState.from_file(iteration_cache)
-
-            exp = DataStore.get_experiment(it.experiment_id)
-
-        return exp
-
-    def adjust_iteration(self, iteration=None, calib_data=None):
-        """
-        Validate iteration against latest_iteration
-        return adjusted iteration
-        """
-        # If calib_data is None or Empty, load data
-        if calib_data is None or not calib_data:
-            calib_data = self.read_calib_data()
-
-        # Get latest iteration #
-        latest_iteration = calib_data.get('iteration', None)
-
-        # Handle special case
-        if latest_iteration is None:
-            return 0
-
-        # If no iteration passed in, take latest_iteration as instead
-        if iteration is None:
-            iteration = latest_iteration
-
-        # Adjust input iteration
-        if latest_iteration < iteration:
-            iteration = latest_iteration
-
-        return iteration
 
     def check_orphan_experiments(self, ask=True):
         """

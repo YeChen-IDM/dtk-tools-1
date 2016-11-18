@@ -19,7 +19,7 @@ from simtools.SetupParser import SetupParser
 from simtools.utils import init_logging
 
 logger = init_logging('ExperimentManager')
-
+overseer_check_lock = multiprocessing.Lock()
 
 class BaseExperimentManager:
     __metaclass__ = ABCMeta
@@ -101,7 +101,7 @@ class BaseExperimentManager:
     def done_commissioning(self):
         self.experiment = DataStore.get_experiment(self.experiment.exp_id)
         for sim in self.experiment.simulations:
-            if sim.status == 'Waiting' or not sim.status or sim.status=="Created":
+            if sim.status == 'Waiting' or not sim.status or sim.status == "Created":
                 return False
 
         return True
@@ -113,27 +113,29 @@ class BaseExperimentManager:
         The thread pid is retrieved from the settings and then we test if it corresponds to a python thread.
         If not, just start it.
         """
-        setting = DataStore.get_setting('overseer_pid')
+        overseer_check_lock.acquire()
+        try:
+            setting = DataStore.get_setting('overseer_pid')
 
-        if setting:
-            overseer_pid = int(setting.value)
-        else:
-            overseer_pid = None
+            if setting:
+                overseer_pid = int(setting.value)
+            else:
+                overseer_pid = None
 
-        if overseer_pid and psutil.pid_exists(overseer_pid) and 'python' in psutil.Process(overseer_pid).name().lower():
-            return
+            if not overseer_pid or not psutil.pid_exists(overseer_pid) or 'python' not in psutil.Process(overseer_pid).name().lower():
+                # Run the runner
+                current_dir = os.path.dirname(os.path.realpath(__file__))
+                runner_path = os.path.join(current_dir, '..', 'Overseer.py')
+                import platform
+                if platform.system() == 'Windows':
+                    p = subprocess.Popen([sys.executable, runner_path], shell=False, creationflags=512)
+                else:
+                    p = subprocess.Popen([sys.executable, runner_path], shell=False)
 
-        # Run the runner
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        runner_path = os.path.join(current_dir, '..', 'Overseer.py')
-        import platform
-        if platform.system() == 'Windows':
-            p = subprocess.Popen([sys.executable, runner_path], shell=False, creationflags=512)
-        else:
-            p = subprocess.Popen([sys.executable, runner_path], shell=False)
-
-        # Save the pid in the settings
-        DataStore.save_setting(DataStore.create_setting(key='overseer_pid', value=str(p.pid)))
+                # Save the pid in the settings
+                DataStore.save_setting(DataStore.create_setting(key='overseer_pid', value=str(p.pid)))
+        finally:
+            overseer_check_lock.release()
 
     def success_callback(self, simulation):
         """
@@ -237,7 +239,7 @@ class BaseExperimentManager:
             return True
 
         input_files = config_builder.get_input_file_paths()
-        missing_files = self.check_input_files(input_files)
+        input_root, missing_files = self.check_input_files(input_files)
 
         # Py-passing 'Campaign_Filename' for now.
         if 'Campaign_Filename' in missing_files:
@@ -246,6 +248,7 @@ class BaseExperimentManager:
 
         if len(missing_files) > 0:
             print 'Missing files list:'
+            print 'input_root: %s' % input_root
             print json.dumps(missing_files, indent=2)
             var = raw_input("Above shows the missing input files, do you want to continue? [Y/N]:  ")
             if var.upper() == 'Y':
