@@ -51,42 +51,76 @@ class OptimTool(NextPointAlgorithm):
         self.rsquared_thresh = rsquared_thresh
         self.samples_per_iteration = int(samples_per_iteration)
 
+        self.Xmin = {p['Name']:p['Min'] for p in self.params }
+        self.Xmax = {p['Name']:p['Max'] for p in self.params }
+        self.Dynamic = {p['Name']:p['Dynamic'] for p in self.params }
+
 
     def resolve_args(self, iteration):
         # Have args from user and from set_state.
         # Note this is called only right before commissioning a new iteration, likely from 'resume'
-        print 'resolve_args', iteration
 
         # TODO: be more sensitive with params, user could have added or removed variables, need to adjust
-        self.params = self.args('params') # TODO: Check min <= center <= max
-        self.mu_r = self.args('mu_r')
-        self.sigma_r = self.args('sigma_r')
-        self.center_repeats = self.args('center_repeats')
-        self.rsquared_thresh = self.args('rsquared_thresh')
-        self.samples_per_iteration = int(self.args('samples_per_iteration'))
+        # TODO: Check min <= center <= max for params
+        # TODO: could clean this up with a helper function
+        self.params = self.args['params'] if 'params' in self.args else self.params # Guess may move, but should be ignored
+        self.mu_r = self.args['mu_r'] if 'mu_r' in self.args else self.mu_r
+        self.sigma_r = self.args['sigma_r'] if 'sigma_r' in self.args else self.sigma_r
+        self.center_repeats = self.args['center_repeats'] if 'center_repeats' in self.args else self.center_repeats
+        self.rsquared_thresh = self.args['rsquared_thresh'] if 'rsquared_thresh' in self.args else self.rsquared_thresh
+        self.samples_per_iteration = self.args['samples_per_iteration'] if 'samples_per_iteration' in self.args else self.samples_per_iteration
+
+        self.n_dimensions = len(self.params)
+        self.Xmin = {p['Name']:p['Min'] for p in self.params }
+        self.Xmax = {p['Name']:p['Max'] for p in self.params }
+        self.Dynamic = {p['Name']:p['Dynamic'] for p in self.params }
+
+        self.need_resolve = False
+
+        """
+        # TODO: Allow user to override current 'Center' value
+        state_by_iter = self.state.set_index('Iteration')
+        if iteration == 0:
+            # Not sure this would happen, but just in case
+            cur_val = {p['Name']:p['Guess'] for p in self.params}
+        else:
+            cur_val = {s['Parameter']:s['Center'] for (i,s) in state_by_iter.loc[iteration-1].iterrows()}
+
+        iter_state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Min', 'Max', 'Dynamic'])
+        for param in self.params:
+            iter_state.loc[len(iter_state)] = [iteration, param['Name'], cur_val[param['Name']], param['Min'], param['Max'], param['Dynamic']]
+
+        self.state = self.state.loc[:iteration-1]
+        self.state.reset_index(inplace=True)
+        self.state = pd.concat([self.state, iter_state], ignore_index=True)
+        self.state['Iteration'] = self.state['Iteration'].astype(int)
+
+        with pd.option_context("display.max_rows", 500, "display.max_columns", 500):
+            print self.state
+            raw_input('resolve_args')
+        """
 
 
     def _get_X_center(self, iteration):
         state_by_iter = self.state.reset_index(drop=True).set_index(['Iteration', 'Parameter'])
         assert( iteration in state_by_iter.index.get_level_values('Iteration') )
-        state_this_iter = state_by_iter.loc[iteration]
-        return [ state_this_iter.loc[p]['Center'] for p in self.get_param_names() ]
+        return state_by_iter.loc[iteration]['Center']
 
 
     def add_samples(self, samples, iteration):
-        samples_df = pd.DataFrame( samples, columns = self.get_param_names() )
-        samples_df.index.name = '__sample_index__'
-        samples_df['Iteration'] = iteration
-        samples_df.reset_index(inplace=True)
-        self.data = pd.concat([self.data, samples_df])
+        samples_cpy = samples.copy()
+        samples_cpy.index.name = '__sample_index__'
+        samples_cpy['Iteration'] = iteration
+        samples_cpy.reset_index(inplace=True)
 
-        logger.debug('__sample_index__:\n%s' % samples_df[self.get_param_names()].values)
+        self.data = pd.concat([self.data, samples_cpy], ignore_index = True)
+        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
 
 
     def get_samples_for_iteration(self, iteration):
         # Update args
         if self.need_resolve:
-            resolve_args(self, iteration)
+            self.resolve_args(iteration)
 
         if iteration == 0:
             # Choose initial samples
@@ -99,23 +133,15 @@ class OptimTool(NextPointAlgorithm):
         #return self.data.query('Iteration == @iteration').sort_values('__sample_index__')[self.get_param_names()] # Query makes a copy
         return samples
 
-    def clamp(self, X, Xmin, Xmax):
-        # UGLY, but functional: TODO cleanup!
-        Xa = np.asmatrix(X) if not isinstance(X, np.ndarray) else X
+    def clamp(self, X):
 
-        Xa = np.asmatrix(X)
-        nRows = Xa.shape[0]
-        for (i,p) in enumerate( self.get_param_names() ):
-            Xa[:,i] = np.minimum( Xmax[p], np.maximum( Xmin[p], Xa[:,i] ) )
+        print 'X.before:\n', X
 
-        if isinstance(X, list):
-            Xout = Xa.tolist()
-            if nRows == 1:
-                Xout = Xout[0]
-        else:
-            Xout = Xa
+        # X should be a data frame
+        for pname in X.columns:
+            X[pname] = np.minimum( self.Xmax[pname], np.maximum( self.Xmin[pname], X[pname] ) )
 
-        return Xout
+        return X
 
 
     def set_results_for_iteration(self, iteration, results):
@@ -150,23 +176,43 @@ class OptimTool(NextPointAlgorithm):
             print (iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic'])
             self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic']]
 
-        X_center = self._get_X_center(iteration)
-        initial_samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration, X_center)
+        initial_samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration)
+
+        self.add_samples( initial_samples, iteration )
 
         return initial_samples
 
 
     def choose_samples_via_gradient_ascent(self, iteration):
 
-        dynamic_params = [p['Name'] for p in self.params if p['Dynamic']]
+        assert(iteration >= 1)
 
-        latest_dynamic_samples = self.data.loc[iteration, dynamic_params].values
-        latest_results = self.data.loc[iteration, 'Results'].values
+        # DYNAMIC ON PREVIOUS ITERATION WHEN COMMISSIONED ...
+        state_prev_iter = self.state.set_index('Iteration').loc[iteration-1]
+        dynamic_params = [r['Parameter'] for idx,r in state_prev_iter.iterrows() if r['Dynamic']]
+
+        self.data.set_index('Iteration', inplace=True)
+        latest_dynamic_samples = self.data.loc[iteration-1, dynamic_params].values
+        latest_results = self.data.loc[iteration-1, 'Results'].values
 
         mod = sm.OLS(latest_results, sm.add_constant(latest_dynamic_samples) )
 
         mod_fit = mod.fit()
         print mod_fit.summary()
+
+        # Regression parameters for plotting / analysis
+        self.regression = self.regression.query('Iteration < @iteration')
+        r2_df = pd.DataFrame( [[iteration-1, 'Rsquared', mod_fit.rsquared]], columns=['Iteration', 'Parameter', 'Value'] )
+        thresh_df = pd.DataFrame( [[iteration-1, 'Rsquared_Threshold', self.rsquared_thresh]], columns=['Iteration', 'Parameter', 'Value'] )
+        repeats_df = pd.DataFrame( [[iteration-1, 'Center_Repeats', self.center_repeats]], columns=['Iteration', 'Parameter', 'Value'] )
+        self.regression = pd.concat([self.regression, r2_df, thresh_df, repeats_df])
+        for (p,v) in zip( ['Constant'] + dynamic_params, mod_fit.params): # mod.endog_names
+            regression_param_df = pd.DataFrame( [[iteration-1, p, v]], columns=['Iteration', 'Parameter', 'Value'] )
+            self.regression = pd.concat([self.regression, regression_param_df])
+        for (p,v) in zip( ['P_Constant'] + ['P_'+s for s in dynamic_params], mod_fit.pvalues): # mod.endog_names
+            regression_param_df = pd.DataFrame( [[iteration-1, p, v]], columns=['Iteration', 'Parameter', 'Value'] )
+            self.regression = pd.concat([self.regression, regression_param_df])
+
 
         """
         #L1_wt : scalar : The fraction of the penalty given to the L1 penalty term. Must be between 0 and 1 (inclusive). If 0, the fit is ridge regression. If 1, the fit is the lasso.
@@ -197,19 +243,18 @@ class OptimTool(NextPointAlgorithm):
 
         self.fit_summary = mod_fit.summary().as_csv()
 
-        self.data.loc[iteration, 'Fitted'] = mod_fit.fittedvalues
+        self.data.loc[iteration-1, 'Fitted'] = mod_fit.fittedvalues
+        self.data.reset_index(inplace=True)
 
-        # Choose next X_center
+        # Choose X_center for this iteration based on previous
+        old_center = self._get_X_center(iteration-1)
         if mod_fit.rsquared > self.rsquared_thresh:
             print 'Good R^2 (%f), using params: '%mod_fit.rsquared, mod_fit.params
             coef = mod_fit.params[1:] # Drop constant
-            den = np.sqrt( sum([ (p['Max']-p['Min'])**2 * c**2  for c,p in zip(coef, self.params) ]) )
+            den = np.sqrt( sum([ (self.Xmax[pname]-self.Xmin[pname])**2 * c**2  for c,pname in zip(coef, dynamic_params) ]) )
 
-            old_center = self._get_X_center(iteration)
-            old_center_of_dynamic_params = [c for c,p in zip(old_center, self.params) if p['Dynamic']]
-            print 'OLD CENTER:', old_center
-            print 'OLD CENTER DYNAMIC:', old_center_of_dynamic_params
-            new_dynamic_center = [x + (p['Max']-p['Min'])**2 * c * self.mu_r / den for x,c,p in zip(old_center_of_dynamic_params, coef, self.params) ]
+            old_center_of_dynamic_params = old_center[dynamic_params].values
+            new_dynamic_center = [x + (self.Xmax[pname]-self.Xmin[pname])**2 * c * self.mu_r / den for x,c,pname in zip(old_center_of_dynamic_params, coef, dynamic_params) ]
 
         else:
             print 'Bad R^2 (%f)'%mod_fit.rsquared
@@ -217,107 +262,83 @@ class OptimTool(NextPointAlgorithm):
             'Stepping to argmax of %f at:'%latest_results[max_idx], latest_dynamic_samples[max_idx]
             new_dynamic_center = latest_dynamic_samples[max_idx].tolist()
 
-        new_center_dict = {k:v for k,v in zip(self.get_param_names(), self._get_X_center(iteration))}
+        new_center_dict = old_center.to_dict() #{k:v for k,v in zip(self.get_param_names(), old_center)}
         new_center_dict.update( {k:v for k,v in zip(dynamic_params, new_dynamic_center)} )
-        new_center = [new_center_dict[param_name] for param_name in self.get_param_names()]
 
-        r2_df = pd.DataFrame( [[iteration, 'Rsquared', mod_fit.rsquared]], columns=['Iteration', 'Parameter', 'Value'] )
-        thresh_df = pd.DataFrame( [[iteration, 'Rsquared_Threshold', self.rsquared_thresh]], columns=['Iteration', 'Parameter', 'Value'] )
-        repeats_df = pd.DataFrame( [[iteration, 'Center_Repeats', self.center_repeats]], columns=['Iteration', 'Parameter', 'Value'] )
-        self.regression = pd.concat([self.regression, r2_df, thresh_df, repeats_df])
-        for (p,v) in zip( ['Constant'] + self.get_param_names(), mod_fit.params): # mod.endog_names
-            regression_param_df = pd.DataFrame( [[iteration, p, v]], columns=['Iteration', 'Parameter', 'Value'] )
-            self.regression = pd.concat([self.regression, regression_param_df])
-        for (p,v) in zip( ['P_Constant'] + ['P_'+s for s in self.get_param_names()], mod_fit.pvalues): # mod.endog_names
-            regression_param_df = pd.DataFrame( [[iteration, p, v]], columns=['Iteration', 'Parameter', 'Value'] )
-            self.regression = pd.concat([self.regression, regression_param_df])
+        # User may have added or removed params
+        param_names = [p['Name'] for p in self.params]
+        # Remove -
+        new_center_df = {k:v for k,v in new_center_dict.iteritems() if k in param_names}
+        # Add -
+        new_params = {p['Name']:p['Guess'] for p in self.params if p['Name'] not in new_center_dict}
+        new_center_dict.update(new_params)
 
         # CLAMP
-        X_min = self.state.pivot('Iteration', 'Parameter', 'Min').loc[iteration, self.get_param_names()]
-        X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
-        new_center = self.clamp(new_center, X_min, X_max)
+        new_center_df = pd.Series(new_center_dict, name=0).to_frame().transpose()
+        new_center_df = self.clamp( new_center_df )
 
         # USER CONSTRAINT FN
-        new_center_dict = self.constrain_sample_fn( {k:v for k,v in zip(self.get_param_names(), new_center)} )
-        new_center = np.array( [new_center_dict[p] for p in self.get_param_names()] )
+        new_center_df = new_center_df.apply(self.constrain_sample_fn, axis=1)
 
         new_state = pd.DataFrame( {
-            'Iteration':[iteration+1]*self.n_dimensions,
-            'Parameter': self.get_param_names(),
-            'Center': new_center,
-            'Min': [p['Min'] for p in self.params],
-            'Max': [p['Max'] for p in self.params],
-            'Dynamic': [p['Dynamic'] for p in self.params]
+            'Iteration':[iteration]*self.n_dimensions,
+            'Parameter': new_center_df.columns.values,
+            'Center': new_center_df.as_matrix()[0],
+            'Min': [self.Xmin[pname] for pname in new_center_df.columns.values],
+            'Max': [self.Xmax[pname] for pname in new_center_df.columns.values],
+            'Dynamic': [self.Dynamic[pname] for pname in new_center_df.columns.values]
         } )
 
-        self.state = pd.concat( [self.state, new_state] )
+        self.state = self.state.query('Iteration < @iteration')
+        self.state = pd.concat( [self.state, new_state], ignore_index=True)
 
-        samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration+1, new_center)
-
-        logger.debug('Next samples:\n%s', samples_for_next_iteration)
+        samples = self.choose_and_clamp_hypersphere_samples_for_iteration(iteration)
+        self.add_samples( samples, iteration )
 
         return samples
 
 
-    def choose_and_clamp_hypersphere_samples_for_iteration(self, iteration, X_center):
-        # TODO: This function does too much, break up
-
+    def choose_and_clamp_hypersphere_samples_for_iteration(self, iteration):
         N = self.samples_per_iteration
-        samples = self.sample_hypersphere(N, X_center)
+        state_by_iter = self.state.set_index('Iteration')
+        # Will vary parameters that are 'Dyanmic' on this iteration
+        samples = self.sample_hypersphere(N, state_by_iter.loc[iteration])
 
-        # Move static parameters to X_center
-        for i,p in enumerate(self.params):
-            if not p['Dynamic']:
-                samples[:,i] = X_center[i]
+        # Clamp and constrain
+        samples = self.clamp(samples)
+        samples = samples.apply( self.constrain_sample_fn, axis=1)
 
-        # CLAMP
-        X_min = self.state.pivot('Iteration', 'Parameter', 'Min').loc[iteration, self.get_param_names()]
-        X_max = self.state.pivot('Iteration', 'Parameter', 'Max').loc[iteration, self.get_param_names()]
-        samples = self.clamp(samples, X_min, X_max)
-
-        with pd.option_context("display.max_columns", 500):
-            print self.data.head()
-
-        self.data.reset_index(inplace=True)
-        self.add_samples( samples, iteration )
-
-        # USER CONSTRAINT FN
-        self.data = self.data.set_index('Iteration')
-        tmp = self.data.loc[iteration].apply( self.constrain_sample_fn, axis=1)
-
-        self.data.loc[iteration] = self.data.loc[iteration].apply( self.constrain_sample_fn, axis=1)
-        self.data.reset_index(inplace=True)
-        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
-
-        data_by_iter = self.data.reset_index().set_index('Iteration')
-
-        with pd.option_context("display.max_columns", 500):
-            print data_by_iter.loc[iteration].head()
-
-        return data_by_iter.loc[iteration]
+        return samples# Order shouldn't matter now, so dropped [self.get_param_names()]
 
 
-    def sample_hypersphere(self, N, X_center):
-        # Pick samples on hypersphere
-        sn = norm(loc=0, scale=1)
-
+    def sample_hypersphere(self, N, state):
+        # Pick samples on hypersphere - TODO: clean
         assert(N > self.center_repeats)
 
+        dynamic_state = state.query('Dynamic == True')
+
         deviations = []
+        standard_normal = norm(loc=0, scale=1)
+        radius_normal = norm(loc = self.mu_r, scale = self.sigma_r)
         for i in range(N - self.center_repeats):
-            rvs = sn.rvs(size = self.n_dimensions)
-            nrm = np.linalg.norm(rvs)
+            sn_rvs = standard_normal.rvs(size = len(dynamic_state))
+            sn_nrm = np.linalg.norm(sn_rvs)
+            radius = radius_normal.rvs()
+            deviations.append( [radius/sn_nrm * sn for sn in sn_rvs] )
 
-            deviations.append( [r/nrm for r in rvs] )
+        X_center = state.reset_index(drop=True).set_index(['Parameter'])[['Center']]
+        xc = X_center.transpose().reset_index(drop=True)
+        xc.columns.name = ""
 
-        rad = norm(loc = self.mu_r, scale = self.sigma_r)
+        samples = pd.concat( [xc]*N ).reset_index(drop=True)
 
-        samples = np.empty([N, self.n_dimensions])
-        samples[:self.center_repeats] = X_center
-        for i, deviation in enumerate(deviations):
-            r = rad.rvs()
-            # Scale by param range
-            samples[self.center_repeats + i] = [x + r * d * (param['Max']-param['Min']) for x, d, param in zip(X_center, deviation, self.params)]
+        dt = np.transpose(deviations)
+
+        dynamic_state_by_param = dynamic_state.set_index('Parameter')
+        for i, pname in enumerate(dynamic_state['Parameter']):
+            Xcen = dynamic_state_by_param.loc[pname, 'Center']
+            Xrange = dynamic_state_by_param.loc[pname, 'Max'] - dynamic_state_by_param.loc[pname, 'Min']
+            samples.loc[self.center_repeats:N, pname] = Xcen + dt[i] * Xrange
 
         return samples
 
@@ -336,8 +357,11 @@ class OptimTool(NextPointAlgorithm):
         state_by_iteration = self.state.set_index('Iteration')
         last_iter = sorted(state_by_iteration.index.unique())[-1]
 
-        #return dict( samples = self.X_center[-1] )
-        return self._get_X_center(last_iter)
+        X_Center = self._get_X_center(last_iter)
+        xc = X_Center.to_frame().transpose().reset_index(drop=True)
+        xc.columns.name = ""
+
+        return xc
 
     def prep_for_dict(self, df):
         # Needed for Windows compatibility
@@ -371,8 +395,6 @@ class OptimTool(NextPointAlgorithm):
         return optimtool_state
 
     def set_state(self, state, iteration):
-        print 'set_state\n'*25
-
         self.mu_r = state['mu_r']
         self.sigma_r = state['sigma_r']
         self.center_repeats = state['center_repeats']
@@ -400,4 +422,3 @@ class OptimTool(NextPointAlgorithm):
 
     def get_param_names(self):
         return [p['Name'] for p in self.params]
-

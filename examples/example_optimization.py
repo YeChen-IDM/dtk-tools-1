@@ -1,9 +1,8 @@
 # Execute directly: 'python example_optimization.py'
 # or via the calibtool.py script: 'calibtool run example_optimization.py'
 
-import numpy as np
-from scipy.stats import uniform, norm
-import collections
+from scipy.special import gammaln
+import math
 import random
 
 from calibtool.CalibManager import CalibManager
@@ -26,27 +25,31 @@ sites = [DTKCalibFactory.get_site('Dielmo', analyzers=[analyzer]),
 print 'Dielmo only for now'
 sites = [sites[0]]
 
-# TODO: 'Frozen': False
+plotters = [    LikelihoodPlotter(combine_sites=True), 
+                SiteDataPlotter(num_to_plot=10, combine_sites=True),
+                OptimToolPlotter()] # OTP must be last because it calls gc.collect()
+
+# Antigen_Switch_Rate (1e-10 to 1e-8, log)
+# Falciparum_PfEMP1_Variants (900 to 1700, linear int)
+# Falciparum_MSP_Variants (5 to 50, linear int)
+
+# The following params can be changed by stopping 'calibool', making a modification, and then resuming.
+# Things you can do:
+# * Change the min and max, but changing the guess of an existing parameter has no effect
+# * Make a dynamic parameter static and vise versa
+# * Add and remove (needs testing) parameters
 params = [
     {
-        'Name': 'Min Days Between Clinical Incidents',
-        'MapTo': 'Min_Days_Between_Clinical_Incidents',
-        'Guess': 25,
-        'Min': 1,
-        'Max': 50
-    },
-
-    {
         'Name': 'Clinical Fever Threshold High',
-        'MapTo': 'Clinical_Fever_Threshold_High',
+        'Dynamic': True,
+        #'MapTo': 'Clinical_Fever_Threshold_High', # <-- DEMO: Custom mapping, see map_sample_to_model_input below
         'Guess': 1.75,
         'Min': 0.5,
         'Max': 2.5
-    }
-]
-'''
+    },
     {
         'Name': 'MSP1 Merozoite Kill Fraction',
+        'Dynamic': False,   # <-- NOTE: this parameter is frozen at Guess
         'MapTo': 'MSP1_Merozoite_Kill_Fraction',
         'Guess': 0.65,
         'Min': 0.4,
@@ -54,73 +57,84 @@ params = [
     },
     {
         'Name': 'Falciparum PfEMP1 Variants',
+        'Dynamic': True,
         'MapTo': 'Falciparum_PfEMP1_Variants',
         'Guess': 1500,
-        'Min': 900, # 0
-        'Max': 1700 # 1e5
+        'Min': 1, # 900 [0]
+        'Max': 5000 # 1700 [1e5]
     },
-'''
-
-# Antigen_Switch_Rate (1e-10 to 1e-8, log)
-# Falciparum_PfEMP1_Variants (900 to 1700, linear int)
-# Falciparum_MSP_Variants (5 to 50, linear int)
-# OR "Min_Days_Between_Clinical_Incidents": 14, [ integer? ]
-
-# Build optimization parameter name --> model input parameter from params above
-mapping = { p['Name']:p['MapTo'] for p in params }
+    {
+        'Name': 'Min Days Between Clinical Incidents',
+        'Dynamic': False, # <-- NOTE: this parameter is frozen at Guess
+        'MapTo': 'Min_Days_Between_Clinical_Incidents',
+        'Guess': 25,
+        'Min': 1,
+        'Max': 50
+    },
+]
 
 def constrain_sample( sample ):
-
     # Convert Falciparum MSP Variants to nearest integer
-    sample['Min Days Between Clinical Incidents'] = int( round(sample['Min Days Between Clinical Incidents']) )
+    if 'Min Days Between Clinical Incidents' in sample:
+        sample['Min Days Between Clinical Incidents'] = int( round(sample['Min Days Between Clinical Incidents']) )
 
-    # Clinical Fever Threshold High <  MSP1 Merozoite Kill Fraction
     '''
-    if 'Clinical Fever Threshold High' in sample and 'MSP1 Merozoite Kill Fraction' in sample:
+    # Can do much more here, e.g. for
+    # Clinical Fever Threshold High <  MSP1 Merozoite Kill Fraction
+    if 'Clinical Fever Threshold High' and 'MSP1 Merozoite Kill Fraction' in sample:
         sample['Clinical Fever Threshold High'] = \
             min( sample['Clinical Fever Threshold High'], sample['MSP1 Merozoite Kill Fraction'] )
     '''
 
     return sample
 
-plotters = [    LikelihoodPlotter(combine_sites=True), 
-                SiteDataPlotter(num_to_plot=10, combine_sites=True),
-                OptimToolPlotter()] # OTP must be last because it calls gc.collect()
-
 def map_sample_to_model_input(cb, sample):
-    sample['Simulation_Duration'] = 10*365
-    sample['Run_Number'] = random.randint(0, 1e6)
-
     tags = {}
-    for name, value in sample.iteritems():
-        print (name, value)
-        if name in mapping:
-            map_to_name = mapping[name]
-            if map_to_name is 'Custom':
-                print 'TODO: Handle custom mapping for', map_to_name
-            else:
-                tags.update( cb.set_param(map_to_name, value) )
-        else:
-            tags.update( cb.set_param(name, value) )
+
+    # Can perform custom mapping, e.g. a trivial example
+    if 'Clinical Fever Threshold High' in sample:
+        value = sample.pop('Clinical Fever Threshold High')
+        tags.update( cb.set_param('Clinical_Fever_Threshold_High', value) )
+
+    for p in params:
+        if 'MapTo' in p:
+            if p['Name'] not in sample:
+                print 'Warning: %s not in sample, perhaps resuming previous iteration' % p['Name']
+                continue
+            value = sample.pop( p['Name'] )
+            tags.update( cb.set_param(p['Name'], value) )
+
+    for name,value in sample.iteritems():
+        print 'UNUSED PARAMETER:', name
+    assert( len(sample) == 0 ) # All params used
+
+    # Run for 10 years with a random random number seed
+    tags.update( cb.set_param('Simulation_Duration', 10*365) )
+    tags.update( cb.set_param('Run_Number', random.randint(0, 1e6)) )
 
     return tags
 
+# Just for fun, let the numerical derivative baseline scale with the number of dimensions
+volume_fraction = 0.05   # desired fraction of N-sphere area to unit cube area for numerical derivative (automatic radius scaling with N)
+num_params = len( [p for p in params if p['Dynamic']] )
+r = math.exp( 1/float(num_params)*( math.log(volume_fraction) + gammaln(num_params/2.+1) - num_params/2.*math.log(math.pi) ) )
+
 optimtool = OptimTool(params, 
-    constrain_sample, # <-- WILL NOT BE SAVED IN ITERATION STATE
-    mu_r = 0.05,      # <-- Mean percent of parameter range for numerical derivatve.  CAREFUL with integer parameters!
-    sigma_r = 0.01,   # <-- stdev of above
-    samples_per_iteration = 32,
-    center_repeats = 2
+    constrain_sample,   # <-- WILL NOT BE SAVED IN ITERATION STATE
+    mu_r = r,           # <-- radius for numerical derivatve.  CAREFUL not to go too small with integer parameters
+    sigma_r = r/10.,    # <-- stdev of radius
+    center_repeats = 2, # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
+    samples_per_iteration = 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
 )
 
-calib_manager = CalibManager(name='ExampleOptimization',
+calib_manager = CalibManager(name='ExampleOptimization',    # <-- Please customize this name
                              setup = SetupParser(),
                              config_builder = cb,
                              map_sample_to_model_input_fn = map_sample_to_model_input,
                              sites = sites,
                              next_point = optimtool,
                              sim_runs_per_param_set = 1, # <-- Replicates
-                             max_iterations = 10,        # <-- Iterations
+                             max_iterations = 5,         # <-- Iterations
                              plotters = plotters)
 
 #run_calib_args = {'selected_block': "EXAMPLE"}
