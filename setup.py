@@ -4,11 +4,11 @@ import os
 import platform
 import shutil
 import sys
+from datetime import datetime
 from collections import OrderedDict
 from urlparse import urlparse
 from ConfigParser import ConfigParser
 from distutils.version import LooseVersion
-from simtools.utils import nostdout
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 install_directory = os.path.join(current_directory, 'install')
@@ -24,6 +24,12 @@ requirements = OrderedDict([
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/curses-2.2-cp27-none-win_amd64.whl'
     }),
+    ('pyCOMPS', {
+        'platform': ['win','lin','mac'],
+        'version': '1.0b10',
+        'test': '==',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/pyCOMPS-1.0b10-py2.py3-none-any.whl'
+    }),
     ('matplotlib', {
         'platform': ['win', 'lin', 'mac'],
         'version': '1.5.3',
@@ -32,9 +38,9 @@ requirements = OrderedDict([
     }),
     ('numpy', {
         'platform': ['win', 'lin', 'mac'],
-        'version': '1.11.2rc1+mkl',
+        'version': '1.11.2+mkl',
         'test': '>=',
-        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/numpy-1.11.2rc1%2Bmkl-cp27-cp27m-win_amd64.whl'
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/numpy-1.11.2+mkl-cp27-cp27m-win_amd64.whl'
     }),
     ('scipy', {
         'platform': ['win', 'lin', 'mac'],
@@ -80,6 +86,11 @@ requirements = OrderedDict([
     ('npyscreen', {
         'platform': ['win', 'lin', 'mac'],
         'version': '4.10.5',
+        'test': '=='
+    }),
+    ('fasteners', {
+        'platform': ['win', 'lin', 'mac'],
+        'version': '0.14.1',
         'test': '=='
     }),
     ('decorator', {
@@ -368,13 +379,26 @@ def install_packages(my_os, reqs):
 
     from setuptools import setup, find_packages
     # Suppress the outputs except the errors
+    from simtools.utils import nostdout
     with nostdout(stderr=True):
         setup(name='dtk-tools',
-              version='0.4',
+              version='0.5',
               description='Facilitating submission and analysis of simulations',
               url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
-              author='Edward Wenger, Benoit Raybaud, Jaline Gerardin, Milen Nikolov, Aaron Roney, Nick Karnik, Zhaowei Du',
-              author_email='ewenger@intven.com, braybaud@intven.com, jgerardin@intven.com, mnikolov@intven.com, aroney@intven.com, nkarnik@intven.com, zdu@intven.com',
+              author='Edward Wenger,'
+                     'Benoit Raybaud,'
+                     'Daniel Klein,'
+                     'Jaline Gerardin,'
+                     'Milen Nikolov,'
+                     'Aaron Roney,'
+                     'Zhaowei Du',
+              author_email='ewenger@intven.com,'
+                           'braybaud@intven.com,'
+                           'dklein@idmod.org,'
+                           'jgerardin@intven.com,'
+                           'mnikolov@intven.com,'
+                           'aroney@intven.com,'
+                           'zdu@intven.com',
               packages=find_packages(),
               install_requires=[],
               entry_points={
@@ -438,6 +462,44 @@ def upgrade_pip(my_os):
         subprocess.call("python -m pip install --upgrade pip", shell=True)
 
 
+def verify_matplotlibrc(my_os):
+    """
+    on MAC: make sure file matplotlibrc has content
+    backend: Agg
+    """
+    if my_os not in ['mac']:
+        return
+
+    home = os.path.expanduser('~')
+    rc = 'matplotlibrc'
+    rc_file = os.path.join(home, '.matplotlib', rc)
+
+    def has_Agg(rc_file):
+        with open(rc_file, "r") as f:
+            for line in f:
+                ok = re.match('^\s*backend\s*:\s*Agg\s*$', line)
+                if ok:
+                    return True
+
+        return False
+
+    if os.path.exists(rc_file):
+        ok = has_Agg(rc_file)
+        if not ok:
+            # make a backup of existing rc file
+            directory = os.path.dirname(rc_file)
+            backup_id = 'backup_' + re.sub('[ :.-]', '_', str(datetime.now().replace(microsecond=0)))
+            shutil.copy(rc_file, os.path.join(directory, '%s_%s' % (rc, backup_id)))
+
+            # append 'backend : Agg' to existing file
+            with open(rc_file, "a") as f:
+                f.write('\nbackend : Agg')
+    else:
+        # create a rc file
+        with open(rc_file, "wb") as f:
+            f.write('backend : Agg')
+
+
 def main():
     # Check OS
     my_os = get_os()
@@ -454,6 +516,9 @@ def main():
 
     # Consider config file
     handle_init()
+
+    # Make sure matplotlibrc file is valid
+    verify_matplotlibrc(my_os)
 
     # Success !
     print "\n======================================================="

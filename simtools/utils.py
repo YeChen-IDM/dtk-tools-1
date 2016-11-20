@@ -2,17 +2,27 @@ import base64
 import cStringIO
 import contextlib
 import logging
-import logging.config
 import os
 import re
 import shutil
 import sys
 from hashlib import md5
-
-max_exp_name_len = 100
-
 import json
 import numpy as np
+
+max_exp_name_len = 100
+logging_initialized = False
+def init_logging(name):
+    import logging.config
+    global logging_initialized
+
+    if not logging_initialized:
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        logging.config.fileConfig(os.path.join(current_dir, 'logging.ini'), disable_existing_loggers=False)
+        logging_initialized = True
+    return logging.getLogger(name)
+
+logger = init_logging('Utils')
 
 class NumpyEncoder(json.JSONEncoder):
 
@@ -36,7 +46,6 @@ class NumpyEncoder(json.JSONEncoder):
         # Let the base class default method raise the TypeError
         return json.JSONEncoder(self, obj)
 
-
 def json_numpy_obj_hook(dct):
     """Decodes a previously encoded numpy ndarray with proper shape and dtype.
 
@@ -48,14 +57,6 @@ def json_numpy_obj_hook(dct):
         return np.frombuffer(data, dct['dtype']).reshape(dct['shape'])
     return dct
 
-def init_logging(name):
-    # if not os.path.exists(os.path.join(os.getcwd(),'dtk_tools_logs')):
-    #     os.mkdir(os.path.join(os.getcwd(),'dtk_tools_logs'))
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    logging.config.fileConfig(os.path.join(current_dir,'logging.ini'))
-    return logging.getLogger(name)
-
-logger = init_logging('Utils')
 
 @contextlib.contextmanager
 def nostdout(stdout = False, stderr=False):
@@ -75,9 +76,8 @@ def nostdout(stdout = False, stderr=False):
         sys.stderr = cStringIO.StringIO()
 
     # Deactivate logging
-    # logger.propagate = False
-    # previous_level = logging.root.manager.disable
-    # logging.disable(logging.CRITICAL)
+    previous_level = logging.root.manager.disable
+    logging.disable(logging.ERROR)
 
     yield
 
@@ -87,8 +87,7 @@ def nostdout(stdout = False, stderr=False):
     if not stderr:
         sys.stderr = save_stderr
 
-    # logger.propagate = True
-    # logging.disable(previous_level)
+    logging.disable(previous_level)
 
 
 def caller_name(skip=2):
@@ -124,9 +123,11 @@ def caller_name(skip=2):
 
 def COMPS_login(endpoint):
     from COMPS import Client
-    with nostdout():
-        if not Client.getRemoteServer():
-            Client.Login(endpoint)
+    #with nostdout():
+    try:
+        am= Client.auth_manager()
+    except:
+        Client.login(endpoint)
 
     return Client
 
@@ -167,6 +168,7 @@ def translate_COMPS_path(path, setup=None):
     :param setup: The setup to find user and environment
     :return: The absolute path
     """
+    from COMPS import Client
     # Create the regexp
     regexp = re.search('.*(\$COMPS_PATH\((\w+)\)).*', path)
 
@@ -190,9 +192,9 @@ def translate_COMPS_path(path, setup=None):
         # Prepare the variables we will need
         environment = setup.get('environment')
 
-        # Query COMPS to get the path corresponding to the variable
-        Client = COMPS_login(setup.get('server_endpoint'))
-        abs_path = Client.getAuthManager().getEnvironmentMacros(environment).get(groups[1])
+        #Q uery COMPS to get the path corresponding to the variable
+        COMPS_login(setup.get('server_endpoint'))
+        abs_path = Client.auth_manager().get_environment_macros(environment)[groups[1]]
 
         # Cache
         path_translations[comps_variable] = abs_path
