@@ -1,4 +1,5 @@
 import copy
+import gc   # To clean up after plotting
 import glob
 import json
 import logging
@@ -6,20 +7,20 @@ import os
 import pprint
 import re
 import shutil
-import time
-import pandas as pd
 import subprocess
-import gc   # To clean up after plotting
+import time
 from datetime import datetime
-from calibtool.plotters import SiteDataPlotter
+
+import pandas as pd
+
 from IterationState import IterationState
+from calibtool.plotters import SiteDataPlotter
+from core.utils.time import verbose_timedelta
 from simtools import utils
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.ModBuilder import ModBuilder, ModFn
-from simtools.OutputParser import CompsDTKOutputParser
 from simtools.utils import NumpyEncoder
-from core.utils.time import verbose_timedelta
 
 logger = logging.getLogger("Calibration")
 
@@ -242,7 +243,6 @@ class CalibManager(object):
 
         self.iteration_state.next_point = self.next_point.get_state()
         self.cache_iteration_state(backup_existing=True)
-
         return samples_for_this_iteration
 
     def commission_iteration(self, next_params, **kwargs):
