@@ -26,7 +26,7 @@ class ModFn(object):
             import numpy as np
             if isinstance(v, (np.int64, np.float64, np.float32, np.uint32, np.int16, np.int32)):
                 md[k] = v.item()
-                
+
         # Store the metadata in a class variable
         ModBuilder.metadata.update(md)
         # But also return the metadata because of muddleheaded use
@@ -52,6 +52,7 @@ class ModBuilder(object):
         Construct the list of ModFns to be applied to each simulation,
         verifying that only one site-configuration call is made and that it is done first.
         """
+
         funcs = list(funcs)  # to allow reordering
 
         site_mods = [s for s in funcs if s.fname in ('configure_site', 'set_calibration_site')]

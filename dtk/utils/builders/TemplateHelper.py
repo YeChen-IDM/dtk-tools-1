@@ -1,7 +1,7 @@
 import copy
 import logging
 
-from simtools.ModBuilder import ModBuilder
+from simtools.ModBuilder import ModBuilder, ModFn, ModList
 
 logger = logging.getLogger(__name__)
 
@@ -36,8 +36,10 @@ class TemplateHelper():
 
         assert (nRow > 0)
         for row in table:
-            assert (nParm == len(row))
-
+            if nParm != len(row):
+                print 'HEADER (%d):\n'%len(header), header
+                print 'ROW (%d):\n'%len(row), row
+                raise Exception('The number of columns in the header (%d) does not match the number of columns in the table row (%d)'%(nParm, len(row)))
         logger.info("Table with %d configurations of %d parameters." % (nRow, nParm))
 
     def mod_dynamic_parameters(self, cb, dynamic_params):
@@ -81,7 +83,5 @@ class TemplateHelper():
         """
         Returns a ModBuilder ModFn that sets file contents and values in config builder according to the dynamic parameters.
         """
-        return [
-            ModBuilder.ModFn(self.mod_dynamic_parameters, dict(zip(self.header, row)))
-            for row in self.table
-            ]
+
+        return [ModFn(self.mod_dynamic_parameters, dict(zip(self.header, row))) for row in self.table]
