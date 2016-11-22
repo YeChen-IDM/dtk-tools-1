@@ -374,7 +374,7 @@ class CalibManager(object):
         cached_analyses = {a.uid(): a.cache() for a in exp_manager.analyzers}
         logger.debug(cached_analyses)
 
-        results = pd.DataFrame({a.uid(): a.result for a in exp_manager.analyzers})
+        results = pd.DataFrame({a.uid(): a.weight * a.result for a in exp_manager.analyzers})
         results['total'] = results.sum(axis=1)
 
         logger.debug(results)

@@ -71,8 +71,9 @@ class BaseShelveAnalyzer(BaseAnalyzer):
 
             self.shelve = shelve.open(self.shelve_file)
 
-            if self.force_apply and self.verbose:
-                print "User set force_apply = True, so clearing the shelve."
+            if self.force_apply:
+                if self.verbose:
+                    print "User set force_apply = True, so clearing the shelve."
                 self.shelve.clear()
 
         if 'status' in self.shelve:

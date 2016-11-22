@@ -113,6 +113,8 @@ class OptimTool(NextPointAlgorithm):
         samples_cpy['Iteration'] = iteration
         samples_cpy.reset_index(inplace=True)
 
+        self.data = self.data.query('Iteration < @iteration')   # DJK: Needed?
+
         self.data = pd.concat([self.data, samples_cpy], ignore_index = True)
         self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
 
@@ -135,8 +137,6 @@ class OptimTool(NextPointAlgorithm):
 
     def clamp(self, X):
 
-        print 'X.before:\n', X
-
         # X should be a data frame
         for pname in X.columns:
             X[pname] = np.minimum( self.Xmax[pname], np.maximum( self.Xmin[pname], X[pname] ) )
@@ -145,7 +145,7 @@ class OptimTool(NextPointAlgorithm):
 
 
     def set_results_for_iteration(self, iteration, results):
-        logger.info('%s: Choosing samples at iteration %d:', self.__class__.__name__, iteration)
+        logger.info('%s: Set results at iteration %d:', self.__class__.__name__, iteration)
         logger.debug('Results:\n%s', results)
 
         data_by_iter = self.data.set_index('Iteration')
@@ -201,7 +201,7 @@ class OptimTool(NextPointAlgorithm):
         print mod_fit.summary()
 
         # Regression parameters for plotting / analysis
-        self.regression = self.regression.query('Iteration < @iteration')
+        self.regression = self.regression.query('Iteration < @iteration-1')
         r2_df = pd.DataFrame( [[iteration-1, 'Rsquared', mod_fit.rsquared]], columns=['Iteration', 'Parameter', 'Value'] )
         thresh_df = pd.DataFrame( [[iteration-1, 'Rsquared_Threshold', self.rsquared_thresh]], columns=['Iteration', 'Parameter', 'Value'] )
         repeats_df = pd.DataFrame( [[iteration-1, 'Center_Repeats', self.center_repeats]], columns=['Iteration', 'Parameter', 'Value'] )
