@@ -123,7 +123,7 @@ def status(args, unknownArgs):
     # No matter what check the overseer
     from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
     BaseExperimentManager.check_overseer()
-    
+
     if args.active:
         logger.info('Getting status of all active experiments.')
         active_experiments = DataStore.get_active_experiments()
@@ -402,7 +402,7 @@ def sync(args, unknownArgs):
         limit_date = today - datetime.timedelta(days=int(day_limit))
         limit_date_str = limit_date.strftime("%Y-%m-%d")
 
-        exps = Experiment.get(query_criteria=QueryCriteria().where('owner=%s,date_created>%s' % (sp.get('user'), limit_date_str)))
+        exps = Experiment.get(query_criteria=QueryCriteria().where('owner=%s,DateCreated>%s' % (sp.get('user'), limit_date_str)))
 
         # For each of them, check if they are in the db
         for exp in exps:
@@ -474,7 +474,7 @@ def create_experiment(exp_id, sp, verbose=False):
 
     # Go through the sims and create them
     for sim in sims:
-        # Create the simulation
+# Create the simulation
         simulation = DataStore.create_simulation(id=str(sim.id),
                                                  status=sim.state.name,
                                                  tags=sim.tags,
