@@ -43,7 +43,7 @@ params = [
         'Name': 'Clinical Fever Threshold High',
         'Dynamic': True,
         #'MapTo': 'Clinical_Fever_Threshold_High', # <-- DEMO: Custom mapping, see map_sample_to_model_input below
-        'Guess': 1.75,
+        'Guess': 0.6,
         'Min': 0.5,
         'Max': 2.5
     },
@@ -59,7 +59,7 @@ params = [
         'Name': 'Falciparum PfEMP1 Variants',
         'Dynamic': True,
         'MapTo': 'Falciparum_PfEMP1_Variants',
-        'Guess': 1500,
+        'Guess': 4000,
         'Min': 1, # 900 [0]
         'Max': 5000 # 1700 [1e5]
     },

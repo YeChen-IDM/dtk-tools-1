@@ -173,6 +173,14 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
         pdata.rename({0:'Male', 1:'Female'}, inplace=True)
         pdata.reset_index(inplace=True)
 
+        # Make "Both" gender col in case data are not gender disaggregated
+        pdata.set_index(['Gender', 'Province', 'Year', 'Risk', 'Age'], inplace=True)
+        both = pdata.loc['Male'] + pdata.loc['Female']
+        both['Gender'] = 'Both'
+        both = both.reset_index().set_index(['Gender', 'Province', 'Year', 'Risk', 'Age'])
+        pdata = pd.concat([pdata, both])
+        pdata.reset_index(inplace=True)
+
         return pdata
 
     def combine(self, parsers):
