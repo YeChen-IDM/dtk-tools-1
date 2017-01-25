@@ -31,7 +31,8 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
                 fig_format = 'png',
                 fig_dpi = 600,
                 include_all_interventions = False,
-                verbose = False):
+                verbose = False,
+                **kwargs):
 
         super(ReportHIVByAgeAndGenderAnalyzer, self).__init__(force_apply, force_combine, verbose)
 
@@ -160,7 +161,7 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
             pdata[py_col] = self.report_timestep_in_years * pdata[col]
         #######################################################################
 
-        keep_cols = [kc for kc in ['Year', 'Gender', 'NodeId', 'IP_Key:Risk', 'Age', 'Population', 'Infected', 'Newly Infected', 'On_ART', 'Died', 'Died_from_HIV', 'Received_PrEP', 'Transmitters', 'HasIntervention(PrEP)'] if kc in pdata.columns]
+        keep_cols = [kc for kc in ['Year', 'Gender', 'NodeId', 'IP_Key:Risk', 'Age', 'Population', 'Infected', 'Newly Infected', 'On_ART', 'Died', 'Died_from_HIV', 'Received_PrEP', 'Transmitters', 'HasIntervention(PrEP)', 'Diagnosed'] if kc in pdata.columns]
         keep_cols += self.py_cols
         drop_cols = list( set(pdata.columns.values) - set(keep_cols) )
         pdata.drop(drop_cols, axis=1, inplace=True)
@@ -174,12 +175,13 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
         pdata.reset_index(inplace=True)
 
         # Make "Both" gender col in case data are not gender disaggregated
-        pdata.set_index(['Gender', 'Province', 'Year', 'Risk', 'Age'], inplace=True)
-        both = pdata.loc['Male'] + pdata.loc['Female']
-        both['Gender'] = 'Both'
-        both = both.reset_index().set_index(['Gender', 'Province', 'Year', 'Risk', 'Age'])
-        pdata = pd.concat([pdata, both])
-        pdata.reset_index(inplace=True)
+        if True:
+            pdata.set_index(['Gender', 'Province', 'Year', 'Risk', 'Age'], inplace=True)
+            both = pdata.loc['Male'] + pdata.loc['Female']
+            both['Gender'] = 'Both'
+            both = both.reset_index().set_index(['Gender', 'Province', 'Year', 'Risk', 'Age'])
+            pdata = pd.concat([pdata, both])
+            pdata.reset_index(inplace=True)
 
         return pdata
 
