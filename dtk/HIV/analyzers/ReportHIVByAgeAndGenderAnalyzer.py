@@ -12,9 +12,6 @@ from dtk.utils.analyzers.BaseShelveAnalyzer import BaseShelveAnalyzer
 logger = logging.getLogger(__name__)
 
 class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
-    count = {}
-    skipped_interventions = []
-
     def __init__(self,
                 max_sims_per_scenario = -1,
                 reference_year = 2012.5,
@@ -33,6 +30,7 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
                 include_all_interventions = False,
                 verbose = False,
                 **kwargs):
+
 
         super(ReportHIVByAgeAndGenderAnalyzer, self).__init__(force_apply, force_combine, verbose)
 
@@ -70,6 +68,9 @@ class ReportHIVByAgeAndGenderAnalyzer(BaseShelveAnalyzer):
         logger.info(self.__class__.__name__ + " writing to " + self.basedir) # TODO
 
         self.sim_ids = []
+
+        self.count = {}
+        self.skipped_interventions = []
 
         if not os.path.isdir(self.basedir):
             os.makedirs(self.basedir)
