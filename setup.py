@@ -4,11 +4,11 @@ import os
 import platform
 import shutil
 import sys
-from datetime import datetime
 from collections import OrderedDict
 from urlparse import urlparse
 from ConfigParser import ConfigParser
 from distutils.version import LooseVersion
+from simtools.utils import nostdout
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 install_directory = os.path.join(current_directory, 'install')
@@ -17,97 +17,90 @@ installed_packages = dict()
 
 # Set the list of requirements here
 # For Windows, the wheel can be provided in either tar.gz or whl format
-requirements = OrderedDict([
-    ('curses', {
+requirements = {
+    'curses': {
         'platform': ['win'],
         'version': '2.2',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/curses-2.2-cp27-none-win_amd64.whl'
-    }),
-    ('pyCOMPS', {
-        'platform': ['win','lin','mac'],
-        'version': '1.0b10',
-        'test': '==',
-        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/pyCOMPS-1.0b10-py2.py3-none-any.whl'
-    }),
-    ('matplotlib', {
+    },
+    'numpy': {
         'platform': ['win', 'lin', 'mac'],
-        'version': '1.5.3',
+        'version': '1.11.2rc1+mkl',
         'test': '>=',
-        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/matplotlib-1.5.3-cp27-cp27m-win_amd64.whl'
-    }),
-    ('numpy', {
-        'platform': ['win', 'lin', 'mac'],
-        'version': '1.11.2+mkl',
-        'test': '>=',
-        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/numpy-1.11.2+mkl-cp27-cp27m-win_amd64.whl'
-    }),
-    ('scipy', {
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/numpy-1.11.2rc1%2Bmkl-cp27-cp27m-win_amd64.whl'
+    },
+    'scipy': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.18.1',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/scipy-0.18.1-cp27-cp27m-win_amd64.whl'
-    }),
-    ('pandas', {
+    },
+    'matplotlib': {
+        'platform': ['win', 'lin', 'mac'],
+        'version': '1.5.3',
+        'test': '>=',
+        'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/matplotlib-1.5.3-cp27-cp27m-win_amd64.whl'
+    },
+    'pandas': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.18.1',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/pandas-0.18.1-cp27-cp27m-win_amd64.whl'
-    }),
-    ('psutil', {
+    },
+    'psutil': {
         'platform': ['win', 'lin', 'mac'],
         'version': '4.3.1',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/psutil-4.3.1-cp27-cp27m-win_amd64.whl'
-    }),
-    ('python-snappy', {
+    },
+    'python-snappy': {
         'platform': ['win', 'lin'],
         'version': '0.5',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/python_snappy-0.5-cp27-none-win_amd64.whl'
-    }),
-    ('seaborn', {
+    },
+    'seaborn': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.7.1',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/seaborn-0.7.1-py2.py3-none-any.whl'
-    }),
-    ('statsmodels', {
+    },
+    'statsmodels': {
         'platform': ['win', 'lin', 'mac'],
         'version': '0.6.1',
         'test': '==',
         'wheel': 'https://institutefordiseasemodeling.github.io/PythonDependencies/statsmodels-0.6.1-cp27-none-win_amd64.whl'
-    }),
-    ('SQLAlchemy', {
+    },
+    'SQLAlchemy': {
         'platform': ['win', 'lin', 'mac'],
         'version': '1.1.0b3',
         'test': '=='
-    }),
-    ('npyscreen', {
+    },
+    'npyscreen': {
         'platform': ['win', 'lin', 'mac'],
         'version': '4.10.5',
         'test': '=='
-    }),
-    ('fasteners', {
-        'platform': ['win', 'lin', 'mac'],
-        'version': '0.14.1',
-        'test': '=='
-    }),
-    ('decorator', {
+    },
+    'decorator': {
         'platform': ['mac'],
         'version': '4.0.10',
         'test': '=='
-    }),
-    ('validators', {
+    },
+    'validators': {
         'platform': ['win', 'lin', 'mac'],
-    }),
-    ('networkx', {
+    },
+    'networkx': {
         'platform': ['win', 'lin', 'mac'],
-    }),
-    ('dill', {
+    },
+    'dill': {
         'platform': ['win', 'lin', 'mac'],
-    })
-])
+    }
+}
+
+
+# Installation orders are required for some packages
+order_requirements = ['curses', 'numpy',  'scipy', 'matplotlib']
 
 
 def get_installed_packages():
@@ -302,7 +295,7 @@ def get_requirements_by_os(my_os):
     """
     Update requirements based on OS
     """
-    reqs = OrderedDict([(name, val) for (name, val) in requirements.iteritems() if my_os in val['platform']])
+    reqs = {name: val for (name, val) in requirements.iteritems() if my_os in val['platform']}
 
     # OS: Mac or Linux. No wheel needed
     if my_os in ['mac', 'lin']:
@@ -318,7 +311,18 @@ def get_requirements_by_os(my_os):
             if 'test' in reqs[name]:
                 reqs[name].pop('test')
 
-    return reqs
+    # Keep packages in order
+    reqs_ordered_dict = OrderedDict()
+
+    for i in range(len(order_requirements)):
+        name = order_requirements[i]
+        if name in reqs:
+            reqs_ordered_dict[name] = reqs.pop(name)
+
+    for (name, val) in reqs.iteritems():
+        reqs_ordered_dict[name] = val
+
+    return reqs_ordered_dict
 
 
 def install_linux_pre_requisites():
@@ -379,26 +383,13 @@ def install_packages(my_os, reqs):
 
     from setuptools import setup, find_packages
     # Suppress the outputs except the errors
-    from simtools.utils import nostdout
     with nostdout(stderr=True):
         setup(name='dtk-tools',
-              version='0.5',
+              version='0.4',
               description='Facilitating submission and analysis of simulations',
               url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
-              author='Edward Wenger,'
-                     'Benoit Raybaud,'
-                     'Daniel Klein,'
-                     'Jaline Gerardin,'
-                     'Milen Nikolov,'
-                     'Aaron Roney,'
-                     'Zhaowei Du',
-              author_email='ewenger@intven.com,'
-                           'braybaud@intven.com,'
-                           'dklein@idmod.org,'
-                           'jgerardin@intven.com,'
-                           'mnikolov@intven.com,'
-                           'aroney@intven.com,'
-                           'zdu@intven.com',
+              author='Edward Wenger, Benoit Raybaud, Jaline Gerardin, Milen Nikolov, Aaron Roney, Nick Karnik, Zhaowei Du',
+              author_email='ewenger@intven.com, braybaud@intven.com, jgerardin@intven.com, mnikolov@intven.com, aroney@intven.com, nkarnik@intven.com, zdu@intven.com',
               packages=find_packages(),
               install_requires=[],
               entry_points={
@@ -462,44 +453,6 @@ def upgrade_pip(my_os):
         subprocess.call("python -m pip install --upgrade pip", shell=True)
 
 
-def verify_matplotlibrc(my_os):
-    """
-    on MAC: make sure file matplotlibrc has content
-    backend: Agg
-    """
-    if my_os not in ['mac']:
-        return
-
-    home = os.path.expanduser('~')
-    rc = 'matplotlibrc'
-    rc_file = os.path.join(home, '.matplotlib', rc)
-
-    def has_Agg(rc_file):
-        with open(rc_file, "r") as f:
-            for line in f:
-                ok = re.match('^\s*backend\s*:\s*Agg\s*$', line)
-                if ok:
-                    return True
-
-        return False
-
-    if os.path.exists(rc_file):
-        ok = has_Agg(rc_file)
-        if not ok:
-            # make a backup of existing rc file
-            directory = os.path.dirname(rc_file)
-            backup_id = 'backup_' + re.sub('[ :.-]', '_', str(datetime.now().replace(microsecond=0)))
-            shutil.copy(rc_file, os.path.join(directory, '%s_%s' % (rc, backup_id)))
-
-            # append 'backend : Agg' to existing file
-            with open(rc_file, "a") as f:
-                f.write('\nbackend : Agg')
-    else:
-        # create a rc file
-        with open(rc_file, "wb") as f:
-            f.write('backend : Agg')
-
-
 def main():
     # Check OS
     my_os = get_os()
@@ -516,9 +469,6 @@ def main():
 
     # Consider config file
     handle_init()
-
-    # Make sure matplotlibrc file is valid
-    verify_matplotlibrc(my_os)
 
     # Success !
     print "\n======================================================="
