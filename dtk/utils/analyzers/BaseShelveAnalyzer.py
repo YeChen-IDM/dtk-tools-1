@@ -77,7 +77,8 @@ class BaseShelveAnalyzer(BaseAnalyzer):
                 self.shelve.clear()
 
         if 'status' in self.shelve:
-            if self.shelve['status'] in ['combine', 'finalize']:   # past apply, don't need to download any files
+            pass
+            if self.shelve['status'] in ['combine', 'finalize'] and not self.force_combine:   # past apply, don't need to download any files
                 if self.verbose:
                     print 'shelve status is %s, so returning False from filter' % self.shelve['status']
                 self.mutex.release()
