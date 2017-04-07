@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>IRS &mdash; DTK Package 0.3.5 documentation</title>
+    <title>IRS &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,16 +23,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
   
    
 
@@ -47,7 +49,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -58,7 +60,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">dtk-tools 0.3.5</a>
+    ../index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -70,7 +72,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
@@ -114,9 +117,20 @@
 <p class="first admonition-title">Todo</p>
 <p class="last">This file should include a <code class="docutils literal"><span class="pre">add_IRS</span></code> function to add the IRS to a config_builder with the different parameters.</p>
 </div>
-<span class="target" id="module-dtk.interventions.irs"></span><dl class="function">
+<span class="target" id="module-dtk.interventions.irs"></span><p>OLD
+# IRS parameters
+irs_housingmod = {&quot;class&quot;: &quot;IRSHousingModification&quot;,</p>
+<blockquote>
+<div>&quot;Blocking_Rate&quot;: 0.0,  # i.e. repellency
+&quot;Killing_Rate&quot;: 0.7,
+&quot;Durability_Time_Profile&quot;: &quot;DECAYDURABILITY&quot;,
+&quot;Primary_Decay_Time_Constant&quot;: 365,  # killing
+&quot;Secondary_Decay_Time_Constant&quot;: 365,  # blocking
+&quot;Cost_To_Consumer&quot;: 8.0
+}</div></blockquote>
+<dl class="function">
 <dt id="dtk.interventions.irs.add_IRS">
-<code class="descclassname">dtk.interventions.irs.</code><code class="descname">add_IRS</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>coverage_by_ages</em>, <em>waning={}</em>, <em>cost=None</em>, <em>nodeIDs=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/irs.html#add_IRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.irs.add_IRS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dtk.interventions.irs.</code><code class="descname">add_IRS</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>coverage_by_ages</em>, <em>cost=None</em>, <em>nodeIDs=[]</em>, <em>initial_killing=0.5</em>, <em>duration=90</em>, <em>waning={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/irs.html#add_IRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.irs.add_IRS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an IRS intervention to the config_builder passed.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
@@ -135,12 +149,12 @@
 
 <dl class="function">
 <dt id="dtk.interventions.irs.add_node_IRS">
-<code class="descclassname">dtk.interventions.irs.</code><code class="descname">add_node_IRS</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>coverage=1.0</em>, <em>initial_killing=0.7</em>, <em>box_duration=365</em>, <em>cost=None</em>, <em>nodeIDs=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/irs.html#add_node_IRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.irs.add_node_IRS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dtk.interventions.irs.</code><code class="descname">add_node_IRS</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>initial_killing=0.5</em>, <em>box_duration=90</em>, <em>cost=None</em>, <em>irs_ineligibility_duration=0</em>, <em>nodeIDs=[]</em>, <em>node_property_restrictions=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/irs.html#add_node_IRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.irs.add_node_IRS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="dtk.interventions.irs.add_reactive_node_IRS">
-<code class="descclassname">dtk.interventions.irs.</code><code class="descname">add_reactive_node_IRS</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>duration=10000</em>, <em>trigger_coverage=1.0</em>, <em>irs_coverage=1.0</em>, <em>node_selection_type='DISTANCE_ONLY'</em>, <em>reactive_radius=0</em>, <em>blackout_duration=60</em>, <em>delay=7</em>, <em>nodes={'class': 'NodeSetAll'}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/irs.html#add_reactive_node_IRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.irs.add_reactive_node_IRS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dtk.interventions.irs.</code><code class="descname">add_reactive_node_IRS</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>duration=10000</em>, <em>trigger_coverage=1.0</em>, <em>irs_coverage=1.0</em>, <em>node_selection_type='DISTANCE_ONLY'</em>, <em>reactive_radius=0</em>, <em>irs_ineligibility_duration=60</em>, <em>delay=7</em>, <em>initial_killing=0.5</em>, <em>box_duration=90</em>, <em>nodeIDs=[]</em>, <em>node_property_restrictions=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/irs.html#add_reactive_node_IRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.irs.add_reactive_node_IRS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -160,7 +174,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

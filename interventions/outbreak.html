@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Outbreak &mdash; DTK Package 0.3.5 documentation</title>
+    <title>Outbreak &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,16 +23,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
   
    
 
@@ -47,7 +49,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -58,7 +60,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">dtk-tools 0.3.5</a>
+    ../index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -70,7 +72,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
@@ -107,8 +110,28 @@
           
           <div class="document clearer body">
             
-  <div class="section" id="outbreak">
-<h1>Outbreak<a class="headerlink" href="#outbreak" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-dtk.interventions.outbreakindividual">
+<span id="outbreak"></span><h1>Outbreak<a class="headerlink" href="#module-dtk.interventions.outbreakindividual" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="dtk.interventions.outbreakindividual.recurring_outbreak">
+<code class="descclassname">dtk.interventions.outbreakindividual.</code><code class="descname">recurring_outbreak</code><span class="sig-paren">(</span><em>cb</em>, <em>outbreak_fraction=0.01</em>, <em>repetitions=-1</em>, <em>tsteps_btwn=365</em>, <em>target='Everyone'</em>, <em>start_day=0</em>, <em>strain=(0</em>, <em>0)</em>, <em>nodes={'class': 'NodeSetAll'}</em>, <em>outbreak_source='PrevalenceIncrease'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/outbreakindividual.html#recurring_outbreak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.outbreakindividual.recurring_outbreak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to add recurring introduction of new infections to the current configuration builder</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>cb</strong> -- Configuration builder holding the interventions</li>
+<li><strong>outbreak_fraction</strong> -- Fraction of people getting infected by the outbreak</li>
+<li><strong>repetitions</strong> -- Number of repetitions</li>
+<li><strong>tsteps_btwn</strong> -- Timesteps between repetitions</li>
+<li><strong>target</strong> -- Target demographic. Default is 'Everyone'</li>
+<li><strong>start_day</strong> -- Start day for the outbreak</li>
+<li><strong>strain</strong> -- Needs to be defined as (Antigen,Genome)</li>
+</ul>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">A dictionary holding the fraction and the timesteps between events</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -126,7 +149,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

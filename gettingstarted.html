@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Getting started &mdash; DTK Package 0.3.5 documentation</title>
+    <title>Getting started &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,17 +23,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="index.html" />
-    <link rel="next" title="DTK package" href="dtk.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dtk package" href="dtk.html" />
     <link rel="prev" title="Introduction" href="intro.html" />
   
    
@@ -50,12 +52,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dtk.html" title="DTK package"
+          <a href="dtk.html" title="dtk package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="intro.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -66,7 +68,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    index.html" class="text-logo">dtk-tools 0.3.5</a>
+    index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -79,10 +81,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-of-the-tools">Configuration of the tools</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
@@ -121,29 +124,88 @@
             
   <div class="section" id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>The dtk package is intended to strengthen and simplify the interaction between researchers and the DTK model.</p>
-<p>Modules contained in this package are intended to:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Empower the user to configure diverse simulations and arbitrarily complex campaigns built up from a standardized library of configuration fragments and utility functions;</li>
-<li>Facilitate transparent switching between local and remote HPC commissioning, job-status queries, and output analysis;</li>
-<li>Enable the configuration of arbitrary collections of simulations (e.g. parameteric sweeps) through an extensible library of builder classes;</li>
-<li>Collect a library of post-processing analysis functionality, e.g. filtering, mapping, averaging, plotting.</li>
-</ul>
-</div></blockquote>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>The package being in development, run the following command from the dtk-tools root:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#pre-requisites" id="id1">Pre-requisites</a></li>
+<li><a class="reference internal" href="#windows-installation" id="id2">Windows installation</a></li>
+<li><a class="reference internal" href="#mac-osx-installation" id="id3">MAC OSX installation</a></li>
+</ul>
+</div>
+<div class="section" id="pre-requisites">
+<h3><a class="toc-backref" href="#id1">Pre-requisites</a><a class="headerlink" href="#pre-requisites" title="Permalink to this headline">¶</a></h3>
+<p>In order to use the tools, you will need a x64 version of Python 2.7. To verify which Python is installed on your computer, issue a: <cite>python</cite> and the output should look like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">13</span> <span class="p">(</span><span class="n">v2</span><span class="o">.</span><span class="mf">7.13</span><span class="p">:</span><span class="n">a06454b1afa1</span><span class="p">,</span> <span class="n">Dec</span> <span class="mi">17</span> <span class="mi">2016</span><span class="p">,</span> <span class="mi">20</span><span class="p">:</span><span class="mi">53</span><span class="p">:</span><span class="mi">40</span><span class="p">)</span> <span class="p">[</span><span class="n">MSC</span> <span class="n">v</span><span class="o">.</span><span class="mi">1500</span> <span class="mi">64</span> <span class="n">bit</span> <span class="p">(</span><span class="n">AMD64</span><span class="p">)]</span> <span class="n">on</span> <span class="n">win32</span>
+</pre></div>
+</div>
+<p>Then you will need to clone the dtk-tools repository.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">InstituteforDiseaseModeling</span><span class="o">/</span><span class="n">dtk</span><span class="o">-</span><span class="n">tools</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows-installation">
+<h3><a class="toc-backref" href="#id2">Windows installation</a><a class="headerlink" href="#windows-installation" title="Permalink to this headline">¶</a></h3>
+<p>On Windows, navigate to the dtk-tools directory and issue a</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>All the Python dependencies along with the package will be installed on your machine.</p>
+<p>To finish, in order to use dtk-tools from everywhere on your system, ddd the path to the dtk_tools folder to your <cite>PYTHONPATH</cite> environment variable.</p>
+</div>
+<div class="section" id="mac-osx-installation">
+<h3><a class="toc-backref" href="#id3">MAC OSX installation</a><a class="headerlink" href="#mac-osx-installation" title="Permalink to this headline">¶</a></h3>
+<p>Tested with macOS Sierra (Version 10.12)</p>
+<p>Make sure you have the Xcode Command Line Tools installed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">xcode</span><span class="o">-</span><span class="n">select</span> <span class="o">--</span><span class="n">install</span>
+</pre></div>
+</div>
+<p>By default, MAC will install Python 2.7.10 for system use and users may not have certain permissions to upgrade some packages. We will leave the system Python unchanged and install our own Python instead:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">ruby</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span>
+</pre></div>
+</div>
+<p>Refer to <a class="reference external" href="http://brew.sh/index.html">http://brew.sh/index.html</a></p>
+<p>Install Python with the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">python</span>
+</pre></div>
+</div>
+<p>Install virtualenv:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">virtualenv</span>
+</pre></div>
+</div>
+<p>Then navigate inside the <cite>dtk-tools</cite> directory and create an IDM virtual environment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">virtualenv</span> <span class="n">idm</span>
+</pre></div>
+</div>
+<p>Activate the virtual environment (you will have to do activate the virtual environment first before using dtk-tools):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="o">./</span><span class="n">idm</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+<p>Make sure you are in the virtual environment by checking if the prompt displays <cite>(idm)</cite> at the beginning as shown:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">idm</span><span class="p">)</span> <span class="n">my</span><span class="o">-</span><span class="n">computer</span><span class="p">:</span><span class="n">dtk</span><span class="o">-</span><span class="n">tools</span>
+</pre></div>
+</div>
+<p>Install pyCOMPS (wheel available <a class="reference external" href="https://institutefordiseasemodeling.github.io/PythonDependencies/pyCOMPS-1.0.1-py2.py3-none-any.whl">here</a> ):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyCOMPS</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="n">py2</span><span class="o">.</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+</pre></div>
+</div>
+<p>Navigate inside the <cite>dtk-tools</cite> folder and install dtk-tools:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">EMOD DTK is required to work with dtk-tools. You can download the quick start at: <a class="reference external" href="https://github.com/InstituteforDiseaseModeling/EMOD-QuickStart">https://github.com/InstituteforDiseaseModeling/EMOD-QuickStart</a></p>
+<p>If you are encountering issues with TK on OSX (for example not being able to plot, or some matplotlib related issues), try:</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>brew install homebrew/dupes/tcl-tk
+brew uninstall python
+brew install python --with-brewed-tk
+</pre></div>
 </div>
 </div>
-<div class="section" id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="configuration-of-the-tools">
+<h2>Configuration of the tools<a class="headerlink" href="#configuration-of-the-tools" title="Permalink to this headline">¶</a></h2>
 <p>To configure your user-specific paths and settings for local and HPC job submission, edit the properties in <code class="docutils literal"><span class="pre">simtools/simtools.ini</span></code>.
 To learn more about the available options, please refer to <a class="reference internal" href="simtools/simtoolsini.html"><span class="doc">simtools.ini file</span></a>.</p>
 <p>One can verify the proper system setup by navigating to the <code class="docutils literal"><span class="pre">test</span></code> directory and running the unit tests contained therein, e.g. by executing <code class="docutils literal"><span class="pre">nosetests</span></code> if one has the <a class="reference external" href="http://nose.readthedocs.org/en/latest/index.html">nose</a> package installed.</p>
@@ -160,7 +222,7 @@ To learn more about the available options, please refer to <a class="reference i
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="dtk.html" title="next chapter (use the right arrow)">DTK package</a>
+        <a class="btn btn-default" href="dtk.html" title="next chapter (use the right arrow)">dtk package</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -178,12 +240,12 @@ To learn more about the available options, please refer to <a class="reference i
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dtk.html" title="DTK package"
+          <a href="dtk.html" title="dtk package"
              >next</a> |</li>
         <li class="right" >
           <a href="intro.html" title="Introduction"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

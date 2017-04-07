@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>DTK package &mdash; DTK Package 0.3.5 documentation</title>
+    <title>dtk package &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,17 +23,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="index.html" />
-    <link rel="next" title="dtk commands" href="dtk/commands.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DTKConfigBuilder" href="dtk/utils/core/DTKConfigBuilder.html" />
     <link rel="prev" title="Getting started" href="gettingstarted.html" />
   
    
@@ -50,12 +52,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dtk/commands.html" title="dtk commands"
+          <a href="dtk/utils/core/DTKConfigBuilder.html" title="DTKConfigBuilder"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="gettingstarted.html" title="Getting started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -66,7 +68,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    index.html" class="text-logo">dtk-tools 0.3.5</a>
+    index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -78,11 +80,11 @@
       <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">DTK package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html">dtk commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">dtk package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="dtk/utils/core/DTKConfigBuilder.html">DTKConfigBuilder</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
@@ -113,31 +115,16 @@
             <ol class="breadcrumb">
               <li><a href="index.html">Docs</a></li>
               
-              <li>DTK package</li>
+              <li>dtk package</li>
             </ol>
           </div>
           
           <div class="document clearer body">
             
   <div class="section" id="dtk-package">
-<h1>DTK package<a class="headerlink" href="#dtk-package" title="Permalink to this headline">¶</a></h1>
+<h1>dtk package<a class="headerlink" href="#dtk-package" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="dtk/commands.html">dtk commands</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#available-commands">Available commands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#analyze"><code class="docutils literal"><span class="pre">analyze</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#clean"><code class="docutils literal"><span class="pre">clean</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#delete"><code class="docutils literal"><span class="pre">delete</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#exterminate"><code class="docutils literal"><span class="pre">exterminate</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#kill"><code class="docutils literal"><span class="pre">kill</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#progress"><code class="docutils literal"><span class="pre">progress</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#resubmit"><code class="docutils literal"><span class="pre">resubmit</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#run"><code class="docutils literal"><span class="pre">run</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#status"><code class="docutils literal"><span class="pre">status</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#stdout"><code class="docutils literal"><span class="pre">stdout</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dtk/commands.html#list"><code class="docutils literal"><span class="pre">list</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="dtk/utils/core/DTKConfigBuilder.html">DTKConfigBuilder</a></li>
 </ul>
 </div>
@@ -153,7 +140,7 @@
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="dtk/commands.html" title="next chapter (use the right arrow)">dtk commands</a>
+        <a class="btn btn-default" href="dtk/utils/core/DTKConfigBuilder.html" title="next chapter (use the right arrow)">DTKConfigBuilder</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -171,12 +158,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dtk/commands.html" title="dtk commands"
+          <a href="dtk/utils/core/DTKConfigBuilder.html" title="DTKConfigBuilder"
              >next</a> |</li>
         <li class="right" >
           <a href="gettingstarted.html" title="Getting started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

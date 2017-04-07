@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.interventions.irs &mdash; DTK Package 0.3.5 documentation</title>
+    <title>dtk.interventions.irs &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -23,17 +23,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
   
    
 
@@ -48,8 +49,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -60,7 +61,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../../../index.html" class="text-logo">dtk-tools 0.3.5</a>
+    ../../../index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -72,7 +73,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
@@ -112,9 +114,7 @@
           <div class="document clearer body">
             
   <h1>Source code for dtk.interventions.irs</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
-
-<span class="sd">&#39;&#39;&#39; OLD</span>
+<span></span><span class="sd">&#39;&#39;&#39; OLD</span>
 <span class="sd"># IRS parameters</span>
 <span class="sd">irs_housingmod = {&quot;class&quot;: &quot;IRSHousingModification&quot;,</span>
 <span class="sd">                  &quot;Blocking_Rate&quot;: 0.0,  # i.e. repellency</span>
@@ -126,11 +126,12 @@
 <span class="sd">                  }</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.malaria_drug_campaigns</span> <span class="k">import</span> <span class="n">fmda_cfg</span>
 
 <span class="n">irs_housingmod</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;IRSHousingModification&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Killing_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
-                    <span class="s2">&quot;Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">1460</span><span class="p">,</span>
+                    <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="s2">&quot;Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
                     <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;WaningEffectExponential&quot;</span>
                 <span class="p">},</span>
                 <span class="s2">&quot;Blocking_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -157,12 +158,9 @@
                     <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;SpaceSpraying&quot;</span>
                 <span class="p">}</span>
 
-<span class="n">node_sprayed_event</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;BroadcastEvent&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Broadcast_Event&quot;</span><span class="p">:</span> <span class="s2">&quot;Node_Sprayed&quot;</span>
-    <span class="p">}</span>
 
-<div class="viewcode-block" id="add_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="add_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">initial_killing</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an IRS intervention to the config_builder passed.</span>
 
@@ -181,9 +179,15 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">waning</span><span class="p">:</span>
-        <span class="n">irs_housingmod</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;Durability_Time_Profile&quot;</span><span class="p">:</span>   <span class="n">waning</span><span class="p">[</span><span class="s1">&#39;profile&#39;</span><span class="p">],</span> 
-                            <span class="s2">&quot;Primary_Decay_Time_Constant&quot;</span><span class="p">:</span>   <span class="n">waning</span><span class="p">[</span><span class="s1">&#39;kill&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">365</span><span class="p">,</span>
-                            <span class="s2">&quot;Secondary_Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="n">waning</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">365</span> <span class="p">})</span>
+        <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">waning</span> <span class="p">:</span>
+            <span class="n">irs_housingmod</span><span class="p">[</span><span class="n">cfg</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">waning</span><span class="p">[</span><span class="n">cfg</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">initial_killing</span><span class="p">:</span>
+        <span class="n">irs_housingmod</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Initial_Effect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_killing</span>
+
+
+    <span class="k">if</span> <span class="n">duration</span><span class="p">:</span>
+        <span class="n">irs_housingmod</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Decay_Time_Constant&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
 
     <span class="k">if</span> <span class="n">cost</span><span class="p">:</span>
         <span class="n">irs_housingmod</span><span class="p">[</span><span class="s1">&#39;Cost_To_Consumer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
@@ -227,58 +231,104 @@
 
             <span class="n">IRS_event</span><span class="p">[</span><span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">][</span><span class="s2">&quot;Intervention_Config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">birth_triggered_intervention</span>
             <span class="n">IRS_event</span><span class="p">[</span><span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">)</span>
+            <span class="n">IRS_event</span><span class="p">[</span><span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Target_Residents_Only&quot;</span><span class="p">)</span>
 
         <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">IRS_event</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="add_node_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_node_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_node_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">initial_killing</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">box_duration</span><span class="o">=</span><span class="mi">365</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[]):</span>
+
+<div class="viewcode-block" id="add_node_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_node_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_node_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">initial_killing</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">box_duration</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">irs_ineligibility_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span> <span class="n">node_property_restrictions</span><span class="o">=</span><span class="p">[]):</span>
 
     <span class="n">irs_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node_irs_config</span><span class="p">)</span>
-    <span class="n">irs_config</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Box_Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_duration</span>
+    <span class="n">irs_config</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Decay_Time_Constant&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_duration</span>
     <span class="n">irs_config</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Initial_Effect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_killing</span>
 
     <span class="k">if</span> <span class="n">cost</span><span class="p">:</span>
         <span class="n">node_irs_config</span><span class="p">[</span><span class="s1">&#39;Cost_To_Consumer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
 
-    <span class="n">IRS_event</span> <span class="o">=</span> <span class="p">{</span>   <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;Intervention_Config&quot;</span><span class="p">:</span> <span class="n">irs_config</span><span class="p">,</span> 
-                        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeEventCoordinator&quot;</span>
-                    <span class="p">},</span> 
-                    <span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span>
-                    <span class="p">},</span> 
-                    <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> 
-                    <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Node Level IRS&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span>
-                <span class="p">}</span>
+    <span class="n">IRS_event</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Intervention_Config&quot;</span><span class="p">:</span> <span class="n">irs_config</span><span class="p">,</span>
+            <span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeEventCoordinator&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span>
+        <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Node Level IRS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span>
+    <span class="p">}</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">nodeIDs</span><span class="p">:</span>
         <span class="n">IRS_event</span><span class="p">[</span><span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span> <span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">random</span>
-        <span class="n">nodeIDs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodeIDs</span> <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">coverage</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">nodeIDs</span> <span class="o">==</span> <span class="p">[]</span> <span class="p">:</span> <span class="c1"># no nodes were sprayed</span>
-            <span class="k">return</span>
         <span class="n">IRS_event</span><span class="p">[</span><span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetNodeList&quot;</span><span class="p">,</span> <span class="s2">&quot;Node_List&quot;</span><span class="p">:</span> <span class="n">nodeIDs</span> <span class="p">}</span>
 
-    <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">IRS_event</span><span class="p">)</span></div>
+    <span class="n">IRS_cfg</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">IRS_event</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">irs_ineligibility_duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">recent_irs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodePropertyValueChanger&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Target_NP_Key_Value&quot;</span><span class="p">:</span> <span class="s2">&quot;SprayStatus:RecentSpray&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Daily_Probability&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                      <span class="s2">&quot;Maximum_Duration&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s1">&#39;Revert&#39;</span><span class="p">:</span> <span class="n">irs_ineligibility_duration</span>
+                      <span class="p">}</span>
+        <span class="n">IRS_cfg</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MultiInterventionEventCoordinator&#39;</span>
+        <span class="n">IRS_cfg</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Intervention_Configs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">irs_config</span><span class="p">,</span>
+            <span class="n">recent_irs</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">IRS_cfg</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Intervention_Config&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="add_reactive_node_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_reactive_node_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_reactive_node_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">trigger_coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">irs_coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">node_selection_type</span><span class="o">=</span><span class="s1">&#39;DISTANCE_ONLY&#39;</span><span class="p">,</span> 
-                          <span class="n">reactive_radius</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">blackout_duration</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span><span class="p">})</span> <span class="p">:</span>
+        <span class="n">IRS_cfg</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([{</span> <span class="s1">&#39;SprayStatus&#39;</span> <span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">}])</span>
 
+    <span class="k">if</span> <span class="n">node_property_restrictions</span><span class="p">:</span>
+        <span class="n">IRS_cfg</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">node_property_restrictions</span><span class="p">)</span>
+    <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">IRS_cfg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_reactive_node_IRS"><a class="viewcode-back" href="../../../interventions/irs.html#dtk.interventions.irs.add_reactive_node_IRS">[docs]</a><span class="k">def</span> <span class="nf">add_reactive_node_IRS</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">trigger_coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">irs_coverage</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                          <span class="n">node_selection_type</span><span class="o">=</span><span class="s1">&#39;DISTANCE_ONLY&#39;</span><span class="p">,</span>
+                          <span class="n">reactive_radius</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">irs_ineligibility_duration</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+                          <span class="n">delay</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">initial_killing</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">box_duration</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+                          <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span> <span class="n">node_property_restrictions</span><span class="o">=</span><span class="p">[])</span> <span class="p">:</span>
+
+    <span class="n">irs_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node_irs_config</span><span class="p">)</span>
+    <span class="n">irs_config</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Decay_Time_Constant&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_duration</span>
+    <span class="n">irs_config</span><span class="p">[</span><span class="s1">&#39;Killing_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Initial_Effect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_killing</span>
     <span class="n">irs_trigger_config</span> <span class="o">=</span> <span class="n">fmda_cfg</span><span class="p">(</span><span class="n">reactive_radius</span><span class="p">,</span> <span class="n">node_selection_type</span><span class="p">,</span> <span class="s1">&#39;Spray_IRS&#39;</span><span class="p">)</span>
 
-    <span class="n">trigger_irs</span> <span class="o">=</span> <span class="p">{</span>   <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger Reactive IRS&quot;</span><span class="p">,</span> 
+    <span class="n">receiving_irs_event</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;BroadcastEvent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Broadcast_Event&quot;</span><span class="p">:</span> <span class="s2">&quot;Node_Sprayed&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">recent_irs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodePropertyValueChanger&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;Target_NP_Key_Value&quot;</span><span class="p">:</span> <span class="s2">&quot;SprayStatus:RecentSpray&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;Daily_Probability&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                  <span class="s2">&quot;Maximum_Duration&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                  <span class="s1">&#39;Revert&#39;</span><span class="p">:</span> <span class="n">irs_ineligibility_duration</span>
+                  <span class="p">}</span>
+    <span class="n">irs_config</span> <span class="o">=</span> <span class="p">[</span><span class="n">irs_config</span><span class="p">,</span> <span class="n">receiving_irs_event</span><span class="p">,</span> <span class="n">recent_irs</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodeIDs</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetAll&quot;</span> <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeSetNodeList&quot;</span><span class="p">,</span> <span class="s2">&quot;Node_List&quot;</span><span class="p">:</span> <span class="n">nodeIDs</span> <span class="p">}</span>
+
+    <span class="n">no_spray</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SprayStatus&#39;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">}</span>
+
+    <span class="n">trigger_irs</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger Reactive IRS&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
                     <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> 
                     <span class="p">{</span>
                         <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;Intervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span> 
+                        <span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">&quot;Intervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeLevelHealthTriggeredIV&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">trigger_coverage</span><span class="p">,</span>
-                            <span class="s2">&quot;Trigger_Condition&quot;</span><span class="p">:</span> <span class="s2">&quot;TriggerString&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;Trigger_Condition_String&quot;</span><span class="p">:</span> <span class="s2">&quot;Received_Treatment&quot;</span><span class="p">,</span> <span class="c1"># triggered by successful health-seeking</span>
-                            <span class="s2">&quot;Duration&quot;</span> <span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+                            <span class="s2">&quot;Trigger_Condition_List&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Received_Treatment&quot;</span><span class="p">],</span> <span class="c1"># triggered by successful health-seeking</span>
+                            <span class="s2">&quot;Duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
                             <span class="s2">&quot;Actual_IndividualIntervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span> 
                                 <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;DelayedIntervention&quot;</span><span class="p">,</span>                    
                                 <span class="s2">&quot;Delay_Distribution&quot;</span><span class="p">:</span> <span class="s2">&quot;FIXED_DURATION&quot;</span><span class="p">,</span>
@@ -289,34 +339,35 @@
                     <span class="p">},</span>
                     <span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">:</span> <span class="n">nodes</span><span class="p">}</span>
 
-
-    <span class="n">distribute_irs</span> <span class="o">=</span> <span class="p">{</span>   <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Distribute IRS&quot;</span><span class="p">,</span> 
-                                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
-                                <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> 
-                                <span class="p">{</span>
-                                    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
-                                    <span class="s2">&quot;Intervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span> 
-                                        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeLevelHealthTriggeredIV&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">irs_coverage</span><span class="p">,</span>
-                                        <span class="s2">&quot;Trigger_Condition&quot;</span><span class="p">:</span> <span class="s2">&quot;TriggerString&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;Trigger_Condition_String&quot;</span><span class="p">:</span> <span class="s2">&quot;Spray_IRS&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;Blackout_Event_Trigger&quot;</span> <span class="p">:</span> <span class="s2">&quot;IRS_Blackout&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;Blackout_Period&quot;</span> <span class="p">:</span> <span class="n">blackout_duration</span><span class="p">,</span>
-                                        <span class="s2">&quot;Blackout_On_First_Occurrence&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                                        <span class="s2">&quot;Actual_IndividualIntervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span>
-                                                <span class="s2">&quot;Intervention_List&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">node_irs_config</span><span class="p">,</span> <span class="n">node_sprayed_event</span><span class="p">],</span>
-                                                <span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;MultiInterventionDistributor&quot;</span>
-                                            <span class="p">}</span>
-                                    <span class="p">}</span>
-                                <span class="p">},</span>
-                                <span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">:</span> <span class="n">nodes</span>
+    <span class="n">distribute_irs</span> <span class="o">=</span> <span class="p">{</span>  <span class="s2">&quot;Event_Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Distribute IRS&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;CampaignEvent&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+                        <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;Intervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span>
+                                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;NodeLevelHealthTriggeredIV&quot;</span><span class="p">,</span>
+                                <span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">no_spray</span><span class="p">],</span>
+                                <span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">irs_coverage</span><span class="p">,</span>
+                                <span class="s2">&quot;Trigger_Condition_List&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Spray_IRS&quot;</span><span class="p">],</span>
+                                <span class="s2">&quot;Blackout_Event_Trigger&quot;</span><span class="p">:</span> <span class="s2">&quot;IRS_Blackout&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;Blackout_Period&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="s2">&quot;Blackout_On_First_Occurrence&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="s2">&quot;Actual_IndividualIntervention_Config&quot;</span> <span class="p">:</span> <span class="p">{</span>
+                                    <span class="s2">&quot;Intervention_List&quot;</span> <span class="p">:</span> <span class="n">irs_config</span><span class="p">,</span>
+                                    <span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;MultiInterventionDistributor&quot;</span>
+                                <span class="p">}</span>
                             <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="s2">&quot;Nodeset_Config&quot;</span><span class="p">:</span> <span class="n">nodes</span>
+                    <span class="p">}</span>
 
+    <span class="k">if</span> <span class="n">node_property_restrictions</span><span class="p">:</span>
+        <span class="n">trigger_irs</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">node_property_restrictions</span><span class="p">)</span>
+        <span class="n">distribute_irs</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Intervention_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">no_spray</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">node_property_restrictions</span><span class="p">]</span>
 
     <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">trigger_irs</span><span class="p">)</span>
     <span class="n">config_builder</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">distribute_irs</span><span class="p">)</span></div>
-    
 </pre></div>
 
           </div>
@@ -333,8 +384,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.utils.core.DTKConfigBuilder &mdash; DTK Package 0.3.5 documentation</title>
+    <title>dtk.utils.core.DTKConfigBuilder &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -23,17 +23,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../../../index.html" />
-    <link rel="up" title="Module code" href="../../../index.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
   
    
 
@@ -48,8 +49,8 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -60,7 +61,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../../../../index.html" class="text-logo">dtk-tools 0.3.5</a>
+    ../../../../index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -72,7 +73,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../cookbook.html">Cookbook</a></li>
@@ -117,38 +119,39 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span> <span class="c1"># find listed events by regex</span>
 
+<span class="kn">import</span> <span class="nn">dtk.dengue.params</span> <span class="k">as</span> <span class="nn">dengue_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.params</span> <span class="k">as</span> <span class="nn">generic_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.seir</span> <span class="k">as</span> <span class="nn">seir_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.seir_vitaldynamics</span> <span class="k">as</span> <span class="nn">seir_vitaldynamics_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.seirs</span> <span class="k">as</span> <span class="nn">seirs_params</span>
+<span class="kn">import</span> <span class="nn">dtk.generic.si</span> <span class="k">as</span> <span class="nn">si_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.sir</span> <span class="k">as</span> <span class="nn">sir_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.sir_vaccinations_a</span> <span class="k">as</span> <span class="nn">sir_vaccinations_a_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.sir_vaccinations_b</span> <span class="k">as</span> <span class="nn">sir_vaccinations_b_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.sir_vaccinations_c</span> <span class="k">as</span> <span class="nn">sir_vaccinations_c_params</span>
-<span class="kn">import</span> <span class="nn">dtk.generic.seir</span> <span class="k">as</span> <span class="nn">seir_params</span>
-<span class="kn">import</span> <span class="nn">dtk.generic.seir_vitaldynamics</span> <span class="k">as</span> <span class="nn">seir_vitaldynamics_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.sirs</span> <span class="k">as</span> <span class="nn">sirs_params</span>
-<span class="kn">import</span> <span class="nn">dtk.generic.seirs</span> <span class="k">as</span> <span class="nn">seirs_params</span>
-<span class="kn">import</span> <span class="nn">dtk.generic.si</span> <span class="k">as</span> <span class="nn">si_params</span>
 <span class="kn">import</span> <span class="nn">dtk.generic.sis</span> <span class="k">as</span> <span class="nn">sis_params</span>
 <span class="kn">import</span> <span class="nn">dtk.malaria.params</span> <span class="k">as</span> <span class="nn">malaria_params</span>
 <span class="kn">import</span> <span class="nn">dtk.vector.params</span> <span class="k">as</span> <span class="nn">vector_params</span>
-<span class="kn">import</span> <span class="nn">dtk.dengue.params</span> <span class="k">as</span> <span class="nn">dengue_params</span>
-
 <span class="kn">from</span> <span class="nn">dtk.interventions.empty_campaign</span> <span class="k">import</span> <span class="n">empty_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.seir_initial_seeding</span> <span class="k">import</span> <span class="n">seir_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.seir_vitaldynamics</span> <span class="k">import</span> <span class="n">seir_vitaldynamics_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.seirs</span> <span class="k">import</span> <span class="n">seirs_campaign</span>
+<span class="kn">from</span> <span class="nn">dtk.interventions.si_initial_seeding</span> <span class="k">import</span> <span class="n">si_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.interventions.sir_initial_seeding</span> <span class="k">import</span> <span class="n">sir_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.interventions.sir_vaccinations_a_initial_seeding</span> <span class="k">import</span> <span class="n">sir_vaccinations_a_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.interventions.sir_vaccinations_b_initial_seeding</span> <span class="k">import</span> <span class="n">sir_vaccinations_b_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.interventions.sir_vaccinations_c_initial_seeding</span> <span class="k">import</span> <span class="n">sir_vaccinations_c_campaign</span>
-<span class="kn">from</span> <span class="nn">dtk.interventions.seir_initial_seeding</span> <span class="k">import</span> <span class="n">seir_campaign</span>
-<span class="kn">from</span> <span class="nn">dtk.interventions.seir_vitaldynamics</span> <span class="k">import</span> <span class="n">seir_vitaldynamics_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.interventions.sirs_initial_seeding</span> <span class="k">import</span> <span class="n">sirs_campaign</span>
-<span class="kn">from</span> <span class="nn">dtk.interventions.seirs</span> <span class="k">import</span> <span class="n">seirs_campaign</span>
-<span class="kn">from</span> <span class="nn">dtk.interventions.si_initial_seeding</span> <span class="k">import</span> <span class="n">si_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.interventions.sis_initial_seeding</span> <span class="k">import</span> <span class="n">sis_campaign</span>
 <span class="kn">from</span> <span class="nn">dtk.utils.parsers.JSON</span> <span class="k">import</span> <span class="n">json2dict</span>
 <span class="kn">from</span> <span class="nn">dtk.utils.reports.CustomReport</span> <span class="k">import</span> <span class="nb">format</span> <span class="k">as</span> <span class="n">format_reports</span>
-<span class="kn">from</span> <span class="nn">simtools</span> <span class="k">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">simtools.SimConfigBuilder</span> <span class="k">import</span> <span class="n">SimConfigBuilder</span>
+<span class="kn">from</span> <span class="nn">simtools.Utilities.COMPSUtilities</span> <span class="k">import</span> <span class="n">translate_COMPS_path</span><span class="p">,</span> <span class="n">stage_file</span>
+<span class="kn">from</span> <span class="nn">simtools.Utilities.Encoding</span> <span class="k">import</span> <span class="n">NumpyEncoder</span>
+<span class="kn">from</span> <span class="nn">simtools.Utilities.General</span> <span class="k">import</span> <span class="n">CommandlineGenerator</span><span class="p">,</span> <span class="n">init_logging</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">init_logging</span><span class="p">(</span><span class="s1">&#39;ConfigBuilder&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DTKConfigBuilder"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">[docs]</a><span class="k">class</span> <span class="nc">DTKConfigBuilder</span><span class="p">(</span><span class="n">SimConfigBuilder</span><span class="p">):</span>
@@ -199,6 +202,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{}},</span> <span class="n">campaign</span><span class="o">=</span><span class="n">empty_campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span> <span class="o">=</span> <span class="n">campaign</span>
+        <span class="c1"># Indent the files when dumping or not</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">human_readability</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">demog_overlays</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">custom_reports</span> <span class="o">=</span> <span class="p">[]</span>
@@ -209,7 +214,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DTKConfigBuilder.from_defaults"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">from_defaults</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.from_defaults"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">from_defaults</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build up the default parameters for the specified simulation type.</span>
 
@@ -331,10 +336,10 @@
 
         <span class="n">config</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;Simulation_Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim_type</span>
 
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DTKConfigBuilder.from_files"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">[docs]</a>    <span class="k">def</span> <span class="nf">from_files</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DTKConfigBuilder.from_files"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">[docs]</a>    <span class="k">def</span> <span class="nf">from_files</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build up a simulation configuration from the path to an existing</span>
 <span class="sd">        config.json and optionally a campaign.json file on disk.</span>
@@ -348,7 +353,7 @@
         <span class="n">config</span> <span class="o">=</span> <span class="n">json2dict</span><span class="p">(</span><span class="n">config_name</span><span class="p">)</span>
         <span class="n">campaign</span> <span class="o">=</span> <span class="n">json2dict</span><span class="p">(</span><span class="n">campaign_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">campaign_name</span> <span class="k">else</span> <span class="n">empty_campaign</span>
 
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">campaign</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -502,7 +507,7 @@
         <span class="k">if</span> <span class="s1">&#39;python_path&#39;</span> <span class="ow">in</span> <span class="n">paths</span> <span class="ow">and</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;python_path&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
             <span class="n">eradication_options</span><span class="p">[</span><span class="s1">&#39;--python-script-path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;python_path&#39;</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">CommandlineGenerator</span><span class="p">(</span><span class="n">exe_path</span><span class="p">,</span> <span class="n">eradication_options</span><span class="p">,</span> <span class="p">[])</span></div>
+        <span class="k">return</span> <span class="n">CommandlineGenerator</span><span class="p">(</span><span class="n">exe_path</span><span class="p">,</span> <span class="n">eradication_options</span><span class="p">,</span> <span class="p">[])</span></div>
 
 <div class="viewcode-block" id="DTKConfigBuilder.stage_required_libraries"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">[docs]</a>    <span class="k">def</span> <span class="nf">stage_required_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dll_path</span><span class="p">,</span> <span class="n">staging_root</span><span class="p">,</span> <span class="n">assets_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -529,14 +534,14 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">staged_dll</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">assets_service</span><span class="p">:</span>
                     <span class="c1"># If the assets service is not use, actually stage the dll file</span>
-                    <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">stage_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dll_path</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">),</span>
+                    <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">stage_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dll_path</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">),</span>
                                                   <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">staging_root</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If the assets service is used, assume that the dll is staged already</span>
                     <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">staging_root</span><span class="p">,</span> <span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">)</span>
 
                 <span class="c1"># Translate just in case</span>
-                <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">translate_COMPS_path</span><span class="p">(</span><span class="n">staged_dll</span><span class="p">)</span>
+                <span class="n">staged_dll</span> <span class="o">=</span> <span class="n">translate_COMPS_path</span><span class="p">(</span><span class="n">staged_dll</span><span class="p">)</span>
 
                 <span class="c1"># caching to avoid repeat md5 and os calls</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">staged_dlls</span><span class="p">[(</span><span class="n">dll_type</span><span class="p">,</span> <span class="n">dll_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">staged_dll</span>
@@ -547,10 +552,10 @@
 <div class="viewcode-block" id="DTKConfigBuilder.check_custom_events"><a class="viewcode-back" href="../../../../dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.check_custom_events">[docs]</a>    <span class="k">def</span> <span class="nf">check_custom_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Return difference between config and campaign</span>
 
-        <span class="n">broadcast_events_from_campaign</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">r&quot;[&#39;</span><span class="se">\&quot;</span><span class="s2">]Broadcast_Event[&#39;</span><span class="se">\&quot;</span><span class="s2">]:\s[&#39;</span><span class="se">\&quot;</span><span class="s2">](.*?)[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">,</span>
+        <span class="n">broadcast_events_from_campaign</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[&#39;</span><span class="se">\&quot;</span><span class="s2">]Broadcast_Event[&#39;</span><span class="se">\&quot;</span><span class="s2">]:\s[&#39;</span><span class="se">\&quot;</span><span class="s2">](.*?)[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">,</span>
                                                     <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">)),</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
-        <span class="n">event_triggers_from_campaign</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">r&quot;[&#39;</span><span class="se">\&quot;</span><span class="s2">]Event_Trigger[&#39;</span><span class="se">\&quot;</span><span class="s2">]:\s[&#39;</span><span class="se">\&quot;</span><span class="s2">](.*?)[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">,</span>
+        <span class="n">event_triggers_from_campaign</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[&#39;</span><span class="se">\&quot;</span><span class="s2">]Event_Trigger[&#39;</span><span class="se">\&quot;</span><span class="s2">]:\s[&#39;</span><span class="se">\&quot;</span><span class="s2">](.*?)[&#39;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">,</span>
                                                   <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">)),</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">event_triggers_from_campaign</span> <span class="o">+</span> <span class="n">broadcast_events_from_campaign</span><span class="p">)</span>
@@ -580,8 +585,10 @@
 <span class="sd">                    with open(filename, &#39;w&#39;) as f:</span>
 <span class="sd">                        f.write(content)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">dump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">human_readability</span><span class="p">:</span>
+            <span class="n">dump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyEncoder</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyEncoder</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
 
         <span class="n">write_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Campaign_Filename&#39;</span><span class="p">],</span> <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">))</span>
 
@@ -618,8 +625,8 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

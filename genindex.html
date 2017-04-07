@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Index &mdash; DTK Package 0.3.5 documentation</title>
+    <title>Index &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,16 +24,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="index.html" />
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
   
    
 
@@ -48,7 +50,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -59,7 +61,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    index.html" class="text-logo">dtk-tools 0.3.5</a>
+    index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -71,7 +73,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
@@ -134,1196 +137,871 @@
 </div>
 <h2 id="Symbols">Symbols</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     --&lt;block_name&gt;
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--">run command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run">run command line option</a>
+</li>
+      </ul></li>
+      <li>
     --&lt;location&gt;
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-list--">list command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-list">list command line option</a>
+</li>
+      </ul></li>
+      <li>
     --active, -a
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-status--active">status command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-status-active">status command line option</a>
+</li>
+      </ul></li>
+      <li>
     --all, -a
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-resubmit--all">resubmit command line option</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-resubmit-all">resubmit command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --batchName, -bn
 
-      </dl></dd>
-      
-  <dt>
-    --comps, -c
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-create-batch-batchname">create_batch command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --blocking, -b
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-analyze--comps">analyze command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run-blocking">run command line option</a>
+</li>
+      </ul></li>
+      <li>
     --failed, --succeeded
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-stdout--failed">stdout command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-stdout-failed">stdout command line option</a>
+</li>
+      </ul></li>
+      <li>
     --force, -f
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-analyze--force">analyze command line option</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-stdout--force">stdout command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-analyze-force">analyze command line option</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-stdout-force">stdout command line option</a>
+</li>
+      </ul></li>
+      <li>
     --hard
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-delete--hard">delete command line option</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-delete-hard">delete command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --ids -i
 
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-create-batch-ids">create_batch command line option</a>
+</li>
+      </ul></li>
+      <li>
     --ini &lt;ini_file_path&gt;
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--ini">run command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run-ini">run command line option</a>
+</li>
+      </ul></li>
+      <li>
     --node_group &lt;node_group&gt;
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--node_group">run command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run-node-group">run command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     --number, -n
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-list--number">list command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-list-number">list command line option</a>
+</li>
+      </ul></li>
+      <li>
     --priority
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--priority">run command line option</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run-priority">run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --quiet, -q
 
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run-quiet">run command line option</a>
+</li>
+      </ul></li>
+      <li>
     --repeat, -r
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-status--repeat">status command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-status-repeat">status command line option</a>
+</li>
+      </ul></li>
+      <li>
     --simIds, -s
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-kill--simIds">kill command line option</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-kill-simids">kill command line option</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-resubmit-simids">resubmit command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -a, --config_name
 
-        
-  <dt><a href="dtk/commands.html#cmdoption-resubmit--simIds">resubmit command line option</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-analyze-a">analyze command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -bid
 
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-clear-batch-bid">clear_batch command line option</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-list-batch-bid">list_batch command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -bn, --batchName
+
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-analyze-bn">analyze command line option</a>
+</li>
+      </ul></li>
+      <li>
     -e
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-stdout-e">stdout command line option</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-stdout-e">stdout command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -i, --ids
 
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-analyze-i">analyze command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -n
+
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-list-batch-n">list_batch command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="interventions/malaria_challenge.html#dtk.interventions.malaria_challenge.add_challenge_trial">add_challenge_trial() (in module dtk.interventions.malaria_challenge)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">add_demog_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.add_drug_campaign">add_drug_campaign() (in module dtk.interventions.malaria_drugs)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_event">add_event() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/health_seeking.html#dtk.interventions.health_seeking.add_health_seeking">add_health_seeking() (in module dtk.interventions.health_seeking)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/immunity.html#dtk.malaria.immunity.add_immune_init">add_immune_init() (in module dtk.malaria.immunity)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/immunity.html#dtk.malaria.immunity.add_immune_overlays">add_immune_overlays() (in module dtk.malaria.immunity)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file">add_input_file() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/inputs_EIR.html#dtk.interventions.input_EIR.add_InputEIR">add_InputEIR() (in module dtk.interventions.input_EIR)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/irs.html#dtk.interventions.irs.add_IRS">add_IRS() (in module dtk.interventions.irs)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="interventions/itn.html#dtk.interventions.itn.add_ITN">add_ITN() (in module dtk.interventions.itn)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/ivernectin.html#dtk.interventions.ivermectin.add_ivermectin">add_ivermectin() (in module dtk.interventions.ivermectin)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/irs.html#dtk.interventions.irs.add_node_IRS">add_node_IRS() (in module dtk.interventions.irs)</a>
-  </dt>
-
-      
-  <dt><a href="generic/properties.html#dtk.generic.properties.add_properties_overlay">add_properties_overlay() (in module dtk.generic.properties)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/irs.html#dtk.interventions.irs.add_reactive_node_IRS">add_reactive_node_IRS() (in module dtk.interventions.irs)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports">add_reports() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interventions/malaria_challenge.html#dtk.interventions.malaria_challenge.add_challenge_trial">add_challenge_trial() (in module dtk.interventions.malaria_challenge)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_demog_overlay">add_demog_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.add_drug_campaign">add_drug_campaign() (in module dtk.interventions.malaria_drugs)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_event">add_event() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="interventions/health_seeking.html#dtk.interventions.health_seeking.add_health_seeking">add_health_seeking() (in module dtk.interventions.health_seeking)</a>
+</li>
+      <li><a href="interventions/health_seeking.html#dtk.interventions.health_seeking.add_health_seeking_by_chw">add_health_seeking_by_chw() (in module dtk.interventions.health_seeking)</a>
+</li>
+      <li><a href="malaria/immunity.html#dtk.malaria.immunity.add_immune_init">add_immune_init() (in module dtk.malaria.immunity)</a>
+</li>
+      <li><a href="malaria/immunity.html#dtk.malaria.immunity.add_immune_overlays">add_immune_overlays() (in module dtk.malaria.immunity)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_input_file">add_input_file() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="interventions/inputs_EIR.html#dtk.interventions.input_EIR.add_InputEIR">add_InputEIR() (in module dtk.interventions.input_EIR)</a>
+</li>
+      <li><a href="interventions/irs.html#dtk.interventions.irs.add_IRS">add_IRS() (in module dtk.interventions.irs)</a>
+</li>
+      <li><a href="interventions/itn.html#dtk.interventions.itn.add_ITN">add_ITN() (in module dtk.interventions.itn)</a>
+</li>
+      <li><a href="interventions/ivernectin.html#dtk.interventions.ivermectin.add_ivermectin">add_ivermectin() (in module dtk.interventions.ivermectin)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interventions/irs.html#dtk.interventions.irs.add_node_IRS">add_node_IRS() (in module dtk.interventions.irs)</a>
+</li>
+      <li><a href="generic/properties.html#dtk.generic.properties.add_properties_overlay">add_properties_overlay() (in module dtk.generic.properties)</a>
+</li>
+      <li><a href="interventions/irs.html#dtk.interventions.irs.add_reactive_node_IRS">add_reactive_node_IRS() (in module dtk.interventions.irs)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.add_reports">add_reports() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li>
     analyze
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-analyze">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-analyze">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
     analyze command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-analyze--comps">--comps, -c</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-analyze--force">--force, -f</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.append_overlay">append_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="generic/demographics.html#dtk.generic.demographics.apply_to_defaults_or_nodes">apply_to_defaults_or_nodes() (in module dtk.generic.demographics)</a>
-  </dt>
-
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-analyze-force">--force, -f</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-analyze-a">-a, --config_name</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-analyze-bn">-bn, --batchName</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-analyze-i">-i, --ids</a>
+</li>
+      </ul></li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.append_overlay">append_overlay() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="generic/demographics.html#dtk.generic.demographics.apply_to_defaults_or_nodes">apply_to_defaults_or_nodes() (in module dtk.generic.demographics)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     bin_staging_root
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-bin_staging_root">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-bin_staging_root">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interventions/health_seeking.html#dtk.interventions.health_seeking.build_actual_treatment_cfg">build_actual_treatment_cfg() (in module dtk.interventions.health_seeking)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.check_custom_events">check_custom_events() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.check_custom_events">check_custom_events() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li>
     clean
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-clean">dtk-cmd command</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-clean">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
+    clear_batch
 
-      </dl></dd>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.clear_events">clear_events() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-clear_batch">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
+    clear_batch command line option
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-clear-batch-bid">-bid</a>
+</li>
+      </ul></li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.clear_events">clear_events() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     compress_assets
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-compress_assets">setting</a>
-  </dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-compress_assets">setting</a>
+</li>
+      </ul></li>
+      <li><a href="generic/geography.html#dtk.generic.geography.convert_filepaths">convert_filepaths() (in module dtk.generic.geography)</a>
+</li>
+      <li>
+    create_batch
 
-      </dl></dd>
-      
-  <dt><a href="generic/geography.html#dtk.generic.geography.convert_filepaths">convert_filepaths() (in module dtk.generic.geography)</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-create_batch">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
+    create_batch command line option
 
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-create-batch-batchname">--batchName, -bn</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-create-batch-ids">--ids -i</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     delete
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-delete">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-delete">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
     delete command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-delete--hard">--hard</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.disable">disable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-delete-hard">--hard</a>
+</li>
+      </ul></li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.disable">disable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li>
     dll_path
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-dll_path">setting</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.drug_configs_from_code">drug_configs_from_code() (in module dtk.interventions.malaria_drugs)</a>
-  </dt>
-
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-dll_path">setting</a>
+</li>
+      </ul></li>
+      <li><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.drug_configs_from_code">drug_configs_from_code() (in module dtk.interventions.malaria_drugs)</a>
+</li>
+      <li>
     dtk-cmd command
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-analyze">analyze</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-clean">clean</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-delete">delete</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-exterminate">exterminate</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-kill">kill</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-list">list</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-progress">progress</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-resubmit">resubmit</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-run">run</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-status">status</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-stdout">stdout</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="generic/climate.html#module-dtk.generic.climate">dtk.generic.climate (module)</a>
-  </dt>
-
-      
-  <dt><a href="generic/demographics.html#module-dtk.generic.demographics">dtk.generic.demographics (module)</a>
-  </dt>
-
-      
-  <dt><a href="generic/geography.html#module-dtk.generic.geography">dtk.generic.geography (module)</a>
-  </dt>
-
-      
-  <dt><a href="generic/migration.html#module-dtk.generic.migration">dtk.generic.migration (module)</a>
-  </dt>
-
-      
-  <dt><a href="generic/params.html#module-dtk.generic.params">dtk.generic.params (module)</a>
-  </dt>
-
-      
-  <dt><a href="generic/properties.html#module-dtk.generic.properties">dtk.generic.properties (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/habitat_scale.html#module-dtk.interventions.habitat_scale">dtk.interventions.habitat_scale (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/health_seeking.html#module-dtk.interventions.health_seeking">dtk.interventions.health_seeking (module)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="interventions/inputs_EIR.html#module-dtk.interventions.input_EIR">dtk.interventions.input_EIR (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/irs.html#module-dtk.interventions.irs">dtk.interventions.irs (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/itn.html#module-dtk.interventions.itn">dtk.interventions.itn (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/ivernectin.html#module-dtk.interventions.ivermectin">dtk.interventions.ivermectin (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/malaria_challenge.html#module-dtk.interventions.malaria_challenge">dtk.interventions.malaria_challenge (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/malaria_drugs.html#module-dtk.interventions.malaria_drugs">dtk.interventions.malaria_drugs (module)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/malaria_vaccine.html#module-dtk.interventions.malaria_vaccine">dtk.interventions.malaria_vaccine (module)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/immunity.html#module-dtk.malaria.immunity">dtk.malaria.immunity (module)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/infection.html#module-dtk.malaria.infection">dtk.malaria.infection (module)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/params.html#module-dtk.malaria.params">dtk.malaria.params (module)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/symptoms.html#module-dtk.malaria.symptoms">dtk.malaria.symptoms (module)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder">dtk.utils.core.DTKConfigBuilder (module)</a>
-  </dt>
-
-      
-  <dt><a href="vector.html#module-dtk.vector.species">dtk.vector.species (module)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">DTKConfigBuilder (class in dtk.utils.core.DTKConfigBuilder)</a>
-  </dt>
-
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-analyze">analyze</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-clean">clean</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-clear_batch">clear_batch</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-create_batch">create_batch</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-delete">delete</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-exterminate">exterminate</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-kill">kill</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-list">list</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-list_batch">list_batch</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-resubmit">resubmit</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-run">run</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-status">status</a>
+</li>
+        <li><a href="cli/dtk.html#dtk-cmd-stdout">stdout</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generic/climate.html#module-dtk.generic.climate">dtk.generic.climate (module)</a>
+</li>
+      <li><a href="generic/demographics.html#module-dtk.generic.demographics">dtk.generic.demographics (module)</a>
+</li>
+      <li><a href="generic/geography.html#module-dtk.generic.geography">dtk.generic.geography (module)</a>
+</li>
+      <li><a href="generic/migration.html#module-dtk.generic.migration">dtk.generic.migration (module)</a>
+</li>
+      <li><a href="generic/params.html#module-dtk.generic.params">dtk.generic.params (module)</a>
+</li>
+      <li><a href="generic/properties.html#module-dtk.generic.properties">dtk.generic.properties (module)</a>
+</li>
+      <li><a href="interventions/habitat_scale.html#module-dtk.interventions.habitat_scale">dtk.interventions.habitat_scale (module)</a>
+</li>
+      <li><a href="interventions/health_seeking.html#module-dtk.interventions.health_seeking">dtk.interventions.health_seeking (module)</a>
+</li>
+      <li><a href="interventions/inputs_EIR.html#module-dtk.interventions.input_EIR">dtk.interventions.input_EIR (module)</a>
+</li>
+      <li><a href="interventions/irs.html#module-dtk.interventions.irs">dtk.interventions.irs (module)</a>
+</li>
+      <li><a href="interventions/itn.html#module-dtk.interventions.itn">dtk.interventions.itn (module)</a>
+</li>
+      <li><a href="interventions/ivernectin.html#module-dtk.interventions.ivermectin">dtk.interventions.ivermectin (module)</a>
+</li>
+      <li><a href="interventions/malaria_challenge.html#module-dtk.interventions.malaria_challenge">dtk.interventions.malaria_challenge (module)</a>
+</li>
+      <li><a href="interventions/malaria_drugs.html#module-dtk.interventions.malaria_drugs">dtk.interventions.malaria_drugs (module)</a>
+</li>
+      <li><a href="interventions/malaria_vaccine.html#module-dtk.interventions.malaria_vaccine">dtk.interventions.malaria_vaccine (module)</a>
+</li>
+      <li><a href="interventions/outbreak.html#module-dtk.interventions.outbreakindividual">dtk.interventions.outbreakindividual (module)</a>
+</li>
+      <li><a href="malaria/immunity.html#module-dtk.malaria.immunity">dtk.malaria.immunity (module)</a>
+</li>
+      <li><a href="malaria/infection.html#module-dtk.malaria.infection">dtk.malaria.infection (module)</a>
+</li>
+      <li><a href="malaria/params.html#module-dtk.malaria.params">dtk.malaria.params (module)</a>
+</li>
+      <li><a href="malaria/symptoms.html#module-dtk.malaria.symptoms">dtk.malaria.symptoms (module)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder">dtk.utils.core.DTKConfigBuilder (module)</a>
+</li>
+      <li><a href="vector.html#module-dtk.vector.species">dtk.vector.species (module)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder">DTKConfigBuilder (class in dtk.utils.core.DTKConfigBuilder)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.enable">enable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.enable">enable() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li>
     environment
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-environment">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-environment">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     exe_path
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-exe_path">setting</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-exe_path">setting</a>
+</li>
+      </ul></li>
+      <li>
     exterminate
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-exterminate">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-exterminate">dtk-cmd command</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">file_writer() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">from_defaults() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">from_files() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
-  </dt>
-
-  </dl></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.file_writer">file_writer() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_defaults">from_defaults() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.from_files">from_files() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder class method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_commandline">get_commandline() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="generic/geography.html#dtk.generic.geography.get_converted_paths_for_geography">get_converted_paths_for_geography() (in module dtk.generic.geography)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.get_drug_param">get_drug_param() (in module dtk.interventions.malaria_drugs)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="generic/geography.html#dtk.generic.geography.get_geography_parameter">get_geography_parameter() (in module dtk.generic.geography)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_input_file_paths">get_input_file_paths() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="vector.html#dtk.vector.species.get_species_param">get_species_param() (in module dtk.vector.species)</a>
-  </dt>
-
-  </dl></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_commandline">get_commandline() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="generic/geography.html#dtk.generic.geography.get_converted_paths_for_geography">get_converted_paths_for_geography() (in module dtk.generic.geography)</a>
+</li>
+      <li><a href="interventions/health_seeking.html#dtk.interventions.health_seeking.get_drug_config">get_drug_config() (in module dtk.interventions.health_seeking)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.get_drug_param">get_drug_param() (in module dtk.interventions.malaria_drugs)</a>
+</li>
+      <li><a href="generic/geography.html#dtk.generic.geography.get_geography_parameter">get_geography_parameter() (in module dtk.generic.geography)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.get_input_file_paths">get_input_file_paths() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="vector.html#dtk.vector.species.get_species_param">get_species_param() (in module dtk.vector.species)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="generic/properties.html#dtk.generic.properties.init_access">init_access() (in module dtk.generic.properties)</a>
-  </dt>
-
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generic/properties.html#dtk.generic.properties.init_access">init_access() (in module dtk.generic.properties)</a>
+</li>
+      <li>
     input_root
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-input_root">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="interventions/ivernectin.html#dtk.interventions.ivermectin.ivermectin_config_by_duration">ivermectin_config_by_duration() (in module dtk.interventions.ivermectin)</a>
-  </dt>
-
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-input_root">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interventions/ivernectin.html#dtk.interventions.ivermectin.ivermectin_config_by_duration">ivermectin_config_by_duration() (in module dtk.interventions.ivermectin)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     kill
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-kill">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-kill">dtk-cmd command</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     kill command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-kill--simIds">--simIds, -s</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-kill-simids">--simIds, -s</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     lib_staging_root
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-lib_staging_root">setting</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-lib_staging_root">setting</a>
+</li>
+      </ul></li>
+      <li>
     list
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-list">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-list">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
     list command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-list--">--&lt;location&gt;</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-list">--&lt;location&gt;</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-list-number">--number, -n</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    list_batch
 
-        
-  <dt><a href="dtk/commands.html#cmdoption-list--number">--number, -n</a>
-  </dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-list_batch">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
+    list_batch command line option
 
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-list-batch-bid">-bid</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-list-batch-n">-n</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     max_local_sims
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-max_local_sims">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-max_local_sims">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     max_threads
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-max_threads">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-max_threads">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     node_group
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-node_group">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-node_group">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     num_retries
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-num_retries">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-num_retries">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.params">params (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
-  </dt>
-
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.params">params (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
+</li>
+      <li>
     priority
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-priority">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
-    progress
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-progress">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-priority">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     python_path
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-python_path">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-python_path">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interventions/outbreak.html#dtk.interventions.outbreakindividual.recurring_outbreak">recurring_outbreak() (in module dtk.interventions.outbreakindividual)</a>
+</li>
+      <li>
     resubmit
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-resubmit">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-resubmit">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
     resubmit command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-resubmit--all">--all, -a</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-resubmit--simIds">--simIds, -s</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-resubmit-all">--all, -a</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-resubmit-simids">--simIds, -s</a>
+</li>
+      </ul></li>
+      <li>
     run
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-run">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-run">dtk-cmd command</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     run command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--">--&lt;block_name&gt;</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--ini">--ini &lt;ini_file_path&gt;</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--node_group">--node_group &lt;node_group&gt;</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-run--priority">--priority</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-run">--&lt;block_name&gt;</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-run-blocking">--blocking, -b</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-run-ini">--ini &lt;ini_file_path&gt;</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-run-node-group">--node_group &lt;node_group&gt;</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-run-priority">--priority</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-run-quiet">--quiet, -q</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="vector.html#dtk.vector.species.scale_all_habitats">scale_all_habitats() (in module dtk.vector.species)</a>
-  </dt>
-
-      
-  <dt><a href="malaria/immunity.html#dtk.malaria.immunity.scale_habitat_with_immunity">scale_habitat_with_immunity() (in module dtk.malaria.immunity)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/habitat_scale.html#dtk.interventions.habitat_scale.scale_larval_habitats">scale_larval_habitats() (in module dtk.interventions.habitat_scale)</a>
-  </dt>
-
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="vector.html#dtk.vector.species.scale_all_habitats">scale_all_habitats() (in module dtk.vector.species)</a>
+</li>
+      <li><a href="malaria/immunity.html#dtk.malaria.immunity.scale_habitat_with_immunity">scale_habitat_with_immunity() (in module dtk.malaria.immunity)</a>
+</li>
+      <li><a href="interventions/habitat_scale.html#dtk.interventions.habitat_scale.scale_larval_habitats">scale_larval_habitats() (in module dtk.interventions.habitat_scale)</a>
+</li>
+      <li>
     server_endpoint
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-server_endpoint">setting</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="generic/climate.html#dtk.generic.climate.set_climate_constant">set_climate_constant() (in module dtk.generic.climate)</a>
-  </dt>
-
-      
-  <dt><a href="generic/demographics.html#dtk.generic.demographics.set_demog_distributions">set_demog_distributions() (in module dtk.generic.demographics)</a>
-  </dt>
-
-      
-  <dt><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.set_drug_param">set_drug_param() (in module dtk.interventions.malaria_drugs)</a>
-  </dt>
-
-      
-  <dt><a href="generic/geography.html#dtk.generic.geography.set_geography">set_geography() (in module dtk.generic.geography)</a>
-  </dt>
-
-      
-  <dt><a href="generic/demographics.html#dtk.generic.demographics.set_growing_demographics">set_growing_demographics() (in module dtk.generic.demographics)</a>
-  </dt>
-
-      
-  <dt><a href="generic/demographics.html#dtk.generic.demographics.set_immune_mod">set_immune_mod() (in module dtk.generic.demographics)</a>
-  </dt>
-
-      
-  <dt><a href="vector.html#dtk.vector.species.set_larval_habitat">set_larval_habitat() (in module dtk.vector.species)</a>
-  </dt>
-
-      
-  <dt><a href="vector.html#dtk.vector.species.set_params_by_species">set_params_by_species() (in module dtk.vector.species)</a>
-  </dt>
-
-      
-  <dt><a href="generic/properties.html#dtk.generic.properties.set_property">set_property() (in module dtk.generic.properties)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="generic/demographics.html#dtk.generic.demographics.set_risk_mod">set_risk_mod() (in module dtk.generic.demographics)</a>
-  </dt>
-
-      
-  <dt><a href="vector.html#dtk.vector.species.set_species_param">set_species_param() (in module dtk.vector.species)</a>
-  </dt>
-
-      
-  <dt><a href="generic/demographics.html#dtk.generic.demographics.set_static_demographics">set_static_demographics() (in module dtk.generic.demographics)</a>
-  </dt>
-
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-server_endpoint">setting</a>
+</li>
+      </ul></li>
+      <li><a href="generic/climate.html#dtk.generic.climate.set_climate_constant">set_climate_constant() (in module dtk.generic.climate)</a>
+</li>
+      <li><a href="generic/demographics.html#dtk.generic.demographics.set_demog_distributions">set_demog_distributions() (in module dtk.generic.demographics)</a>
+</li>
+      <li><a href="interventions/malaria_drugs.html#dtk.interventions.malaria_drugs.set_drug_param">set_drug_param() (in module dtk.interventions.malaria_drugs)</a>
+</li>
+      <li><a href="generic/geography.html#dtk.generic.geography.set_geography">set_geography() (in module dtk.generic.geography)</a>
+</li>
+      <li><a href="generic/demographics.html#dtk.generic.demographics.set_growing_demographics">set_growing_demographics() (in module dtk.generic.demographics)</a>
+</li>
+      <li><a href="generic/demographics.html#dtk.generic.demographics.set_immune_mod">set_immune_mod() (in module dtk.generic.demographics)</a>
+</li>
+      <li><a href="vector.html#dtk.vector.species.set_larval_habitat">set_larval_habitat() (in module dtk.vector.species)</a>
+</li>
+      <li><a href="vector.html#dtk.vector.species.set_params_by_species">set_params_by_species() (in module dtk.vector.species)</a>
+</li>
+      <li><a href="generic/properties.html#dtk.generic.properties.set_property">set_property() (in module dtk.generic.properties)</a>
+</li>
+      <li><a href="generic/demographics.html#dtk.generic.demographics.set_risk_mod">set_risk_mod() (in module dtk.generic.demographics)</a>
+</li>
+      <li><a href="vector.html#dtk.vector.species.set_species_param">set_species_param() (in module dtk.vector.species)</a>
+</li>
+      <li><a href="generic/demographics.html#dtk.generic.demographics.set_static_demographics">set_static_demographics() (in module dtk.generic.demographics)</a>
+</li>
+      <li>
     setting
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-bin_staging_root">bin_staging_root</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-compress_assets">compress_assets</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-dll_path">dll_path</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-environment">environment</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-exe_path">exe_path</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-input_root">input_root</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-lib_staging_root">lib_staging_root</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-max_local_sims">max_local_sims</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-max_threads">max_threads</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-node_group">node_group</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-num_retries">num_retries</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-priority">priority</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-python_path">python_path</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-server_endpoint">server_endpoint</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-sim_root">sim_root</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-sims_per_thread">sims_per_thread</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-type">type</a>
-  </dt>
-
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-use_comps_asset_svc">use_comps_asset_svc</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-bin_staging_root">bin_staging_root</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-compress_assets">compress_assets</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-dll_path">dll_path</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-environment">environment</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-exe_path">exe_path</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-input_root">input_root</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-lib_staging_root">lib_staging_root</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-max_local_sims">max_local_sims</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-max_threads">max_threads</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-node_group">node_group</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-num_retries">num_retries</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-priority">priority</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-python_path">python_path</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-server_endpoint">server_endpoint</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-sim_root">sim_root</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-sims_per_thread">sims_per_thread</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-type">type</a>
+</li>
+        <li><a href="simtools/simtoolsini.html#std:setting-use_comps_asset_svc">use_comps_asset_svc</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     sim_root
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-sim_root">setting</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-sim_root">setting</a>
+</li>
+      </ul></li>
+      <li>
     sims_per_thread
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-sims_per_thread">setting</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="simtools/experimentmanager.html#module-simtools.ExperimentManager">simtools.ExperimentManager (module)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">stage_required_libraries() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
-  </dt>
-
-      
-  <dt><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.staged_dlls">staged_dlls (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
-  </dt>
-
-      
-  <dt>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-sims_per_thread">setting</a>
+</li>
+      </ul></li>
+      <li><a href="simtools/experimentmanager.html#module-simtools.ExperimentManager">simtools.ExperimentManager (module)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.stage_required_libraries">stage_required_libraries() (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder method)</a>
+</li>
+      <li><a href="dtk/utils/core/DTKConfigBuilder.html#dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder.staged_dlls">staged_dlls (dtk.utils.core.DTKConfigBuilder.DTKConfigBuilder attribute)</a>
+</li>
+      <li>
     status
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-status">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-status">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
     status command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-status--active">--active, -a</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-status--repeat">--repeat, -r</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-status-active">--active, -a</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-status-repeat">--repeat, -r</a>
+</li>
+      </ul></li>
+      <li>
     stdout
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#dtk-cmd-stdout">dtk-cmd command</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
+      <ul>
+        <li><a href="cli/dtk.html#dtk-cmd-stdout">dtk-cmd command</a>
+</li>
+      </ul></li>
+      <li>
     stdout command line option
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="dtk/commands.html#cmdoption-stdout--failed">--failed, --succeeded</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-stdout--force">--force, -f</a>
-  </dt>
-
-        
-  <dt><a href="dtk/commands.html#cmdoption-stdout-e">-e</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="cli/dtk.html#cmdoption-stdout-failed">--failed, --succeeded</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-stdout-force">--force, -f</a>
+</li>
+        <li><a href="cli/dtk.html#cmdoption-stdout-e">-e</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     type
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-type">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-type">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="vector.html#dtk.vector.species.update_species_param">update_species_param() (in module dtk.vector.species)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="vector.html#dtk.vector.species.update_species_param">update_species_param() (in module dtk.vector.species)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     use_comps_asset_svc
-  </dt>
 
-      <dd><dl>
-        
-  <dt><a href="simtools/simtoolsini.html#std:setting-use_comps_asset_svc">setting</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
+      <ul>
+        <li><a href="simtools/simtoolsini.html#std:setting-use_comps_asset_svc">setting</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 
@@ -1342,7 +1020,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 0.3.5 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

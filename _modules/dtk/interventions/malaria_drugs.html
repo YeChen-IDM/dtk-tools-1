@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.interventions.malaria_drugs &mdash; DTK Package 0.3.5 documentation</title>
+    <title>dtk.interventions.malaria_drugs &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -23,17 +23,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
   
    
 
@@ -48,8 +49,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -60,7 +61,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../../../index.html" class="text-logo">dtk-tools 0.3.5</a>
+    ../../../index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -72,7 +73,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
@@ -159,8 +161,8 @@
 <span class="sd">    :param drug_code: Code of the drug to add</span>
 <span class="sd">    :return: A dictionary containing the parameters for an intervention using the given drug</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dosing_type</span> <span class="o">=</span> <span class="n">drug_cfg</span><span class="p">[</span><span class="n">drug_code</span><span class="p">][</span><span class="s2">&quot;dosing&quot;</span><span class="p">]</span>
-    <span class="n">drug_array</span> <span class="o">=</span> <span class="n">drug_cfg</span><span class="p">[</span><span class="n">drug_code</span><span class="p">][</span><span class="s2">&quot;drugs&quot;</span><span class="p">]</span>
+    <span class="n">dosing_type</span> <span class="o">=</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span>
+    <span class="n">drug_array</span> <span class="o">=</span> <span class="n">drug_cfg</span><span class="p">[</span><span class="n">drug_code</span><span class="p">]</span>
 
     <span class="n">cb</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s2">&quot;PKPD_Model&quot;</span><span class="p">,</span> <span class="s2">&quot;CONCENTRATION_VERSUS_TIME&quot;</span><span class="p">)</span>
 
@@ -354,7 +356,124 @@
     <span class="s2">&quot;Fractional_Dose_By_Upper_Age&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.17</span><span class="p">},{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.33</span><span class="p">},{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.67</span><span class="p">}]</span>
   <span class="p">},</span>
 
-  <span class="s2">&quot;Abstract&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c1"># abstracted drug</span>
+  <span class="s2">&quot;Chloroquine&quot;</span> <span class="p">:</span> <span class="p">{</span>
+     <span class="c1"># Drug PkPd</span>
+    <span class="s2">&quot;Drug_Cmax&quot;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
+    <span class="s2">&quot;Drug_Decay_T1&quot;</span><span class="p">:</span> <span class="mf">8.9</span><span class="p">,</span>
+    <span class="s2">&quot;Drug_Decay_T2&quot;</span><span class="p">:</span> <span class="mi">244</span><span class="p">,</span>
+    <span class="s2">&quot;Drug_Vd&quot;</span><span class="p">:</span> <span class="mf">3.9</span><span class="p">,</span>
+    <span class="s2">&quot;Drug_PKPD_C50&quot;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
+
+    <span class="c1"># Treatment regimen</span>
+    <span class="s2">&quot;Drug_Fulltreatment_Doses&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Drug_Dose_Interval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+    <span class="c1"># These are daily parasite killing rates for:</span>
+    <span class="s2">&quot;Drug_Gametocyte02_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># ... gametocyte - early stages</span>
+    <span class="s2">&quot;Drug_Gametocyte34_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># ...            - late stages</span>
+    <span class="s2">&quot;Drug_GametocyteM_Killrate&quot;</span><span class="p">:</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># ...            - mature</span>
+    <span class="s2">&quot;Drug_Hepatocyte_Killrate&quot;</span><span class="p">:</span>   <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># ... hepatocytes</span>
+    <span class="s2">&quot;Max_Drug_IRBC_Kill&quot;</span><span class="p">:</span>         <span class="mf">4.8</span><span class="p">,</span>   <span class="c1"># ... asexual parasites</span>
+
+    <span class="c1"># Adherence rate for subsequent doses</span>
+    <span class="s2">&quot;Drug_Adherence_Rate&quot;</span> <span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+
+    <span class="c1"># Cmax modifications due to age-based dosing and bodyweight-dependence Vd</span>
+    <span class="s2">&quot;Bodyweight_Exponent&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Fractional_Dose_By_Upper_Age&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.17</span><span class="p">},{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.33</span><span class="p">},{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.67</span><span class="p">}]</span>
+  <span class="p">},</span>
+
+    <span class="s2">&quot;Sulfadoxine&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># Drug PkPd</span>
+        <span class="s2">&quot;Drug_Cmax&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>  <span class="c1"># ... Barnes et al. 2006</span>
+        <span class="s2">&quot;Drug_Decay_T1&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Decay_T2&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Vd&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_PKPD_C50&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">62</span><span class="p">,</span>
+
+        <span class="c1"># Treatment regimen</span>
+        <span class="s2">&quot;Drug_Fulltreatment_Doses&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Dose_Interval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+        <span class="c1"># These are daily parasite killing rates for:</span>
+        <span class="s2">&quot;Drug_Gametocyte02_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ... gametocyte - early stages</span>
+        <span class="s2">&quot;Drug_Gametocyte34_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ...            - late stages</span>
+        <span class="s2">&quot;Drug_GametocyteM_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ...            - mature</span>
+        <span class="s2">&quot;Drug_Hepatocyte_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ... hepatocytes</span>
+        <span class="s2">&quot;Max_Drug_IRBC_Kill&quot;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>  <span class="c1"># ... asexual parasites</span>
+
+        <span class="c1"># Adherence rate for subsequent doses</span>
+        <span class="s2">&quot;Drug_Adherence_Rate&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+
+        <span class="c1"># Cmax modifications due to age-based dosing and bodyweight-dependence Vd</span>
+        <span class="s2">&quot;Bodyweight_Exponent&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Fractional_Dose_By_Upper_Age&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.16</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.32</span><span class="p">}]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Pyrimethamine&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># Drug PkPd</span>
+        <span class="s2">&quot;Drug_Cmax&quot;</span><span class="p">:</span> <span class="mi">281</span><span class="p">,</span>  <span class="c1"># ... Barnes et al. 2006</span>
+        <span class="s2">&quot;Drug_Decay_T1&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Decay_T2&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Vd&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_PKPD_C50&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">24</span><span class="p">,</span>  <span class="c1"># ... Pertersen Eskild 1987</span>
+
+        <span class="c1"># Treatment regimen</span>
+        <span class="s2">&quot;Drug_Fulltreatment_Doses&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Dose_Interval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+        <span class="c1"># These are daily parasite killing rates for:</span>
+        <span class="s2">&quot;Drug_Gametocyte02_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ... gametocyte - early stages</span>
+        <span class="s2">&quot;Drug_Gametocyte34_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ...            - late stages</span>
+        <span class="s2">&quot;Drug_GametocyteM_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ...            - mature</span>
+        <span class="s2">&quot;Drug_Hepatocyte_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ... hepatocytes</span>
+        <span class="s2">&quot;Max_Drug_IRBC_Kill&quot;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>  <span class="c1"># ... asexual parasites; Sanz et al. 2012 PLoS ONE</span>
+
+        <span class="c1"># Adherence rate for subsequent doses</span>
+        <span class="s2">&quot;Drug_Adherence_Rate&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+
+        <span class="c1"># Cmax modifications due to age-based dosing and bodyweight-dependence Vd ... Zongo et al. 2015</span>
+        <span class="s2">&quot;Bodyweight_Exponent&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Fractional_Dose_By_Upper_Age&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.16</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.32</span><span class="p">}]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Amodiaquine&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># Drug PkPd</span>
+        <span class="s2">&quot;Drug_Cmax&quot;</span><span class="p">:</span> <span class="mi">478</span><span class="p">,</span>  <span class="c1"># ... Adjei et al. 2008</span>
+        <span class="s2">&quot;Drug_Decay_T1&quot;</span><span class="p">:</span> <span class="mf">2.7</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Decay_T2&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Vd&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_PKPD_C50&quot;</span><span class="p">:</span> <span class="mf">0.0064</span><span class="p">,</span>
+
+        <span class="c1"># Treatment regimen</span>
+        <span class="s2">&quot;Drug_Fulltreatment_Doses&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;Drug_Dose_Interval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+        <span class="c1"># These are daily parasite killing rates for:</span>
+        <span class="s2">&quot;Drug_Gametocyte02_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ... gametocyte - early stages</span>
+        <span class="s2">&quot;Drug_Gametocyte34_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ...            - late stages</span>
+        <span class="s2">&quot;Drug_GametocyteM_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ...            - mature</span>
+        <span class="s2">&quot;Drug_Hepatocyte_Killrate&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ... hepatocytes</span>
+        <span class="s2">&quot;Max_Drug_IRBC_Kill&quot;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>  <span class="c1"># ... asexual parasites</span>
+
+        <span class="c1"># Adherence rate for subsequent doses</span>
+        <span class="s2">&quot;Drug_Adherence_Rate&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+
+        <span class="c1"># Cmax modifications due to age-based dosing and bodyweight-dependence Vd</span>
+        <span class="s2">&quot;Bodyweight_Exponent&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;Fractional_Dose_By_Upper_Age&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.16</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
+                                         <span class="p">{</span><span class="s2">&quot;Upper_Age_In_Years&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Fraction_Of_Adult_Dose&quot;</span><span class="p">:</span> <span class="mf">0.32</span><span class="p">}]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Abstract&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c1"># abstracted drug</span>
      <span class="c1"># Drug PkPd</span>
     <span class="s2">&quot;Drug_Cmax&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> 
     <span class="s2">&quot;Drug_Decay_T1&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> 
@@ -410,74 +529,20 @@
 
 <span class="c1"># Different configurations of regimens and drugs</span>
 <span class="n">drug_cfg</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;MSAT_ALP&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Artemether&quot;</span><span class="p">,</span> <span class="s2">&quot;Lumefantrine&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_AL&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Artemether&quot;</span><span class="p">,</span> <span class="s2">&quot;Lumefantrine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_AL&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Artemether&quot;</span><span class="p">,</span> <span class="s2">&quot;Lumefantrine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_ALP&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Artemether&quot;</span><span class="p">,</span> <span class="s2">&quot;Lumefantrine&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_DP&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Piperaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_DPP&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Piperaquine&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_PPQ&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Piperaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_DHA_PQ&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_DHA&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MSAT_PMQ&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentNewDetectionTech&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_DP&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Piperaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_DA&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Abstract&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_DHA&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_PPQ&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Piperaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_DPP&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Piperaquine&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_PMQ&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Primaquine&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;MDA_Vehicle&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;dosing&quot;</span> <span class="p">:</span> <span class="s2">&quot;FullTreatmentCourse&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drugs&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Vehicle&quot;</span><span class="p">]</span>
-    <span class="p">}</span>
+    <span class="s2">&quot;ALP&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Artemether&quot;</span><span class="p">,</span> <span class="s2">&quot;Lumefantrine&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;AL&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Artemether&quot;</span><span class="p">,</span> <span class="s2">&quot;Lumefantrine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;DP&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Piperaquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;DPP&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Piperaquine&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;PPQ&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Piperaquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;DHA_PQ&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Primaquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;DHA&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;PMQ&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Primaquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;DA&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;DHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Abstract&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;CQ&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Chloroquine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;SP&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Sulfadoxine&quot;</span><span class="p">,</span> <span class="s2">&quot;Pyrimethamine&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;SPP&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Sulfadoxine&quot;</span><span class="p">,</span> <span class="s2">&quot;Pyrimethamine&quot;</span><span class="p">,</span> <span class="s1">&#39;Primaquine&#39;</span><span class="p">],</span>
+    <span class="s2">&quot;SPA&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Sulfadoxine&quot;</span><span class="p">,</span> <span class="s2">&quot;Pyrimethamine&quot;</span><span class="p">,</span> <span class="s1">&#39;Amodiaquine&#39;</span><span class="p">],</span>
+    <span class="s2">&quot;Vehicle&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Vehicle&quot;</span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -495,8 +560,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

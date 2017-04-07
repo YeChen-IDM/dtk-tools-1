@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.interventions.itn &mdash; DTK Package 0.3.5 documentation</title>
+    <title>dtk.interventions.itn &#8212; DTK Package Beta 1 - 0.7 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -23,17 +23,18 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.3.5',
+        VERSION:     'Beta 1 - 0.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 0.3.5 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
   
    
 
@@ -48,8 +49,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -60,7 +61,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../../../index.html" class="text-logo">dtk-tools 0.3.5</a>
+    ../../../index.html" class="text-logo">dtk-tools Beta 1</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -72,7 +73,8 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">DTK package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
@@ -112,50 +114,52 @@
           <div class="document clearer body">
             
   <h1>Source code for dtk.interventions.itn</h1><div class="highlight"><pre>
-<span></span><span class="c1"># new campaign format : need to fix some add_itn() functionalities</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="c1"># new campaign format : need to fix some add_itn() functionalities</span>
 <span class="n">itn_bednet</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;SimpleBednet&quot;</span><span class="p">,</span>
                <span class="s2">&quot;Bednet_Type&quot;</span><span class="p">:</span> <span class="s2">&quot;ITN&quot;</span><span class="p">,</span> 
-                <span class="s2">&quot;Killing_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
+               <span class="s2">&quot;Killing_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
                     <span class="s2">&quot;Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">1460</span><span class="p">,</span>
                     <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;WaningEffectExponential&quot;</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;Blocking_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
+               <span class="s2">&quot;Blocking_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
                     <span class="s2">&quot;Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">730</span><span class="p">,</span>
                     <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;WaningEffectExponential&quot;</span>
                 <span class="p">},</span>
+               <span class="s2">&quot;Usage_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
+                   <span class="s2">&quot;Expected_Discard_Time&quot;</span><span class="p">:</span> <span class="mi">3650</span><span class="p">,</span> <span class="c1"># default: keep nets for 10 years</span>
+                   <span class="s2">&quot;Initial_Effect&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                   <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;WaningEffectRandomBox&quot;</span>
+               <span class="p">},</span>
                <span class="s2">&quot;Cost_To_Consumer&quot;</span><span class="p">:</span> <span class="mf">3.75</span>
 <span class="p">}</span>
 
-<div class="viewcode-block" id="add_ITN"><a class="viewcode-back" href="../../../interventions/itn.html#dtk.interventions.itn.add_ITN">[docs]</a><span class="k">def</span> <span class="nf">add_ITN</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span> <span class="n">perfect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="n">receiving_itn_event</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;BroadcastEvent&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Broadcast_Event&quot;</span><span class="p">:</span> <span class="s2">&quot;Received_ITN&quot;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="add_ITN"><a class="viewcode-back" href="../../../interventions/itn.html#dtk.interventions.itn.add_ITN">[docs]</a><span class="k">def</span> <span class="nf">add_ITN</span><span class="p">(</span><span class="n">config_builder</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">coverage_by_ages</span><span class="p">,</span> <span class="n">waning</span><span class="o">=</span><span class="p">{},</span> <span class="n">cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeIDs</span><span class="o">=</span><span class="p">[],</span> <span class="n">node_property_restrictions</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an ITN intervention to the config_builder passed.</span>
 <span class="sd">    :param config_builder: The :py:class:`DTKConfigBuilder &lt;dtk.utils.core.DTKConfigBuilder&gt;` holding the campaign that will receive the ITN event</span>
 <span class="sd">    :param start: The start day of the bednet distribution</span>
 <span class="sd">    :param coverage_by_ages: a list of dictionaries defining the coverage per age group</span>
-<span class="sd">    :param waning: a dictionary defining the durability of the nets. if empty the default ``DECAYDURABILITY`` with 4 years primary and 2 years secondary will be used.</span>
+<span class="sd">    :param waning: a dictionary defining the durability of the nets. if empty the default decay profile will be used.</span>
+<span class="sd">    For example, update usage duration to 180 days as waning={&#39;Usage_Config&#39; : {&quot;Expected_Discard_Time&quot;: 180}}</span>
 <span class="sd">    :param cost: Set the ``Cost_To_Consumer`` parameter</span>
 <span class="sd">    :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.</span>
 <span class="sd">    :return: Nothing</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">receiving_itn_event</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;BroadcastEvent&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Broadcast_Event&quot;</span><span class="p">:</span> <span class="s2">&quot;Received_ITN&quot;</span>
-    <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">waning</span><span class="p">:</span>
-        <span class="n">itn_bednet</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;Durability_Time_Profile&quot;</span><span class="p">:</span>       <span class="n">waning</span><span class="p">[</span><span class="s1">&#39;profile&#39;</span><span class="p">],</span> 
-                            <span class="s2">&quot;Primary_Decay_Time_Constant&quot;</span><span class="p">:</span>   <span class="n">waning</span><span class="p">[</span><span class="s1">&#39;kill&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">365</span><span class="p">,</span>
-                            <span class="s2">&quot;Secondary_Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="n">waning</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">365</span> <span class="p">})</span>
+        <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">waning</span> <span class="p">:</span>
+            <span class="n">itn_bednet</span><span class="p">[</span><span class="n">cfg</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">waning</span><span class="p">[</span><span class="n">cfg</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">perfect</span> <span class="p">:</span>
-        <span class="n">itn_bednet</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;Blocking_Rate&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                            <span class="s2">&quot;Killing_Rate&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> 
-                            <span class="s2">&quot;Durability_Time_Profile&quot;</span><span class="p">:</span> <span class="s2">&quot;BOXDURABILITY&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;Primary_Decay_Time_Constant&quot;</span><span class="p">:</span>   <span class="mi">400</span> <span class="o">*</span> <span class="mi">365</span><span class="p">,</span>   <span class="c1"># killing</span>
-                            <span class="s2">&quot;Secondary_Decay_Time_Constant&quot;</span><span class="p">:</span> <span class="mi">400</span> <span class="o">*</span> <span class="mi">365</span>    <span class="c1"># blocking</span>
-                            <span class="p">})</span>
     <span class="k">if</span> <span class="n">cost</span><span class="p">:</span>
         <span class="n">itn_bednet</span><span class="p">[</span><span class="s1">&#39;Cost_To_Consumer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
 
@@ -170,11 +174,14 @@
                       <span class="s2">&quot;Start_Day&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span>
                       <span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">:</span> <span class="p">{</span>
                           <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardInterventionDistributionEventCoordinator&quot;</span><span class="p">,</span>
+                          <span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">:</span> <span class="p">[],</span>
                           <span class="s2">&quot;Target_Residents_Only&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                           <span class="s2">&quot;Demographic_Coverage&quot;</span><span class="p">:</span> <span class="n">coverage_by_age</span><span class="p">[</span><span class="s2">&quot;coverage&quot;</span><span class="p">],</span>
                           <span class="s2">&quot;Intervention_Config&quot;</span><span class="p">:</span> <span class="n">itn_bednet_w_event</span> <span class="c1">#itn_bednet</span>
                       <span class="p">}</span>
                     <span class="p">}</span>
+        <span class="k">if</span> <span class="n">node_property_restrictions</span><span class="p">:</span>
+            <span class="n">ITN_event</span><span class="p">[</span><span class="s1">&#39;Event_Coordinator_Config&#39;</span><span class="p">][</span><span class="s1">&#39;Node_Property_Restrictions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">node_property_restrictions</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">coverage_by_age</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">,</span><span class="s1">&#39;max&#39;</span><span class="p">]]):</span>
             <span class="n">ITN_event</span><span class="p">[</span><span class="s2">&quot;Event_Coordinator_Config&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
@@ -216,8 +223,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 0.3.5 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
