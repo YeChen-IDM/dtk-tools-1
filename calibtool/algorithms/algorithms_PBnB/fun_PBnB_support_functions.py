@@ -6,6 +6,7 @@ import copy
 from scipy.ndimage import variance
 from scipy.stats import binom
 from c_SubRegion import c_SubRegion
+
 """
 Created on Fri Jun 23 15:53:08 2017
 
