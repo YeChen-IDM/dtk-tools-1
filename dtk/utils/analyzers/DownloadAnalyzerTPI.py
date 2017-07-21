@@ -2,9 +2,6 @@ import json
 import os
 
 from dtk.utils.analyzers.DownloadAnalyzer import DownloadAnalyzer
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
-from simtools.SetupParser import SetupParser
-from simtools.Utilities.Experiments import retrieve_experiment
 
 class DownloadAnalyzerTPI(DownloadAnalyzer):
     def __init__(self, experiment, filenames):
@@ -26,7 +23,11 @@ class DownloadAnalyzerTPI(DownloadAnalyzer):
 
     def _construct_filename(self, parser, filename):
         # create the infix filename string e.g. TPI14_REP1, where the TPI number is the ordered sim number
-        tpi_number = parser.sim_data['TPI'] # ck4, should be TPI in deployed code, CLEANUP AFTER DEBUG
+        try:
+            tpi_number = parser.sim_data['TPI'] # ck4, should be TPI in deployed code, CLEANUP AFTER DEBUG
+        except KeyError:
+            raise KeyError('Experiment simulations must have the tag \'TPI\' in order to be compatible with'
+                           'DownloadAnalyzerTPI')
         infix_string = '_'.join(['TPI%s' % tpi_number, 'REP1'])  # REPn is hardcoded for now; will need to change
         prefix, extension = os.path.splitext(filename)
         constructed_filename = '_'.join([prefix, infix_string]) + extension
