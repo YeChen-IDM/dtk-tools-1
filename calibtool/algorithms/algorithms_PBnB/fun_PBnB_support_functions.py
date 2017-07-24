@@ -3,9 +3,13 @@ import pandas as pd
 import scipy.stats
 import math
 import copy
-from scipy.ndimage import variance
 from scipy.stats import binom
 from c_SubRegion import c_SubRegion
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import pickle
+import os
+
 
 """
 Created on Fri Jun 23 15:53:08 2017
@@ -20,6 +24,7 @@ outout
     l_subr
     df_testing_samples
 """
+# TODO: plotter that can choose any two dimension and fix the value of other dimensions
 
 
 def fun_sample_points_generator(l_subr, i_n_sampling, i_n_rep, s_stage, l_para):
@@ -82,26 +87,30 @@ def turn_to_power(list, power):
     return [number**power for number in list]
 
 
-def fun_results_organizer(l_subr, df_testing_samples):
+def fun_results_organizer(l_subr, df_testing_samples, params):
     #print ('=====fun_results_organizer=====')
     # df_testing_samples: ['l_coordinate_lower', 'l_coordinate_upper'] + l_para + ['replication'] + ['result']
     # result contains the list of outputs
-    for c_subr in [c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True]:
-        for i in range(0, len(df_testing_samples)):
-            i_n_rep = (c_subr.pd_sample_record.loc[i, '# rep'] + len(df_testing_samples.loc[i, 'result']))
-            if c_subr.l_coordinate_lower == df_testing_samples.loc[i, 'l_coordinate_lower'] and \
-                            c_subr.l_coordinate_upper == df_testing_samples.loc[i, 'l_coordinate_upper']:
-                if c_subr.pd_sample_record.loc[i, '# rep'] == 0:
-                    c_subr.pd_sample_record.loc[i, 'mean'] = np.mean(df_testing_samples.loc[i, 'result'])
-                    c_subr.pd_sample_record.loc[i, 'SST'] = sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2))
-                    c_subr.pd_sample_record.loc[i, 'var'] = np.var(df_testing_samples.loc[i, 'result'])
-                    c_subr.pd_sample_record.loc[i, '# rep'] = i_n_rep
-                else:
-                    c_subr.pd_sample_record.loc[i, 'mean'] = copy.copy(float(
-                        int(c_subr.pd_sample_record.loc[i, '# rep']) * c_subr.pd_sample_record.loc[i, 'mean'] + sum(df_testing_samples.loc[i, 'result'])) / i_n_rep)
-                    c_subr.pd_sample_record.loc[i, 'SST'] = copy.copy(c_subr.pd_sample_record.loc[i, 'SST'] + sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2)))
-                    c_subr.pd_sample_record.loc[i, 'var'] = copy.copy(float(c_subr.pd_sample_record.loc[i, 'SST'] - i_n_rep * pow(c_subr.pd_sample_record.loc[i, 'mean'], 2)) / (i_n_rep - 1))
-                    c_subr.pd_sample_record.loc[i, '# rep'] = i_n_rep
+    df_testing_samples = df_testing_samples.reset_index(drop=True)
+    for i in range(0, len(df_testing_samples)):
+        for c_subr in [c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.l_coordinate_lower == df_testing_samples.loc[i, 'l_coordinate_lower'] and c_subr.l_coordinate_upper == df_testing_samples.loc[i, 'l_coordinate_upper']]:
+            c_subr.pd_sample_record = c_subr.pd_sample_record.reset_index(drop=True)  # reindex the sorted df
+
+            for j in range(0, len(c_subr.pd_sample_record)):
+                if ([c_subr.pd_sample_record.loc[j, p['Name']] for p in params] == [df_testing_samples.loc[i, p['Name']]
+                                                                                    for p in params]):
+                    i_n_rep = (c_subr.pd_sample_record.loc[j, '# rep'] + len(df_testing_samples.loc[i, 'result']))
+                    if c_subr.pd_sample_record.loc[j, '# rep'] == 0:
+                        c_subr.pd_sample_record.loc[j, 'mean'] = np.mean(df_testing_samples.loc[i, 'result'])
+                        c_subr.pd_sample_record.loc[j, 'SST'] = sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2))
+                        c_subr.pd_sample_record.loc[j, 'var'] = np.var(df_testing_samples.loc[i, 'result'])
+                        c_subr.pd_sample_record.loc[j, '# rep'] = i_n_rep
+                    else:
+                        c_subr.pd_sample_record.loc[j, 'mean'] = copy.copy(float(
+                            int(c_subr.pd_sample_record.loc[i, '# rep']) * c_subr.pd_sample_record.loc[i, 'mean'] + sum(df_testing_samples.loc[i, 'result'])) / i_n_rep)
+                        c_subr.pd_sample_record.loc[j, 'SST'] = copy.copy(c_subr.pd_sample_record.loc[i, 'SST'] + sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2)))
+                        c_subr.pd_sample_record.loc[j, 'var'] = copy.copy(float(c_subr.pd_sample_record.loc[i, 'SST'] - i_n_rep * pow(c_subr.pd_sample_record.loc[i, 'mean'], 2)) / (i_n_rep - 1))
+                        c_subr.pd_sample_record.loc[j, '# rep'] = i_n_rep
 
         # the following update i_min_sample, i_max_sample, f_min_diff_sample_mean, and f_max_var
         c_subr.pd_sample_record = c_subr.pd_sample_record.sort_values(by="mean", ascending=True)
@@ -207,11 +216,12 @@ output:
 """
 
 
-def fun_pruning_indicator(c_subr, f_CI_u):
-    if c_subr.i_min_sample > f_CI_u:
-        c_subr.b_maintaining_indicator = False
-        c_subr.b_pruning_indicator = True
-    return c_subr
+def fun_pruning_indicator(l_subr, f_CI_u):
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.b_worst is True):
+        if c_subr.i_min_sample > f_CI_u:
+            c_subr.b_maintaining_indicator = False
+            c_subr.b_pruning_indicator = True
+    return l_subr
 
 """
 Created on Fri Jun 23 16:49:41 2017
@@ -226,11 +236,12 @@ output:
 """
 
 
-def fun_maintaining_indicator(c_subr, f_CI_l):
-    if c_subr.i_max_sample < f_CI_l:
-        c_subr.b_maintaining_indicator = True
-        c_subr.b_pruning_indicator = False
-    return c_subr
+def fun_maintaining_indicator(l_subr, f_CI_l):
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.b_elite is True):
+        if c_subr.i_max_sample < f_CI_l:
+            c_subr.b_maintaining_indicator = True
+            c_subr.b_pruning_indicator = False
+    return l_subr
 
 """
 Created on Fri Jun 23 16:49:42 2017
@@ -246,11 +257,11 @@ output:
 """
 
 
-def fun_elite_indicator(c_subr, f_CI_l):
-    if c_subr.i_max_sample < f_CI_l:
+def fun_elite_indicator(l_subr, f_CI_l):
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.i_max_sample < f_CI_l):
         c_subr.b_elite = True
         c_subr.b_worst = False
-    return c_subr
+    return l_subr
 
 """
 Created on Fri Jun 23 16:49:42 2017
@@ -265,11 +276,11 @@ output:
 """
 
 
-def fun_worst_indicator(c_subr, f_CI_u):
-    if c_subr.i_min_sample > f_CI_u:
+def fun_worst_indicator(l_subr, f_CI_u):
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.i_min_sample > f_CI_u):
         c_subr.b_elite = False
         c_subr.b_worst = True
-    return c_subr
+    return l_subr
 
 """
 Created on Fri Jun 23 16:57:51 2017
@@ -320,11 +331,6 @@ def fun_CI_builder(l_subr, pd_order_z, f_delta_k, f_alpha_k, f_epsilon):
     f_vol_M = sum(c.f_volume for c in l_subr if c.s_label == 'M' and c.b_activate is True)
     f_delta_kl = f_delta_k - float(f_vol_P * f_epsilon) / (f_vol_S * f_vol_C)
     f_delta_ku = f_delta_k + float(f_vol_M * f_epsilon) / (f_vol_S * f_vol_C)
-    print (f_delta_kl)
-    print (f_delta_ku)
-    print (f_delta_k)
-    print (f_vol_S)
-    print (f_vol_C, f_vol_P, f_vol_M)
     f_max_r = binom.ppf(f_alpha_k / 2, len(pd_order_z), f_delta_kl)
     f_min_s = binom.ppf(1 - f_alpha_k / 2, len(pd_order_z), f_delta_ku)
     if math.isnan(f_max_r) is True:
@@ -337,11 +343,7 @@ def fun_CI_builder(l_subr, pd_order_z, f_delta_k, f_alpha_k, f_epsilon):
     # print ('max_r: '+str(f_max_r))
     # print ('min_s: '+str(f_min_s))
     CI_l = pd_order_z.loc[f_max_r, 'mean']
-    print ('CI_l')
-    print (CI_l)
     CI_u = pd_order_z.loc[f_min_s, 'mean']
-    print ('CI_u')
-    print (CI_u)
     return [CI_u, CI_l]
 
 """
@@ -351,9 +353,10 @@ Created on Thu Jun 29 10:45:17 2017
 """
 
 
-def fun_pruning_labeler(c_subr):
-    c_subr.s_label = 'P'
-    return c_subr
+def fun_pruning_labeler(l_subr):
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.b_pruning_indicator is True and c_subr.b_activate is True):  # <-- whose  worst == 1
+        c_subr.s_label = 'P'
+    return l_subr
 
 """
 Created on Thu Jun 29 10:46:09 2017
@@ -362,9 +365,10 @@ Created on Thu Jun 29 10:46:09 2017
 """
 
 
-def fun_maintaining_labeler(c_subr):
-    c_subr.s_label = 'M'
-    return c_subr
+def fun_maintaining_labeler(l_subr):
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.b_maintaining_indicator is True and c_subr.b_activate is True):  # <-- whose elite == 1
+        c_subr.s_label = 'M'
+    return l_subr
 
 """
 Created on Tue Jun 27 19:07:27 2017
@@ -379,12 +383,10 @@ http://effbot.org/pyfaq/how-do-i-copy-an-object-in-python.htm
 """
 
 
-def fun_reg_branching(c_subr, i_n_branching, l_para):
-    # the following decides which dimension should be divide
-    my_list = (np.array(c_subr.l_coordinate_upper)-np.array(c_subr.l_coordinate_lower)).tolist()
-    f_max_value = max(my_list)
-    i_max_index = my_list.index(f_max_value)
-    s_branching_dim = l_para[i_max_index]
+def fun_reg_branching(c_subr, i_n_branching, params, s_branching_dim):
+    print ('fun_reg_branching')
+
+    i_max_index = [p['Name'] for p in params].index(s_branching_dim)
 
     l_subr = []
     # the following creates B subregions in the list of subregions
@@ -393,7 +395,7 @@ def fun_reg_branching(c_subr, i_n_branching, l_para):
         l_coordinate_upper = copy.deepcopy(c_subr.l_coordinate_upper)
         l_coordinate_lower[i_max_index] = float((c_subr.l_coordinate_upper[i_max_index] - c_subr.l_coordinate_lower[i_max_index])*i)/i_n_branching+c_subr.l_coordinate_lower[i_max_index]
         l_coordinate_upper[i_max_index] = float((c_subr.l_coordinate_upper[i_max_index] - c_subr.l_coordinate_lower[i_max_index])*(i+1))/i_n_branching+c_subr.l_coordinate_lower[i_max_index]
-        l_new_branching_subr = c_SubRegion(l_coordinate_lower, l_coordinate_upper, l_para)
+        l_new_branching_subr = c_SubRegion(l_coordinate_lower, l_coordinate_upper, params)
         l_subr.append(l_new_branching_subr)
     # the following reallocate the sampling points
     for i in l_subr:
@@ -408,3 +410,51 @@ def fun_reg_branching(c_subr, i_n_branching, l_para):
         if len(i.pd_sample_record) > 1:
             i.f_max_var = max(i.pd_sample_record.loc[:, 'var'])
     return l_subr
+
+
+def fun_plot2D(l_subr, l_ini_coordinate_lower, l_ini_coordinate_upper, params, str_k):
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(l_ini_coordinate_upper[0], l_ini_coordinate_upper[1])
+    ax.plot(l_ini_coordinate_lower[0], l_ini_coordinate_lower[1])
+
+    for i in (i for i in l_subr if i.b_activate is True):
+        if i.s_label == 'M':
+            alpha_value = 1
+        elif i.s_label == 'P':
+            alpha_value = 0.1
+        else:  # i.s_label == 'C':
+            alpha_value = 0.6
+        ax.add_patch(
+            patches.Rectangle(
+                (i.l_coordinate_lower[0], i.l_coordinate_lower[1]),  # (x,y)
+                i.l_coordinate_upper[0] - i.l_coordinate_lower[0],  # width
+                i.l_coordinate_upper[1] - i.l_coordinate_lower[1],  # height
+                alpha=alpha_value,
+                edgecolor="black"
+            )
+        )
+    # the following plot the minimum and maximum point
+    df_all_sample = pd.concat([c_subr.pd_sample_record for c_subr in l_subr if c_subr.b_activate is True])
+    df_all_sample = df_all_sample.sort_values(by="mean", ascending=True)  # sort before start
+    df_all_sample = df_all_sample.reset_index(drop=True)
+    f_min_value = df_all_sample.loc[0, 'mean']
+    f_max_value = df_all_sample.loc[len(df_all_sample) - 1, 'mean']
+    l_min_coordinate = [df_all_sample.loc[0, p['Name']] for p in params]
+    l_max_coordinate = [df_all_sample.loc[len(df_all_sample) - 1, p['Name']] for p in params]
+    #red_patch = patches.Patch(color='red', marker='x', label='The minimum value:'+str(f_min_value))
+    #blue_patch = patches.Patch(color='blue', marker='o', label='The maximum value:'+str(f_max_value))
+    p_min, p_max = ax.plot(l_min_coordinate[0], l_min_coordinate[1], '*b', l_max_coordinate[0], l_max_coordinate[1], 'or')
+    fig.legend((p_min, p_max), ('minimum point:['+str(l_min_coordinate[0])+','+str(l_min_coordinate[1])+'], result:'+str(f_min_value), 'maximum point:['+str(l_max_coordinate[0])+','+str(l_max_coordinate[1])+'], result:'+str(f_max_value)), 'upper right')
+
+    # plt.legend(handles=[red_patch, blue_patch])
+
+    ax.set_xlabel([p['Name'] for p in params][0])
+    ax.set_ylabel([p['Name'] for p in params][1])
+
+    fig.savefig('test_iteration '+str_k+'.png', dpi=200, bbox_inches='tight')
+    plt.close(fig)
+    with open('test_l_subr_iteration'+str_k+'.dat', "wb") as f:
+        pickle.dump(l_subr, f)
+
+    plt.close(fig)

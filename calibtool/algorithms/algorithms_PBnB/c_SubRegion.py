@@ -7,7 +7,7 @@ Created on Fri Jun 23 14:21:27 2017
 
 
 class c_SubRegion(object): 
-    def __init__(self, coordinate_lower, coordinate_upper, l_para):
+    def __init__(self, coordinate_lower, coordinate_upper, params):
         import pandas as pd  # this is how I usually import pandas
         import numpy as np
         self.s_label = 'C'  # C: undetermined, P:prune, M:maintain
@@ -39,7 +39,7 @@ class c_SubRegion(object):
         #self.pd_sample_record['var'] = pd.Series(0, index=self.pd_sample_record.index)
         #self.pd_sample_record['SST'] = pd.Series(0, index=self.pd_sample_record.index)
         #self.pd_sample_record['iteration'] = pd.Series(0, index=self.pd_sample_record.index)
-        self.pd_sample_record = pd.DataFrame([], columns=l_para+['# rep']+['mean']+['var']+['SST'])
+        self.pd_sample_record = pd.DataFrame([], columns=[p['Name'] for p in params]+['# rep']+['mean']+['var']+['SST'])
         self.pd_sample_record['# rep'].astype(int)
         self.pd_sample_record['mean'].astype(int)
         self.pd_sample_record['var'].astype(float)

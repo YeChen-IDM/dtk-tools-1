@@ -2,7 +2,7 @@
 # or via the calibtool.py script: 'calibtool run example_optimization_PBnB.py'
 import math
 import random
-import calibtool.algorithms_PBnB.m_intial_paramters_setting as par
+import calibtool.algorithms.algorithms_PBnB.m_intial_paramters_setting as par
 
 from scipy.special import gammaln
 
@@ -13,7 +13,7 @@ from calibtool.study_sites.DielmoCalibSite import DielmoCalibSite
 from calibtool.study_sites.NdiopCalibSite import NdiopCalibSite
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from simtools.SetupParser import SetupParser
-from calibtool.algorithms_PBnB.OptimTool_PBnB import OptimTool_PBnB
+from calibtool.algorithms.algorithms_PBnB.OptimTool_PBnB import OptimTool_PBnB
 #from calibtool.plotters.OptimToolPlotter_PBnB import OptimToolPlotter_PBnB
 
 SetupParser.default_block = 'HPC'
