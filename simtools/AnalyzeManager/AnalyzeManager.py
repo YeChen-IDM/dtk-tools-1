@@ -68,9 +68,11 @@ class AnalyzeManager:
             if not exp_manager.asset_service:
                 exp_manager.parserClass.asset_service = False
 
+        # Call the analyzer per experiment function for initialization
         for analyzer in self.analyzers:
             analyzer.per_experiment(experiment)
 
+        # Create the thread pool to create the parsers
         p = ThreadPool()
         res = []
         for simulation in exp_manager.experiment.simulations:
@@ -79,6 +81,7 @@ class AnalyzeManager:
         p.close()
         p.join()
 
+        # Retrieve the parsers from the pool
         for r in res:
             parser = r.get()
             if parser: self.parsers.append(parser)
