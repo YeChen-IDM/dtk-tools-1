@@ -23,9 +23,16 @@ class BaseAnalyzer(object):
         self.working_dir = None
 
     def initialize(self):
+        """
+        Called once after the analyzer has been added to the AnalyzeManager
+        """
         pass
 
     def per_experiment(self, experiment):
+        """
+        Called once per experiment before doing the apply on the simulations
+        :param experiment:
+        """
         pass
 
     def filter(self, sim_metadata):
