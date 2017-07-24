@@ -68,6 +68,9 @@ class AnalyzeManager:
             if not exp_manager.asset_service:
                 exp_manager.parserClass.asset_service = False
 
+        for analyzer in self.analyzers:
+            analyzer.per_experiment(experiment)
+
         p = ThreadPool()
         res = []
         for simulation in exp_manager.experiment.simulations:

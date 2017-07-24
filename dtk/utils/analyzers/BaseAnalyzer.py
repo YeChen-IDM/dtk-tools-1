@@ -25,6 +25,9 @@ class BaseAnalyzer(object):
     def initialize(self):
         pass
 
+    def per_experiment(self, experiment):
+        pass
+
     def filter(self, sim_metadata):
         """
         Decide whether analyzer should process a simulation based on its associated metadata
