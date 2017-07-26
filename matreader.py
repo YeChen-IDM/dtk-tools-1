@@ -18,13 +18,16 @@ class ParameterPointTable(object):
         mat = scipy.io.loadmat(filename, squeeze_me=True, struct_as_record=False)
         points = mat[points_key]
         header = ['these', 'are', 'dummy_params'] # ck4, read from file using header_key
-        return cls(header=header, points=points)
+        #return cls(header=header, points=points)
+        return header, points
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-    tpis = ParameterPointTable.read_mat_points_file(filename)
-
-    print('original data header\n---\n%s\n' % '\n'.join(tpis.header))
-    print('original data format:\n---\n%s\n' % '\n'.join(map(lambda x: str(x), tpis.original_points)))
-    print('constructed structure:\n---\n')
-    pprint(tpis.points)
+    # tpis = ParameterPointTable.read_mat_points_file(filename)
+    #
+    # print('original data header\n---\n%s\n' % '\n'.join(tpis.header))
+    # print('original data format:\n---\n%s\n' % '\n'.join(map(lambda x: str(x), tpis.original_points)))
+    # print('constructed structure:\n---\n')
+    # pprint(tpis.points)
+    header, points = ParameterPointTable.read_mat_points_file(filename)
+    
