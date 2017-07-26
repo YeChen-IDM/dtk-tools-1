@@ -10,9 +10,10 @@ from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.ModBuilder import ModBuilder
 from simtools.SetupParser import SetupParser
+from simtools.Utilities.Matlab.matreader import read_mat_points_file
 
 SetupParser.default_block = 'HPC'
-
+tpi_matlab_filename = 'put_your_filename_here_with_tpi_and_header_tables_with_no_custom_classes_in_it.mat'
 
 def header_table_to_dict(header, table):
     df = pandas.DataFrame(data=table, columns=header)
@@ -30,7 +31,7 @@ config_builder = DTKConfigBuilder.from_files(
  )
 
 # Load the scenarios
-s_headers = [
+scenario_header = [
     "Name",
     "Start_Year__KP_Seeding_Year",
     "Condom_Usage_Probability__KP_INFORMAL.Max"
@@ -40,8 +41,10 @@ scenarios = [
     ['Scenario 2', 1981, 0.456]
 ]
 
-# And the points
-p_headers = [
+# And the points ; The REAL way followed by an example that does not require a .mat file
+#point_header, points = read_mat_points_file(tpi_matlab_filename, header_key='header', points_key='points')
+
+point_header = [
     "Run_Number",
     "Base_Infectivity"
 ]
@@ -51,8 +54,8 @@ points = [
 ]
 
 # Get the dicts
-points_dict = header_table_to_dict(p_headers, points)
-scenarios_dict = header_table_to_dict(s_headers, scenarios)
+points_dict = header_table_to_dict(point_header, points)
+scenarios_dict = header_table_to_dict(scenario_header, scenarios)
 
 # Experiments containing all the scenarios
 experiments = []
@@ -99,7 +102,3 @@ if __name__ == "__main__":
                 em.refresh_experiment()
 
         if not finished: time.sleep(3)
-
-
-
-
