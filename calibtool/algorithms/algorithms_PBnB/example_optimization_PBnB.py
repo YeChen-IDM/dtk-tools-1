@@ -48,28 +48,12 @@ params = [
         'Max': 2.5
     },
     {
-        'Name': 'MSP1 Merozoite Kill Fraction',
-        'Dynamic': False,   # <-- NOTE: this parameter is frozen at Guess
-        'MapTo': 'MSP1_Merozoite_Kill_Fraction',
-        'Guess': 0.65,
-        'Min': 0.4,
-        'Max': 0.7
-    },
-    {
         'Name': 'Falciparum PfEMP1 Variants',
         'Dynamic': True,
         'MapTo': 'Falciparum_PfEMP1_Variants',
         'Guess': 1500,
         'Min': 1, # 900 [0]
         'Max': 5000 # 1700 [1e5]
-    },
-    {
-        'Name': 'Min Days Between Clinical Incidents',
-        'Dynamic': False, # <-- NOTE: this parameter is frozen at Guess
-        'MapTo': 'Min_Days_Between_Clinical_Incidents',
-        'Guess': 25,
-        'Min': 1,
-        'Max': 50
     },
 ]
 
@@ -131,8 +115,8 @@ calib_manager = CalibManager(name='Example_Optimization_PBnB',    # <-- Please c
                              map_sample_to_model_input_fn=map_sample_to_model_input,
                              sites=sites,
                              next_point=optimtool_PBnB,
-                             sim_runs_per_param_set=1, # <-- Replicates
-                             max_iterations=3,         # <-- Iterations
+                             sim_runs_per_param_set=1,  # <-- Replicates
+                             max_iterations=30,         # <-- Iterations
                              plotters=plotters)
 
 run_calib_args = {}

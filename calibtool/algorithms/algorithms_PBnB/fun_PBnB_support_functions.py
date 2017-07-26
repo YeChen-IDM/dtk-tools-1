@@ -88,7 +88,7 @@ def turn_to_power(list, power):
 
 
 def fun_results_organizer(l_subr, df_testing_samples, params):
-    #print ('=====fun_results_organizer=====')
+    print ('=====fun_results_organizer=====')
     # df_testing_samples: ['l_coordinate_lower', 'l_coordinate_upper'] + l_para + ['replication'] + ['result']
     # result contains the list of outputs
     df_testing_samples = df_testing_samples.reset_index(drop=True)
@@ -171,8 +171,6 @@ def fun_replication_update(l_subr, i_n_rep, f_alpha):
         f_d_star = 0.005
     else:
         f_d_star = min(i.f_min_diff_sample_mean for i in l_subr if i.s_label == 'C' and i.b_activate is True)
-    for i in (i for i in l_subr if i.b_activate is True and i.s_label == 'C'):
-        print (i.f_max_var)
     f_var_star = max(i.f_max_var for i in l_subr if i.s_label == 'C' and i.b_activate is True)
     z = scipy.stats.norm.ppf(1 - f_alpha / 2)
     # to prevent the float NaN
@@ -324,7 +322,6 @@ outout
 
 
 def fun_CI_builder(l_subr, pd_order_z, f_delta_k, f_alpha_k, f_epsilon):
-    print ('==========fun_CI_builder==============')
     f_vol_S = l_subr[0].f_volume
     f_vol_C = sum(c.f_volume for c in l_subr if c.s_label == 'C' and c.b_activate is True)
     f_vol_P = sum(c.f_volume for c in l_subr if c.s_label == 'P' and c.b_activate is True)
@@ -384,11 +381,9 @@ http://effbot.org/pyfaq/how-do-i-copy-an-object-in-python.htm
 
 
 def fun_reg_branching(c_subr, i_n_branching, params, s_branching_dim):
-    print ('fun_reg_branching')
-
     i_max_index = [p['Name'] for p in params].index(s_branching_dim)
 
-    l_subr = []
+    l_subr_new = []
     # the following creates B subregions in the list of subregions
     for i in range(0, i_n_branching):
         l_coordinate_lower = copy.deepcopy(c_subr.l_coordinate_lower)
@@ -396,11 +391,11 @@ def fun_reg_branching(c_subr, i_n_branching, params, s_branching_dim):
         l_coordinate_lower[i_max_index] = float((c_subr.l_coordinate_upper[i_max_index] - c_subr.l_coordinate_lower[i_max_index])*i)/i_n_branching+c_subr.l_coordinate_lower[i_max_index]
         l_coordinate_upper[i_max_index] = float((c_subr.l_coordinate_upper[i_max_index] - c_subr.l_coordinate_lower[i_max_index])*(i+1))/i_n_branching+c_subr.l_coordinate_lower[i_max_index]
         l_new_branching_subr = c_SubRegion(l_coordinate_lower, l_coordinate_upper, params)
-        l_subr.append(l_new_branching_subr)
+        l_subr_new.append(l_new_branching_subr)
     # the following reallocate the sampling points
-    for i in l_subr:
+    for i in l_subr_new:
         i.pd_sample_record = c_subr.pd_sample_record[(c_subr.pd_sample_record[s_branching_dim] > i.l_coordinate_lower[i_max_index]) & (c_subr.pd_sample_record[s_branching_dim] < i.l_coordinate_upper[i_max_index])]
-    for i in l_subr:  # reindex the sampling points into 0 1 2...
+    for i in l_subr_new:  # reindex the sampling points into 0 1 2...
         i.pd_sample_record = i.pd_sample_record.reset_index(drop=True)
         # update attributed based on data
         if len(i.pd_sample_record) > 0:
@@ -409,7 +404,7 @@ def fun_reg_branching(c_subr, i_n_branching, params, s_branching_dim):
             i.f_min_diff_sample_mean = min(i.pd_sample_record['mean'].shift(-1) - i.pd_sample_record['mean'])
         if len(i.pd_sample_record) > 1:
             i.f_max_var = max(i.pd_sample_record.loc[:, 'var'])
-    return l_subr
+    return l_subr_new
 
 
 def fun_plot2D(l_subr, l_ini_coordinate_lower, l_ini_coordinate_upper, params, str_k):

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import logging
-
+import operator
 import m_intial_paramters_setting as par
 from fun_PBnB_support_functions import *
 from c_SubRegion import c_SubRegion
@@ -23,9 +23,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
                  i_replication=par.i_replication,
                  i_stopping_max_k=par.i_stopping_max_k,
                  ):
-        self.args = locals()  # Store inputs in case set_state is called later and we want to override with new (user) args
-        del self.args['self']
-        self.need_resolve = False
+        #self.args = locals()  # Store inputs in case set_state is called later and we want to override with new (user) args
 
         self.constrain_sample_fn = constrain_sample_fn
         self.params = params
@@ -77,9 +75,9 @@ class OptimTool_PBnB(NextPointAlgorithm):
 
     def get_samples_for_iteration(self, iteration):
         print ('===============get_samples_for_iteration=============')
-        print self.params
-        print type(self.params)
+
         df_samples = self.fun_probability_branching_and_bound(iteration)
+        print df_samples
         # return self.fun_generate_samples_from_df(df_samples[[p['Name'] for p in self.params]+['Run_Number']])
         return self.fun_generate_samples_from_df(df_samples[[p['Name'] for p in self.params]])
 
@@ -101,10 +99,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
                 self.i_N_k = int(self.i_c_k / sum(1 for j in self.l_subr if j.s_label == 'C' and j.b_activate is True))
                 [self.l_subr, self.df_testing_samples] = fun_sample_points_generator(self.l_subr, self.i_N_k,
                                                                                      self.i_R_k, self.s_stage, [p['Name'] for p in self.params])
-                for i in self.l_subr:
-                    print (i.pd_sample_record)
-                print('df_testing_samples')
-                print(self.df_testing_samples)
+
                 self.s_stage = 'stage_2'
                 if not self.df_testing_samples.empty:  # <-- call calibtool only if there is new sampling demand
                     return self.df_testing_samples
@@ -145,7 +140,9 @@ class OptimTool_PBnB(NextPointAlgorithm):
                         self.l_subr = fun_worst_indicator(self.l_subr, self.f_CI_u)
 
                         # TODO: Exception when self.f_epsilon is larger than volume, need to modify the setting of self.f_epsilon
-
+                        print self.f_alpha_k
+                        print self.f_epsilon
+                        print self.l_subr[0].f_volume
                         self.i_N_elite_worst = int(np.ceil(np.log(self.f_alpha_k) /
                                                            np.log(1. - (self.f_epsilon / self.l_subr[0].f_volume))))  # <-- number of sampling points for elite and worst subregions
 
@@ -202,12 +199,16 @@ class OptimTool_PBnB(NextPointAlgorithm):
                             self.dict_n_branching_dim[s_branching_dim] += 1
 
                             l_temp_new_branching_subr = []
-                            for i in (i for i in self.l_subr if i.s_label == 'C' and i.b_activate is True and i.b_branchable is True):
-                                i.b_activate = False  # deactivate the original subregion
-                                l_temp_new_branching_subr += fun_reg_branching(i, self.i_n_branching, self.params, s_branching_dim)
+                            for c_subr in (c_subr for c_subr in self.l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.b_branchable is True):
+                                c_subr.b_activate = False  # deactivate the original subregion
+                                l_temp_new_branching_subr += fun_reg_branching(c_subr, self.i_n_branching, self.params, s_branching_dim)
                             # begin: print the data so far==================
                             self.l_subr += l_temp_new_branching_subr  # append the branching subregions to the list
-
+                            # the following index the subregions for get and set results
+                            index_number = 0
+                            for c_subr in self.l_subr:
+                                c_subr.i_index = index_number
+                                index_number += 1
                             # end: print the data so far==================
                             # end of branching-------------------------------
                             if all(i.b_maintaining_indicator is False for i in
@@ -347,6 +348,9 @@ class OptimTool_PBnB(NextPointAlgorithm):
             i_N_elite_worst=self.i_N_elite_worst,
             i_R_elite_worst=self.i_R_elite_worst,
             i_R_k=self.i_R_k,
+            i_dimension=self.i_dimension,
+            i_dimension_true=self.i_dimension_true,
+            dict_n_branching_dim=self.dict_n_branching_dim,
             df_testing_samples=self.df_testing_samples.where(~self.df_testing_samples.isnull(), other=None).to_dict(orient='list')
         )
         optimtool_state_l_subr = {}
@@ -354,6 +358,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
             s_c_subr_name = str(c_subr.l_coordinate_lower)+','+str(c_subr.l_coordinate_upper)
             optimtool_state_c_subr = {s_c_subr_name: {
                     's_label': c_subr.s_label,
+                    'i_index': c_subr.i_index,
                     'b_activate': c_subr.b_activate,
                     'b_branchable': c_subr.b_branchable,
                     'b_elite': c_subr.b_elite,
@@ -374,15 +379,12 @@ class OptimTool_PBnB(NextPointAlgorithm):
         return optimtool_state
 
     def set_state(self, state, iteration):
-        print type(state)
-        print state
-        print state['i_R_k']
-        print type(state['i_R_k'])
         self.params = state['params']
         self.f_delta = state['f_delta']
         self.f_alpha = state['f_alpha']
         self.i_n_branching = state['i_n_branching']
         self.i_k_b = state['i_k_b']
+        self.i_c_k = state['i_c_k']
         self.i_c = state['i_c']
         self.i_replication = state['i_replication']
         self.i_stopping_max_k = state['i_stopping_max_k']
@@ -390,6 +392,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
 
         self.i_k = state['i_k']
         self.i_k_c = state['i_k_c']
+
         self.s_stage = state['s_stage']
         self.f_CI_u = state['f_CI_u']
         self.f_CI_l = state['f_CI_l']
@@ -400,19 +403,16 @@ class OptimTool_PBnB(NextPointAlgorithm):
         self.i_N_elite_worst = state['i_N_elite_worst']
         self.i_R_elite_worst = state['i_R_elite_worst']
         self.i_R_k = state['i_R_k']
-        print self.i_R_k
-        print type(self.i_R_k)
         self.df_testing_samples = pd.DataFrame.from_dict(state['df_testing_samples'], orient='columns')
         self.df_testing_samples['replication'].astype(int)
+        self.i_dimension = state['i_dimension']
+        self.i_dimension_true = state['i_dimension_true']
+        self.dict_n_branching_dim = state['dict_n_branching_dim']
         self.l_subr = []  # <-- list of subregion objects
-        print self.df_testing_samples
-        print self.i_R_k
-        print (type(self.i_R_k))
+
         for c_subr in state['l_subr']:
-            print (self.params)
-            print type(self.params)
-            print ([p['Name'] for p in self.params])
             c_subr_set = c_SubRegion(state['l_subr'][c_subr]['l_coordinate_lower'], state['l_subr'][c_subr]['l_coordinate_upper'], self.params)
+            c_subr_set.i_index = state['l_subr'][c_subr]['i_index']
             c_subr_set.s_label = state['l_subr'][c_subr]['s_label']
             c_subr_set.b_activate = state['l_subr'][c_subr]['b_activate']
             c_subr_set.b_branchable = state['l_subr'][c_subr]['b_branchable']
@@ -428,6 +428,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
             c_subr_set.pd_sample_record = pd.DataFrame.from_dict(state['l_subr'][c_subr]['pd_sample_record'], orient='columns')
             c_subr_set.pd_sample_record['# rep'].astype(int)
             self.l_subr.append(c_subr_set)
+        self.l_subr.sort(key=operator.attrgetter('i_index'))  # dinc->list and sorting
 
     def end_condition(self):
         return self.i_k > self.i_stopping_max_k

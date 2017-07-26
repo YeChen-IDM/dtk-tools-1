@@ -11,6 +11,7 @@ class c_SubRegion(object):
         import pandas as pd  # this is how I usually import pandas
         import numpy as np
         self.s_label = 'C'  # C: undetermined, P:prune, M:maintain
+        self.i_index = 0
         self.b_activate = True  # become false if branching into two
         self.b_branchable = True
         self.b_elite = False
