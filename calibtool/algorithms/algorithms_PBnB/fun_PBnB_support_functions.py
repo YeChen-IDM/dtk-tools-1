@@ -88,7 +88,7 @@ def turn_to_power(list, power):
 
 
 def fun_results_organizer(l_subr, df_testing_samples, params):
-    print ('=====fun_results_organizer=====')
+    # TODO: add option to quick organizing due to one replication
     # df_testing_samples: ['l_coordinate_lower', 'l_coordinate_upper'] + l_para + ['replication'] + ['result']
     # result contains the list of outputs
     df_testing_samples = df_testing_samples.reset_index(drop=True)
