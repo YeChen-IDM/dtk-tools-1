@@ -48,22 +48,22 @@ def fun_sample_points_generator(l_subr, i_n_sampling, i_n_rep, s_stage, l_para):
         if len(c_subr.pd_sample_record) >= i_n_sampling:  # if has enough number of sampling points
             #print ('if has enough number of sampling points')
             for i in (i for i in range(0, len(c_subr.pd_sample_record)) if
-                      c_subr.pd_sample_record.loc[i, '# rep'] < i_n_rep):  # check enough # reps or not, i is index
+                      c_subr.pd_sample_record.loc[i, 'rep'] < i_n_rep):  # check enough # reps or not, i is index
                 #df_testing_samples.append(pd.DataFrame([[c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, '# rep'])]], columns=l_column))
-                l_vals = [c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, '# rep'])]
+                l_vals = [c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, 'rep'])]
                 df_testing_samples = df_testing_samples.append(dict(zip(l_column, l_vals)), ignore_index=True)
 
         else:  # if has not enough sampling points and replication
             #print ('if has not enough sampling points and replication')
             if len(c_subr.pd_sample_record) >= 1:  # if already has sample points, first deal with them
-                for i in (i for i in range(0, len(c_subr.pd_sample_record)) if c_subr.pd_sample_record.loc[i, '# rep'] < i_n_rep):  # check enough # reps or not for existing old sampling points
+                for i in (i for i in range(0, len(c_subr.pd_sample_record)) if c_subr.pd_sample_record.loc[i, 'rep'] < i_n_rep):  # check enough # reps or not for existing old sampling points
                     #df_testing_samples.append(pd.DataFrame([[c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, '# rep'])]], columns=l_column))
-                    l_vals = [c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, '# rep'])]
+                    l_vals = [c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, 'rep'])]
                     df_testing_samples = df_testing_samples.append(dict(zip(l_column, l_vals)), ignore_index=True)
             i_ini_length = len(c_subr.pd_sample_record)  # number of sampling point so far in this subregion
             for i in range(i_ini_length, i_n_sampling):  # create new rows for new sampling points
                 c_subr.pd_sample_record.loc[i] = [1 for n in range(len(c_subr.pd_sample_record.columns))]
-                c_subr.pd_sample_record.loc[i, '# rep'] = 0
+                c_subr.pd_sample_record.loc[i, 'rep'] = 0
 
             index = [x for x in range(i_ini_length, i_n_sampling)]
             for i in range(0, len(l_para)):  # create new sampling point and add to dataframe
@@ -88,30 +88,33 @@ def turn_to_power(list, power):
 
 
 def fun_results_organizer(l_subr, df_testing_samples, params):
-    # TODO: add option to quick organizing due to one replication
     # df_testing_samples: ['l_coordinate_lower', 'l_coordinate_upper'] + l_para + ['replication'] + ['result']
-    # result contains the list of outputs
     df_testing_samples = df_testing_samples.reset_index(drop=True)
-    for i in range(0, len(df_testing_samples)):
-        for c_subr in [c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.l_coordinate_lower == df_testing_samples.loc[i, 'l_coordinate_lower'] and c_subr.l_coordinate_upper == df_testing_samples.loc[i, 'l_coordinate_upper']]:
-            c_subr.pd_sample_record = c_subr.pd_sample_record.reset_index(drop=True)  # reindex the sorted df
-
-            for j in range(0, len(c_subr.pd_sample_record)):
-                if ([c_subr.pd_sample_record.loc[j, p['Name']] for p in params] == [df_testing_samples.loc[i, p['Name']]
-                                                                                    for p in params]):
-                    i_n_rep = (c_subr.pd_sample_record.loc[j, '# rep'] + len(df_testing_samples.loc[i, 'result']))
-                    if c_subr.pd_sample_record.loc[j, '# rep'] == 0:
-                        c_subr.pd_sample_record.loc[j, 'mean'] = np.mean(df_testing_samples.loc[i, 'result'])
-                        c_subr.pd_sample_record.loc[j, 'SST'] = sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2))
-                        c_subr.pd_sample_record.loc[j, 'var'] = np.var(df_testing_samples.loc[i, 'result'])
-                        c_subr.pd_sample_record.loc[j, '# rep'] = i_n_rep
-                    else:
-                        c_subr.pd_sample_record.loc[j, 'mean'] = copy.copy(float(
-                            int(c_subr.pd_sample_record.loc[i, '# rep']) * c_subr.pd_sample_record.loc[i, 'mean'] + sum(df_testing_samples.loc[i, 'result'])) / i_n_rep)
-                        c_subr.pd_sample_record.loc[j, 'SST'] = copy.copy(c_subr.pd_sample_record.loc[i, 'SST'] + sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2)))
-                        c_subr.pd_sample_record.loc[j, 'var'] = copy.copy(float(c_subr.pd_sample_record.loc[i, 'SST'] - i_n_rep * pow(c_subr.pd_sample_record.loc[i, 'mean'], 2)) / (i_n_rep - 1))
-                        c_subr.pd_sample_record.loc[j, '# rep'] = i_n_rep
-
+    df_testing_samples_s_subr = pd.DataFrame([], columns=[p['Name'] for p in params] + ['rep'] + ['mean'] + ['var'] + ['SST'])
+    df_testing_samples_s_subr['rep'].astype(int)
+    df_testing_samples_s_subr['mean'].astype(float)
+    df_testing_samples_s_subr['var'].astype(float)
+    df_testing_samples_s_subr['SST'].astype(float)
+    print df_testing_samples_s_subr
+    for c_subr in [c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True]:
+        c_subr.pd_sample_record.drop(c_subr.pd_sample_record[c_subr.pd_sample_record.rep == 0.0].index, inplace=True)
+        print " c_subr.pd_sample_record"
+        print c_subr.pd_sample_record
+        df_testing_samples['l_coordinate_lower'] = df_testing_samples['l_coordinate_lower'].astype(str)
+        df_testing_samples['l_coordinate_upper'] = df_testing_samples['l_coordinate_upper'].astype(str)
+        df_testing_samples_s_subr[[p['Name'] for p in params]+['mean']] = df_testing_samples[(df_testing_samples['l_coordinate_lower'] == str(c_subr.l_coordinate_lower)) & (df_testing_samples['l_coordinate_upper'] == str(c_subr.l_coordinate_upper))][[p['Name'] for p in params]+['result']]
+        df_testing_samples_s_subr = df_testing_samples_s_subr.reset_index(drop=True)
+        for i in range(0, len(df_testing_samples_s_subr)):
+            df_testing_samples_s_subr.loc[i, 'mean'] = df_testing_samples_s_subr.loc[i, 'mean'][0]
+        print df_testing_samples_s_subr
+        df_testing_samples_s_subr['rep'] = 1
+        df_testing_samples_s_subr['var'] = 0
+        df_testing_samples_s_subr['SST'] = df_testing_samples_s_subr.apply(lambda row: (row['mean'] * row['mean']), axis=1)
+        print "df_testing_samples_s_subr"
+        print df_testing_samples_s_subr
+        c_subr.pd_sample_record = pd.concat([c_subr.pd_sample_record, df_testing_samples_s_subr])
+        print " c_subr.pd_sample_record"
+        print c_subr.pd_sample_record
         # the following update i_min_sample, i_max_sample, f_min_diff_sample_mean, and f_max_var
         c_subr.pd_sample_record = c_subr.pd_sample_record.sort_values(by="mean", ascending=True)
         c_subr.pd_sample_record = c_subr.pd_sample_record.reset_index(drop=True)  # reindex the sorted df
@@ -121,6 +124,29 @@ def fun_results_organizer(l_subr, df_testing_samples, params):
         c_subr.f_min_diff_sample_mean = min(
             c_subr.pd_sample_record['mean'].shift(-1) - c_subr.pd_sample_record['mean'])
         c_subr.f_max_var = max(c_subr.pd_sample_record.loc[:, 'var'])
+    return l_subr
+
+
+def fun_results_organizer_multiple_replication (l_subr, df_testing_samples, params):
+    for i in range(0, len(df_testing_samples)):
+        for c_subr in [c_subr for c_subr in l_subr if c_subr.s_label == 'C' and c_subr.b_activate is True and c_subr.l_coordinate_lower == df_testing_samples.loc[i, 'l_coordinate_lower'] and c_subr.l_coordinate_upper == df_testing_samples.loc[i, 'l_coordinate_upper']]:
+            c_subr.pd_sample_record = c_subr.pd_sample_record.reset_index(drop=True)  # reindex the sorted df
+
+            for j in range(0, len(c_subr.pd_sample_record)):
+                if ([c_subr.pd_sample_record.loc[j, p['Name']] for p in params] == [df_testing_samples.loc[i, p['Name']]
+                                                                                    for p in params]):
+                    i_n_rep = (c_subr.pd_sample_record.loc[j, 'rep'] + len(df_testing_samples.loc[i, 'result']))
+                    if c_subr.pd_sample_record.loc[j, 'rep'] == 0:
+                        c_subr.pd_sample_record.loc[j, 'mean'] = np.mean(df_testing_samples.loc[i, 'result'])
+                        c_subr.pd_sample_record.loc[j, 'SST'] = sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2))
+                        c_subr.pd_sample_record.loc[j, 'var'] = np.var(df_testing_samples.loc[i, 'result'])
+                        c_subr.pd_sample_record.loc[j, 'rep'] = i_n_rep
+                    else:
+                        c_subr.pd_sample_record.loc[j, 'mean'] = copy.copy(float(
+                            int(c_subr.pd_sample_record.loc[i, 'rep']) * c_subr.pd_sample_record.loc[i, 'mean'] + sum(df_testing_samples.loc[i, 'result'])) / i_n_rep)
+                        c_subr.pd_sample_record.loc[j, 'SST'] = copy.copy(c_subr.pd_sample_record.loc[i, 'SST'] + sum(turn_to_power(df_testing_samples.loc[i, 'result'], 2)))
+                        c_subr.pd_sample_record.loc[j, 'var'] = copy.copy(float(c_subr.pd_sample_record.loc[i, 'SST'] - i_n_rep * pow(c_subr.pd_sample_record.loc[i, 'mean'], 2)) / (i_n_rep - 1))
+                        c_subr.pd_sample_record.loc[j, 'rep'] = i_n_rep
     return l_subr
 
 """

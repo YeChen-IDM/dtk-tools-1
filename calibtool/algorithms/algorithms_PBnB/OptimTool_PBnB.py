@@ -1,6 +1,3 @@
-import numpy as np
-import pandas as pd
-import pickle
 import logging
 import operator
 import m_intial_paramters_setting as par
@@ -426,7 +423,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
             c_subr_set.f_min_diff_sample_mean = state['l_subr'][c_subr]['f_min_diff_sample_mean']
             c_subr_set.f_max_var = state['l_subr'][c_subr]['f_max_var']
             c_subr_set.pd_sample_record = pd.DataFrame.from_dict(state['l_subr'][c_subr]['pd_sample_record'], orient='columns')
-            c_subr_set.pd_sample_record['# rep'].astype(int)
+            c_subr_set.pd_sample_record['rep'].astype(int)
             self.l_subr.append(c_subr_set)
         self.l_subr.sort(key=operator.attrgetter('i_index'))  # dinc->list and sorting
 
