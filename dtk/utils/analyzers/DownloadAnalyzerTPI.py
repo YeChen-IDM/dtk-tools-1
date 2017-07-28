@@ -1,22 +1,21 @@
 import json
 import os
 
-from dtk.utils.analyzers.BaseAnalyzer import BaseAnalyzer
+from dtk.utils.analyzers.BaseShelfAnalyzer import BaseShelfAnalyzer
 
-class DownloadAnalyzerTPI(BaseAnalyzer):
+class DownloadAnalyzerTPI(BaseShelfAnalyzer):
     """
     Similar to DownloadAnalyzer, but not quite, as the output directories need to be the exp_name and
     all sim results are dropped into this flat directory.
     """
-    TPI_tag = 'TPI'
+    TPI_tag = 'TPI' # 'Run_Number'
+
+    DONE = True
 
     def __init__(self, filenames):
         super(DownloadAnalyzerTPI, self).__init__()
         self.output_path = None # we need to make sure this is set via per_experiment before calling self.apply
         self.filenames = filenames
-
-    def initialize(self):
-        pass
 
     def per_experiment(self, experiment):
         """
@@ -27,7 +26,18 @@ class DownloadAnalyzerTPI(BaseAnalyzer):
         """
         self.output_path = os.path.join(self.working_dir, experiment.exp_name)
         if not os.path.exists(self.output_path):
-            os.mkdir(self.output_path)
+            os.makedirs(self.output_path)
+
+    def filter(self, simulation_metadata):
+        """
+        Determines if the given simulation should be downloaded
+        :param simulation_metadata:
+        :return: True/False : True if sim should be downloaded, False otherwise
+        """
+        value = self.from_shelf(key=simulation_metadata['sim_id'])
+        if value is None:
+            value = True # due to a key error in the shelf, we need analyze this sim still
+        return value
 
     def apply(self, parser):
         sim_folder = self.output_path # all sims for the exp in one directory
@@ -42,6 +52,9 @@ class DownloadAnalyzerTPI(BaseAnalyzer):
                     outfile.write(json.dumps(parser.raw_data[source_filename]))
                 else:
                     outfile.write(parser.raw_data[source_filename])
+
+        # # now update the shelf/cache
+        self.update_shelf(key=parser.sim_id, value=self.DONE)
 
     def _construct_filename(self, parser, filename):
         # create the infix filename string e.g. TPI14_REP1, where the TPI number is the ordered sim number
