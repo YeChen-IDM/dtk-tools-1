@@ -13,12 +13,12 @@ import sys
 #                 point_hash[ header[header_index] ] = points[point_index][header_index]
 #             self.points.append(point_hash)
 
-def read_mat_points_file(cls, filename, header_key='header', points_key='points'):
+def read_mat_points_file(filename, header_key='jp', points_key='vals'):
     mat = scipy.io.loadmat(filename, squeeze_me=True, struct_as_record=False)
     points = mat[points_key]
-    header = ['these', 'are', 'dummy_params'] # ck4, read from file using header_key
+    header = mat[header_key][0]
     #return cls(header=header, points=points)
-    return header, points
+    return header.tolist(), points.tolist()
 
 # if __name__ == '__main__':
 #     filename = sys.argv[1]
