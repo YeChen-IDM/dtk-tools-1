@@ -53,7 +53,6 @@ def fun_sample_points_generator(l_subr, i_n_sampling, i_n_rep, s_stage, l_para):
                 df_testing_samples = df_testing_samples.append(dict(zip(l_column, l_vals)), ignore_index=True)
 
         else:  # if has not enough sampling points and replication
-            #print ('if has not enough sampling points and replication')
             if len(c_subr.pd_sample_record) >= 1:  # if already has sample points, first deal with them
                 for i in (i for i in range(0, len(c_subr.pd_sample_record)) if c_subr.pd_sample_record.loc[i, 'rep'] < i_n_rep):  # check enough # reps or not for existing old sampling points
                     #df_testing_samples.append(pd.DataFrame([[c_subr.l_coordinate_lower] + [c_subr.l_coordinate_upper] + [c_subr.pd_sample_record.loc[i, p] for p in l_para] + [i_n_rep - int(c_subr.pd_sample_record.loc[i, '# rep'])]], columns=l_column))
