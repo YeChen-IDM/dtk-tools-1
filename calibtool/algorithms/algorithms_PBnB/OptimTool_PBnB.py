@@ -1,6 +1,6 @@
 import logging
 import operator
-import m_intial_paramters_setting as par
+import calibtool.algorithms.algorithms_PBnB.m_intial_paramters_setting as par
 from fun_PBnB_support_functions import *
 from c_SubRegion import c_SubRegion
 from calibtool.NextPointAlgorithm import NextPointAlgorithm
@@ -71,10 +71,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
         self.l_subr.append(c_SubRegion(self.l_coordinate_lower, self.l_coordinate_upper, self.params))  # <-- SIGMA_1={S}
 
     def get_samples_for_iteration(self, iteration):
-        print ('===============get_samples_for_iteration=============')
-
         df_samples = self.fun_probability_branching_and_bound(iteration)
-        print df_samples
         # return self.fun_generate_samples_from_df(df_samples[[p['Name'] for p in self.params]+['Run_Number']])
         return self.fun_generate_samples_from_df(df_samples[[p['Name'] for p in self.params]])
 
@@ -136,10 +133,7 @@ class OptimTool_PBnB(NextPointAlgorithm):
                         self.l_subr = fun_elite_indicator(self.l_subr, self.f_CI_l)
                         self.l_subr = fun_worst_indicator(self.l_subr, self.f_CI_u)
 
-                        # TODO: Exception when self.f_epsilon is larger than volume, need to modify the setting of self.f_epsilon
-                        print self.f_alpha_k
-                        print self.f_epsilon
-                        print self.l_subr[0].f_volume
+
                         self.i_N_elite_worst = int(np.ceil(np.log(self.f_alpha_k) /
                                                            np.log(1. - (self.f_epsilon / self.l_subr[0].f_volume))))  # <-- number of sampling points for elite and worst subregions
 
