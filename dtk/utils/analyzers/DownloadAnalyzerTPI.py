@@ -1,4 +1,5 @@
 import json
+from multiprocessing import Lock
 import os
 
 from dtk.utils.analyzers.BaseShelfAnalyzer import BaseShelfAnalyzer
@@ -8,9 +9,9 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
     Similar to DownloadAnalyzer, but not quite, as the output directories need to be the exp_name and
     all sim results are dropped into this flat directory.
     """
-    TPI_tag = 'TPI' # 'Run_Number'
-
+    TPI_tag = 'Run_Number' # ''TPI' # 'Run_Number'
     DONE = True
+    LOCK = Lock() #someday this should be per-instance, but the naming of the shelf files is still class-specific.
 
     def __init__(self, filenames):
         super(DownloadAnalyzerTPI, self).__init__()
