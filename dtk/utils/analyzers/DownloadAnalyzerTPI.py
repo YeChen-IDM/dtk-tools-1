@@ -11,13 +11,13 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
     """
     DONE = True
 
-    def __init__(self, filenames, TPI_tag='TPI', working_dir="output"):
+    def __init__(self, filenames, TPI_tag='TPI', output_dir="output"):
         super(DownloadAnalyzerTPI, self).__init__()
         self.output_path = None # we need to make sure this is set via per_experiment before calling self.apply
         self.filenames = filenames
         self.parse = False
         self.TPI_tag = TPI_tag
-        self.working_dir = working_dir
+        self.output_dir = output_dir
 
     def per_experiment(self, experiment):
         """
@@ -26,7 +26,7 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
         :param experiment: experiment object to make output directory for
         :return: Nothing
         """
-        self.output_path = os.path.join(self.working_dir, experiment.exp_name)
+        self.output_path = os.path.join(self.working_dir, self.output_dir,experiment.exp_name)
         if not os.path.exists(self.output_path):
             os.makedirs(self.output_path)
 

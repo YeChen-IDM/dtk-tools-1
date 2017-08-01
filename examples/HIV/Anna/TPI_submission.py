@@ -178,7 +178,8 @@ if __name__ == "__main__":
     if resume:
         experiments = [ExperimentManagerFactory.from_experiment(e) for e in resume]
 
-    am = AnalyzeManager(verbose=False)
+    time.sleep(5)
+    am = AnalyzeManager(verbose=False,create_dir_map=False)
     for em in experiments:
         am.add_experiment(em.experiment)
     am.add_analyzer(DownloadAnalyzerTPI(['output\\InsetChart.json']))

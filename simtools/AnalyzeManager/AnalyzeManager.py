@@ -19,7 +19,7 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 
 class AnalyzeManager:
 
-    def __init__(self, exp_list=[], analyzers=[], working_dir=None, force_analyze=False, verbose=True):
+    def __init__(self, exp_list=[], analyzers=[], working_dir=None, force_analyze=False, verbose=True, create_dir_map=True):
         self.experiments = []
         self.verbose = verbose
         self.analyzers = []
@@ -28,6 +28,7 @@ class AnalyzeManager:
         self.working_dir = working_dir or os.getcwd()
         self.parsers = []
         self.force_analyze = force_analyze
+        self.create_dir_map = create_dir_map
 
         # If no experiment is specified, retrieve the most recent as a convenience
         if exp_list == 'latest':
@@ -64,10 +65,11 @@ class AnalyzeManager:
 
         if exp_manager.location == 'HPC':
             # Get the sim map no matter what
-            exp_manager.parserClass.createSimDirectoryMap(exp_id=exp_manager.experiment.exp_id,
-                                                          suite_id=exp_manager.experiment.suite_id,
-                                                          save=True, comps_experiment=exp_manager.comps_experiment,
-                                                          verbose=self.verbose)
+            if self.create_dir_map:
+                exp_manager.parserClass.createSimDirectoryMap(exp_id=exp_manager.experiment.exp_id,
+                                                              suite_id=exp_manager.experiment.suite_id,
+                                                              save=True, comps_experiment=exp_manager.comps_experiment,
+                                                              verbose=self.verbose)
             if not exp_manager.asset_service:
                 exp_manager.parserClass.asset_service = False
 
@@ -92,7 +94,7 @@ class AnalyzeManager:
     def parser_for_simulation(self, simulation, experiment, manager):
         # If simulation not done -> return none
         if not self.force_analyze and simulation.status != SimulationState.Succeeded:
-            if self.verbose: print "Simulation %s skipped (status is %s)" % (simulation.id, simulation.status.name)
+            if self.verbose: print("Simulation %s skipped (status is %s)" % (simulation.id, simulation.status.name))
             return
 
         # Add the simulation_id to the tags
@@ -108,7 +110,7 @@ class AnalyzeManager:
                 filtered_analyses.append(a)
 
         if not filtered_analyses:
-            if self.verbose: print 'Simulation %s did not pass filter on any analyzer.' % simulation.id
+            if self.verbose: print("Simulation %s did not pass filter on any analyzer." % simulation.id)
             return
 
         # If all the analyzers present call for deactivating the parsing -> do it
