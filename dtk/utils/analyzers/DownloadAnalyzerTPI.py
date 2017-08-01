@@ -9,14 +9,15 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
     Similar to DownloadAnalyzer, but not quite, as the output directories need to be the exp_name and
     all sim results are dropped into this flat directory.
     """
-    TPI_tag = 'Run_Number' # ''TPI' # 'Run_Number'
     DONE = True
-    LOCK = Lock() #someday this should be per-instance, but the naming of the shelf files is still class-specific.
 
-    def __init__(self, filenames):
+    def __init__(self, filenames, TPI_tag='TPI', working_dir="output"):
         super(DownloadAnalyzerTPI, self).__init__()
         self.output_path = None # we need to make sure this is set via per_experiment before calling self.apply
         self.filenames = filenames
+        self.parse = False
+        self.TPI_tag = TPI_tag
+        self.working_dir = working_dir
 
     def per_experiment(self, experiment):
         """
@@ -36,9 +37,7 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
         :return: True/False : True if sim should be downloaded, False otherwise
         """
         value = self.from_shelf(key=simulation_metadata['sim_id'])
-        if value is None:
-            value = True # due to a key error in the shelf, we need analyze this sim still
-        return value
+        return not value
 
     def apply(self, parser):
         sim_folder = self.output_path # all sims for the exp in one directory
@@ -49,10 +48,7 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
 
             file_path = os.path.join(sim_folder, os.path.basename(dest_filename))
             with open(file_path, 'wb') as outfile:
-                if not isinstance(parser.raw_data[source_filename], str):
-                    outfile.write(json.dumps(parser.raw_data[source_filename]))
-                else:
-                    outfile.write(parser.raw_data[source_filename])
+                outfile.write(parser.raw_data[source_filename])
 
         # # now update the shelf/cache
         self.update_shelf(key=parser.sim_id, value=self.DONE)

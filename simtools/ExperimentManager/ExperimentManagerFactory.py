@@ -18,6 +18,9 @@ class ExperimentManagerFactory(object):
 
     @classmethod
     def from_experiment(cls, experiment, config_builder=None):
+        if isinstance(experiment, str):
+            from simtools.Utilities.Experiments import retrieve_experiment
+            experiment = retrieve_experiment(experiment)
         logger.debug("Factory - Creating ExperimentManager for experiment %s pid: %d location: %s" % (experiment.id, os.getpid(), experiment.location))
         manager_class = cls._factory(type=experiment.location)
         manager = manager_class(experiment=experiment, config_builder=config_builder)

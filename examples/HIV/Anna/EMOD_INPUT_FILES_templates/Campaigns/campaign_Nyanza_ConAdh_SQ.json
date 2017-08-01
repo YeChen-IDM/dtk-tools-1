@@ -36,7 +36,7 @@
                 
                 "Update_Period": 7.01923076923, 
                    "Intervention_Config":{
-                    "class": "RevaccinatableVaccine",
+                    "class": "ControlledVaccine",
                     "Cost_To_Consumer": 1.0, 
                     "Distributed_Event_Trigger": "Received_PrEP", 
                     "Intervention_Name": "PrEP", 
@@ -82,7 +82,7 @@
                 "Update_Period": 7.01923076923,
                 "Intervention_Config": {
                 
-                    "class": "RevaccinatableVaccine",
+                    "class": "ControlledVaccine",
                     "Cost_To_Consumer": 1.0, 
                     "Distributed_Event_Trigger": "Received_PrEP", 
                     "Intervention_Name": "PrEP", 

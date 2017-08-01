@@ -59,6 +59,9 @@ class AnalyzeManager:
         # Create a manager for the current experiment
         exp_manager = ExperimentManagerFactory.from_experiment(experiment)
 
+        # Refresh the experiment just to be sure to have latest info
+        exp_manager.refresh_experiment()
+
         if exp_manager.location == 'HPC':
             # Get the sim map no matter what
             exp_manager.parserClass.createSimDirectoryMap(exp_id=exp_manager.experiment.exp_id,
@@ -119,6 +122,9 @@ class AnalyzeManager:
         if len(self.analyzers) == 0:
             return
 
+        # Empty the parsers
+        self.parsers = []
+
         # Create the parsers for the experiments
         map(self.create_parsers_for_experiment, self.experiments)
 
@@ -137,7 +143,7 @@ class AnalyzeManager:
             # Plot in another process
             try:
                 # If on mac just plot and continue
-                if LocalOS.name == LocalOS.MAC:
+                if LocalOS.name == LocalOS.MAC or (hasattr(a, 'multiprocessing_plot') and not a.multiprocessing_plot):
                     a.plot()
                     continue
                 plotting_process = Process(target=a.plot)
