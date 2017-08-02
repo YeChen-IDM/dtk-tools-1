@@ -18,7 +18,7 @@ from simtools.Utilities.Matlab.matreader import read_mat_points_file
 SetupParser.default_block = 'HPC'
 tpi_matlab_filename = 'MAT_file_containing_calibration_table/ReSample64.mat'
 resume = False
-# resume = ['6d032d60-fc76-e711-80c1-f0921c167860','78032d60-fc76-e711-80c1-f0921c167860']
+# resume = ['6ec447cd-0f77-e711-9401-f0921c16849d','58c447cd-0f77-e711-9401-f0921c16849d']
 
 
 # Unused parameters to remove
@@ -51,7 +51,7 @@ def header_table_to_dict(header, table, index_name=None):
     if index_name:
         df[index_name] = df.index
 
-    return json.loads(pandas.json.dumps(df.to_dict(orient='records')[0:10]))
+    return json.loads(pandas.json.dumps(df.to_dict(orient='records')))
 
 # Load the base files
 current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -178,8 +178,7 @@ if __name__ == "__main__":
     if resume:
         experiments = [ExperimentManagerFactory.from_experiment(e) for e in resume]
 
-    time.sleep(5)
-    am = AnalyzeManager(verbose=False,create_dir_map=False)
+    am = AnalyzeManager(verbose=False, create_dir_map=False)
     for em in experiments:
         am.add_experiment(em.experiment)
     am.add_analyzer(DownloadAnalyzerTPI(['output\\InsetChart.json']))

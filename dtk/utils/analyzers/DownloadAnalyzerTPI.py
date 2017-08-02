@@ -13,7 +13,6 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
 
     def __init__(self, filenames, TPI_tag='TPI', output_dir="output"):
         super(DownloadAnalyzerTPI, self).__init__()
-        self.output_path = None # we need to make sure this is set via per_experiment before calling self.apply
         self.filenames = filenames
         self.parse = False
         self.TPI_tag = TPI_tag
@@ -26,9 +25,9 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
         :param experiment: experiment object to make output directory for
         :return: Nothing
         """
-        self.output_path = os.path.join(self.working_dir, self.output_dir,experiment.exp_name)
-        if not os.path.exists(self.output_path):
-            os.makedirs(self.output_path)
+        output_path = os.path.join(self.working_dir, self.output_dir,experiment.exp_name)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
 
     def filter(self, simulation_metadata):
         """
@@ -40,13 +39,13 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
         return not value
 
     def apply(self, parser):
-        sim_folder = self.output_path # all sims for the exp in one directory
+        output_dir = os.path.join(self.working_dir, self.output_dir, parser.experiment.exp_name)
         # Create the requested files
         for source_filename in self.filenames:
             # construct the full destination filename
             dest_filename = self._construct_filename(parser, source_filename)
 
-            file_path = os.path.join(sim_folder, os.path.basename(dest_filename))
+            file_path = os.path.join(output_dir, os.path.basename(dest_filename))
             with open(file_path, 'wb') as outfile:
                 outfile.write(parser.raw_data[source_filename])
 
