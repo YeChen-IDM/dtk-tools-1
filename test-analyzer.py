@@ -7,5 +7,5 @@ if __name__ == "__main__":
     SetupParser.init('HPC')
     experiment = retrieve_experiment('8e35aced-d470-e711-9401-f0921c16849d') # '5d35c13c-986d-e711-9401-f0921c16849d')
     am = AnalyzeManager(exp_list=experiment)
-    am.add_analyzer(DownloadAnalyzerTPI(filenames=['config.json', 'output\\InsetChart.json']))
+    am.add_analyzer(DownloadAnalyzerTPI(filenames=['config.json', 'output\\InsetChart.json'], TPI_tag='Run_Number'))
     am.analyze()

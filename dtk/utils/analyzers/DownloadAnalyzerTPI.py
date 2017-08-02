@@ -7,7 +7,7 @@ from dtk.utils.analyzers.BaseShelfAnalyzer import BaseShelfAnalyzer
 class DownloadAnalyzerTPI(BaseShelfAnalyzer):
     """
     Similar to DownloadAnalyzer, but not quite, as the output directories need to be the exp_name and
-    all sim results are dropped into this flat directory.
+    all sim results are sorted into subdirectories by their associated requested filename.
     """
     DONE = True
 
@@ -39,13 +39,25 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
         return not value
 
     def apply(self, parser):
+        """
+        We will put all files associated with each requested file (self.filenames) into a common directory, one
+        directory per requested file.
+        :param parser:
+        :return:
+        """
         output_dir = os.path.join(self.working_dir, self.output_dir, parser.experiment.exp_name)
         # Create the requested files
         for source_filename in self.filenames:
             # construct the full destination filename
             dest_filename = self._construct_filename(parser, source_filename)
 
-            file_path = os.path.join(output_dir, os.path.basename(dest_filename))
+            # sorting all downloaded results by requested filename
+            subdirectory, _ = os.path.splitext(os.path.basename(source_filename))
+            file_path = os.path.join(output_dir, subdirectory, os.path.basename(dest_filename))
+            try:
+                os.makedirs(os.path.dirname(file_path)) # just in case!
+            except Exception:
+                pass
             with open(file_path, 'wb') as outfile:
                 outfile.write(parser.raw_data[source_filename])
 
@@ -61,5 +73,6 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
                            'DownloadAnalyzerTPI' % self.TPI_tag)
         infix_string = '_'.join(['TPI%s' % tpi_number, 'REP1'])  # REPn is hardcoded for now; will need to change
         prefix, extension = os.path.splitext(filename)
+
         constructed_filename = '_'.join([prefix, infix_string]) + extension
         return constructed_filename
