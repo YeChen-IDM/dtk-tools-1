@@ -8,13 +8,10 @@ from c_SubRegion import c_SubRegion
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import pickle
-import os
+
 
 
 """
-Created on Fri Jun 23 15:53:08 2017
-
-@author: TingYu Ho
 This function uniformly sampling i_n_samp sample points with i_n_rep replication in the subregions c_subregion and generate the df that used to sent to calibtool
 input:
     i_n_samp: # sampling needed in the subregion
@@ -143,9 +140,6 @@ def fun_results_organizer_multiple_replication (l_subr, df_testing_samples, para
     return l_subr
 
 """
-Created on Fri Jun 23 23:19:38 2017
-
-@author: TingYu Ho
 This function orders all the samplign points in all the undetermined regions
 input:
     one subregions
@@ -165,9 +159,6 @@ def fun_order_subregion(c_subr):
     return c_subr
 
 """
-Created on Fri Jun 23 15:41:44 2017
-
-@author: TingYu Ho
 f_update_replication function is aim to calculate the updated replication number
 input:
     l_subr:list of all examing subregions
@@ -175,11 +166,6 @@ input:
     f_alpha
 outout
     i_replication:update replication
-note: for more information about "Get the object with the max attribute's value in a list of objects"
-https://stackoverflow.com/questions/18005172/get-the-object-with-the-max-attributes-value-in-a-list-of-objects
-
-Jun 29 2017
-	assign an minimun value for f_D_star to avoid huge i_n_rep output
 """
 
 
@@ -200,9 +186,6 @@ def fun_replication_update(l_subr, i_n_rep, f_alpha):
     return i_n_rep
 
 """
-Created on Fri Jun 23 23:19:38 2017
-
-@author: TingYu Ho
 This function orders all the samplign points in all the undetermined regions
 input:
     l_subr:list of all subregions
@@ -221,11 +204,7 @@ def fun_order_region(l_subr):
     return pd_order_z
 
 """
-Created on Fri Jun 23 16:46:06 2017
-
-@author: TingYu Ho
-This function create the list of subregions prepared to prune from the list of worst subregions 
-nput: 
+input: 
     f_CI_u:upper bound confidence interval
      c_subr: examining subregion
 output:
@@ -241,9 +220,6 @@ def fun_pruning_indicator(l_subr, f_CI_u):
     return l_subr
 
 """
-Created on Fri Jun 23 16:49:41 2017
-
-@author: TingYu Ho
 This function create the list of subregions prepared to maintain from the list of elite subregions 
 nput: 
     f_CI_l:lower bound confidence interval
@@ -261,10 +237,6 @@ def fun_maintaining_indicator(l_subr, f_CI_l):
     return l_subr
 
 """
-Created on Fri Jun 23 16:49:42 2017
-
-@author: TingYu Ho
-@author: TingYu Ho
 This function create the list of worst function used in the step 4
 nput: 
     f_CI_l:lower bound confidence interval
@@ -281,9 +253,6 @@ def fun_elite_indicator(l_subr, f_CI_l):
     return l_subr
 
 """
-Created on Fri Jun 23 16:49:42 2017
-
-@author: TingYu Ho
 This function create the list of worst function used in the step 4
 nput: 
     f_CI_u:upper bound confidence interval
@@ -300,9 +269,6 @@ def fun_worst_indicator(l_subr, f_CI_u):
     return l_subr
 
 """
-Created on Fri Jun 23 16:57:51 2017
-
-@author: TingYu Ho
 This function update the quantile
 input:
     l_subr: list of subregions
@@ -321,11 +287,7 @@ def fun_quantile_update(l_subr, f_delta):
 
 
 """
-Created on Fri Jun 23 16:06:47 2017
-
-@author: TingYu Ho
 input:
-
     l_subergion:examine subregions
     f_delta
     f_epsilon
@@ -355,23 +317,12 @@ def fun_CI_builder(l_subr, pd_order_z, f_delta_k, f_alpha_k, f_epsilon):
     CI_u = pd_order_z.loc[f_min_s, 'mean']
     return [CI_u, CI_l]
 
-"""
-Created on Thu Jun 29 10:45:17 2017
-
-@author: TingYu
-"""
 
 
 def fun_pruning_labeler(l_subr):
     for c_subr in (c_subr for c_subr in l_subr if c_subr.b_pruning_indicator is True and c_subr.b_activate is True):  # <-- whose  worst == 1
         c_subr.s_label = 'P'
     return l_subr
-
-"""
-Created on Thu Jun 29 10:46:09 2017
-
-@author: TingYu
-"""
 
 
 def fun_maintaining_labeler(l_subr):
@@ -380,15 +331,10 @@ def fun_maintaining_labeler(l_subr):
     return l_subr
 
 """
-Created on Tue Jun 27 19:07:27 2017
-
-@author: TingYu Ho
 input:
     c_subr: examining subregion
 output:
     l_subr: list of branching B subregions
-How do I copy an object in Python?
-http://effbot.org/pyfaq/how-do-i-copy-an-object-in-python.htm
 """
 
 
@@ -425,18 +371,18 @@ def fun_plot2D(l_subr, l_ini_coordinate_lower, l_ini_coordinate_upper, params, s
     ax.plot(l_ini_coordinate_upper[0], l_ini_coordinate_upper[1])
     ax.plot(l_ini_coordinate_lower[0], l_ini_coordinate_lower[1])
 
-    for i in (i for i in l_subr if i.b_activate is True):
-        if i.s_label == 'M':
+    for c_subr in (c_subr for c_subr in l_subr if c_subr.b_activate is True):
+        if c_subr.s_label == 'M':
             alpha_value = 1
-        elif i.s_label == 'P':
+        elif c_subr.s_label == 'P':
             alpha_value = 0.1
         else:  # i.s_label == 'C':
             alpha_value = 0.6
         ax.add_patch(
             patches.Rectangle(
-                (i.l_coordinate_lower[0], i.l_coordinate_lower[1]),  # (x,y)
-                i.l_coordinate_upper[0] - i.l_coordinate_lower[0],  # width
-                i.l_coordinate_upper[1] - i.l_coordinate_lower[1],  # height
+                (c_subr.l_coordinate_lower[0], c_subr.l_coordinate_lower[1]),  # (x,y)
+                c_subr.l_coordinate_upper[0] - c_subr.l_coordinate_lower[0],  # width
+                c_subr.l_coordinate_upper[1] - c_subr.l_coordinate_lower[1],  # height
                 alpha=alpha_value,
                 edgecolor="black"
             )
@@ -449,11 +395,10 @@ def fun_plot2D(l_subr, l_ini_coordinate_lower, l_ini_coordinate_upper, params, s
     f_max_value = df_all_sample.loc[len(df_all_sample) - 1, 'mean']
     l_min_coordinate = [df_all_sample.loc[0, p['Name']] for p in params]
     l_max_coordinate = [df_all_sample.loc[len(df_all_sample) - 1, p['Name']] for p in params]
-    #red_patch = patches.Patch(color='red', marker='x', label='The minimum value:'+str(f_min_value))
-    #blue_patch = patches.Patch(color='blue', marker='o', label='The maximum value:'+str(f_max_value))
     p_min, p_max = ax.plot(l_min_coordinate[0], l_min_coordinate[1], '*b', l_max_coordinate[0], l_max_coordinate[1], 'or')
     fig.legend((p_min, p_max), ('minimum point:['+str(l_min_coordinate[0])+','+str(l_min_coordinate[1])+'], result:'+str(f_min_value), 'maximum point:['+str(l_max_coordinate[0])+','+str(l_max_coordinate[1])+'], result:'+str(f_max_value)), 'upper right')
-
+    for c_subr in (c_subr for c_subr in l_subr if i.b_activate is True):
+        ax.text((float(c_subr.l_coordinate_lower[0]+c_subr.l_coordinate_upper[0])/2, c_subr.l_coordinate_lower[1]+c_subr.l_coordinate_upper[1])/2, str(c_subr.pd_sample_record['rep'].sum()))
     # plt.legend(handles=[red_patch, blue_patch])
 
     ax.set_xlabel([p['Name'] for p in params][0])

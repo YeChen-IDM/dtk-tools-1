@@ -308,10 +308,10 @@ class OptimTool_PBnB(NextPointAlgorithm):
         logger.info(self.df_testing_samples)
         self.logging_saver(iteration)
         self.l_subr = fun_results_organizer(self.l_subr, self.df_testing_samples, self.params)  # <-- Update the self.l_subr based on df_testing_samples
-        for i in range(0, len(self.l_subr)):
-            name = 'l_subr['+str(i)+'].pd_sample_record.csv'
-            self.l_subr[i].pd_sample_record.to_csv(name, index=True)
-        fun_plot2D(self.l_subr, self.l_subr[0].l_coordinate_lower, self.l_subr[0].l_coordinate_upper, self.params, str(self.i_k))
+        #for i in range(0, len(self.l_subr)):
+        #   name = 'l_subr['+str(i)+'].pd_sample_record.csv'
+        #   self.l_subr[i].pd_sample_record.to_csv(name, index=True)
+        # fun_plot2D(self.l_subr, self.l_subr[0].l_coordinate_lower, self.l_subr[0].l_coordinate_upper, self.params, str(self.i_k))
         logger.info('================end: set_results_for_iteration================')
 
     def get_state(self):
