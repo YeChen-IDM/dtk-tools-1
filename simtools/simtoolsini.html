@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,15 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>simtools.ini file &#8212; DTK Package Beta 1 - 0.7 documentation</title>
-    
+    <title>simtools.ini file &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Beta 1 - 0.7',
+        VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -41,7 +38,7 @@
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -57,7 +54,7 @@
         <li class="right" >
           <a href="../simtools.html" title="Simtools package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &#187;</li> 
       </ul>
     </div>
@@ -87,6 +84,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">simtools.ini file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="overlay.html">INI File overlay mechanism</a></li>
 <li class="toctree-l2"><a class="reference internal" href="experimentmanager.html">Experiment Manager Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="diseasepackages.html">Disease packages</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
@@ -136,7 +134,7 @@
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><a class="reference internal" href="#default-section" id="id1">DEFAULT section</a></li>
-<li><a class="reference internal" href="#common-parameters" id="id2">Common parameters</a><ul>
+<li><a class="reference internal" href="#default-parameters" id="id2">Default parameters</a><ul>
 <li><a class="reference internal" href="#type" id="id3"><code class="docutils literal"><span class="pre">type</span></code></a></li>
 <li><a class="reference internal" href="#python-path" id="id4"><code class="docutils literal"><span class="pre">python_path</span></code></a></li>
 <li><a class="reference internal" href="#exe-path" id="id5"><code class="docutils literal"><span class="pre">exe_path</span></code></a></li>
@@ -169,7 +167,7 @@
 <div class="section" id="default-section">
 <h2><a class="toc-backref" href="#id1">DEFAULT section</a><a class="headerlink" href="#default-section" title="Permalink to this headline">¶</a></h2>
 <p>Anything in this section will apply to all the subsequent blocks if they do not override the value.
-For example, let's assume the following file:</p>
+For example, let’s assume the following file:</p>
 <div class="highlight-cfg"><div class="snippet-filename"><em>simtools/simtools.ini</em></div>
 <div class="highlight"><pre><span></span><span class="k">[DEFAULT]</span>
 <span class="na">max_threads</span> <span class="o">=</span> <span class="s">16</span>
@@ -185,8 +183,8 @@ For example, let's assume the following file:</p>
 However, if the <code class="docutils literal"><span class="pre">LOCAL</span></code> block is used, the <code class="docutils literal"><span class="pre">max_threads</span></code> will be coming from the <code class="docutils literal"><span class="pre">[LOCAL]</span></code> block.</p>
 <p>Usually this section contains the following parameters: <a class="reference internal" href="#std:setting-exe_path"><code class="xref std std-setting docutils literal"><span class="pre">exe_path</span></code></a>, <a class="reference internal" href="#std:setting-dll_path"><code class="xref std std-setting docutils literal"><span class="pre">dll_path</span></code></a> and <a class="reference internal" href="#std:setting-max_threads"><code class="xref std std-setting docutils literal"><span class="pre">max_threads</span></code></a>.</p>
 </div>
-<div class="section" id="common-parameters">
-<h2><a class="toc-backref" href="#id2">Common parameters</a><a class="headerlink" href="#common-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="default-parameters">
+<h2><a class="toc-backref" href="#id2">Default parameters</a><a class="headerlink" href="#default-parameters" title="Permalink to this headline">¶</a></h2>
 <p>Those parameters apply to both HPC and LOCAL configurations.</p>
 <div class="section" id="type">
 <span id="std:setting-type"></span><h3><a class="toc-backref" href="#id3"><code class="docutils literal"><span class="pre">type</span></code></a><a class="headerlink" href="#type" title="Permalink to this headline">¶</a></h3>
@@ -335,7 +333,7 @@ Those defaults will apply to every blocks with the <code class="docutils literal
 <p>If set to <code class="docutils literal"><span class="pre">1</span></code>, uses the COMPS assets service.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p>When setting this to <code class="docutils literal"><span class="pre">1</span></code>, don't forget to set:</p>
+<p>When setting this to <code class="docutils literal"><span class="pre">1</span></code>, don’t forget to set:</p>
 <ul class="last simple">
 <li><a class="reference internal" href="#std:setting-lib_staging_root"><code class="xref std std-setting docutils literal"><span class="pre">lib_staging_root</span></code></a> with the folder containing already staged DLLs.</li>
 <li><a class="reference internal" href="#std:setting-bin_staging_root"><code class="xref std std-setting docutils literal"><span class="pre">bin_staging_root</span></code></a> with the full path to the exe used for the simulations.</li>
@@ -425,7 +423,7 @@ Those defaults will apply to every blocks with the <code class="docutils literal
         <li class="right" >
           <a href="../simtools.html" title="Simtools package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &#187;</li> 
       </ul>
     </div>
@@ -436,7 +434,7 @@ Those defaults will apply to every blocks with the <code class="docutils literal
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,15 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Properties &#8212; DTK Package Beta 1 - 0.7 documentation</title>
-    
+    <title>Properties &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Beta 1 - 0.7',
+        VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +36,7 @@
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -49,7 +46,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -112,22 +109,28 @@
             
   <div class="section" id="properties">
 <h1>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h1>
-<p>This helper file is used for easily defining properties in the model (see <a class="reference external" href="http://idmod.org/idmdoc/#EMOD/ModelOverview/Heterogeneous%20Intra-Node%20Transmission%20%28HINT%29.htm">Heterogeneous Intra-Node Transmission (HINT)</a>).</p>
+<p>This helper file is used for easily defining properties in the model (see <a class="reference external" href="https://institutefordiseasemodeling.github.io/EMOD/general/howto-hint.html">Configure heterogeneous disease transmission)</a>).</p>
 <span class="target" id="module-dtk.generic.properties"></span><dl class="function">
 <dt id="dtk.generic.properties.add_properties_overlay">
 <code class="descclassname">dtk.generic.properties.</code><code class="descname">add_properties_overlay</code><span class="sig-paren">(</span><em>cb</em>, <em>properties</em>, <em>directory=None</em>, <em>tag=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/properties.html#add_properties_overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.properties.add_properties_overlay" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a property overlay with the given properties.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the configuration</li>
-<li><strong>properties</strong> -- The list of properties to add</li>
-<li><strong>directory</strong> -- The directory where the demographics file is stored</li>
-<li><strong>tag</strong> -- Properties tag</li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> – The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the configuration</li>
+<li><strong>properties</strong> – The list of properties to add</li>
+<li><strong>directory</strong> – The directory where the demographics file is stored</li>
+<li><strong>tag</strong> – Properties tag</li>
 </ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">Nothing</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -139,10 +142,16 @@
 </pre></div>
 </div>
 </div></blockquote>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>kwargs</strong> -- A list of key,value pairs representing the property value and initial distribution</dd>
-<dt class="field-name">Returns</dt><dd class="field-body">A dictionary representing the property ready for DTK</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> – A list of key,value pairs representing the property value and initial distribution</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary representing the property ready for DTK</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -154,16 +163,22 @@
 </pre></div>
 </div>
 </div></blockquote>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>property</strong> -- The property to set</li>
-<li><strong>values</strong> -- A list of different values this property can take</li>
-<li><strong>initial</strong> -- The initial distribution</li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>property</strong> – The property to set</li>
+<li><strong>values</strong> – A list of different values this property can take</li>
+<li><strong>initial</strong> – The initial distribution</li>
 </ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">A dictionary representing the property ready for DTK</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dictionary representing the property ready for DTK</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -183,7 +198,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
@@ -193,7 +208,7 @@
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

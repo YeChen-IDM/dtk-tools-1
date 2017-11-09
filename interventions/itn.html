@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,15 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ITN &#8212; DTK Package Beta 1 - 0.7 documentation</title>
-    
+    <title>ITN &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Beta 1 - 0.7',
+        VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +36,7 @@
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -49,7 +46,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -115,16 +112,45 @@
 <p>Contains the <code class="docutils literal"><span class="pre">itn_bednet</span></code> defining an ITN intervention along with the function to add an ITN event to a campaign file.</p>
 <span class="target" id="module-dtk.interventions.itn"></span><dl class="function">
 <dt id="dtk.interventions.itn.add_ITN">
-<code class="descclassname">dtk.interventions.itn.</code><code class="descname">add_ITN</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>coverage_by_ages</em>, <em>waning={}</em>, <em>cost=None</em>, <em>nodeIDs=[]</em>, <em>node_property_restrictions=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/itn.html#add_ITN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.itn.add_ITN" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dtk.interventions.itn.</code><code class="descname">add_ITN</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>coverage_by_ages</em>, <em>waning={}</em>, <em>cost=0</em>, <em>nodeIDs=[]</em>, <em>node_property_restrictions=[]</em>, <em>ind_property_restrictions=[]</em>, <em>triggered_campaign_delay=0</em>, <em>trigger_condition_list=[]</em>, <em>listening_duration=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/itn.html#add_ITN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.itn.add_ITN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an ITN intervention to the config_builder passed.
-:param config_builder: The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the campaign that will receive the ITN event
-:param start: The start day of the bednet distribution
-:param coverage_by_ages: a list of dictionaries defining the coverage per age group
-:param waning: a dictionary defining the durability of the nets. if empty the default decay profile will be used.
-For example, update usage duration to 180 days as waning={'Usage_Config' : {&quot;Expected_Discard_Time&quot;: 180}}
+birth-triggered(in coverage_by_age) and triggered_condition_list are mututally exclusive. “birth” option will be ingnored if you’re
+using trigger_condition_list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config_builder</strong> – The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the campaign that will receive the ITN event</li>
+<li><strong>start</strong> – The start day of the bednet distribution</li>
+<li><strong>coverage_by_ages</strong> – a list of dictionaries defining the coverage per age group
+[{“coverage”:1,”min”: 1, “max”: 10},{“coverage”:1,”min”: 11, “max”: 50},{ “coverage”:0.5, “birth”:”birth”, “duration”:34}]</li>
+<li><strong>waning</strong> – a dictionary defining the durability of the nets. if empty the default decay profile will be used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For example, update usage duration to 180 days as waning={‘Usage_Config’ : {“Expected_Discard_Time”: 180}}
 :param cost: Set the <code class="docutils literal"><span class="pre">Cost_To_Consumer</span></code> parameter
 :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-:return: Nothing</p>
+:param node_property_restrictions: restricts itn based on list of node properties in format [{“Place”:”RURAL”}, {“ByALake”:”Yes, “LovelyWeather”:”No}]
+:param ind_property_restrictions: Restricts itn based on list of individual properties in format [{“BitingRisk”:”High”, “IsCool”:”Yes}, {“IsRich”: “Yes”}]
+:param triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
+Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
+:param trigger_condition_list: when not empty,  the start day is the day to start listening for the trigger conditions listed, distributing the spraying</p>
+<blockquote>
+<div>when the trigger is heard. This does not distribute the BirthTriggered intervention.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>listening_duration</strong> – how long the distributed event will listen for the trigger for, default is -1, which is indefinitely</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Nothing</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -144,7 +170,7 @@ For example, update usage duration to 180 days as waning={'Usage_Config' : {&quo
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
@@ -154,7 +180,7 @@ For example, update usage duration to 180 days as waning={'Usage_Config' : {&quo
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

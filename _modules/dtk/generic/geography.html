@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
@@ -15,15 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk.generic.geography &#8212; DTK Package Beta 1 - 0.7 documentation</title>
-    
+    <title>dtk.generic.geography &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'Beta 1 - 0.7',
+        VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +36,7 @@
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -49,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -152,8 +149,9 @@
 <span class="sd">    :return: parameters with the correct path</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">geographies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">geography</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">geographies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">geography</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> geography not yet implemented&#39;</span> <span class="o">%</span> <span class="n">geography</span><span class="p">)</span>
 
     <span class="n">convert_filepaths</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -215,7 +213,7 @@
 
     <span class="s2">&quot;Namawala&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Geography&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;Air_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_air_temperature_daily.bin&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Namawala_single_node_demographics.compiled.json&quot;</span><span class="p">],</span>
+                 <span class="s2">&quot;Demographics_Filenames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Namawala_single_node_demographics.json&quot;</span><span class="p">],</span>
                  <span class="s2">&quot;Land_Temperature_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_land_temperature_daily.bin&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;Rainfall_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_rainfall_daily.bin&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;Relative_Humidity_Filename&quot;</span><span class="p">:</span> <span class="s2">&quot;Namawala_single_node_relative_humidity_daily.bin&quot;</span><span class="p">,</span>
@@ -496,9 +494,9 @@
                   <span class="s2">&quot;Enable_Sea_Demographics_Modifiers&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                   <span class="s2">&quot;Enable_Sea_Family_Migration&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
 
-                  <span class="s2">&quot;Vector_Sampling_Type&quot;</span><span class="p">:</span> <span class="s2">&quot;TRACK_ALL_VECTORS&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;Enable_Vector_Aging&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                  <span class="s2">&quot;Enable_Vector_Mortality&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                  <span class="c1"># &quot;Vector_Sampling_Type&quot;: &quot;TRACK_ALL_VECTORS&quot;,</span>
+                  <span class="c1"># &quot;Enable_Vector_Aging&quot;: 1,</span>
+                  <span class="c1"># &quot;Enable_Vector_Mortality&quot;: 1,</span>
                   <span class="s2">&quot;Enable_Vector_Migration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                   <span class="s2">&quot;Enable_Vector_Migration_Local&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                   <span class="s2">&quot;Enable_Vector_Migration_Regional&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -526,7 +524,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -537,7 +535,7 @@
 </script>
 <script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

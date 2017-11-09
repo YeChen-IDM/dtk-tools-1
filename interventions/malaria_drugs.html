@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,15 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Malaria drugs &#8212; DTK Package Beta 1 - 0.7 documentation</title>
-    
+    <title>Malaria drugs &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Beta 1 - 0.7',
+        VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +36,7 @@
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -49,7 +46,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -139,76 +136,6 @@
 <li>MDA_PMQ</li>
 <li>MDA_Vehicle</li>
 </ul>
-<span class="target" id="module-dtk.interventions.malaria_drugs"></span><dl class="function">
-<dt id="dtk.interventions.malaria_drugs.add_drug_campaign">
-<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">add_drug_campaign</code><span class="sig-paren">(</span><em>cb</em>, <em>drug_code</em>, <em>start_days</em>, <em>coverage=1.0</em>, <em>repetitions=3</em>, <em>interval=60</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#add_drug_campaign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.add_drug_campaign" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a drug campaign defined by the parameters to the config builder.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug intervention.</li>
-<li><strong>drug_code</strong> -- The drug code of the drug regimen</li>
-<li><strong>start_days</strong> -- List of start days where the drug regimen will be distributed</li>
-<li><strong>coverage</strong> -- Demographic coverage of the distribution</li>
-<li><strong>repetitions</strong> -- Number repetitions</li>
-<li><strong>interval</strong> -- Timesteps between the repetitions</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">Nothing</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="dtk.interventions.malaria_drugs.drug_configs_from_code">
-<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">drug_configs_from_code</code><span class="sig-paren">(</span><em>cb</em>, <em>drug_code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#drug_configs_from_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.drug_configs_from_code" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a drug config to the simulation configuration based on its code and add the corresponding AntimalarialDrug intervention to the return dictionary.
-The drug_code needs to be one identified in the <code class="docutils literal"><span class="pre">drug_cfg</span></code> dictionary.</p>
-<p>For example passing the <code class="docutils literal"><span class="pre">MDA_ALP</span></code> drug code, will add the drugs config for Artemether, Lumefantrine, Primaquine to the configuration file
-and will return a dictionary containing a Full Treatment course for those 3 drugs.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> that will receive the drug configuration</li>
-<li><strong>drug_code</strong> -- Code of the drug to add</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">A dictionary containing the parameters for an intervention using the given drug</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="dtk.interventions.malaria_drugs.get_drug_param">
-<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">get_drug_param</code><span class="sig-paren">(</span><em>cb</em>, <em>drugname</em>, <em>parameter</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#get_drug_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.get_drug_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a parameter for a given drug</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the configuration</li>
-<li><strong>drugname</strong> -- The drug that holds the parameter we want to retrieve</li>
-<li><strong>parameter</strong> -- The name of the parameter</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">The parameter value or None if not found</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="dtk.interventions.malaria_drugs.set_drug_param">
-<code class="descclassname">dtk.interventions.malaria_drugs.</code><code class="descname">set_drug_param</code><span class="sig-paren">(</span><em>cb</em>, <em>drugname</em>, <em>parameter</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/malaria_drugs.html#set_drug_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.malaria_drugs.set_drug_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a drug parameter in the config builder passed.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the simulation configuration</li>
-<li><strong>drugname</strong> -- The drug that has a parameter to set</li>
-<li><strong>parameter</strong> -- The parameter to set</li>
-<li><strong>value</strong> -- The new value to set</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"></p>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 
@@ -226,7 +153,7 @@ and will return a dictionary containing a Full Treatment course for those 3 drug
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
@@ -236,7 +163,7 @@ and will return a dictionary containing a Full Treatment course for those 3 drug
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

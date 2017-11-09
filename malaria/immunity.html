@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,15 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Immunity &#8212; DTK Package Beta 1 - 0.7 documentation</title>
-    
+    <title>Immunity &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Beta 1 - 0.7',
+        VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +36,7 @@
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -49,7 +46,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -114,64 +111,14 @@
 <h1>Immunity<a class="headerlink" href="#immunity" title="Permalink to this headline">¶</a></h1>
 <p>The immunity.py file contains a <code class="docutils literal"><span class="pre">params</span></code> dictionary defining the default immunity parameters.
 This file also holds utility function to create immunity overlays or initialize immunity based on habitat scaling.</p>
-<span class="target" id="module-dtk.malaria.immunity"></span><dl class="function">
-<dt id="dtk.malaria.immunity.add_immune_init">
-<code class="descclassname">dtk.malaria.immunity.</code><code class="descname">add_immune_init</code><span class="sig-paren">(</span><em>cb</em>, <em>site</em>, <em>x_temp_habitats</em>, <em>directory=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/malaria/immunity.html#add_immune_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.malaria.immunity.add_immune_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the immunity based on habitat scaling.</p>
-<p>Simply create the tags and call the <a class="reference internal" href="#dtk.malaria.immunity.add_immune_overlays" title="dtk.malaria.immunity.add_immune_overlays"><code class="xref any py py-func docutils literal"><span class="pre">add_immune_overlays</span></code></a> function.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the configuration</li>
-<li><strong>site</strong> -- If the site is specified, the files will be expected to be found in the immune_init/site subdirectory.</li>
-<li><strong>x_temp_habitats</strong> -- List of temp habitats</li>
-<li><strong>directory</strong> -- Main directory where the ..._immune_init_x_...json files are stored</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">Nothing</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="dtk.malaria.immunity.add_immune_overlays">
-<code class="descclassname">dtk.malaria.immunity.</code><code class="descname">add_immune_overlays</code><span class="sig-paren">(</span><em>cb</em>, <em>tags</em>, <em>directory=None</em>, <em>site=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/malaria/immunity.html#add_immune_overlays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.malaria.immunity.add_immune_overlays" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add an immunity overlay.</p>
-<p>To do so, reads the demographics files and find the corresponding immunity initialization overlay.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> holding the configuration</li>
-<li><strong>tags</strong> -- List of immunity tags that have corresponding initialization files</li>
-<li><strong>directory</strong> -- Main directory where the ..._immune_init_x_...json files are stored</li>
-<li><strong>site</strong> -- If the site is specified, the files will be expected to be found in the immune_init/site subdirectory.</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">Nothing</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="dtk.malaria.immunity.scale_habitat_with_immunity">
-<code class="descclassname">dtk.malaria.immunity.</code><code class="descname">scale_habitat_with_immunity</code><span class="sig-paren">(</span><em>cb</em>, <em>available=[]</em>, <em>scale=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/malaria/immunity.html#scale_habitat_with_immunity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.malaria.immunity.scale_habitat_with_immunity" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Document this function.</p>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>cb</strong> -- </li>
-<li><strong>available</strong> -- </li>
-<li><strong>scale</strong> -- </li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">orphan</dt><dd class="field-body"></dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">orphan:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -189,7 +136,7 @@ This file also holds utility function to create immunity overlays or initialize 
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package Beta 1 - 0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
@@ -199,7 +146,7 @@ This file also holds utility function to create immunity overlays or initialize 
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2015, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>
