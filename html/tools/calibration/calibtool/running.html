@@ -1,0 +1,186 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>2. Running CalibTool &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0 Beta 3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../../../index.html" class="text-logo">dtk-tools Beta 3</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../../index.html">Docs</a></li>
+              
+              <li>2. Running CalibTool</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="running-calibtool">
+<h1>2. Running CalibTool<a class="headerlink" href="#running-calibtool" title="Permalink to this headline">¶</a></h1>
+<p>Run from the command line as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="o">./</span><span class="n">calibration_manager</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The primary point of user manipulation is load_settings.py, which sets
+up a dictionary including locations of local working directories, HPC
+settings, local simulation settings, which sites to simulate, which
+analyzers should be run for each site, any relative weights for each
+site, iterative settings such as number of samples and max number of
+iterations, and the file where the names and boundaries of sampled
+parameters are listed.</p>
+<p>Parameters to be sampled over should be specified as follows in json
+format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;Parameter_Name_1&#39;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;max&#39;</span> <span class="p">:</span> <span class="n">max_value</span><span class="p">,</span>
+    <span class="s1">&#39;min&#39;</span> <span class="p">:</span> <span class="n">min_value</span><span class="p">,</span>
+    <span class="s1">&#39;type&#39;</span> <span class="p">:</span> <span class="n">PARAM_TYPE</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal"><span class="pre">PARAM_TYPE</span></code> is a string specifying linear vs log sampling, and if
+the parameter must be an integer. For example, a parameter to be
+sampled over log space should have type ‘log’, a parameter sampled
+over linear space but as an integer should have type ‘linear_int’,
+etc.</p>
+<p>load_settings.py also contains setup details for each
+analyzer type. This includes the reporter from which data should be
+gathered, relevant fields, and any other analyzer-specific settings
+that will be needed for parsing and calculating likelihoods.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Each calibration experiment MUST have a unique name.</p>
+</div>
+<p>When setting up a new calibration experiment, load_settings.py will
+save settings and analyzers to json files.</p>
+<p>To resume a partially-completed calibration, set <code class="docutils literal"><span class="pre">settings['expname']</span></code>
+in load_settings.py to the name of the calibration, then run
+calibration_manager.py as normal. It is not necessary to cross-check
+all remaining settings since load_settings.py will be loading the
+settings.json and analyzers.json files from the appropriate experiment
+directory.</p>
+</div>
+
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

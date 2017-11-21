@@ -1,10 +1,11 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -14,29 +15,29 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Geography &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <title>Geography &mdash; DTK Package 1.0 Beta 3 documentation</title>
+    
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
   
    
 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -46,7 +47,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -57,7 +58,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">dtk-tools Beta 1</a>
+    ../index.html" class="text-logo">dtk-tools Beta 3</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -134,34 +135,22 @@ The <code class="docutils literal"><span class="pre">geographies</span></code> d
 <code class="descclassname">dtk.generic.geography.</code><code class="descname">convert_filepaths</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/geography.html#convert_filepaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.geography.convert_filepaths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make sure to add the geography folder in front of the paths.
 For example, if the geography is Namawala, we want the climate/demographics files to be Namawalafile.json</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> – The config parameters</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Nothing</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>params</strong> -- The config parameters</dd>
+<dt class="field-name">Returns</dt><dd class="field-body">Nothing</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="dtk.generic.geography.get_converted_paths_for_geography">
 <code class="descclassname">dtk.generic.geography.</code><code class="descname">get_converted_paths_for_geography</code><span class="sig-paren">(</span><em>geography</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/geography.html#get_converted_paths_for_geography"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.geography.get_converted_paths_for_geography" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the converted paths for a given geography.</p>
-<p>Simply copy the geography specific parameters and send it to the :any:’convert_filepaths’ function to get the correct paths.
+<p>Simply copy the geography specific parameters and send it to the :any:'convert_filepaths' function to get the correct paths.
 Then return the updated parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>geography</strong> – The selected geography</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">parameters with the correct path</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>geography</strong> -- The selected geography</dd>
+<dt class="field-name">Returns</dt><dd class="field-body">parameters with the correct path</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -170,21 +159,15 @@ Then return the updated parameters.</p>
 <dd><p>Return a particular parameter for a given geography.
 This function will return the parameter value with the updated path and can accommodate geography of the form:
 <code class="docutils literal"><span class="pre">Sinazongwe.static</span></code>. The <code class="docutils literal"><span class="pre">.static</span></code> will be removed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>geography</strong> – The desired geography</li>
-<li><strong>param</strong> – The parameter we want to retrieve</li>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>geography</strong> -- The desired geography</li>
+<li><strong>param</strong> -- The parameter we want to retrieve</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The value of the parameter for the given geography</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">The value of the parameter for the given geography</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -197,23 +180,17 @@ with the population scale parameter passed.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">The population scale will act on the <code class="docutils literal"><span class="pre">x_Birth</span></code> configuration parameter if the <code class="docutils literal"><span class="pre">Birth_Rate_dependence</span></code> is set to a <code class="docutils literal"><span class="pre">FIXED_BIRTH_DATE</span></code>. It will also act on the <code class="docutils literal"><span class="pre">Base_Population_Scale_Factor</span></code>.</p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cb</strong> – The <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> containing the current configuration</li>
-<li><strong>geography</strong> – The selected geography</li>
-<li><strong>static</strong> – If True, will create a static demographics. if False, will use the <code class="docutils literal"><span class="pre">pop_scale</span></code></li>
-<li><strong>pop_scale</strong> – Used if the demographics is not static and will</li>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>cb</strong> -- The <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> containing the current configuration</li>
+<li><strong>geography</strong> -- The selected geography</li>
+<li><strong>static</strong> -- If True, will create a static demographics. if False, will use the <code class="docutils literal"><span class="pre">pop_scale</span></code></li>
+<li><strong>pop_scale</strong> -- Used if the demographics is not static and will</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">Nothing</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -233,7 +210,7 @@ with the population scale parameter passed.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

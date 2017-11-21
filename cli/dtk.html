@@ -1,10 +1,11 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -14,31 +15,32 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>dtk commands &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <title>dtk commands &mdash; DTK Package 1.0 Beta 3 documentation</title>
+    
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
+    <link rel="up" title="Command Line Interface" href="../cli.html" />
     <link rel="next" title="calibtool commands" href="calibtool.html" />
     <link rel="prev" title="Command Line Interface" href="../cli.html" />
   
    
 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -54,8 +56,8 @@
         <li class="right" >
           <a href="../cli.html" title="Command Line Interface"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../cli.html" accesskey="U">Command Line Interface</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../cli.html" accesskey="U">Command Line Interface</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -66,7 +68,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">dtk-tools Beta 1</a>
+    ../index.html" class="text-logo">dtk-tools Beta 3</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -163,7 +165,7 @@
 Refer to the <a class="reference internal" href="#dtk-cmd-analyze-list"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">analyze-list</span></code></a> to see all available built-in analyzers.</p>
 <dl class="dtk-cmd-option">
 <dt id="cmdoption-analyze-bn">
-<code class="descname">-bn</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--batchName</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-analyze-bn" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-analyze--batchName"></span><code class="descname">-bn</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--batchName</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-analyze-bn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>When the analyze command is called on more than one experiment, a batch is automatically created. By default it will be called
@@ -185,13 +187,13 @@ If the chosen batch already exists, the command will ask if you want to merge, o
 </ul>
 <dl class="dtk-cmd-option">
 <dt id="cmdoption-analyze-a">
-<code class="descname">-a</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--config_name</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-analyze-a" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-analyze--config_name"></span><code class="descname">-a</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--config_name</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-analyze-a" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Python script or builtin analyzer name for custom analysis of simulations (see <a class="reference internal" href="#dtk-cmd-analyze-list"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">analyze-list</span></code></a>).</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-analyze-force">
-<code class="descname">--force</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-analyze-force" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-analyze--force">
+<span id="cmdoption-analyze-f"></span><code class="descname">--force</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-analyze--force" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Force analyzer to run even if jobs are not all finished.</p>
@@ -233,8 +235,8 @@ If the chosen batch already exists, the command will ask if you want to merge, o
 
 <p>Clear the provided batch of all experiments or remove empty batches if no id provided.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-clear-batch-id">
-<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-clear-batch-id" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-clear_batch-id">
+<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-clear_batch-id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>ID of the batch to clear.</p>
@@ -260,14 +262,14 @@ If the chosen batch already exists, the command will ask if you want to merge, o
 <p class="last">The batch creation will merge any overlapping items and ensure there will be no duplicates in the final batch.</p>
 </div>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-create-batch-id">
-<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-create-batch-id" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-create_batch-id">
+<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-create_batch-id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>IDs of the items to group in the batch.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-create-batch-batchname">
-<code class="descname">--batchName</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-bn</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-create-batch-batchname" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-create_batch--batchName">
+<span id="cmdoption-create_batch-bn"></span><code class="descname">--batchName</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-bn</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-create_batch--batchName" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Name of the batch.</p>
@@ -309,8 +311,8 @@ If the chosen batch already exists, the command will ask if you want to merge, o
 <p>Allows to download and install a disease package. Optionally a version can be specified. if not the last released version will be chosen.
 The list of available packages can be displayed with the <a class="reference internal" href="#dtk-cmd-list_packages"><code class="xref std std-dtk-cmd docutils literal"><span class="pre">list_packages</span></code></a> command</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-get-package-v">
-<code class="descname">-v</code><code class="descclassname"> &lt;version&gt;</code><a class="headerlink" href="#cmdoption-get-package-v" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-get_package-v">
+<code class="descname">-v</code><code class="descclassname"> &lt;version&gt;</code><a class="headerlink" href="#cmdoption-get_package-v" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Specify a version to choose for the given package. A special version named <code class="docutils literal"><span class="pre">HEAD</span></code> allows to download the latest git commit for the disease repository.</p>
@@ -355,8 +357,8 @@ The list of available packages can be displayed with the <a class="reference int
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-list-location">
-<code class="descname">--&lt;location&gt;</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list-location" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-list--">
+<code class="descname">--</code><code class="descclassname">&lt;location&gt;</code><a class="headerlink" href="#cmdoption-list--" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>list 20 <em>most recent</em> experiment by matched specified <strong>location</strong> in the experiment location. For example, to list experiments with HPC as a location:</p>
@@ -364,8 +366,8 @@ The list of available packages can be displayed with the <a class="reference int
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-list-number">
-<code class="descname">--number</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list-number" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-list--number">
+<span id="cmdoption-list-n"></span><code class="descname">--number</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list--number" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Use any number following by the command option to <strong>limit</strong> the number of <em>most recent</em> experiments to display. For example:</p>
@@ -387,14 +389,14 @@ The list of available packages can be displayed with the <a class="reference int
 
 <p>List the 20 (or <code class="docutils literal"><span class="pre">limit</span></code>) most recently created batches in the DB or the batch identified by <code class="docutils literal"><span class="pre">batch_id</span></code>.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-list-batch-id">
-<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list-batch-id" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-list_batch-id">
+<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list_batch-id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>ID of the batch to list. If not provided, the command will list the <code class="docutils literal"><span class="pre">limit</span></code> batches present in the system.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-list-batch-n">
-<code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list-batch-n" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-list_batch-n">
+<code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list_batch-n" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Limit the number of batches to list.</p>
@@ -417,14 +419,14 @@ The list of available packages can be displayed with the <a class="reference int
 
 <p>List the versions available for the given package.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-list-package-versions-id">
-<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list-package-versions-id" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-list_package_versions-id">
+<code class="descname">-id</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list_package_versions-id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>ID of the batch to list. If not provided, the command will list the <code class="docutils literal"><span class="pre">limit</span></code> batches present in the system.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-list-package-versions-n">
-<code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list-package-versions-n" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-list_package_versions-n">
+<code class="descname">-n</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-list_package_versions-n" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Limit the number of batches to list.</p>
@@ -502,8 +504,8 @@ The levels are (from less important to more important):</p>
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-run-block-name">
-<code class="descname">--&lt;block_name&gt;</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run-block-name" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-run--">
+<code class="descname">--</code><code class="descclassname">&lt;block_name&gt;</code><a class="headerlink" href="#cmdoption-run--" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Overrides which configuration block the simulation will be ran. Even if the python configuration passed defines the location <code class="docutils literal"><span class="pre">LOCAL</span></code>, the simulations will be ran on the selected block:</p>
@@ -512,8 +514,8 @@ The levels are (from less important to more important):</p>
 </div>
 <p>See <a class="reference internal" href="../simtools/overlay.html#simtoolsoverlay"><span class="std std-ref">INI File overlay mechanism</span></a> for more information.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-run-priority">
-<code class="descname">--priority</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run-priority" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-run--priority">
+<code class="descname">--priority</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run--priority" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Overrides the <a class="reference internal" href="../simtools/simtoolsini.html#std:setting-priority"><code class="xref std std-setting docutils literal"><span class="pre">priority</span></code></a> setting of the <a class="reference internal" href="../simtools/simtoolsini.html#simtoolsini"><span class="std std-ref">simtools.ini file</span></a>.
@@ -532,20 +534,20 @@ Priority can take the following values:</p>
 </pre></div>
 </div>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-run-node-group">
-<code class="descname">--node_group</code><code class="descclassname"> &lt;node_group&gt;</code><a class="headerlink" href="#cmdoption-run-node-group" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-run--node_group">
+<code class="descname">--node_group</code><code class="descclassname"> &lt;node_group&gt;</code><a class="headerlink" href="#cmdoption-run--node_group" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Allows to overrides the <a class="reference internal" href="../simtools/simtoolsini.html#std:setting-node_group"><code class="xref std std-setting docutils literal"><span class="pre">node_group</span></code></a> setting of the <a class="reference internal" href="../simtools/simtoolsini.html#simtoolsini"><span class="std std-ref">simtools.ini file</span></a>.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-run-blocking">
-<code class="descname">--blocking</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-b</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run-blocking" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-run--blocking">
+<span id="cmdoption-run-b"></span><code class="descname">--blocking</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-b</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run--blocking" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>If this flag is present, the tools will run the experiment and automatically display the status until done.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-run-quiet">
-<code class="descname">--quiet</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-q</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run-quiet" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-run--quiet">
+<span id="cmdoption-run-q"></span><code class="descname">--quiet</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-q</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-run--quiet" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>If this flag is used, the tools will not generate console outputs while running.</p>
@@ -615,14 +617,14 @@ Priority can take the following values:</p>
 </div>
 <p>Letting us know that the 1 simulation of our experiment completed successfully. You can learn more about the simulation states in the documentation related to the <a class="reference internal" href="../simtools/experimentmanager.html#experimentmanager"><span class="std std-ref">Experiment Manager Class</span></a>.</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-status-active">
-<code class="descname">--active</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-status-active" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-status--active">
+<span id="cmdoption-status-a"></span><code class="descname">--active</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-status--active" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Returns the status of all active experiments (mutually exclusive to any other parameters).</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-status-repeat">
-<code class="descname">--repeat</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-r</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-status-repeat" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-status--repeat">
+<span id="cmdoption-status-r"></span><code class="descname">--repeat</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-r</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-status--repeat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Repeat status check until job is done processing. Without this option, the status command will only return the current state and return. With this option, the status of the experiment will be displayed at regular intervals until its completion.
@@ -663,8 +665,8 @@ For example:</p>
 
 <p>Prints <code class="docutils literal"><span class="pre">StdErr.txt</span></code> for the <em>first</em> simulation in the <em>most recent</em> experiment matched by specified id or name (or just the most recent).</p>
 <dl class="dtk-cmd-option">
-<dt id="cmdoption-stdout-failed">
-<code class="descname">--failed</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--succeeded</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout-failed" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-stdout--failed">
+<span id="cmdoption-stdout--succeeded"></span><code class="descname">--failed</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--succeeded</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stdout--failed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>Prints <code class="docutils literal"><span class="pre">StdOut.txt</span></code> for the <em>first</em> failed or succeeded (depending on flag) simulation in the <em>most recent</em> experiment matched by specified id or name (or just the most recent).</p>
@@ -756,8 +758,8 @@ issuing a simple <code class="docutils literal"><span class="pre">dtk</span> <sp
         <li class="right" >
           <a href="../cli.html" title="Command Line Interface"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../cli.html" >Command Line Interface</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../cli.html" >Command Line Interface</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

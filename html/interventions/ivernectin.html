@@ -1,0 +1,186 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Ivermectin &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0 Beta 3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">dtk-tools Beta 3</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+              <li>Ivermectin</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="ivermectin">
+<h1>Ivermectin<a class="headerlink" href="#ivermectin" title="Permalink to this headline">¶</a></h1>
+<p>Contains the <code class="docutils literal"><span class="pre">ivermectin_cfg</span></code> dictionary defining the default of an <a class="reference external" href="https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin">Ivermectin</a>
+intervention along with a function to create an ivermectin campaign event.</p>
+<span class="target" id="module-dtk.interventions.ivermectin"></span><dl class="function">
+<dt id="dtk.interventions.ivermectin.add_ivermectin">
+<code class="descclassname">dtk.interventions.ivermectin.</code><code class="descname">add_ivermectin</code><span class="sig-paren">(</span><em>config_builder</em>, <em>drug_code</em>, <em>coverage</em>, <em>start_days</em>, <em>trigger_condition_list=[]</em>, <em>listening_duration=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/ivermectin.html#add_ivermectin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.ivermectin.add_ivermectin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an ivermectin event to the config_builder passed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>config_builder</strong> – The config builder getting the intervention event</li>
+<li><strong>drug_code</strong> – Can be ‘DAY’, ‘WEEK’ or ‘MONTH’ and drive the <code class="docutils literal"><span class="pre">Killing_config</span></code> (see <a class="reference external" href="https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin">Killing_Config in Ivermectin</a> for more info).</li>
+<li><strong>coverage</strong> – Set the <code class="docutils literal"><span class="pre">Demographic_Coverage</span></code></li>
+<li><strong>start_days</strong> – list of days when to start the ivermectin distribution</li>
+<li><strong>trigger_condition_list</strong> – ivermectin will be distributed when it hears the trigger string event, please note the start_days then is used to distribute the NodeLevelHealthTriggeredIV</li>
+<li><strong>listening_duration</strong> – for how long the NLHTIV will listen for the trigger</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.interventions.ivermectin.ivermectin_config_by_duration">
+<code class="descclassname">dtk.interventions.ivermectin.</code><code class="descname">ivermectin_config_by_duration</code><span class="sig-paren">(</span><em>drug_code=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/ivermectin.html#ivermectin_config_by_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.ivermectin.ivermectin_config_by_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the correct <code class="docutils literal"><span class="pre">Killing_Config</span></code> parameter depending on the <code class="docutils literal"><span class="pre">drug_code</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>drug_code</strong> – <p>Can be <code class="docutils literal"><span class="pre">'DAY'</span></code>, <code class="docutils literal"><span class="pre">'WEEK'</span></code> or <code class="docutils literal"><span class="pre">'MONTH'</span></code> or a number of days and drive the <code class="docutils literal"><span class="pre">Killing_config</span></code> (see <a class="reference external" href="https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin">Killing_Config in Ivermectin</a> for more info).</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a dictionary with the correct <code class="docutils literal"><span class="pre">Killing_Config</span> <span class="pre">/</span> <span class="pre">Box_Duration</span></code> set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

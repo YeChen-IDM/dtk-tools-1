@@ -1,0 +1,457 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>INI File overlay mechanism &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0 Beta 3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Experiment Manager Class" href="experimentmanager.html" />
+    <link rel="prev" title="simtools.ini file" href="simtoolsini.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="experimentmanager.html" title="Experiment Manager Class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="simtoolsini.html" title="simtools.ini file"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">dtk-tools Beta 3</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../simtools.html">Simtools package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="simtoolsini.html">simtools.ini file</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">INI File overlay mechanism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experimentmanager.html">Experiment Manager Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="diseasepackages.html">Disease packages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../simtools.html">Simtools package</a></li>
+              
+              <li>INI File overlay mechanism</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="ini-file-overlay-mechanism">
+<span id="simtoolsoverlay"></span><h1>INI File overlay mechanism<a class="headerlink" href="#ini-file-overlay-mechanism" title="Permalink to this headline">¶</a></h1>
+<p>To illustrate how the overlay mechanism works, we will use the example of running a single simulation.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#running-with-all-defaults" id="id1">Running with all defaults</a></li>
+<li><a class="reference internal" href="#switching-blocks-in-default-ini-file" id="id2">Switching blocks in default ini file</a></li>
+<li><a class="reference internal" href="#local-ini-file-without-arguments" id="id3">LOCAL Ini file without arguments</a></li>
+<li><a class="reference internal" href="#local-ini-file-with-block-selection" id="id4">LOCAL Ini file with block selection</a></li>
+<li><a class="reference internal" href="#specified-ini-file" id="id5">Specified ini file</a></li>
+<li><a class="reference internal" href="#specified-ini-file-and-block" id="id6">Specified ini file and block</a></li>
+<li><a class="reference internal" href="#file-and-block-selection-in-the-code" id="id7">File and block selection in the code</a></li>
+</ul>
+</div>
+<div class="section" id="running-with-all-defaults">
+<h2><a class="toc-backref" href="#id1">Running with all defaults</a><a class="headerlink" href="#running-with-all-defaults" title="Permalink to this headline">¶</a></h2>
+<p>The following folder structure is assumed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Example</span>
+<span class="o">|</span><span class="n">_</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Also we assume that the <code class="docutils literal"><span class="pre">example_sim.py</span></code> file is simple and do not overrides anythong regarding to the <code class="docutils literal"><span class="pre">SetupParser()</span></code> like:</p>
+<div class="highlight-python"><div class="snippet-filename"><em>example_sim.py</em></div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dtk.utils.core.DTKConfigBuilder</span> <span class="kn">import</span> <span class="n">DTKConfigBuilder</span>
+
+<span class="n">cb</span> <span class="o">=</span> <span class="n">DTKConfigBuilder</span><span class="o">.</span><span class="n">from_defaults</span><span class="p">(</span><span class="s1">&#39;VECTOR_SIM&#39;</span><span class="p">)</span>
+
+<span class="n">run_sim_args</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;config_builder&#39;</span><span class="p">:</span> <span class="n">cb</span><span class="p">,</span>
+                 <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ExampleSim&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>To run the simulation one would issue a <code class="docutils literal"><span class="pre">dtk</span> <span class="pre">run</span> <span class="pre">example_sim.py</span></code>.</p>
+<p>dtk-tools will then assumes we want to run a <code class="docutils literal"><span class="pre">LOCAL</span></code> simulation and look for the <code class="docutils literal"><span class="pre">LOCAL</span></code> block and configuration in the default ini file (<code class="docutils literal"><span class="pre">simtools/simtools.ini</span></code>).</p>
+</div>
+<div class="section" id="switching-blocks-in-default-ini-file">
+<h2><a class="toc-backref" href="#id2">Switching blocks in default ini file</a><a class="headerlink" href="#switching-blocks-in-default-ini-file" title="Permalink to this headline">¶</a></h2>
+<p>Now lets consider the same file and directory structure as the previous example.
+Because our default ini file has the <code class="docutils literal"><span class="pre">LOCAL</span></code> and <code class="docutils literal"><span class="pre">HPC</span></code> blocks present, one could issue the following commands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">HPC</span>
+<span class="n">dtk</span> <span class="n">run</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">LOCAL</span>
+</pre></div>
+</div>
+<p>The first command would go look for the parameters in the <code class="docutils literal"><span class="pre">HPC</span></code> block present in <code class="docutils literal"><span class="pre">simtools/simtools.ini</span></code>).
+Similarly, the second command would look for the parameters in the <code class="docutils literal"><span class="pre">LOCAL</span></code> block of the <code class="docutils literal"><span class="pre">simtools.ini</span></code> file
+(which is the same as doing <code class="docutils literal"><span class="pre">dtk</span> <span class="pre">run</span> <span class="pre">example_sim.py</span></code> because <code class="docutils literal"><span class="pre">--LOCAL</span></code> is always assumed.</p>
+<p>If the user would issue a <code class="docutils literal"><span class="pre">dtk</span> <span class="pre">run</span> <span class="pre">example_sim.py</span> <span class="pre">--MYBLOCK</span></code> the command would fail because <code class="docutils literal"><span class="pre">simtools/simtools.cfg</span></code>
+only includes <code class="docutils literal"><span class="pre">HPC</span></code> and <code class="docutils literal"><span class="pre">LOCAL</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal"><span class="pre">--CONFIG_NAME</span></code> flag is not yet implemented and for now only allows <code class="docutils literal"><span class="pre">--hpc</span></code> to switch to HPC environment.
+See <a class="reference external" href="https://github.com/InstituteforDiseaseModeling/dtk-tools/issues/192">GitHub issue</a> for more information.</p>
+</div>
+</div>
+<div class="section" id="local-ini-file-without-arguments">
+<h2><a class="toc-backref" href="#id3">LOCAL Ini file without arguments</a><a class="headerlink" href="#local-ini-file-without-arguments" title="Permalink to this headline">¶</a></h2>
+<p>Now if one wants to define custom blocks or overrides the current blocks, the tools will automatically look for
+<code class="docutils literal"><span class="pre">simtools.ini</span></code> file in the working directory.</p>
+<p>Let’s assume the following folder structure:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Example</span>
+<span class="o">|</span><span class="n">_</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span><span class="n">_</span> <span class="n">simtools</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<p>With simtools.ini looking like:</p>
+<div class="highlight-ini"><div class="snippet-filename"><em>simtools.ini</em></div>
+<div class="highlight"><pre><span></span><span class="k">[DEFAULT]</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">10</span>
+
+<span class="k">[LOCAL]</span>
+<span class="na">max_local_sims</span> <span class="o">=</span> <span class="s">5</span>
+
+<span class="k">[MY_BLOCK]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">HPC</span>
+<span class="na">use_comps_assets_svc</span> <span class="o">=</span> <span class="s">1</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">8</span>
+</pre></div>
+</div>
+<p>For simplicity, lets assume our global default looks like:</p>
+<div class="highlight-ini"><div class="snippet-filename"><em>simtools/simtools.ini</em></div>
+<div class="highlight"><pre><span></span><span class="k">[DEFAULT]</span>
+<span class="na">dll_root</span> <span class="o">=</span> <span class="s">C:\dll</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">3</span>
+
+<span class="k">[LOCAL]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">LOCAL</span>
+<span class="na">max_local_sims</span> <span class="o">=</span> <span class="s">1</span>
+<span class="na">sim_root</span> <span class="o">=</span> <span class="s">C:\Temp</span>
+
+<span class="k">[HPC]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">HPC</span>
+<span class="na">use_comps_assets_svc</span> <span class="o">=</span> <span class="s">0</span>
+<span class="na">max_threads</span> <span class="o">=</span> <span class="s">3</span>
+</pre></div>
+</div>
+<p>If one would issue the following command:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>dtk run example_sim.py
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>No config block specified so <code class="docutils literal"><span class="pre">LOCAL</span></code> is assumed</li>
+<li>Load the <code class="docutils literal"><span class="pre">DEFAULT</span></code> block from the global defaults(<code class="docutils literal"><span class="pre">simtools/simtools.ini</span></code>)</li>
+<li>Load the <code class="docutils literal"><span class="pre">LOCAL</span></code> block from the global defaults</li>
+<li>A <code class="docutils literal"><span class="pre">simtools.ini</span></code> file is present in the local directory</li>
+<li>The local ini file has a <code class="docutils literal"><span class="pre">DEFAULT</span></code> block overlays its parameters</li>
+<li>The local ini file has a <code class="docutils literal"><span class="pre">LOCAL</span></code> block, overlays it</li>
+</ol>
+<p>Therefore the resulting set of parameters will look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">step</span><span class="o">-</span><span class="mi">2</span> <span class="o">=</span> <span class="p">{</span>
+<span class="hll">    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span> <span class="c1"># Coming from global(DEFAULT)</span>
+</span><span class="hll">    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">3</span>      <span class="c1"># Coming from global(DEFAULT)</span>
+</span><span class="p">}</span>
+
+<span class="n">step</span><span class="o">-</span><span class="mi">3</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+<span class="hll">    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;LOCAL&#39;</span><span class="p">,</span>      <span class="c1"># Coming from global(LOCAL)</span>
+</span><span class="hll">    <span class="s1">&#39;max_local_sims&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Coming from global(LOCAL)</span>
+</span><span class="hll">    <span class="s1">&#39;sim_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\Temp&#39;</span><span class="p">,</span><span class="c1"># Coming from global(LOCAL)</span>
+</span><span class="p">}</span>
+
+<span class="n">step</span><span class="o">-</span><span class="mi">5</span> <span class="o">=</span> <span class="p">{</span>
+<span class="hll">    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>    <span class="c1"># Overridden by local(DEFAULT)</span>
+</span>    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;LOCAL&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;max_local_sims&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;sim_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\Temp&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">final</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;LOCAL&#39;</span><span class="p">,</span>
+<span class="hll">    <span class="s1">&#39;max_local_sims&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="c1"># Overridden by local(LOCAL)</span>
+</span>    <span class="s1">&#39;sim_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\Temp&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="local-ini-file-with-block-selection">
+<h2><a class="toc-backref" href="#id4">LOCAL Ini file with block selection</a><a class="headerlink" href="#local-ini-file-with-block-selection" title="Permalink to this headline">¶</a></h2>
+<p>Let’s assume the same files structure/content as the previous example.</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>dtk run example_sim.py --MY_BLOCK
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>MY_BLOCK is specified</li>
+<li>A <code class="docutils literal"><span class="pre">simtools.ini</span></code> file is present in the local directory and has the <code class="docutils literal"><span class="pre">MY_BLOCK</span></code> definition</li>
+<li>Look the <code class="docutils literal"><span class="pre">MY_BLOCK.type</span></code> (here <code class="docutils literal"><span class="pre">HPC</span></code>)</li>
+<li>Load the <code class="docutils literal"><span class="pre">DEFAULT</span></code> block from the global defaults(<code class="docutils literal"><span class="pre">simtools/simtools.ini</span></code>)</li>
+<li>Load the <code class="docutils literal"><span class="pre">HPC</span></code> block from the global defaults</li>
+<li>The local ini file has a <code class="docutils literal"><span class="pre">DEFAULT</span></code> block overlays its parameters</li>
+<li>Overlays the <code class="docutils literal"><span class="pre">MY_BLOCK</span></code> parameters</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">step</span><span class="o">-</span><span class="mi">3</span> <span class="o">=</span> <span class="p">{</span>
+<span class="hll">    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;HPC&#39;</span>         <span class="c1"># Coming from local(MY_BLOCK)</span>
+</span><span class="p">}</span>
+
+<span class="n">step</span><span class="o">-</span><span class="mi">4</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;HPC&#39;</span><span class="p">,</span>
+<span class="hll">    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span> <span class="c1"># Coming from global(DEFAULT)</span>
+</span><span class="hll">    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">3</span>      <span class="c1"># Coming from global(DEFAULT)</span>
+</span><span class="p">}</span>
+
+<span class="n">step</span><span class="o">-</span><span class="mi">5</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;HPC&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+<span class="hll">    <span class="s1">&#39;use_comps_assets_svc&#39;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># Coming from global(HPC)</span>
+</span><span class="hll">    <span class="s1">&#39;max_threads&#39;</span> <span class="o">=</span> <span class="mi">3</span>           <span class="c1"># Coming from global(HPC)</span>
+</span><span class="p">}</span>
+
+<span class="n">step</span><span class="o">-</span><span class="mi">6</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;HPC&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span>
+<span class="hll">    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>          <span class="c1"># Overridden by local(DEFAULT)</span>
+</span>    <span class="s1">&#39;use_comps_assets_svc&#39;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;max_threads&#39;</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="p">}</span>
+
+<span class="n">final</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;HPC&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dll_root&#39;</span><span class="p">:</span><span class="s1">&#39;C:\dll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;max_threads&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+<span class="hll">    <span class="s1">&#39;use_comps_assets_svc&#39;</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Overridden by local(MY_BLOCK)</span>
+</span><span class="hll">    <span class="s1">&#39;max_threads&#39;</span> <span class="o">=</span> <span class="mi">8</span>           <span class="c1"># Overridden by local(MY_BLOCK)</span>
+</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specified-ini-file">
+<h2><a class="toc-backref" href="#id5">Specified ini file</a><a class="headerlink" href="#specified-ini-file" title="Permalink to this headline">¶</a></h2>
+<p>If the user specifies a ini file with the following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">ini</span> <span class="n">my_custom_ini</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<p>Then the local ini file will be ignored and only the specified custom ini file will be used for the overlay.
+Because no block is specified, the command assumes the <code class="docutils literal"><span class="pre">LOCAL</span></code> block is used.</p>
+<ul class="simple">
+<li>If no <code class="docutils literal"><span class="pre">LOCAL</span></code> block is present in the custom ini file, the general default <code class="docutils literal"><span class="pre">LOCAL</span></code> block will be used.</li>
+<li>If a <code class="docutils literal"><span class="pre">LOCAL</span></code> block is present in the custom ini file, its parameters will be overlaid to the global <code class="docutils literal"><span class="pre">LOCAL</span></code> block.</li>
+</ul>
+</div>
+<div class="section" id="specified-ini-file-and-block">
+<h2><a class="toc-backref" href="#id6">Specified ini file and block</a><a class="headerlink" href="#specified-ini-file-and-block" title="Permalink to this headline">¶</a></h2>
+<p>If the user specified a ini file and a block name with the following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dtk</span> <span class="n">run</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">ini</span> <span class="n">my_custom_ini</span><span class="o">.</span><span class="n">ini</span> <span class="o">--</span><span class="n">MY_BLOCK</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">MY_BLOCK</span></code> block needs to be defined in the <code class="docutils literal"><span class="pre">my_custom_ini.ini</span></code>. Its parameter will be overlayed to the parameters
+coming from either the global <code class="docutils literal"><span class="pre">LOCAL</span></code> or the global <code class="docutils literal"><span class="pre">HPC</span></code> depending on the <code class="docutils literal"><span class="pre">MY_BLOCK.type</span></code>.</p>
+</div>
+<div class="section" id="file-and-block-selection-in-the-code">
+<h2><a class="toc-backref" href="#id7">File and block selection in the code</a><a class="headerlink" href="#file-and-block-selection-in-the-code" title="Permalink to this headline">¶</a></h2>
+<p>The ini file and block can be specified directly within the code when instantiating a <code class="docutils literal"><span class="pre">SetupParser()</span></code>.
+For example for the following calibration:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">calib_manager</span> <span class="o">=</span> <span class="n">CalibManager</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ExampleCalibration&#39;</span><span class="p">,</span>
+<span class="hll">                             <span class="n">setup</span><span class="o">=</span><span class="n">SetupParser</span><span class="p">(</span><span class="n">selected_block</span><span class="o">=</span><span class="s1">&#39;TEST_BLOCK&#39;</span><span class="p">,</span><span class="n">setup_file</span><span class="o">=</span><span class="s1">&#39;custom_ini.ini&#39;</span><span class="p">),</span>
+</span>                             <span class="n">config_builder</span><span class="o">=</span><span class="n">cb</span><span class="p">,</span>
+                             <span class="n">sample_point_fn</span><span class="o">=</span><span class="n">sample_point_fn</span><span class="p">,</span>
+                             <span class="n">sites</span><span class="o">=</span><span class="n">sites</span><span class="p">,</span>
+                             <span class="n">next_point</span><span class="o">=</span><span class="n">IMIS</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="o">**</span><span class="n">next_point_kwargs</span><span class="p">),</span>
+                             <span class="n">sim_runs_per_param_set</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">max_iterations</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">num_to_plot</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                             <span class="n">plotters</span><span class="o">=</span><span class="n">plotters</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">SetupParser</span></code> constructor can take two parameters:</p>
+<ul class="simple">
+<li><cite>selected_block</cite>: Name of the block we want to select</li>
+<li><cite>setup_file</cite>: Path to the custom ini file</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Note that the constructor can take either or both parameters.</p>
+</div>
+<p>For simulation where the <code class="docutils literal"><span class="pre">SetupParser</span></code> is not directly used like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dtk.utils.core.DTKConfigBuilder</span> <span class="kn">import</span> <span class="n">DTKConfigBuilder</span>
+
+<span class="n">cb</span> <span class="o">=</span> <span class="n">DTKConfigBuilder</span><span class="o">.</span><span class="n">from_defaults</span><span class="p">(</span><span class="s1">&#39;VECTOR_SIM&#39;</span><span class="p">)</span>
+
+<span class="n">run_sim_args</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;config_builder&#39;</span><span class="p">:</span> <span class="n">cb</span><span class="p">,</span>
+                 <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ExampleSim&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">SetupParser</span></code> has the particularity to rely on its class variables <code class="docutils literal"><span class="pre">selected_block</span></code> and <code class="docutils literal"><span class="pre">setup_file</span></code>. Once those are set
+any subsequent instantiation of the object will use them.
+So you can just change their values directly on the class at any point on the code before running:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dtk.utils.core.DTKConfigBuilder</span> <span class="kn">import</span> <span class="n">DTKConfigBuilder</span>
+<span class="hll"><span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="kn">import</span> <span class="n">SetupParser</span>
+</span>
+<span class="hll"><span class="n">SetupParser</span><span class="o">.</span><span class="n">selected_block</span> <span class="o">=</span> <span class="s1">&#39;TEST&#39;</span>
+</span><span class="hll"><span class="n">SetupParser</span><span class="o">.</span><span class="n">setup_file</span> <span class="o">=</span> <span class="s1">&#39;test.ini&#39;</span>
+</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">DTKConfigBuilder</span><span class="o">.</span><span class="n">from_defaults</span><span class="p">(</span><span class="s1">&#39;VECTOR_SIM&#39;</span><span class="p">)</span>
+<span class="n">configure_site</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="s1">&#39;Namawala&#39;</span><span class="p">)</span>
+
+<span class="n">run_sim_args</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;config_builder&#39;</span><span class="p">:</span> <span class="n">cb</span><span class="p">,</span>
+                 <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ExampleSim&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The previous calibration example can also be set the same way instead of using the constructor:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="kn">import</span> <span class="n">SetupParser</span>
+</span>
+<span class="hll"><span class="n">SetupParser</span><span class="o">.</span><span class="n">selected_block</span> <span class="o">=</span> <span class="s1">&#39;TEST_BLOCK&#39;</span>
+</span><span class="hll"><span class="n">SetupParser</span><span class="o">.</span><span class="n">setup_file</span> <span class="o">=</span> <span class="s1">&#39;custom_ini.ini&#39;</span>
+</span>
+<span class="n">calib_manager</span> <span class="o">=</span> <span class="n">CalibManager</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ExampleCalibration&#39;</span><span class="p">,</span>
+<span class="hll">                             <span class="n">setup</span><span class="o">=</span><span class="n">SetupParser</span><span class="p">(),</span>
+</span>                             <span class="n">config_builder</span><span class="o">=</span><span class="n">cb</span><span class="p">,</span>
+                             <span class="n">sample_point_fn</span><span class="o">=</span><span class="n">sample_point_fn</span><span class="p">,</span>
+                             <span class="n">sites</span><span class="o">=</span><span class="n">sites</span><span class="p">,</span>
+                             <span class="n">next_point</span><span class="o">=</span><span class="n">IMIS</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="o">**</span><span class="n">next_point_kwargs</span><span class="p">),</span>
+                             <span class="n">sim_runs_per_param_set</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">max_iterations</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">num_to_plot</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                             <span class="n">plotters</span><span class="o">=</span><span class="n">plotters</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As you notice even with an empty constructor, <code class="docutils literal"><span class="pre">SetupParser</span></code> will still use <code class="docutils literal"><span class="pre">TEST_BLOCK</span></code> and <code class="docutils literal"><span class="pre">custom_ini.ini</span></code>.</p>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="simtoolsini.html" title="previous chapter (use the left arrow)">simtools.ini file</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="experimentmanager.html" title="next chapter (use the right arrow)">Experiment Manager Class</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="experimentmanager.html" title="Experiment Manager Class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="simtoolsini.html" title="simtools.ini file"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

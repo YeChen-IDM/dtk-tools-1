@@ -1,10 +1,11 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -14,29 +15,29 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Health seeking campaign &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <title>Health seeking campaign &mdash; DTK Package 1.0 Beta 3 documentation</title>
+    
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
   
    
 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -46,7 +47,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -57,7 +58,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">dtk-tools Beta 1</a>
+    ../index.html" class="text-logo">dtk-tools Beta 3</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -111,28 +112,23 @@
 <span id="health-seeking-campaign"></span><h1>Health seeking campaign<a class="headerlink" href="#module-dtk.interventions.health_seeking" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="dtk.interventions.health_seeking.add_health_seeking">
-<code class="descclassname">dtk.interventions.health_seeking.</code><code class="descname">add_health_seeking</code><span class="sig-paren">(</span><em>config_builder, start_day=0, targets=[{'trigger': 'NewClinicalCase', 'coverage': 0.8, 'agemin': 15, 'agemax': 70, 'seek': 0.4, 'rate': 0.3}, {'trigger': 'NewSevereCase', 'coverage': 0.8, 'seek': 0.6, 'rate': 0.5}], drug=['Artemether', 'Lumefantrine'], dosing='FullTreatmentNewDetectionTech', nodes={'class': 'NodeSetAll'}, node_property_restrictions=[], ind_property_restrictions=[], drug_ineligibility_duration=0, duration=-1, repetitions=1, tsteps_btwn_repetitions=365, broadcast_event_name='Received_Treatment'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/health_seeking.html#add_health_seeking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.health_seeking.add_health_seeking" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dtk.interventions.health_seeking.</code><code class="descname">add_health_seeking</code><span class="sig-paren">(</span><em>config_builder, start_day=0, targets=[{'agemin': 15, 'rate': 0.3, 'trigger': 'NewClinicalCase', 'coverage': 0.8, 'agemax': 70, 'seek': 0.4}, {'rate': 0.5, 'trigger': 'NewSevereCase', 'seek': 0.6, 'coverage': 0.8}], drug=['Artemether', 'Lumefantrine'], dosing='FullTreatmentNewDetectionTech', nodes={'class': 'NodeSetAll'}, node_property_restrictions=[], ind_property_restrictions=[], drug_ineligibility_duration=0, duration=-1, repetitions=1, tsteps_btwn_repetitions=365, broadcast_event_name='Received_Treatment'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/health_seeking.html#add_health_seeking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.health_seeking.add_health_seeking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a <a class="reference external" href="https://institutefordiseasemodeling.github.io/EMOD/general/parameter-campaign.html#simplehealthseekingbehavior">SimpleHealthSeekingBehavior</a> .</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>config_builder</strong> – The <a class="reference internal" href="../dtk/utils/core/DTKConfigBuilder.html#module-dtk.utils.core.DTKConfigBuilder" title="dtk.utils.core.DTKConfigBuilder"><code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code></a> containing the campaign configuration</li>
-<li><strong>start_day</strong> – Day we want to start the intervention</li>
-<li><strong>targets</strong> – The different targets held in a list of dictionaries (see default for example)</li>
-<li><strong>drug</strong> – The drug to administer</li>
-<li><strong>dosing</strong> – The dosing for the drugs</li>
-<li><strong>nodes</strong> – nodes to target.</li>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
+<li><strong>config_builder</strong> -- The <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> containing the campaign configuration</li>
+<li><strong>start_day</strong> -- Day we want to start the intervention</li>
+<li><strong>targets</strong> -- The different targets held in a list of dictionaries (see default for example)</li>
+<li><strong>drug</strong> -- The drug to administer</li>
+<li><strong>dosing</strong> -- The dosing for the drugs</li>
+<li><strong>nodes</strong> -- nodes to target.</li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p># All nodes: {“class”: “NodeSetAll”}.
-# Subset of nodes: {“class”: “NodeSetNodeList”, “Node_List”: list_of_nodeIDs}
+</dd>
+</dl>
+<p># All nodes: {&quot;class&quot;: &quot;NodeSetAll&quot;}.
+# Subset of nodes: {&quot;class&quot;: &quot;NodeSetNodeList&quot;, &quot;Node_List&quot;: list_of_nodeIDs}
 :param node_property_restrictions: used with NodePropertyRestrictions.
-Format: list of dicts: [{ “NodeProperty1” : “PropertyValue1” }, {‘NodeProperty2’: “PropertyValue2”}, …]
+Format: list of dicts: [{ &quot;NodeProperty1&quot; : &quot;PropertyValue1&quot; }, {'NodeProperty2': &quot;PropertyValue2&quot;}, ...]
 :param drug_ineligibility_duration: if this param is &gt; 0, use IndividualProperties to prevent people from receiving
 drugs too frequently. Demographics file will need to define the IP DrugStatus with possible values None and
 RecentDrug. Individuals who receive drugs for treatment will have their DrugStatus changed to RecentDrug for
@@ -146,7 +142,7 @@ treatment.
 
 <dl class="function">
 <dt id="dtk.interventions.health_seeking.add_health_seeking_by_chw">
-<code class="descclassname">dtk.interventions.health_seeking.</code><code class="descname">add_health_seeking_by_chw</code><span class="sig-paren">(</span><em>config_builder, start_day=0, targets=[{'trigger': 'NewClinicalCase', 'coverage': 0.8, 'agemin': 15, 'agemax': 70, 'seek': 0.4, 'rate': 0.3}, {'trigger': 'NewSevereCase', 'coverage': 0.8, 'seek': 0.6, 'rate': 0.5}], drug=['Artemether', 'Lumefantrine'], dosing='FullTreatmentNewDetectionTech', nodeIDs=[], node_property_restrictions=[], ind_property_restrictions=[], drug_ineligibility_duration=0, duration=100000, chw={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/health_seeking.html#add_health_seeking_by_chw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.health_seeking.add_health_seeking_by_chw" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dtk.interventions.health_seeking.</code><code class="descname">add_health_seeking_by_chw</code><span class="sig-paren">(</span><em>config_builder, start_day=0, targets=[{'agemin': 15, 'rate': 0.3, 'trigger': 'NewClinicalCase', 'coverage': 0.8, 'agemax': 70, 'seek': 0.4}, {'rate': 0.5, 'trigger': 'NewSevereCase', 'seek': 0.6, 'coverage': 0.8}], drug=['Artemether', 'Lumefantrine'], dosing='FullTreatmentNewDetectionTech', nodeIDs=[], node_property_restrictions=[], ind_property_restrictions=[], drug_ineligibility_duration=0, duration=100000, chw={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/health_seeking.html#add_health_seeking_by_chw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.health_seeking.add_health_seeking_by_chw" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -176,7 +172,7 @@ treatment.
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

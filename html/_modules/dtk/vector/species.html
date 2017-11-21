@@ -1,0 +1,447 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>dtk.vector.species &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0 Beta 3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../../../index.html" class="text-logo">dtk-tools Beta 3</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../../index.html">Docs</a></li>
+              
+                <li><a href="../../index.html">Module code</a></li>
+              
+              <li>dtk.vector.species</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for dtk.vector.species</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">param_block</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">8e8</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">8e7</span>
+    <span class="p">},</span>
+
+    <span class="s2">&quot;Aquatic_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mi">84200000000</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">8328</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Mortality_Rate&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+
+    <span class="s2">&quot;Immature_Duration&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># species- and site-specific feeding parameters</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes</span>
+    <span class="s2">&quot;Infected_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mi">117000000000</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">8336</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Egg_Batch_Factor&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+
+    <span class="s2">&quot;Infectious_Human_Feed_Mortality_Factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="s2">&quot;Nighttime_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.9</span>  <span class="c1"># Based on late-2013 calibration of PfPR vs EIR favoring 1.0 to 0.5</span>
+<span class="p">}</span>
+
+<span class="c1"># An. arabiensis</span>
+<span class="n">arabiensis_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+
+<span class="c1"># An. funestus</span>
+<span class="n">funestus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_funestus_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">2e7</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">funestus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_funestus_params</span><span class="p">)</span>
+
+<span class="c1"># extra funestus for Munyumbwe</span>
+<span class="n">munyumbwe_funestus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">funestus_param_block</span><span class="p">)</span>
+
+<span class="c1"># An. gambiae</span>
+<span class="n">gambiae_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">gambiae_param_block</span><span class="p">[</span><span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.95</span>
+
+<span class="c1"># An. farauti</span>
+<span class="n">farauti_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_farauti_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;BRACKISH_SWAMP&quot;</span><span class="p">:</span> <span class="mi">10000000000</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mf">5.9</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.97</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
+<span class="p">}</span>
+<span class="n">farauti_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_farauti_params</span><span class="p">)</span>
+
+<span class="c1"># Thailand_Anopheles_Survey_1968.pdf</span>
+<span class="c1"># An. maculatus</span>
+<span class="c1"># http://www.bioone.org/doi/full/10.3376/038.034.0108</span>
+<span class="c1"># http://www.map.ox.ac.uk/explore/mosquito-malaria-vectors/bionomics/anopheles-maculatus/</span>
+<span class="c1"># previous to 160722, maculatus block had</span>
+<span class="c1">#    &quot;Larval_Habitat_Types&quot;: {</span>
+<span class="c1">#        &quot;WATER_VEGETATION&quot;: 1e7</span>
+<span class="c1">#    },</span>
+<span class="c1">#    &quot;Anthropophily&quot;: 0.3,</span>
+<span class="c1">#    &quot;Indoor_Feeding_Fraction&quot;: 0.4,</span>
+<span class="c1"># on 160722, modified to Trung Trop Med Intl Health 2005 data from Ratanakiri</span>
+<span class="c1"># on 161103, modified to mean values across sites from Trung Trop Med 2005 for anthropophily, indoor feeding fraction</span>
+<span class="c1"># maculatus seasonal with rainfall (Durnez Malar J 2013), but also found in permanent/semipermanent bodies of water</span>
+<span class="c1"># near forest camps or rice fields. For more info see https://wiki.idmod.org/display/EMOD/2016/10/21/SE+Asia+Larval+Habitats+Lit+Review</span>
+<span class="n">maculatus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_maculatus_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e6</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">1e6</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.19</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
+<span class="p">}</span>
+<span class="n">maculatus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_maculatus_params</span><span class="p">)</span>
+
+<span class="c1"># An. minimus</span>
+<span class="c1"># http://www.bioone.org/doi/abs/10.1603/033.046.0511</span>
+<span class="c1"># http://www.map.ox.ac.uk/explore/mosquito-malaria-vectors/bionomics/anopheles-minimus/</span>
+<span class="c1"># previous to 160722, minimus block had</span>
+<span class="c1">#    &quot;Larval_Habitat_Types&quot;: {</span>
+<span class="c1">#        &quot;WATER_VEGETATION&quot;: 1e7</span>
+<span class="c1">#    },</span>
+<span class="c1">#    &quot;Anthropophily&quot;: 0.93,</span>
+<span class="c1">#    &quot;Indoor_Feeding_Fraction&quot;: 0.95,</span>
+<span class="c1"># on 160722, modified to Trung Trop Med Intl Health 2005 data from Ratanakiri</span>
+<span class="c1"># on 161103, modified to mean values across sites from Trung Trop Med 2005 for anthropophily, indoor feeding fraction</span>
+<span class="c1"># minimus more present during drier periods after rainy season</span>
+<span class="c1"># for more info see https://wiki.idmod.org/display/EMOD/2016/10/21/SE+Asia+Larval+Habitats+Lit+Review</span>
+<span class="n">minimus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_minimus_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;WATER_VEGETATION&quot;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span> <span class="c1"># update habitat type?</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">1e6</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.73</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
+<span class="p">}</span>
+<span class="n">minimus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_minimus_params</span><span class="p">)</span>
+
+<span class="c1"># An. dirus</span>
+<span class="c1"># Trung Trop Med Intl Health 2005</span>
+<span class="c1"># Durnez Malar J 2013</span>
+<span class="c1"># on 161103, modified to mean values across sites from Trung Trop Med 2005 for anthropophily, indoor feeding fraction</span>
+<span class="c1"># dirus more abundant during rainy season but also some constant portion in forest</span>
+<span class="c1"># dirus also has longer lifespan, see https://wiki.idmod.org/display/EMOD/2016/10/21/SE+Asia+Larval+Habitats+Lit+Review</span>
+<span class="n">dirus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_dirus_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">1e6</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.96</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
+<span class="p">}</span>
+<span class="n">dirus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_dirus_params</span><span class="p">)</span>
+
+
+<span class="c1"># An. albimanus</span>
+<span class="c1"># CDC Malar J 2016 review</span>
+<span class="n">albimanus_param_block</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">param_block</span><span class="p">)</span>
+<span class="n">mod_albimanus_params</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c1"># seasonal with rainfall</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+        <span class="s2">&quot;CONSTANT&quot;</span><span class="p">:</span> <span class="mf">1e6</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="c1"># daily survival rate somewhere between 0.7 and 0.9</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="c1"># observed 2.6 to 5.2</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="c1"># ?</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span> <span class="c1"># ?</span>
+<span class="p">}</span>
+<span class="n">albimanus_param_block</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mod_albimanus_params</span><span class="p">)</span>
+
+<span class="c1"># An. aegypti</span>
+<span class="c1"># Dengue</span>
+<span class="n">aegypti_param_block</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Adult_Life_Expectancy&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s2">&quot;Anthropophily&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mf">9752291.727</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mf">5525.492</span><span class="p">,</span>
+    <span class="s2">&quot;Aquatic_Mortality_Rate&quot;</span><span class="p">:</span> <span class="mf">0.12</span><span class="p">,</span>
+    <span class="s2">&quot;Cycle_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mf">4.120591E10</span><span class="p">,</span>
+    <span class="s2">&quot;Cycle_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mf">7.740230E3</span><span class="p">,</span>
+    <span class="s2">&quot;Cycle_Arrhenius_Reduction_Factor&quot;</span><span class="p">:</span> <span class="mf">0.58</span><span class="p">,</span>
+    <span class="s2">&quot;Days_Between_Feeds&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Batch_Size&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;Egg_Survival_Rate&quot;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+    <span class="s2">&quot;Larval_Habitat_Types&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TEMPORARY_RAINFALL&quot;</span><span class="p">:</span> <span class="mf">1.125e10</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Immature_Duration&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;Indoor_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Arrhenius_1&quot;</span><span class="p">:</span> <span class="mf">4.784476E12</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Arrhenius_2&quot;</span><span class="p">:</span> <span class="mi">9550</span><span class="p">,</span>
+    <span class="s2">&quot;Infected_Egg_Batch_Factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Infectious_Human_Feed_Mortality_Factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Nighttime_Feeding_Fraction&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Transmission_Rate&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
+<span class="p">}</span>
+
+
+<span class="c1"># Dictionary of params by species name</span>
+<span class="n">vector_params_by_species</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;arabiensis&quot;</span><span class="p">:</span> <span class="n">arabiensis_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;funestus&quot;</span><span class="p">:</span> <span class="n">funestus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;munyumbwe_funestus&quot;</span><span class="p">:</span> <span class="n">munyumbwe_funestus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;farauti&quot;</span><span class="p">:</span> <span class="n">farauti_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;gambiae&quot;</span><span class="p">:</span> <span class="n">gambiae_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;maculatus&quot;</span><span class="p">:</span> <span class="n">maculatus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;minimus&quot;</span><span class="p">:</span> <span class="n">minimus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;dirus&quot;</span><span class="p">:</span> <span class="n">dirus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;albimanus&quot;</span><span class="p">:</span> <span class="n">albimanus_param_block</span><span class="p">,</span>
+    <span class="s2">&quot;aegypti&quot;</span><span class="p">:</span> <span class="n">aegypti_param_block</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="set_params_by_species"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_params_by_species">[docs]</a><span class="k">def</span> <span class="nf">set_params_by_species</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="s2">&quot;VECTOR_SIM&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param params:</span>
+<span class="sd">    :param ss:</span>
+<span class="sd">    :param sim_type:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
+        <span class="n">pp</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">vector_params_by_species</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;MALARIA_SIM&quot;</span><span class="p">:</span>
+            <span class="n">pp</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="s2">&quot;Acquire_Modifier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1">## gametocyte success modeled explicitly</span>
+
+    <span class="n">vector_species_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Vector_Species_Names&quot;</span><span class="p">:</span> <span class="n">ss</span><span class="p">,</span>
+        <span class="s2">&quot;Vector_Species_Params&quot;</span><span class="p">:</span> <span class="n">pp</span>
+    <span class="p">}</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vector_species_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_species_param">[docs]</a><span class="k">def</span> <span class="nf">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">]):</span> <span class="n">value</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="update_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.update_species_param">[docs]</a><span class="k">def</span> <span class="nf">update_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Update a &#39;Vector_Species_Param&#39; variable in a config file; return a length-one dict with a numeric value.</span>
+
+<span class="sd">    :param cb: DTKConfigBuilder object with a &#39;config&#39; attribute.</span>
+<span class="sd">    :param species: (string) vector species whose parameter will be updated.</span>
+<span class="sd">    :param parameter: (string) &#39;Vector_Species_Param&#39; variable to be updated.</span>
+<span class="sd">    :param value: (float, dict) New value for &#39;parameter&#39;.</span>
+<span class="sd">    Note that the function only returns the first key-value pair in &#39;value&#39;.</span>
+<span class="sd">    :param overwrite: (logical) Relevant only if &#39;value&#39; is a dict.</span>
+<span class="sd">    If True, will replace the entire original parameter with whatever is passed in &#39;value&#39;. If False, will change only the elements specified in &#39;value&#39;.</span>
+<span class="sd">    :return: a dict whose key traces the config parameters from &#39;species&#39; onward (including the key of &#39;value&#39; if &#39;value&#39; is a dict) and whose value is equal to the updated config value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="c1"># update values in &#39;parameter&#39; without deleting what&#39;s already there.</span>
+            <span class="c1"># i.e: update the &quot;TEMPORARY RAINFALL&quot; value in a &quot;Larval_Habitat_Types&quot; object</span>
+            <span class="c1"># without eliminating the &quot;CONSTANT&quot; value</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;value is a dict of length&gt;1, returning only the first value.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]):</span> <span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">]):</span> <span class="n">value</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="get_species_param"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.get_species_param">[docs]</a><span class="k">def</span> <span class="nf">get_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cb</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;Vector_Species_Params&#39;</span><span class="p">][</span><span class="n">species</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Unable to get parameter </span><span class="si">%s</span><span class="s1"> for species </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">species</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="scale_all_habitats"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.scale_all_habitats">[docs]</a><span class="k">def</span> <span class="nf">scale_all_habitats</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Vector_Species_Names&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
+        <span class="n">habitats</span> <span class="o">=</span> <span class="n">get_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;Larval_Habitat_Types&#39;</span><span class="p">)</span>
+        <span class="n">scaled_habitats</span> <span class="o">=</span> <span class="p">{</span><span class="n">h</span><span class="p">:</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">habitats</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;Larval_Habitat_Types&#39;</span><span class="p">,</span> <span class="n">scaled_habitats</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_larval_habitat"><a class="viewcode-back" href="../../../vector.html#dtk.vector.species.set_larval_habitat">[docs]</a><span class="k">def</span> <span class="nf">set_larval_habitat</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">habitats</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set vector species and habitat parameters of config argument and return</span>
+<span class="sd">    Example:</span>
+<span class="sd">    habitats = {&quot;arabiensis&quot;: {&quot;TEMPORARY_RAINFALL&quot;: 1.7e9, &quot;CONSTANT&quot;: 1e7}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">species</span><span class="p">,</span> <span class="n">habitat</span> <span class="ow">in</span> <span class="n">habitats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">set_species_param</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="s1">&#39;Larval_Habitat_Types&#39;</span><span class="p">,</span> <span class="n">habitat</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
