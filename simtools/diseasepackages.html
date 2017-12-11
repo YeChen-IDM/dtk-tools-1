@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,32 +14,31 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Disease packages &mdash; DTK Package 1.0 Beta 3 documentation</title>
-    
+    <title>Disease packages &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
-    <link rel="up" title="Simtools package" href="../simtools.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Calibtool package" href="../calibtool.html" />
     <link rel="prev" title="Experiment Manager Class" href="experimentmanager.html" />
   
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -56,8 +54,8 @@
         <li class="right" >
           <a href="experimentmanager.html" title="Experiment Manager Class"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -80,6 +78,7 @@
       <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration27.html">Migrate from Python 2.7</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../simtools.html">Simtools package</a><ul class="current">
@@ -135,7 +134,7 @@ Three commands are available for querying and downloading disease-specific packa
 •       dtk get_package</p>
 <p>Disease packages will be globally installed via ‘pip install’.
 Installing another version of a previously installed disease package will overwrite the original. Only one version per disease may be used.
-The latest (highest numerically, highest significant digits to the left) version is obtained if -v (or --version) PACKAGE_VERSION is not specified.
+The latest (highest numerically, highest significant digits to the left) version is obtained if -v (or –version) PACKAGE_VERSION is not specified.
 How to use an installed package:</p>
 <p>All python modules and files within disease packages are imported recursively so that a simple “import NAME” command is sufficient to access everything in the full package.</p>
 <p>How to create and manage a dtk-tools disease repository</p>
@@ -145,8 +144,8 @@ How to use an installed package:</p>
 <p>Create the REPOSITORY in the IDM GitHub account: <a class="reference external" href="https://github.com/InstituteforDiseaseModeling">https://github.com/InstituteforDiseaseModeling</a></p>
 <p>Create a setup.py file in the root of the new repository that has exactly the following in it (substitute ‘malaria’ with the NAME of the new disease package, not REPOSITORY name):
 from setuptools import setup, find_packages</p>
-<p>setup(name='malaria',
-version='$VERSION$',
+<p>setup(name=’malaria’,
+version=’$VERSION$’,
 packages=find_packages(),
 install_requires=[]
 )
@@ -192,8 +191,8 @@ install_requires=[]
         <li class="right" >
           <a href="experimentmanager.html" title="Experiment Manager Class"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,32 +14,31 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>INI File overlay mechanism &mdash; DTK Package 1.0 Beta 3 documentation</title>
-    
+    <title>INI File overlay mechanism &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
-    <link rel="up" title="Simtools package" href="../simtools.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Experiment Manager Class" href="experimentmanager.html" />
     <link rel="prev" title="simtools.ini file" href="simtoolsini.html" />
   
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -56,8 +54,8 @@
         <li class="right" >
           <a href="simtoolsini.html" title="simtools.ini file"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" accesskey="U">Simtools package</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -80,6 +78,7 @@
       <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration27.html">Migrate from Python 2.7</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../simtools.html">Simtools package</a><ul class="current">
@@ -183,7 +182,7 @@ See <a class="reference external" href="https://github.com/InstituteforDiseaseMo
 <h2><a class="toc-backref" href="#id3">LOCAL Ini file without arguments</a><a class="headerlink" href="#local-ini-file-without-arguments" title="Permalink to this headline">¶</a></h2>
 <p>Now if one wants to define custom blocks or overrides the current blocks, the tools will automatically look for
 <code class="docutils literal"><span class="pre">simtools.ini</span></code> file in the working directory.</p>
-<p>Let's assume the following folder structure:</p>
+<p>Let’s assume the following folder structure:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Example</span>
 <span class="o">|</span><span class="n">_</span> <span class="n">example_sim</span><span class="o">.</span><span class="n">py</span>
 <span class="o">|</span><span class="n">_</span> <span class="n">simtools</span><span class="o">.</span><span class="n">ini</span>
@@ -266,7 +265,7 @@ See <a class="reference external" href="https://github.com/InstituteforDiseaseMo
 </div>
 <div class="section" id="local-ini-file-with-block-selection">
 <h2><a class="toc-backref" href="#id4">LOCAL Ini file with block selection</a><a class="headerlink" href="#local-ini-file-with-block-selection" title="Permalink to this headline">¶</a></h2>
-<p>Let's assume the same files structure/content as the previous example.</p>
+<p>Let’s assume the same files structure/content as the previous example.</p>
 <div class="highlight-bat"><div class="highlight"><pre><span></span>dtk run example_sim.py --MY_BLOCK
 </pre></div>
 </div>
@@ -442,8 +441,8 @@ So you can just change their values directly on the class at any point on the co
         <li class="right" >
           <a href="simtoolsini.html" title="simtools.ini file"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../simtools.html" >Simtools package</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

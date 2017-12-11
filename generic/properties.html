@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,29 +14,29 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Properties &mdash; DTK Package 1.0 Beta 3 documentation</title>
-    
+    <title>Properties &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
   
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -47,7 +46,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -70,6 +69,7 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration27.html">Migrate from Python 2.7</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
@@ -111,6 +111,77 @@
   <div class="section" id="properties">
 <h1>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h1>
 <p>This helper file is used for easily defining properties in the model (see <a class="reference external" href="https://institutefordiseasemodeling.github.io/EMOD/general/howto-hint.html">Configure heterogeneous disease transmission)</a>).</p>
+<span class="target" id="module-dtk.generic.properties"></span><dl class="function">
+<dt id="dtk.generic.properties.add_properties_overlay">
+<code class="descclassname">dtk.generic.properties.</code><code class="descname">add_properties_overlay</code><span class="sig-paren">(</span><em>cb</em>, <em>properties</em>, <em>directory=None</em>, <em>tag=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/properties.html#add_properties_overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.properties.add_properties_overlay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a property overlay with the given properties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cb</strong> – The <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> containing the configuration</li>
+<li><strong>properties</strong> – The list of properties to add</li>
+<li><strong>directory</strong> – The directory where the demographics file is stored</li>
+<li><strong>tag</strong> – Properties tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.properties.init_access">
+<code class="descclassname">dtk.generic.properties.</code><code class="descname">init_access</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/properties.html#init_access"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.properties.init_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>A shortcut function allowing to set the initial distribution of the Accessibility property.</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">init_access</span><span class="p">(</span><span class="n">Easy</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">Hard</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> – A list of key,value pairs representing the property value and initial distribution</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary representing the property ready for DTK</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dtk.generic.properties.set_property">
+<code class="descclassname">dtk.generic.properties.</code><code class="descname">set_property</code><span class="sig-paren">(</span><em>property</em>, <em>values</em>, <em>initial</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/generic/properties.html#set_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.generic.properties.set_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of a property.</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;Accessibility&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Easy&#39;</span><span class="p">,</span> <span class="s1">&#39;Hard&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>property</strong> – The property to set</li>
+<li><strong>values</strong> – A list of different values this property can take</li>
+<li><strong>initial</strong> – The initial distribution</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dictionary representing the property ready for DTK</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -128,7 +199,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

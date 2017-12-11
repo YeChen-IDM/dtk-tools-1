@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,29 +14,29 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ITN &mdash; DTK Package 1.0 Beta 3 documentation</title>
-    
+    <title>ITN &#8212; DTK Package 1.0 Beta 3 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.0 Beta 3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DTK Package 1.0 Beta 3 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
   
    
 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -47,7 +46,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -70,6 +69,9 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration27.html">Migrate from Python 2.7</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration27.html#changed-library-names">Changed library names</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration27.html#print">print</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dtk.html">dtk package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../simtools.html">Simtools package</a></li>
@@ -115,32 +117,43 @@
 <dt id="dtk.interventions.itn.add_ITN">
 <code class="descclassname">dtk.interventions.itn.</code><code class="descname">add_ITN</code><span class="sig-paren">(</span><em>config_builder</em>, <em>start</em>, <em>coverage_by_ages</em>, <em>waning={}</em>, <em>cost=0</em>, <em>nodeIDs=[]</em>, <em>node_property_restrictions=[]</em>, <em>ind_property_restrictions=[]</em>, <em>triggered_campaign_delay=0</em>, <em>trigger_condition_list=[]</em>, <em>listening_duration=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dtk/interventions/itn.html#add_ITN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dtk.interventions.itn.add_ITN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an ITN intervention to the config_builder passed.
-birth-triggered(in coverage_by_age) and triggered_condition_list are mututally exclusive. &quot;birth&quot; option will be ingnored if you're
+birth-triggered(in coverage_by_age) and triggered_condition_list are mututally exclusive. “birth” option will be ingnored if you’re
 using trigger_condition_list</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
-<li><strong>config_builder</strong> -- The <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> holding the campaign that will receive the ITN event</li>
-<li><strong>start</strong> -- The start day of the bednet distribution</li>
-<li><strong>coverage_by_ages</strong> -- a list of dictionaries defining the coverage per age group
-[{&quot;coverage&quot;:1,&quot;min&quot;: 1, &quot;max&quot;: 10},{&quot;coverage&quot;:1,&quot;min&quot;: 11, &quot;max&quot;: 50},{ &quot;coverage&quot;:0.5, &quot;birth&quot;:&quot;birth&quot;, &quot;duration&quot;:34}]</li>
-<li><strong>waning</strong> -- a dictionary defining the durability of the nets. if empty the default decay profile will be used.</li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config_builder</strong> – The <code class="xref py py-class docutils literal"><span class="pre">DTKConfigBuilder</span></code> holding the campaign that will receive the ITN event</li>
+<li><strong>start</strong> – The start day of the bednet distribution</li>
+<li><strong>coverage_by_ages</strong> – a list of dictionaries defining the coverage per age group
+[{“coverage”:1,”min”: 1, “max”: 10},{“coverage”:1,”min”: 11, “max”: 50},{ “coverage”:0.5, “birth”:”birth”, “duration”:34}]</li>
+<li><strong>waning</strong> – a dictionary defining the durability of the nets. if empty the default decay profile will be used.</li>
 </ul>
-</dd>
-</dl>
-<p>For example, update usage duration to 180 days as waning={'Usage_Config' : {&quot;Expected_Discard_Time&quot;: 180}}
+</td>
+</tr>
+</tbody>
+</table>
+<p>For example, update usage duration to 180 days as waning={‘Usage_Config’ : {“Expected_Discard_Time”: 180}}
 :param cost: Set the <code class="docutils literal"><span class="pre">Cost_To_Consumer</span></code> parameter
 :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-:param node_property_restrictions: restricts itn based on list of node properties in format [{&quot;Place&quot;:&quot;RURAL&quot;}, {&quot;ByALake&quot;:&quot;Yes, &quot;LovelyWeather&quot;:&quot;No}]
-:param ind_property_restrictions: Restricts itn based on list of individual properties in format [{&quot;BitingRisk&quot;:&quot;High&quot;, &quot;IsCool&quot;:&quot;Yes}, {&quot;IsRich&quot;: &quot;Yes&quot;}]
+:param node_property_restrictions: restricts itn based on list of node properties in format [{“Place”:”RURAL”}, {“ByALake”:”Yes, “LovelyWeather”:”No}]
+:param ind_property_restrictions: Restricts itn based on list of individual properties in format [{“BitingRisk”:”High”, “IsCool”:”Yes}, {“IsRich”: “Yes”}]
 :param triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
 Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
 :param trigger_condition_list: when not empty,  the start day is the day to start listening for the trigger conditions listed, distributing the spraying</p>
 <blockquote>
 <div>when the trigger is heard. This does not distribute the BirthTriggered intervention.</div></blockquote>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>listening_duration</strong> -- how long the distributed event will listen for the trigger for, default is -1, which is indefinitely</dd>
-<dt class="field-name">Returns</dt><dd class="field-body">Nothing</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>listening_duration</strong> – how long the distributed event will listen for the trigger for, default is -1, which is indefinitely</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Nothing</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -160,7 +173,7 @@ Eligibility of people or nodes for campaign is evaluated on the start day, not t
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

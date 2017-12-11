@@ -1,0 +1,718 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Migrate from Python 2.7 &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0 Beta 3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dtk package" href="dtk.html" />
+    <link rel="prev" title="Getting started" href="gettingstarted.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dtk.html" title="dtk package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gettingstarted.html" title="Getting started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    index.html" class="text-logo">dtk-tools Beta 3</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Migrate from Python 2.7</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#differences-between-python-2-7-and-python-3-6">Differences between Python 2.7 and Python 3.6</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+              <li>Migrate from Python 2.7</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="migrate-from-python-2-7">
+<h1>Migrate from Python 2.7<a class="headerlink" href="#migrate-from-python-2-7" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="differences-between-python-2-7-and-python-3-6">
+<h2>Differences between Python 2.7 and Python 3.6<a class="headerlink" href="#differences-between-python-2-7-and-python-3-6" title="Permalink to this headline">¶</a></h2>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#changed-library-names" id="id1">Changed library names</a></li>
+<li><a class="reference internal" href="#print" id="id2">print</a></li>
+<li><a class="reference internal" href="#exec" id="id3">exec</a></li>
+<li><a class="reference internal" href="#str" id="id4">str</a></li>
+<li><a class="reference internal" href="#unicode" id="id5">UNICODE</a></li>
+<li><a class="reference internal" href="#stringio" id="id6">StringIO</a></li>
+<li><a class="reference internal" href="#dictionary-methods" id="id7">Dictionary Methods.</a></li>
+<li><a class="reference internal" href="#file" id="id8">file</a></li>
+<li><a class="reference internal" href="#input" id="id9">input</a></li>
+<li><a class="reference internal" href="#long" id="id10">long</a></li>
+<li><a class="reference internal" href="#compare" id="id11">compare</a></li>
+<li><a class="reference internal" href="#except" id="id12">except</a></li>
+<li><a class="reference internal" href="#range-and-xrange" id="id13">range() and xrange()</a></li>
+<li><a class="reference internal" href="#class" id="id14">class</a></li>
+<li><a class="reference internal" href="#metaclasses" id="id15">Metaclasses</a></li>
+<li><a class="reference internal" href="#cstringio" id="id16">cStringIO</a></li>
+<li><a class="reference internal" href="#queue" id="id17">Queue</a></li>
+<li><a class="reference internal" href="#basestring" id="id18">basestring</a></li>
+<li><a class="reference internal" href="#importerror" id="id19">ImportError</a></li>
+<li><a class="reference internal" href="#raising-exceptions" id="id20">Raising exceptions</a></li>
+<li><a class="reference internal" href="#handling-exceptions" id="id21">Handling exceptions</a></li>
+<li><a class="reference internal" href="#integer-division" id="id22">Integer division</a></li>
+<li><a class="reference internal" href="#imports-relative-to-a-package" id="id23">Imports relative to a package</a></li>
+<li><a class="reference internal" href="#map" id="id24">map</a></li>
+<li><a class="reference internal" href="#urllib2" id="id25">urllib2</a></li>
+<li><a class="reference internal" href="#dictionary-and-next" id="id26">dictionary and next()</a></li>
+<li><a class="reference internal" href="#misc" id="id27">Misc.</a></li>
+<li><a class="reference internal" href="#bankers-rounding" id="id28">Banker’s Rounding</a></li>
+<li><a class="reference internal" href="#lambda-function" id="id29">lambda function</a></li>
+<li><a class="reference internal" href="#resources" id="id30">Resources</a></li>
+</ul>
+</div>
+<div class="section" id="changed-library-names">
+<h3><a class="toc-backref" href="#id1">Changed library names</a><a class="headerlink" href="#changed-library-names" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Python2.7 Name</th>
+<th class="head">Python 3.6 Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ConfigParser</td>
+<td>configparser</td>
+</tr>
+<tr class="row-odd"><td>Queue</td>
+<td>queue</td>
+</tr>
+<tr class="row-even"><td>SocketServer</td>
+<td>socketserver</td>
+</tr>
+<tr class="row-odd"><td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="print">
+<h3><a class="toc-backref" href="#id2">print</a><a class="headerlink" href="#print" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span> <span class="s1">&#39;Hello...&#39;</span>
+</pre></div>
+</div>
+<p>Python 3.6, print is a function:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello...&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exec">
+<h3><a class="toc-backref" href="#id3">exec</a><a class="headerlink" href="#exec" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7, exec is a statement.</p>
+<p>Python 3.6, exec is a function.</p>
+</div>
+<div class="section" id="str">
+<h3><a class="toc-backref" href="#id4">str</a><a class="headerlink" href="#str" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7, implicit str type is ASCII, separate unicode(), but no byte type.</p>
+<p>Python 3.6, all text (str) is UNICODE, unicode() is gone and encoded text is binary data (bytes).</p>
+</div>
+<div class="section" id="unicode">
+<h3><a class="toc-backref" href="#id5">UNICODE</a><a class="headerlink" href="#unicode" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span> <span class="n">unicode</span><span class="p">(</span><span class="s1">&#39;this is like a python3 str type&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Python 3.6, it has Unicode (utf-8) strings, and 2 byte classes: byte and bytearrays:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;strings are now utf-8 </span><span class="se">\u03BC</span><span class="s1">nico</span><span class="se">\u0394</span><span class="s1">é!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stringio">
+<h3><a class="toc-backref" href="#id6">StringIO</a><a class="headerlink" href="#stringio" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+<span class="c1"># or:</span>
+<span class="kn">from</span> <span class="nn">cStringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">BytesIO</span>     <span class="c1"># for handling byte strings</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>    <span class="c1"># for handling unicode strings</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dictionary-methods">
+<h3><a class="toc-backref" href="#id7">Dictionary Methods.</a><a class="headerlink" href="#dictionary-methods" title="Permalink to this headline">¶</a></h3>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;key3&#39;</span><span class="p">:</span> <span class="s1">&#39;value3&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">iteriterms</span><span class="p">(),</span>
+<span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">):</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">has_key(…) method has been removed in Python 3.</p>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">iterms</span><span class="p">(),</span>
+<span class="k">if</span> <span class="s1">&#39;key&#39;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="file">
+<h3><a class="toc-backref" href="#id8">file</a><a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="input">
+<h3><a class="toc-backref" href="#id9">input</a><a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">raw_input</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="long">
+<h3><a class="toc-backref" href="#id10">long</a><a class="headerlink" href="#long" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">has</span> <span class="n">two</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">int</span> <span class="ow">and</span> <span class="n">long</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">combine</span> <span class="nb">int</span> <span class="ow">and</span> <span class="n">long</span> <span class="n">into</span> <span class="n">one</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">int</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="compare">
+<h3><a class="toc-backref" href="#id11">compare</a><a class="headerlink" href="#compare" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7, there are two ways:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">&lt;&gt;</span> <span class="n">b</span>
+<span class="n">a</span> <span class="o">!=</span> <span class="n">b</span>
+</pre></div>
+</div>
+<p>Python 3.6, &lt;&gt; has been removed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="except">
+<h3><a class="toc-backref" href="#id12">except</a><a class="headerlink" href="#except" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">except</span> <span class="p">(</span><span class="n">Exception1</span><span class="p">,</span> <span class="n">Exception2</span><span class="p">),</span> <span class="n">target</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">except</span> <span class="p">(</span><span class="n">Exception1</span><span class="p">,</span> <span class="n">Exception2</span><span class="p">)</span> <span class="k">as</span> <span class="n">target</span><span class="p">:</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="range-and-xrange">
+<h3><a class="toc-backref" href="#id13">range() and xrange()</a><a class="headerlink" href="#range-and-xrange" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<blockquote>
+<div>In Python 2 <cite>range()</cite> returns a list, and <cite>xrange()</cite> returns an object that will only generate the items in the range when needed, saving memory.</div></blockquote>
+<p>Python 3.6:</p>
+<blockquote>
+<div>In Python 3, the <cite>range()</cite> function is gone, and <cite>xrange()</cite> has been renamed <cite>range()</cite>. In addition the <cite>range()</cite> object support slicing in Python 3.2 and later.</div></blockquote>
+</div>
+<div class="section" id="class">
+<h3><a class="toc-backref" href="#id14">class</a><a class="headerlink" href="#class" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<blockquote>
+<div>In Python&nbsp;2 there are two types of classes, “old-style” and “new”.</div></blockquote>
+<p>Python 3.6:</p>
+<blockquote>
+<div>The “old-style” classes have been removed in Python&nbsp;3, so all classes now subclass from object, even if they don’t do so explicitly.</div></blockquote>
+</div>
+<div class="section" id="metaclasses">
+<h3><a class="toc-backref" href="#id15">Metaclasses</a><a class="headerlink" href="#metaclasses" title="Permalink to this headline">¶</a></h3>
+<p>Suppose we have:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BaseForm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">FormType</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Python 2 only:</span>
+<span class="k">class</span> <span class="nc">Form</span><span class="p">(</span><span class="n">BaseForm</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">FormType</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Python 3 only:</span>
+<span class="k">class</span> <span class="nc">Form</span><span class="p">(</span><span class="n">BaseForm</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FormType</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cstringio">
+<h3><a class="toc-backref" href="#id16">cStringIO</a><a class="headerlink" href="#cstringio" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cStringIO</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s2">&quot;some initial text data&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="queue">
+<h3><a class="toc-backref" href="#id17">Queue</a><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Queue</span> <span class="k">import</span> <span class="n">Queue</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">queue</span> <span class="k">import</span> <span class="n">Queue</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="basestring">
+<h3><a class="toc-backref" href="#id18">basestring</a><a class="headerlink" href="#basestring" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<p>The built-in basestring abstract type was removed. Use str instead:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="importerror">
+<h3><a class="toc-backref" href="#id19">ImportError</a><a class="headerlink" href="#importerror" title="Permalink to this headline">¶</a></h3>
+<p>Property message has been changed to msg.</p>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; during loading module &#39;</span><span class="si">%s</span><span class="s2">&#39; in </span><span class="si">%s</span><span class="s2"> files: </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())),)</span>
+    <span class="k">raise</span> <span class="n">e</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; during loading module &#39;</span><span class="si">%s</span><span class="s2">&#39; in </span><span class="si">%s</span><span class="s2"> files: </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())),)</span>
+    <span class="k">raise</span> <span class="n">e</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="raising-exceptions">
+<h3><a class="toc-backref" href="#id20">Raising exceptions</a><a class="headerlink" href="#raising-exceptions" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7, accepts both notations, the ‘old’ and the ‘new’ syntax:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">raise</span> <span class="ne">IOError</span><span class="p">,</span> <span class="s2">&quot;file error&quot;</span>
+<span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;file error&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Python 3.6, chokes (and raises a SyntaxError in turn) if we don’t enclose the exception argument in parentheses:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;file error&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="handling-exceptions">
+<h3><a class="toc-backref" href="#id21">Handling exceptions</a><a class="headerlink" href="#handling-exceptions" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7,</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">let_us_cause_a_NameError</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="n">err</span><span class="p">,</span> <span class="s1">&#39;--&gt; our error message&#39;</span>
+</pre></div>
+</div>
+<p>Python 3.6, we have to use the “as” keyword now:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">let_us_cause_a_NameError</span>
+<span class="k">except</span> <span class="ne">NameError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="s1">&#39;--&gt; our error message&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="integer-division">
+<h3><a class="toc-backref" href="#id22">Integer division</a><a class="headerlink" href="#integer-division" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<blockquote>
+<div>In Python 2, the result of dividing two integers will itself be an integer; in other words 3/2 returns 1.</div></blockquote>
+<p>Python 3.6:</p>
+<blockquote>
+<div>In Python 3 integer division will always return a float. So 3/2 will return 1.5 and 4/2 will return 2.0.</div></blockquote>
+</div>
+<div class="section" id="imports-relative-to-a-package">
+<h3><a class="toc-backref" href="#id23">Imports relative to a package</a><a class="headerlink" href="#imports-relative-to-a-package" title="Permalink to this headline">¶</a></h3>
+<p>Suppose the package is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mypackage</span><span class="o">/</span>
+    <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">submodule1</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">submodule2</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>and the code below is in submodule1.py:</p>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Python 2 only:</span>
+<span class="kn">import</span> <span class="nn">submodule2</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Python 2 and 3:</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">submodule2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="map">
+<h3><a class="toc-backref" href="#id24">map</a><a class="headerlink" href="#map" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<p>In Python 2 map() returns a list, for example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_analyzer</span><span class="p">,</span> <span class="n">analyzers</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">add_analyzer method gets executed.</p>
+</div>
+<p>Python 3.6:</p>
+<p>In Python 3 it returns an iterator not a list:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_analyzer</span><span class="p">,</span> <span class="n">analyzers</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">add_analyzer method does not get executed.</p>
+</div>
+<p>In Python 3 to make sure add_analyzer method gets executed, we can do something like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_analyzer</span><span class="p">,</span> <span class="n">analyzers</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="urllib2">
+<h3><a class="toc-backref" href="#id25">urllib2</a><a class="headerlink" href="#urllib2" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7:</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="n">req</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<p>The urllib2 module has been split across several modules in Python 3 named urllib.request and urllib.error.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+
+<span class="n">req</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dictionary-and-next">
+<h3><a class="toc-backref" href="#id26">dictionary and next()</a><a class="headerlink" href="#dictionary-and-next" title="Permalink to this headline">¶</a></h3>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;key3&#39;</span><span class="p">:</span> <span class="s1">&#39;value3&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Python 2.7, the following return a generator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">iteriterms</span><span class="p">(),</span>
+</pre></div>
+</div>
+<p>We can go through each item by using .next() or next(…), for example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="n">key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Python 3.6, the following does not return a generator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+<span class="n">d</span><span class="o">.</span><span class="n">iterms</span><span class="p">(),</span>
+</pre></div>
+</div>
+<p>and we can not do below, for example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="n">key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>But you can do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="misc">
+<h3><a class="toc-backref" href="#id27">Misc.</a><a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h3>
+<p>Some commonly used functions and methods that don’t return lists anymore in Python 3:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>* zip()
+* map()
+* filter()
+* dictionary’s .keys() method
+* dictionary’s .values() method
+* dictionary’s .items() method
+</pre></div>
+</div>
+<p>For-loop variables and the global namespace leak.</p>
+<p>Python 2.7,</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nb">print</span> <span class="s1">&#39;before: i =&#39;</span><span class="p">,</span> <span class="n">i</span>
+<span class="nb">print</span> <span class="s1">&#39;comprehension: &#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="nb">print</span> <span class="s1">&#39;after: i =&#39;</span><span class="p">,</span> <span class="n">i</span>
+</pre></div>
+</div>
+<p>results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">before</span><span class="p">:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">comprehension</span><span class="p">:</span>  <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">after</span><span class="p">:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>Python 3.6,</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;before: i =&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;comprehension: &#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;after: i =&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">before</span><span class="p">:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">comprehension</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">after</span><span class="p">:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bankers-rounding">
+<h3><a class="toc-backref" href="#id28">Banker’s Rounding</a><a class="headerlink" href="#bankers-rounding" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7, decimals are rounded to the nearest number (float).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">round</span><span class="p">(</span><span class="mf">15.5</span><span class="p">)</span>
+<span class="nb">round</span><span class="p">(</span><span class="mf">16.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">16.0</span>
+<span class="mf">17.0</span>
+</pre></div>
+</div>
+<p>Python 3.6, decimals are rounded to the nearest even number.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">round</span><span class="p">(</span><span class="mf">15.5</span><span class="p">)</span>
+<span class="nb">round</span><span class="p">(</span><span class="mf">16.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">16</span>
+<span class="mi">16</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="lambda-function">
+<h3><a class="toc-backref" href="#id29">lambda function</a><a class="headerlink" href="#lambda-function" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes in DTK-TOOLS we encounter error something like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ne">AttributeError</span><span class="p">:</span> <span class="n">Can</span><span class="s1">&#39;t pickle local object &#39;</span><span class="n">config_setup_fn</span><span class="o">.&lt;</span><span class="nb">locals</span><span class="o">&gt;.&lt;</span><span class="k">lambda</span><span class="o">&gt;</span><span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>To fix the issue above, we changed original function, for example,</p>
+<p>Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">config_setup_fn</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">21915</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">cb</span><span class="p">:</span> <span class="n">cb</span><span class="o">.</span><span class="n">update_params</span><span class="p">({</span><span class="s1">&#39;Simulation_Duration&#39;</span> <span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+                                <span class="s1">&#39;Infection_Updates_Per_Timestep&#39;</span> <span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Python 3.6:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">config_setup_fn</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">21915</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">cb</span><span class="p">):</span>
+        <span class="n">cb</span><span class="o">.</span><span class="n">update_params</span><span class="p">({</span><span class="s1">&#39;Simulation_Duration&#39;</span> <span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+                          <span class="s1">&#39;Infection_Updates_Per_Timestep&#39;</span> <span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">fn</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="resources">
+<h3><a class="toc-backref" href="#id30">Resources</a><a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Porting Python 2 Code to Python 3</p>
+<p><a class="reference external" href="https://docs.python.org/3/howto/pyporting.html">https://docs.python.org/3/howto/pyporting.html</a></p>
+</li>
+<li><p class="first">Moving from Python 2 to Python 3</p>
+<p><a class="reference external" href="http://ptgmedia.pearsoncmg.com/imprint_downloads/informit/promotions/python/python2python3.pdf">http://ptgmedia.pearsoncmg.com/imprint_downloads/informit/promotions/python/python2python3.pdf</a></p>
+</li>
+<li><p class="first">Python 2 vs. Python 3</p>
+<p><a class="reference external" href="https://www.slideshare.net/pablito56/python-2-vs-python-3">https://www.slideshare.net/pablito56/python-2-vs-python-3</a></p>
+</li>
+<li><p class="first">Cheat Sheet: Writing Python 2-3 compatible code</p>
+<p><a class="reference external" href="http://python-future.org/compatible_idioms.html">http://python-future.org/compatible_idioms.html</a></p>
+</li>
+<li><p class="first">Cheat Sheet: Writing Python 2-3 compatible code</p>
+<p><a class="reference external" href="http://python-future.org/compatible_idioms.html">http://python-future.org/compatible_idioms.html</a></p>
+</li>
+<li><p class="first">Dive Into Python 3</p>
+<p><a class="reference external" href="http://www.diveintopython3.net/">http://www.diveintopython3.net/</a></p>
+</li>
+<li><p class="first">Python 3 Tutorial</p>
+<p><a class="reference external" href="https://www.tutorialspoint.com/python3/">https://www.tutorialspoint.com/python3/</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="gettingstarted.html" title="previous chapter (use the left arrow)">Getting started</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="dtk.html" title="next chapter (use the right arrow)">dtk package</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dtk.html" title="dtk package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gettingstarted.html" title="Getting started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

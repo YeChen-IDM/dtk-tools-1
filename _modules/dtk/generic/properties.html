@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>dtk.generic.properties &#8212; DTK Package 1.0 Beta 3 documentation</title>
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0 Beta 3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../../../index.html" class="text-logo">dtk-tools Beta 3</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migration27.html">Migrate from Python 2.7</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dtk.html">dtk package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simtools.html">Simtools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../calibtool.html">Calibtool package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../../index.html">Docs</a></li>
+              
+                <li><a href="../../index.html">Module code</a></li>
+              
+              <li>dtk.generic.properties</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for dtk.generic.properties</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">simtools.SetupParser</span> <span class="k">import</span> <span class="n">SetupParser</span>
+<span class="kn">from</span> <span class="nn">simtools.Utilities.LocalOS</span> <span class="k">import</span> <span class="n">LocalOS</span>
+
+<div class="viewcode-block" id="set_property"><a class="viewcode-back" href="../../../generic/properties.html#dtk.generic.properties.set_property">[docs]</a><span class="k">def</span> <span class="nf">set_property</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">initial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the value of a property.</span>
+
+<span class="sd">     .. code-block:: python</span>
+
+<span class="sd">        set_property(&#39;Accessibility&#39;, [&#39;Easy&#39;, &#39;Hard&#39;], [0.5, 0.5])</span>
+
+<span class="sd">    :param property: The property to set</span>
+<span class="sd">    :param values: A list of different values this property can take</span>
+<span class="sd">    :param initial: The initial distribution</span>
+<span class="sd">    :return: A dictionary representing the property ready for DTK</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;Property&#39;</span><span class="p">:</span> <span class="nb">property</span><span class="p">,</span> <span class="s1">&#39;Values&#39;</span><span class="p">:</span> <span class="n">values</span><span class="p">,</span> <span class="s1">&#39;Initial_Distribution&#39;</span><span class="p">:</span> <span class="n">initial</span><span class="p">,</span> <span class="s1">&#39;Transitions&#39;</span><span class="p">:</span> <span class="p">[]}</span></div>
+
+
+<div class="viewcode-block" id="init_access"><a class="viewcode-back" href="../../../generic/properties.html#dtk.generic.properties.init_access">[docs]</a><span class="k">def</span> <span class="nf">init_access</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A shortcut function allowing to set the initial distribution of the Accessibility property.</span>
+
+<span class="sd">     .. code-block:: python</span>
+
+<span class="sd">        init_access(Easy=0.5, Hard=0.5)</span>
+
+<span class="sd">    :param kwargs: A list of key,value pairs representing the property value and initial distribution</span>
+<span class="sd">    :return: A dictionary representing the property ready for DTK</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;Accessibility&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="add_properties_overlay"><a class="viewcode-back" href="../../../generic/properties.html#dtk.generic.properties.add_properties_overlay">[docs]</a><span class="k">def</span> <span class="nf">add_properties_overlay</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a property overlay with the given properties.</span>
+
+<span class="sd">    :param cb: The :py:class:`DTKConfigBuilder &lt;dtk.utils.core.DTKConfigBuilder&gt;` containing the configuration</span>
+<span class="sd">    :param properties: The list of properties to add</span>
+<span class="sd">    :param directory: The directory where the demographics file is stored</span>
+<span class="sd">    :param tag: Properties tag</span>
+<span class="sd">    :return: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="n">SetupParser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input_root&#39;</span><span class="p">)</span>
+
+    <span class="n">filenames</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Demographics_Filenames&#39;</span><span class="p">)</span>
+    <span class="n">demogfiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">if</span> <span class="s1">&#39;demographics&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">demogfiles</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;add_properties_overlay function is expecting exactly one base demographics file.&#39;</span><span class="p">)</span>
+
+    <span class="n">demog_filename</span> <span class="o">=</span> <span class="n">demogfiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">demog_filename</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s1">&#39;No demographics file </span><span class="si">%s</span><span class="s1"> in local input directory </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">demog_filename</span><span class="p">,</span> <span class="n">directory</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">demog_filename</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">j</span><span class="p">[</span><span class="s1">&#39;Metadata&#39;</span><span class="p">]</span>
+    <span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Author&#39;</span><span class="p">:</span> <span class="n">LocalOS</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                     <span class="s1">&#39;DateCreated&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%a %b </span><span class="si">%d</span><span class="s1"> </span><span class="si">%X</span><span class="s1"> %Y&#39;</span><span class="p">),</span>
+                     <span class="s1">&#39;Tool&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)})</span>
+
+    <span class="n">overlay_content</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Metadata&#39;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">,</span>
+                       <span class="s1">&#39;Defaults&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;IndividualProperties&#39;</span><span class="p">:</span> <span class="n">properties</span><span class="p">},</span>
+                       <span class="s1">&#39;Nodes&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;NodeID&#39;</span><span class="p">:</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;NodeID&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">j</span><span class="p">[</span><span class="s1">&#39;Nodes&#39;</span><span class="p">]]}</span>
+
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">demog_filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">immune_init_name</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;demographics&#39;</span><span class="p">,</span> <span class="s1">&#39;properties&#39;</span> <span class="o">+</span> <span class="n">tag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">cb</span><span class="o">.</span><span class="n">add_demog_overlay</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">immune_init_name</span><span class="p">),</span> <span class="n">overlay_content</span><span class="p">)</span>
+    <span class="n">cb</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="s1">&#39;Property_Output&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DTK Package 1.0 Beta 3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Institute for Disease Modeling (IDM). Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
