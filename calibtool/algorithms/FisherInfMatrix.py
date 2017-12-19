@@ -7,23 +7,24 @@ from scipy.linalg import sqrtm
 
 
 def perturbed_points(center, Xmin, Xmax, M=1, N=10, n=2, resolution=None):
-    # Atiye Alaeddini, 12/11/2017
-    # generate perturbed points around the center
-    #
-    #  ------------------------------------------------------------------------
-    # INPUTS:
-    # center    center point    px1 nparray
-    # Xmin    minimum of parameters    px1 nparray
-    # Xmax    maximum of parameters    px1 nparray
-    # M    number of Hessian estimates    scalar-positive integer
-    # N    number of pseudodata vectors    scalar-positive integer
-    # n    sample size    scalar-positive integer
+    """
+    Atiye Alaeddini, 12/11/2017
+    generate perturbed points around the center
 
-    #  ------------------------------------------------------------------------
-    # OUTPUTS:
-    # X_perturbed    perturbed points    (4MNn x 4+p) nparray
-    #  ------------------------------------------------------------------------
-
+     ------------------------------------------------------------------------
+    INPUTS:
+    center    center point    1xp nparray
+    Xmin    minimum of parameters    1xp nparray
+    Xmax    maximum of parameters    1xp nparray
+    M    number of Hessian estimates    scalar-positive integer
+    N    number of pseudodata vectors    scalar-positive integer
+    n    sample size    scalar-positive integer
+    resolution    minimum perturbation for each parameter    1xp nparray
+     ------------------------------------------------------------------------
+    OUTPUTS:
+    X_perturbed    perturbed points    (4MNn x 4+p) nparray
+     ------------------------------------------------------------------------
+    """
     # dimension of center point
     p = len(center)
 
@@ -34,13 +35,12 @@ def perturbed_points(center, Xmin, Xmax, M=1, N=10, n=2, resolution=None):
 
     # perturbation sizes
     C = 0.05*np.ones(p)#*(Xmax -Xmin)
+
     # making sure all plus/minus points in range
     too_big = (X_scaled + C) > 1
     too_small = (X_scaled - C) < 0
     C[too_big] = np.maximum(1 - X_scaled[too_big], resolution[too_big])
     C[too_small] = np.maximum(X_scaled[too_small], resolution[too_small])
-
-    C_tilde = np.random.uniform(low=0.25, high=0.75) * C
 
     X_perturbed = np.zeros(shape=(4*M*N*n, 4+p))
     X_perturbed[:, 0] = np.tile(range(4), N * n * M).astype(int)
@@ -48,7 +48,6 @@ def perturbed_points(center, Xmin, Xmax, M=1, N=10, n=2, resolution=None):
     X_perturbed[:, 2] = np.tile(np.repeat(range(M), 4 * n), N)
 
     counter = 0
-
     for j in range(N):
         run_numbers = np.random.randint(1,101,n)
         X_perturbed[(j*(4*n*M)):((j+1)*(4*n*M)), 3] = np.tile(np.repeat(run_numbers, 4), M)
@@ -62,11 +61,10 @@ def perturbed_points(center, Xmin, Xmax, M=1, N=10, n=2, resolution=None):
             thetaPlus = X_scaled + (C * Delta)
             thetaMinus = X_scaled - (C * Delta)
 
-
-            if ((0 > thetaPlus).any() or (thetaPlus > 1).any()):
+            if (0 > thetaPlus).any() or (thetaPlus > 1).any():
                 thetaPlus = X_scaled
 
-            if ((thetaMinus < 0).any() or (thetaMinus > 1).any()):
+            if (thetaMinus < 0).any() or (thetaMinus > 1).any():
                 thetaMinus = X_scaled
 
             Delta_tilde = np.random.choice([-1, 1], size=(1,p))
@@ -100,36 +98,175 @@ def perturbed_points(center, Xmin, Xmax, M=1, N=10, n=2, resolution=None):
             if ((0 > thetaMinusMinus).any() or (thetaMinusMinus > 1).any()):
                 thetaMinusMinus = thetaMinus
 
-            X_perturbed[(counter + 0):(counter + 4*n+0):4, 4:] = np.tile(thetaPlusPlus, (n,1))
-            X_perturbed[(counter + 1):(counter + 4*n+1):4, 4:] = np.tile(thetaPlusMinus, (n,1))
-            X_perturbed[(counter + 2):(counter + 4*n+2):4, 4:] = np.tile(thetaMinusPlus, (n,1))
-            X_perturbed[(counter + 3):(counter + 4*n+3):4, 4:] = np.tile(thetaMinusMinus, (n,1))
+            # back to original scale
+            thetaPlusPlus_realValue = thetaPlusPlus * (Xmax - Xmin) + Xmin
+            thetaPlusMinus_realValue = thetaPlusMinus * (Xmax - Xmin) + Xmin
+            thetaMinusPlus_realValue = thetaMinusPlus * (Xmax - Xmin) + Xmin
+            thetaMinusMinus_realValue = thetaMinusMinus * (Xmax - Xmin) + Xmin
+            X_perturbed[(counter + 0):(counter + 4*n+0):4, 4:] = np.tile(thetaPlusPlus_realValue, (n,1))
+            X_perturbed[(counter + 1):(counter + 4*n+1):4, 4:] = np.tile(thetaPlusMinus_realValue, (n,1))
+            X_perturbed[(counter + 2):(counter + 4*n+2):4, 4:] = np.tile(thetaMinusPlus_realValue, (n,1))
+            X_perturbed[(counter + 3):(counter + 4*n+3):4, 4:] = np.tile(thetaMinusMinus_realValue, (n,1))
 
             counter += 4*n
 
     # X_perturbed[:,0:4] = X_perturbed[:,0:4].astype(int)
-    # df_perturbed = pd.DataFrame(index=['i', 'j', 'k', 'l', 'Parameter'])
+    # convert to pandas DataFrame
     df_perturbed = pd.DataFrame(data=X_perturbed, columns=(['i','j','k','l']+['theta']*p))
-    #df_perturbed = pd.DataFrame(data=X_perturbed)
-    #
+
     return df_perturbed
 
 
-center = np.array([0.95,0,-.98])
+
+def FisherInfMatrix(center, df_perturbed_points, df_LL_points):
+    """
+    Atiye Alaeddini, 12/15/2017
+    compute the Fisher Information matrix using the LL of perturbed points
+
+     ------------------------------------------------------------------------
+    INPUTS:
+    center    center point    (1 x p) nparray
+    df_perturbed_points    perturbed points    DataFrame
+    df_LL_points    Log Likelihood of points    DataFrame
+     ------------------------------------------------------------------------
+    OUTPUTS:
+    Fisher    Fisher Information matrix    (p x p) np array
+     ------------------------------------------------------------------------
+    """
+
+    # convert DataFrame to python array
+    LL_data = df_LL_points.as_matrix()
+    points = df_perturbed_points.as_matrix()
+
+    N = (max(points[:,1]) + 1).astype(int)
+    M = (max(points[:, 2]) + 1).astype(int)
+    n = int((np.shape(points)[0])/(4*M*N))
+
+    PlusPlusPoints = points[0:(4 * M * N * n):(4 * n), 4:]
+    PlusMinusPoints = points[1:(4 * M * N * n):(4 * n), 4:]
+    MinusPlusPoints = points[2:(4 * M * N * n):(4 * n), 4:]
+    MinusMinusPoints = points[3:(4 * M * N * n):(4 * n), 4:]
+
+    # dimension of X
+    p = len(center)
+
+    # Hessian
+    H_bar = np.zeros(shape=(p, p, N))
+    H_bar_avg = np.zeros(shape=(p, p, N))
+
+    for i in range(N):
+        # reset the data (samples) used for evaluation of the log likelihood
+        # initialization
+        H_hat = np.zeros(shape=(p, p, M))
+        H_hat_avg = np.zeros(shape=(p, p, M))
+        G_p = np.zeros(shape=(p, M))
+        G_m = np.zeros(shape=(p, M))
+
+        PlusPlus_round_i = PlusPlusPoints[(i * M):((i + 1) * M), :]
+        PlusMinus_round_i = PlusMinusPoints[(i * M):((i + 1) * M), :]
+        MinusPlus_round_i = MinusPlusPoints[(i * M):((i + 1) * M), :]
+        MinusMinus_round_i = MinusMinusPoints[(i * M):((i + 1) * M), :]
+
+        loglPP_round_i = LL_data[(i * 4 * M + 0):((i + 1) * 4 * M + 0), 3]
+        loglPM_round_i = LL_data[(i * 4 * M + 1):((i + 1) * 4 * M + 1), 3]
+        loglMP_round_i = LL_data[(i * 4 * M + 2):((i + 1) * 4 * M + 2), 3]
+        loglMM_round_i = LL_data[(i * 4 * M + 3):((i + 1) * 4 * M + 3), 3]
+
+        for k in range(M):
+
+            thetaPlusPlus = PlusPlus_round_i[k]
+            thetaPlusMinus = PlusMinus_round_i[k]
+            thetaMinusPlus = MinusPlus_round_i[k]
+            thetaMinusMinus = MinusMinus_round_i[k]
+
+            loglPP = loglPP_round_i[k]
+            loglPM = loglPM_round_i[k]
+            loglMP = loglMP_round_i[k]
+            loglMM = loglMM_round_i[k]
+
+            G_p[:, k] = (loglPP - loglPM) / (thetaPlusPlus - thetaPlusMinus)
+            G_m[:, k] = (loglMP - loglMM) / (thetaMinusPlus - thetaMinusMinus)
+
+            # H_hat(n)
+            S = np.dot((1 / (thetaPlusPlus - thetaMinusPlus))[:, None], (G_p[:, k] - G_m[:, k])[None, :])  # H_hat
+            H_hat[:, :, k] = .5 * (S + S.T)
+
+            H_hat_avg[:, :, k] = k / (k + 1) * H_hat_avg[:, :, k - 1] + 1 / (k + 1) * H_hat[:, :, k]
+
+        H_bar[:, :, i] = .5 * (
+            H_hat_avg[:, :, M - 1] - sqrtm(np.linalg.matrix_power(H_hat_avg[:, :, M - 1], 2) + 1e-6 * np.eye(p))
+        )
+        H_bar_avg[:, :, i] = i / (i + 1) * H_bar_avg[:, :, i - 1] + 1 / (i + 1) * H_bar[:, :, i]
+
+    Fisher = -1 * H_bar_avg[:, :, N - 1]
+    return Fisher
+
+def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
+    """
+    Plots an `nstd` sigma error ellipse based on the specified covariance
+    matrix (`cov`). Additional keyword arguments are passed on to the
+    ellipse patch artist.
+
+    Parameters
+    ----------
+        cov : The 2x2 covariance matrix to base the ellipse on
+        pos : The location of the center of the ellipse. Expects a 2-element
+            sequence of [x0, y0].
+        nstd : The radius of the ellipse in numbers of standard deviations.
+            Defaults to 2 standard deviations.
+        ax : The axis that the ellipse will be plotted on. Defaults to the
+            current axis.
+        Additional keyword arguments are pass on to the ellipse patch.
+
+    Returns
+    -------
+        A matplotlib ellipse artist
+    """
+
+    def eigsorted(cov):
+        vals, vecs = np.linalg.eigh(cov)
+        order = vals.argsort()[::-1]
+        return vals[order], vecs[:, order]
+
+    if ax is None:
+        ax = plt.gca()
+
+    vals, vecs = eigsorted(cov)
+    theta = np.degrees(np.arctan2(*vecs[:, 0][::-1]))
+
+    # Width and height are "full" widths, not radius
+    width, height = 2 * nstd * np.sqrt(vals)
+    ellip = Ellipse(xy=pos, width=width, height=height, angle=theta, **kwargs)
+
+    ax.add_artist(ellip)
+    return ellip
+
+
+# test
+center = np.array([0.05,-0.92,-.98])
 Xmin = np.array([-1]*3)
 Xmax = np.array([1]*3)
-df_perturbed_points = perturbed_points(center, Xmin, Xmax)
-print df_perturbed_points
-df_perturbed_points.to_csv("data.csv")
+df_perturbed_points = perturbed_points(center, Xmin, Xmax, M=2, N=5)
+#print df_perturbed_points
+# df_perturbed_points.to_csv("data.csv")
+ll = pd.DataFrame.from_csv("LLdata.csv")
+Fisher = FisherInfMatrix(center, df_perturbed_points, ll)
+Covariance = np.linalg.inv(Fisher)
 
+print "eigs of fisher: ", np.linalg.eigvals(Fisher)
+print "eigs of Covariance: ", np.linalg.eigvals(Covariance)
 
+fig3 = plt.figure('CramerRao')
+ax = plt.subplot(111)
+x, y = center[0:2]
+plt.plot(x, y, 'g.')
+plot_cov_ellipse(Covariance[0:2,0:2], center[0:2], nstd=1, alpha=0.6, color='green')
+plt.xlim(Xmin[0], Xmax[0])
+plt.ylim(Xmin[1], Xmax[1])
+plt.xlabel('X', fontsize=14)
+plt.ylabel('Y', fontsize=14)
 
-
-
-
-
-
-
+plt.show()
 
 
 
@@ -257,47 +394,6 @@ df_perturbed_points.to_csv("data.csv")
 #     Fisher = -1 * H_bar_avg[:, :, N - 1]
 #     return Fisher
 #
-#
-# # plot the covarience matrix
-# def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
-#     """
-#     Plots an `nstd` sigma error ellipse based on the specified covariance
-#     matrix (`cov`). Additional keyword arguments are passed on to the
-#     ellipse patch artist.
-#
-#     Parameters
-#     ----------
-#         cov : The 2x2 covariance matrix to base the ellipse on
-#         pos : The location of the center of the ellipse. Expects a 2-element
-#             sequence of [x0, y0].
-#         nstd : The radius of the ellipse in numbers of standard deviations.
-#             Defaults to 2 standard deviations.
-#         ax : The axis that the ellipse will be plotted on. Defaults to the
-#             current axis.
-#         Additional keyword arguments are pass on to the ellipse patch.
-#
-#     Returns
-#     -------
-#         A matplotlib ellipse artist
-#     """
-#
-#     def eigsorted(cov):
-#         vals, vecs = np.linalg.eigh(cov)
-#         order = vals.argsort()[::-1]
-#         return vals[order], vecs[:, order]
-#
-#     if ax is None:
-#         ax = plt.gca()
-#
-#     vals, vecs = eigsorted(cov)
-#     theta = np.degrees(np.arctan2(*vecs[:, 0][::-1]))
-#
-#     # Width and height are "full" widths, not radius
-#     width, height = 2 * nstd * np.sqrt(vals)
-#     ellip = Ellipse(xy=pos, width=width, height=height, angle=theta, **kwargs)
-#
-#     ax.add_artist(ellip)
-#     return ellip
 #
 #
 # # test the algorithm
