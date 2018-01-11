@@ -1,6 +1,7 @@
 # Execute directly: 'python example_optimization.py'
 # or via the calibtool.py script: 'calibtool run example_optimization.py'
 
+from calibtool.CalibManager import CalibManager
 from calibtool.algorithms.OptimTool import OptimTool
 from calibtool.algorithms.OptimToolPSPO import OptimToolPSPO
 from calibtool.algorithms.OptimToolSPSA import OptimToolSPSA
