@@ -1,9 +1,6 @@
 import logging
-from abc import ABCMeta, abstractmethod
 import threading
-
 import pandas as pd
-
 from calibtool.analyzers.BaseComparisonAnalyzer import BaseComparisonAnalyzer
 
 logger = logging.getLogger(__name__)
@@ -11,8 +8,6 @@ thread_lock = threading.Lock()
 
 
 class BaseSummaryCalibrationAnalyzer(BaseComparisonAnalyzer):
-
-    __metaclass__ = ABCMeta
 
     def combine(self, parsers):
         """

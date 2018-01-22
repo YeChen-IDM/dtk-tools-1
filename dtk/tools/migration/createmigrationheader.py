@@ -1,4 +1,4 @@
-import sys, os, json, collections, re, msvcrt
+import sys, os, json, collections, re
 
 def ShowUsage():
 	print ('\nUsage: %s [compiled-demographics-file] [migration-type]' % os.path.basename(sys.argv[0]))
@@ -12,7 +12,7 @@ def CheckFiles(infilename, outfilename):
 		return False
 	
 	if os.path.exists(outfilename):
-		print 'Destination file already exists!  Overwriting...'
+		print('Destination file already exists!  Overwriting...')
 
 		try:
 			os.remove(outfilename);
@@ -41,9 +41,9 @@ def GetMaxValueCountForMigrationType(mig_type):
 def main(tool, compiled_demographics, mig_type):
 
 	infilename = compiled_demographics
-	print infilename
+	print(infilename)
 	outfilename = re.sub('_demographics.compiled.json$', '_%s_migration.bin.json' % mig_type, infilename)
-	print outfilename
+	print(outfilename)
 	maxvalcount = GetMaxValueCountForMigrationType(mig_type)
 	
 	if maxvalcount <= 0:
@@ -79,7 +79,7 @@ def main(tool, compiled_demographics, mig_type):
 	migjson['NodeOffsets'] = migoffsets
 			
 	with open(outfilename, 'w') as file:
-		print "MIGRATION HEADER PATH: " + outfilename
+		print("MIGRATION HEADER PATH: " + outfilename)
 		json.dump(migjson, file, indent=5)
 
 

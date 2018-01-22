@@ -3,10 +3,8 @@ import os
 import json
 import struct
 import collections
-import numpy as np
 import operator
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 
 def ShowUsage():
     print ('\nUsage: %s [demographics-file] [optional:migration-file]' % os.path.basename(sys.argv[0]))
@@ -123,7 +121,7 @@ def main(demogfile, migfile, output_dir):
     
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "Insufficient number of parameters provided!"
+        print("Insufficient number of parameters provided!")
         exit(0)
 
     main(sys.argv[1:])

@@ -2,7 +2,6 @@ import glob
 import json
 import os
 import time
-import zipfile
 from dtk.utils.ioformat.OutputMessage import OutputMessage as om
 from simtools.COMPSAccess.InputDataWorker import InputDataWorker
 from simtools.SetupParser import SetupParser
@@ -58,11 +57,11 @@ class ClimateGenerator:
         wi = WorkItem('dtk-tools InputDataWorker WorkItem', workerkey, SetupParser.get('environment'))
         wi.set_tags({'dtk-tools': None, 'WorkItem type': 'InputDataWorker dtk-tools'})
 
-        with open(self.work_order_path, 'r') as workorder_file:
+        with open(self.work_order_path, 'rb') as workorder_file:
             # wi.AddWorkOrder(workorder_file.read())
             wi.add_work_order(data=workorder_file.read())
 
-        with open(self.demographics_file_path, 'r') as demog_file:
+        with open(self.demographics_file_path, 'rb') as demog_file:
             wi.add_file(WorkItemFile(os.path.basename(self.demographics_file_path), 'Demographics', ''),
                         data=demog_file.read())
 
