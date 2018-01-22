@@ -1,10 +1,11 @@
 import json
 import os
-import pprint
 import re
 import shutil
 from datetime import datetime
+
 import pandas as pd
+
 from calibtool.IterationState import IterationState
 from calibtool.utils import StatusPoint
 from core.utils.time import verbose_timedelta
@@ -44,8 +45,7 @@ class CalibManager(object):
     """
 
     def __init__(self,  config_builder, map_sample_to_model_input_fn,
-                 sites, next_point, name='calib_test', iteration_state=None,
-                 sim_runs_per_param_set=1, max_iterations=5, plotters=list()):
+                 sites, next_point, name='calib_test',  sim_runs_per_param_set=1, max_iterations=5, plotters=None):
 
         self.name = name
         self.config_builder = config_builder
@@ -54,7 +54,7 @@ class CalibManager(object):
         self.next_point = next_point
         self.sim_runs_per_param_set = sim_runs_per_param_set
         self.max_iterations = max_iterations
-        self.plotters = plotters
+        self.plotters = plotters or []
         self.suites = []
         self.all_results = None
         self.summary_table = None
@@ -186,9 +186,14 @@ class CalibManager(object):
             self.cache_calibration()
 
     def finalize_calibration(self):
-        """ Get the final samples (and any associated information like weights) from algo. """
+        """
+        Get the final samples from the next point algorithm.
+        """
         final_samples = self.next_point.get_final_samples()
-        logger.debug('Final samples:\n%s', pprint.pformat(final_samples))
+        print("\nFinal samples")
+        for k, v in final_samples['final_samples'].items():
+            print("{}: {}".format(k, v))
+
         self.cache_calibration(**final_samples)
 
         # remove any leftover experiments
@@ -297,6 +302,10 @@ class CalibManager(object):
         given_step = StatusPoint[iter_step]
         if given_step.value > latest_step.value:
             raise Exception("The iter_step '%s' is beyond the latest step '%s'" % (given_step.name, latest_step.name))
+
+        # move forward if status is done
+        if given_step == StatusPoint.done:
+            iter_step = StatusPoint.next_point.name
 
         # finally check user input location and experiment location and provide options for resume
         self.check_location(it)
