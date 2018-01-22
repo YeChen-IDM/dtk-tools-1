@@ -226,6 +226,23 @@ def sample_cov_ellipse(cov, pos, num_of_pts=10):
     return np.random.multivariate_normal(pos, cov, num_of_pts)
 
 def trunc_gauss(mu, sigma, bottom, top, num_of_pts):
+    """
+    Sample 'num_of_pts' points from the specified covariance
+    matrix (`cov`).
+
+    Parameters
+    ----------
+        sigma : 2-D array_like, The covariance matrix (inverse of fisher matrix). It must be symmetric and positive-semidefinite for proper sampling.
+        mu : 1-D array_like, The location of the center of the ellipse, Mean of the multi variate distribution
+        bottom: 1-D array_like, range (lower)
+        top: 1-D array_like, range (upper)
+        num_of_pts : The number of sample points.
+
+    Returns
+    -------
+        samples: ndarray of the drawn samples, of shape (num_of_pts,).
+    """
+
     samples = np.random.multivariate_normal(mu, sigma, num_of_pts)
     while ((np.logical_and(samples >= np.tile(bottom, (num_of_pts,1)), samples <= np.tile(top, (num_of_pts,1))))==False).any():
         samples = np.random.multivariate_normal(mu, sigma, num_of_pts)
