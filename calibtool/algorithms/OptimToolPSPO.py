@@ -348,18 +348,17 @@ class OptimToolPSPO(NextPointAlgorithm):
         X_current = np.array([dynamic_state_by_param.loc[pname, 'Center'] for pname in dynamic_state['Parameter']])
 
         c0 = .05*(X_max-X_min)/M**0.5
+        c = c0 * (iteration + 1) ** (-0.101)
+        # c_tilde = 2 * c
         n_dyn = len(c0)
 
         for i in range(n_dyn):
-            while (X_current[i]-3*c0[i] < X_min[i]) or (X_current[i]+3*c0[i] > X_max[i]):
-                c0[i] = .8*min(X_current[i]-X_min[i] , X_max[i]-X_current[i])/3
+            while (X_current[i]-2*c[i] < X_min[i]) or (X_current[i]+2*c[i] > X_max[i]):
+                c[i] = .8*min(X_current[i]-X_min[i] , X_max[i]-X_current[i])/2
 
-        c = c0*(iteration+1)**(-0.101)
-        c_tilde = 2*c
 
         deviations = []
 
-        # Delta0 = np.round(np.random.uniform(0, 1, n_dyn)) * 2 - 1
         Delta0 = np.ones(n_dyn)
 
         for k in range(M):
@@ -370,30 +369,30 @@ class OptimToolPSPO(NextPointAlgorithm):
                 Delta[k % n_dyn] = -1*Delta0[k % n_dyn]
 
             thetaPlus = X_current+(c*Delta)
-            # thetaMinus= X_current-(c*Delta)
+            thetaMinus= X_current-(c*Delta)
                                 
-            while (X_min > thetaPlus).any() or (thetaPlus > X_max).any(): #or \
-                  # (thetaMinus < X_min).any() or (thetaMinus > X_max).\
-                  #   any():
+            while (X_min > thetaPlus).any() or (thetaPlus > X_max).any() or \
+                   (thetaMinus < X_min).any() or (thetaMinus > X_max).\
+                     any():
                 Delta = np.round(np.random.uniform(0, 1, n_dyn))*2-1
                 thetaPlus = X_current+(c*Delta)
-                # thetaMinus = X_current-(c*Delta)
+                thetaMinus = X_current-(c*Delta)
         
             deviations.append((c*Delta).tolist())
-            # deviations.append((-c*Delta).tolist())
+            deviations.append((-c*Delta).tolist())
         
-            # Delta_tilde = np.round(np.random.uniform(0, 1, n_dyn))*2-1
-            # thetaPlusPlus = thetaPlus + c_tilde*Delta_tilde
-            # thetaMinusPlus =thetaMinus + c_tilde*Delta_tilde
-            #
-            # while (thetaPlusPlus < X_min).any() or (thetaPlusPlus > X_max).any() or \
-            #         (thetaMinusPlus < X_min).any() or (thetaMinusPlus > X_max).any():
-            #     Delta_tilde = np.round(np.random.uniform(0, 1, n_dyn))*2-1
-            #     thetaPlusPlus = thetaPlus + c_tilde*Delta_tilde
-            #     thetaMinusPlus = thetaMinus + c_tilde*Delta_tilde
-            #
-            # deviations.append( (c*Delta+c_tilde*Delta_tilde).tolist())
-            # deviations.append((-c*Delta+c_tilde*Delta_tilde).tolist())
+            Delta_tilde = np.round(np.random.uniform(0, 1, n_dyn))*2-1
+            thetaPlusPlus = thetaPlus + c_tilde*Delta_tilde
+            thetaMinusPlus =thetaMinus + c_tilde*Delta_tilde
+
+            while (thetaPlusPlus < X_min).any() or (thetaPlusPlus > X_max).any() or \
+                    (thetaMinusPlus < X_min).any() or (thetaMinusPlus > X_max).any():
+                Delta_tilde = np.round(np.random.uniform(0, 1, n_dyn))*2-1
+                thetaPlusPlus = thetaPlus + c_tilde*Delta_tilde
+                thetaMinusPlus = thetaMinus + c_tilde*Delta_tilde
+
+            deviations.append( (c*Delta+c_tilde*Delta_tilde).tolist())
+            deviations.append((-c*Delta+c_tilde*Delta_tilde).tolist())
         
         X_center = state.reset_index(drop=True).set_index(['Parameter'])[['Center']]
         xc = X_center.transpose().reset_index(drop=True)

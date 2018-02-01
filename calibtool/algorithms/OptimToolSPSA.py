@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 class OptimToolSPSA(NextPointAlgorithm):
     """
-    OptimTool
+    OptimToolSPSA
 
-    The basic idea of OptimTool is
+    The basic idea of OptimToolSPSA is
     """
 
     def cleanup(self):
@@ -118,7 +118,7 @@ class OptimToolSPSA(NextPointAlgorithm):
 
     def clamp(self, X):
 
-        print("X.before:\n{}".format(X))
+        # print("X.before:\n{}".format(X))
 
         # X should be a data frame
         for pname in X.columns:
