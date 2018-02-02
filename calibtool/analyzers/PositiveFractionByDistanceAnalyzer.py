@@ -1,6 +1,4 @@
 
-# TODO: Generalize this style of CalibAnalyzer as much as possible
-#       to minimize repeated code in e.g. PrevalenceByAgeAnalyzer
 import logging
 
 import pandas as pd
@@ -29,26 +27,6 @@ class PositiveFractionByDistanceAnalyzer(BaseCalibrationAnalyzer):
         self.reference = site.get_reference_data('risk_by_distance')
         self.ignore_nodes = site.get_ignore_node_list()
         self.distmat = site.get_distance_matrix()
-
-    # def set_site(self, site):
-    #     '''
-    #     Get the reference data that this analyzer needs from the specified site.
-    #     '''
-    #
-    #     self.site = site
-    #     self.reference = site.get_reference_data(self.site_ref_type)
-    #     try :
-    #         self.testday = self.setup['testday']
-    #     except KeyError :
-    #         raise Exception('%s requires \'testday\' input in site setup' % self.name)
-    #     if 'ignore_nodes' in self.setup :
-    #         self.ignore_nodes = self.setup['ignore_nodes']
-    #     else :
-    #         self.ignore_nodes = []
-    #     try :
-    #         self.distmat = pd.read_csv(self.setup['distmat'])
-    #     except KeyError :
-    #         raise Exception('%s requires node distance matrix csv path \'distmat\' in site setup' % self.name)
 
     def filter(self, sim_metadata):
         '''
@@ -104,7 +82,8 @@ class PositiveFractionByDistanceAnalyzer(BaseCalibrationAnalyzer):
         Assess the result per sample, in this case the likelihood
         comparison between simulation and reference data.
         '''
-        return self.compare_fn(self.reference['risks'] + [self.reference['prevalence']], sample[self.y].tolist())
+        return self.compare_fn(self.reference['risks'] + [self.reference['prevalence']],
+                               sample[self.y].tolist())
 
     def finalize(self):
         '''
@@ -118,30 +97,36 @@ class PositiveFractionByDistanceAnalyzer(BaseCalibrationAnalyzer):
         Return a cache of the minimal data required for plotting sample comparisons
         to reference comparisons.
         '''
-        
+
         cache = self.data.copy()
         cache = cache[[self.y]].reset_index(level=self.x)
         sample_dicts = [df.to_dict(orient='list') for idx, df in cache.groupby(level='sample', sort=True)]
         logger.debug(sample_dicts)
 
-        return {'sims': sample_dicts, 'reference': self.reference, 'axis_names': [self.x, self.y]}
+        return {'samples': sample_dicts, 'ref': self.reference, 'axis_names': [self.x, self.y]}
 
     def uid(self):
         ''' A unique identifier of site-name and analyzer-name. '''
         return '_'.join([self.site.name, self.name])
 
-    @staticmethod
-    def plot_sim(fig, reference, simdata, x, y, style='-', color='#CB5FA4', alpha=1, linewidth=1) :
-        ax = fig.gca()
-        numpoints = len(simdata[x])
-        ax.plot(range(numpoints), simdata[y], style, color=color, alpha=alpha, linewidth=linewidth)
-
-    @staticmethod
-    def plot_reference(fig, reference, simdata, x, y, style='-o', color='#8DC63F', alpha=1, linewidth=1) :
+    @classmethod
+    def plot_comparison(cls, fig, data, **kwargs):
         from matplotlib.ticker import FixedLocator
+
         ax = fig.gca()
-        numpoints = len(simdata[x])
-        ax.plot(range(numpoints), reference['risks'] + [reference['prevalence']], style, color=color, alpha=alpha, linewidth=linewidth)
-        ax.xaxis.set_major_locator(FixedLocator(range(numpoints)))
-        ax.set_xticklabels(['hh'] + [str(i) for i in reference['distances'][1:]] + ['all'])
-        ax.set(xlabel=x, ylabel=y)
+        fmt_str = kwargs.pop('fmt', None)
+        args = (fmt_str,) if fmt_str else ()
+        ref = False
+        if kwargs.pop('reference', False): # this seems switched around to me? but is working properly
+            ref = True
+
+        if ref:
+            numpoints = len(data['distances'])+1
+            ax.plot(range(numpoints), data['risks'] + [data['prevalence']], *args, **kwargs)
+            ax.xaxis.set_major_locator(FixedLocator(range(numpoints)))
+            ax.set_xticklabels(['hh'] + [str(i) for i in data['distances'][1:]] + ['all'])
+        else :
+            numpoints = len(data['distance'])
+            ax.plot(range(numpoints), data['Risk of RDT Positive'], *args, **kwargs)
+
+        ax.set(xlabel='distance from RDT+', ylabel='risk of RDT+')
