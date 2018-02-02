@@ -332,7 +332,7 @@ class add_seasonal_HS_by_NP_fn:
             sev_cov = 0.8
 
             for start_month in range(len(self.scale_by_month)):
-                start_day = self.date + np.cumsum(self.days_in_month)[start_month]
+                start_day = int(self.date + np.cumsum(self.days_in_month)[start_month])
                 duration = self.days_in_month[start_month + 1]
                 scale = self.scale_by_month[start_month]
                 targets = [
