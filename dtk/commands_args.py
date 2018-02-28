@@ -14,6 +14,13 @@ def populate_run_arguments(subparsers, func):
     parser_run.set_defaults(func=func)
 
 
+# 'dtk ini' options
+def populate_ini_arguments(subparsers, func):
+    parser_ini = subparsers.add_parser('ini', help='Check  simtools.ini file.')
+    parser_ini.add_argument('-o', '--open', action='store_true', help='Open and display file.')
+    parser_ini.set_defaults(func=func)
+
+
 # 'dtk run' options for catalyst, after all, it runs and then does a set-piece analysis
 def populate_catalyst_arguments(subparsers, func):
     parser_catalyst = subparsers.add_parser('catalyst', help='Run a timestep or population-scaling sweep to evaluate '
@@ -47,6 +54,15 @@ def populate_catalyst_arguments(subparsers, func):
                                       '(Default: simtools/Catalyst/reports.json)')
 
     parser_catalyst.set_defaults(func=func)
+
+
+def populate_diskspace_arguments(subparsers, func):
+    parser_status = subparsers.add_parser('diskspace', help='Report diskspace of for users.')
+    parser_status.add_argument('-u', '--users', nargs='*', help='List of users.', dest='users')
+    parser_status.add_argument('-t', '--top', nargs='?', type=int, help='Get given number recent experiment list.', dest='top')
+    parser_status.add_argument('-s', '--save', action='store_true', help='Save results to a file.', dest='save')
+    parser_status.add_argument('-r', '--refresh', action='store_true', help='Refresh data from COMPS.', dest='refresh')
+    parser_status.set_defaults(func=func)
 
 
 # 'dtk status' options

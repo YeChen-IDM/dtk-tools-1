@@ -21,6 +21,7 @@ from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManage
 from simtools.SetupParser import SetupParser
 from simtools.Utilities.COMPSUtilities import get_experiments_per_user_and_date, get_experiments_by_name, COMPS_login, \
     get_experiment_ids_for_user
+from simtools.Utilities.DiskSpaceUsage import DiskSpaceUsage
 from simtools.Utilities.Experiments import COMPS_experiment_to_local_db, retrieve_experiment
 from simtools.Utilities.General import nostdout, get_tools_revision, retrieve_item
 from COMPS.Data.Simulation import SimulationState
@@ -57,6 +58,48 @@ def test(args, unknownArgs):
 
     # Run
     subprocess.Popen(command, cwd=test_dir).wait()
+
+
+def diskspace(args, unknownArgs):
+    # Create a default HPC setup parser
+    with SetupParser.TemporarySetup(temporary_block='HPC') as sp:
+        endpoint = sp.get('server_endpoint')
+        COMPS_login(endpoint)
+
+        # default to the login user
+        user = sp.get('user')
+        if args.users is None or len(args.users) == 0:
+            args.users = [user]
+
+    # query and display the disk information
+    DiskSpaceUsage.display(args.users, args.top, args.save, args.refresh)
+
+
+def check_ini(args, unknownArgs):
+    ini_filename = 'simtools.ini'
+
+    local_file = os.path.join(os.getcwd(), ini_filename)
+    local_file = local_file if os.path.exists(local_file) else None
+    default_file = SetupParser.default_file
+
+    file_to_open = local_file if local_file else default_file
+
+    if local_file:
+        print("Local {} exists!".format(ini_filename))
+    else:
+        print("Local {} DOESN'T exist!".format(ini_filename))
+        print("Default {}: {}".format(ini_filename, default_file))
+
+    if args.open:
+        print('=============================================\n')
+        if local_file:
+            print("Open Local {}: {}".format(ini_filename, local_file))
+        else:
+            print("Open Default {}: {}".format(ini_filename, default_file))
+        print('----------------------------------------------')
+        with open(file_to_open) as f:
+            read_data = f.read()
+            print(read_data)
 
 
 def run(args, unknownArgs):
@@ -293,7 +336,8 @@ def stdout(args, unknownArgs):
     else:
         am = AnalyzeManager(exp_list=[exp_manager.experiment],
                             analyzers=StdoutAnalyzer([sim_id], args.error),
-                            force_analyze=True)
+                            force_analyze=True,
+                            verbose=False)
         am.analyze()
 
 
@@ -757,6 +801,9 @@ def main():
     parser = argparse.ArgumentParser(prog='dtk')
     subparsers = parser.add_subparsers()
 
+    # 'dtk ini' options
+    commands_args.populate_ini_arguments(subparsers, check_ini)
+
     # 'dtk run' options
     commands_args.populate_run_arguments(subparsers, run)
 
@@ -829,6 +876,9 @@ def main():
     # 'dtk get_package' options
     commands_args.populate_get_package_arguments(subparsers, get_package)
 
+    # 'dtk diskspace' options
+    commands_args.populate_diskspace_arguments(subparsers, diskspace)
+
     # # 'dtk catalyst' options
     # commands_args.populate_catalyst_arguments(subparsers, catalyst)
 
@@ -838,10 +888,8 @@ def main():
     # This is it! This is where SetupParser gets set once and for all. Until you run 'dtk COMMAND' again, that is.
     init.initialize_SetupParser_from_args(args, unknownArgs)
 
-    try:
-        args.func(args, unknownArgs)
-    except AttributeError:
-        parser.print_help()
+    args.func(args, unknownArgs)
+
 
 if __name__ == '__main__':
     main()

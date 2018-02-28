@@ -1,4 +1,4 @@
-import sys, os, json, collections, re
+import sys, os, json, collections, re, msvcrt
 
 def ShowUsage():
 	print ('\nUsage: %s [compiled-demographics-file] [migration-type]' % os.path.basename(sys.argv[0]))
@@ -32,17 +32,18 @@ def OrderedJsonLoad(in_dict):
 def GetMaxValueCountForMigrationType(mig_type):
 	return {
 		'sea' : 5,
-		'local' : 8,
-		'regional' : 30,
+		'local' : 90,
+		'regional' : 90,
 		'air' : 60
 	}.get(mig_type, -1.0)
 
 
-def main(tool, compiled_demographics, mig_type):
+def main(tool, compiled_demographics, mig_file_name, mig_type):
 
 	infilename = compiled_demographics
 	print(infilename)
-	outfilename = re.sub('_demographics.compiled.json$', '_%s_migration.bin.json' % mig_type, infilename)
+	#outfilename = re.sub('_demographics.compiled.json$', '_migration.bin.json', infilename)
+	outfilename = mig_file_name + ".json"
 	print(outfilename)
 	maxvalcount = GetMaxValueCountForMigrationType(mig_type)
 	

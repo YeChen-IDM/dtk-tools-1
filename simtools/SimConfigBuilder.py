@@ -9,12 +9,11 @@ from simtools.Utilities.General import CommandlineGenerator
 logger = logging.getLogger(__name__)
 
 
-class SimConfigBuilder:
+class SimConfigBuilder(metaclass=ABCMeta):
     """
     A class for building, modifying, and writing
     required configuration files for a simulation
     """
-    __metaclass__ = ABCMeta
 
     def __init__(self, config=None, **kwargs):
         self.config = config or {}
@@ -29,6 +28,10 @@ class SimConfigBuilder:
     @property
     def params(self):
         return self.config
+
+    @property
+    def exe_name(self):
+        return self.assets.exe_name
 
     def update_params(self, params, validate=False):
         if not validate:

@@ -126,6 +126,7 @@ class DTKConfigBuilder(SimConfigBuilder):
                 * GENERIC_SIM_SI
                 * GENERIC_SIM_SIS
                 * DENGUE_SIM
+                * TBHIV_SIM
 
 
             kwargs (dict): Additional overrides of config parameters
@@ -216,6 +217,17 @@ class DTKConfigBuilder(SimConfigBuilder):
             config["parameters"].update(vector_params.params)
             config["parameters"].update(dengue_params.params)
             # campaign = dengue_campaign
+
+        elif sim_type == "TBHIV_SIM":
+            try:
+                import tb.tbhiv_params as tbhiv_params # must have the tb disease package installed.
+                import tb.tbhiv_initial_seeding as tbhiv_initial_seeding
+            except ImportError as e:
+                message = 'The tb disease package must be installed via the \'dtk get_package tb -v HEAD\' command' + \
+                          'before the TBHIV_SIM simulation types can be used.'
+                raise ImportError(message)
+            config["parameters"].update(tbhiv_params.params)
+            campaign = tbhiv_initial_seeding.tbhiv_campaign
 
         else:
             raise Exception("Don't recognize sim_type argument = %s" % sim_type)
@@ -437,7 +449,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         campaign_str = json.dumps(self.campaign, cls=NumpyEncoder)
 
         # Retrieve all the events in the campaign file
-        events_from_campaign = re.findall(r"['\"](?:Broadcast_Event|Event_Trigger|Event_To_Broadcast)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL)
+        events_from_campaign = re.findall(r"['\"](?:Broadcast_Event|Event_Trigger|Event_To_Broadcast|Blackout_Event_Trigger|Took_Dose_Event)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL)
 
         # Get all the Trigger condition list too and add them to the campaign events
         trigger_lists = re.findall(r"['\"]Trigger_Condition_List['\"]:\s(\[.*?\])", campaign_str, re.DOTALL)

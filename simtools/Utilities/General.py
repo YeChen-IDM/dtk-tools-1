@@ -6,8 +6,14 @@ import sys
 
 import time
 from io import StringIO
+from itertools import cycle
 
 logging_initialized = False
+
+animation = cycle(("\u25f0", "\u25f1", "\u25f2", "\u25f3",))
+animation = cycle(("|", "\\", "-", "|", "/","-"))
+
+
 def init_logging(name):
     import logging.config
     global logging_initialized
@@ -361,7 +367,7 @@ def file_size(bytes, system=labels):
     for factor, suffix in system:
         if bytes >= factor:
             break
-    amount = int(bytes/factor)
+    amount = round(bytes/factor)
     if isinstance(suffix, tuple):
         singular, multiple = suffix
         if amount == 1:

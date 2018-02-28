@@ -122,7 +122,10 @@ class SimulationOutputParser(threading.Thread):
 
     def load_bin_file(self, filename, content):
         from dtk.tools.output.SpatialOutput import SpatialOutput
-        so = SpatialOutput.from_bytes(content, 'Filtered' in filename)
+        if isinstance(content, BytesIO):
+            so = SpatialOutput.from_bytes(content.read(), 'Filtered' in filename)
+        else:
+            so = SpatialOutput.from_bytes(content, 'Filtered' in filename)
         self.raw_data[filename] = so.to_dict()
 
     def get_sim_dir(self):
@@ -169,15 +172,16 @@ class CompsDTKOutputParser(SimulationOutputParser):
         if transient:
             try:
                 byte_arrays.update(dict(zip(transient, self.COMPS_simulation.retrieve_output_files(paths=transient))))
-            except RuntimeError:
+            except Exception as e:
                 print("Could not retrieve requested file(s) for simulation {} - Requested files: {}. Parser exiting..."
                       .format(self.sim_id, transient))
+                print(e)
                 exit()
 
         if assets:
             try:
                 byte_arrays.update(get_asset_files_for_simulation_id(self.sim_id, paths=assets, remove_prefix='Assets'))
-            except RuntimeError:
+            except Exception:
                 print("Could not retrieve requested file(s) for simulation {} - Requested files: {}. Parser exiting..."
                       .format(self.sim_id, assets))
                 exit()
