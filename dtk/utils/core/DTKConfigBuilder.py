@@ -448,34 +448,101 @@ class DTKConfigBuilder(SimConfigBuilder):
         """
         campaign_str = json.dumps(self.campaign, cls=NumpyEncoder)
 
-        # Retrieve all the events in the campaign file
-        events_from_campaign = re.findall(r"['\"](?:Broadcast_Event|Event_Trigger|Event_To_Broadcast|Blackout_Event_Trigger|Took_Dose_Event)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL)
+        # this function traverses the list looking for the key you gave it, if there's another key, it matches up
+        # both values in a dictionary and returns the list of dictionaries
+        def fun(d, event, event_type, result):
+            if event in d:
+                if event_type:  # if there's a type we want a list of dictionaries
+                    result.append({d[event_type]: d[event]})
+                elif isinstance(d[event], list):  # if no type, and a list, we want the lists extended, not used
+                    result.extend(d[event])
+                else:  # assuming if not a list of event, then it's just a string
+                    result.append(d[event])
+            for k in d:
+                if isinstance(d[k], list):
+                    for i in d[k]:
+                        if isinstance(i, dict):
+                            fun(i, event, event_type, result)
+                elif isinstance(d[k], dict):
+                    fun(d[k], event, event_type, result)
+                else:
+                    pass
 
-        # Get all the Trigger condition list too and add them to the campaign events
-        trigger_lists = re.findall(r"['\"]Trigger_Condition_List['\"]:\s(\[.*?\])", campaign_str, re.DOTALL)
-        for tlist in trigger_lists:
-            events_from_campaign.extend(json.loads(tlist))
+        ind_events_list = []
+        node_events_list = []
+        coord_events_list = []
 
-        # Add them with the events already listed in the config file
-        event_set = set(events_from_campaign + self.config['parameters']['Listed_Events'])
+        results = []  # this is for events broadcast by Action in SurveillanceCoordinator
+        fun(self.campaign, "Event_To_Broadcast", "Event_Type", results)
+        for event in results:
+            if 'COORDINATOR' in event:
+                coord_events_list.append(event['COORDINATOR'])
+            elif 'NODE' in event:
+                node_events_list.append(event['NODE'])
+            elif 'INDIVIDUAL' in event:
+                ind_events_list.append(event['INDIVIDUAL'])
+            else:
+                raise ValueError("Matching event type not found in {}".format(event))
 
-        # Remove the built in events and return
-        builtin_events = {"NoTrigger", "Births", "EveryUpdate", "EveryTimeStep", "NewInfectionEvent", "TBActivation",
-                          "NewClinicalCase", "NewSevereCase", "DiseaseDeaths", "NonDiseaseDeaths",
-                          "TBActivationSmearPos", "TBActivationSmearNeg", "TBActivationExtrapulm",
-                          "TBActivationPostRelapse", "TBPendingRelapse", "TBActivationPresymptomatic",
-                          "TestPositiveOnSmear", "ProviderOrdersTBTest", "TBTestPositive", "TBTestNegative",
-                          "TBTestDefault", "TBRestartHSB", "TBMDRTestPositive", "TBMDRTestNegative", "TBMDRTestDefault",
-                          "TBFailedDrugRegimen", "TBRelapseAfterDrugRegimen", "TBStartDrugRegimen", "TBStopDrugRegimen",
-                          "PropertyChange", "STIDebut", "StartedART", "StoppedART", "InterventionDisqualified",
-                          "HIVNewlyDiagnosed", "GaveBirth", "Pregnant", "Emigrating", "Immigrating",
-                          "HIVTestedNegative", "HIVTestedPositive", "HIVSymptomatic", "HIVPreARTToART",
-                          "HIVNonPreARTToART", "TwelveWeeksPregnant", "FourteenWeeksPregnant", "SixWeeksOld",
-                          "EighteenMonthsOld", "STIPreEmigrating", "STIPostImmigrating", "STINewInfection",
-                          "NodePropertyChange", "HappyBirthday", "EnteredRelationship", "ExitedRelationship",
-                          "FirstCoitalAct"}
+        results = []  # this is for general events being broadcast
+        fun(self.campaign, "Broadcast_Event", "class", results)
+        for event in results:
+            if 'BroadcastCoordinatorEvent' in event:
+                coord_events_list.append(event['BroadcastCoordinatorEvent'])
+            elif 'BroadcastNodeEvent' in event:
+                node_events_list.append(event['BroadcastNodeEvent'])
+            elif 'BroadcastEvent' in event:
+                ind_events_list.append(event['BroadcastEvent'])
+            else:
+                raise ValueError("Matching event class not found in {}".format(event))
 
-        return list(event_set - builtin_events)
+        # adding events that are always the same event-type
+        ind_events_list.extend(re.findall(r"['\"](?:Took_Dose_Event)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL))
+        node_events_list.extend(re.findall(r"['\"](?:Negative_Diagnostic_Event|Positive_Diagnostic_Event)"
+                                           r"['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL))
+        coord_events_list.extend(
+            re.findall(r"['\"](?:Completion_Event)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL))
+
+
+        # remove repeats, empty strings and combine with already present events
+        if 'Custom_Individual_Events' in self.config['parameters']:
+            ind_events_list = set(list(filter(None,ind_events_list)) + self.config['parameters']['Custom_Individual_Events'])
+        else:
+            ind_events_list = set(list(filter(None, ind_events_list)))
+        if 'Custom_Node_Events' in self.config['parameters']:
+            node_events_list = set(list(filter(None,node_events_list)) + self.config['parameters']['Custom_Node_Events'])
+        else:
+            node_events_list = set(list(filter(None, node_events_list)))
+        if 'Custom_Coordinator_Events' in self.config['parameters']:
+            coord_events_list = set(list(filter(None,coord_events_list)) + self.config['parameters']['Custom_Coordinator_Events'])
+        else:
+            coord_events_list = set(list(filter(None, coord_events_list)))
+
+        # remove the builtin events and return
+        ind_builtin_events = {"NoTrigger", "Births", "EveryUpdate", "EveryTimeStep", "NewInfectionEvent",
+                              "TBActivation",
+                              "NewClinicalCase", "NewSevereCase", "DiseaseDeaths", "NonDiseaseDeaths",
+                              "TBActivationSmearPos", "TBActivationSmearNeg", "TBActivationExtrapulm",
+                              "TBActivationPostRelapse", "TBPendingRelapse", "TBActivationPresymptomatic",
+                              "TestPositiveOnSmear", "ProviderOrdersTBTest", "TBTestPositive", "TBTestNegative",
+                              "TBTestDefault", "TBRestartHSB", "TBMDRTestPositive", "TBMDRTestNegative",
+                              "TBMDRTestDefault",
+                              "TBFailedDrugRegimen", "TBRelapseAfterDrugRegimen", "TBStartDrugRegimen",
+                              "TBStopDrugRegimen",
+                              "PropertyChange", "STIDebut", "StartedART", "StoppedART", "InterventionDisqualified",
+                              "HIVNewlyDiagnosed", "GaveBirth", "Pregnant", "Emigrating", "Immigrating",
+                              "HIVTestedNegative", "HIVTestedPositive", "HIVSymptomatic", "HIVPreARTToART",
+                              "HIVNonPreARTToART", "TwelveWeeksPregnant", "FourteenWeeksPregnant", "SixWeeksOld",
+                              "EighteenMonthsOld", "STIPreEmigrating", "STIPostImmigrating", "STINewInfection",
+                              "NodePropertyChange", "HappyBirthday", "EnteredRelationship", "ExitedRelationship",
+                              "FirstCoitalAct"}
+
+        node_builtin_events = {"NoTrigger", "NodePropertyChange"}
+        coord_builtin_events = {"NoTrigger"}
+
+        return {"Custom_Individual_Events": list(ind_events_list - ind_builtin_events),
+                "Custom_Node_Events": list(node_events_list - node_builtin_events),
+                "Custom_Coordinator_Events": list(coord_events_list - coord_builtin_events)}
 
     def file_writer(self, write_fn):
         """
@@ -522,10 +589,11 @@ class DTKConfigBuilder(SimConfigBuilder):
             write_fn(name, dump(content))
 
         # Add missing item from campaign individual events into Listed_Events
-        self.config['parameters']['Listed_Events'] = self.check_custom_events()
+        self.config['parameters']['Custom_Individual_Events'] = self.check_custom_events()["Custom_Individual_Events"]
+        self.config['parameters']['Custom_Node_Events'] = self.check_custom_events()["Custom_Node_Events"]
+        self.config['parameters']['Custom_Coordinator_Events'] = self.check_custom_events()["Custom_Coordinator_Events"]
 
         write_fn('config.json', dump(self.config))
-
         # complete the path to each dll before writing emodules_map.json
         location = SetupParser.get('type')
         if location == 'LOCAL':
