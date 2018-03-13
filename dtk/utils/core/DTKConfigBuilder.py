@@ -450,7 +450,7 @@ class DTKConfigBuilder(SimConfigBuilder):
 
         # this function traverses the list looking for the key you gave it, if there's another key, it matches up
         # both values in a dictionary and returns the list of dictionaries
-        def fun(d, event, event_type, result):
+        def search_campaign(d, event, event_type, result):
             if event in d:
                 if event_type:  # if there's a type we want a list of dictionaries
                     result.append({d[event_type]: d[event]})
@@ -462,9 +462,9 @@ class DTKConfigBuilder(SimConfigBuilder):
                 if isinstance(d[k], list):
                     for i in d[k]:
                         if isinstance(i, dict):
-                            fun(i, event, event_type, result)
+                            search_campaign(i, event, event_type, result)
                 elif isinstance(d[k], dict):
-                    fun(d[k], event, event_type, result)
+                    search_campaign(d[k], event, event_type, result)
                 else:
                     pass
 
@@ -473,7 +473,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         coord_events_list = []
 
         results = []  # this is for events broadcast by Action in SurveillanceCoordinator
-        fun(self.campaign, "Event_To_Broadcast", "Event_Type", results)
+        search_campaign(self.campaign, "Event_To_Broadcast", "Event_Type", results)
         for event in results:
             if 'COORDINATOR' in event:
                 coord_events_list.append(event['COORDINATOR'])
@@ -485,7 +485,7 @@ class DTKConfigBuilder(SimConfigBuilder):
                 raise ValueError("Matching event type not found in {}".format(event))
 
         results = []  # this is for general events being broadcast
-        fun(self.campaign, "Broadcast_Event", "class", results)
+        search_campaign(self.campaign, "Broadcast_Event", "class", results)
         for event in results:
             if 'BroadcastCoordinatorEvent' in event:
                 coord_events_list.append(event['BroadcastCoordinatorEvent'])
