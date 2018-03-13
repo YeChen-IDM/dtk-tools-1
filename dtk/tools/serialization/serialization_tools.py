@@ -96,7 +96,7 @@ def remove_vectors_by_nodeid(source_filename, dest_filename, removal_nodes):
     source = dtk.read(source_filename)
 
     for index in range(0, len(source.nodes)):
-        print('Reading {0}{1} node'.format(index, _endings[index%10]), end='\n')
+        print('Reading {0}{1} node'.format(index, _endings[index%10]))
         node = source.nodes[index]
         if node.externalId in removal_nodes:
             node.m_vectorpopulations = []
@@ -116,7 +116,7 @@ def remove_humans_by_nodeid(source_filename, dest_filename, removal_nodes):
     source = dtk.read(source_filename)
 
     for index in range(0, len(source.nodes)):
-        print('Reading {0}{1} node'.format(index, _endings[index%10]), end='\n')
+        print('Reading {0}{1} node'.format(index, _endings[index%10]))
         node = source.nodes[index]
         if node.externalId in removal_nodes:
             for person in node.individualHumans:

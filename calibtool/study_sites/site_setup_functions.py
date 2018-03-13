@@ -89,6 +89,20 @@ class filtered_spatial_report_fn:
         return add_filtered_spatial_report(cb, start=self.start, end=self.end, channels=self.channels,
                                            nodes=self.nodes, description=self.description)
 
+class event_counter_report_fn:
+    def __init__(self, channels, start, duration, nodes, description=''):
+        self.start = start
+        self.duration = duration
+        self.channels = channels
+        self.nodes = nodes
+        self.description = description
+
+    def __call__(self, cb):
+        from malaria.reports.MalariaReport import add_event_counter_report
+        return add_event_counter_report(cb, self.channels, start=self.start, duration=self.duration,
+                                        nodes=self.nodes, description=self.description)
+
+
 # vector
 class larval_habitat_fn:
     def __init__(self, species, habitats):
@@ -209,18 +223,21 @@ class add_mosquito_release_fn:
 
 # health-seeking
 class add_treatment_fn:
-    def __init__(self, start=0, drug=None, targets=None, nodes=None, node_property_restrictions=[]):
+    def __init__(self, start=0, drug=None, targets=None, nodes=None, drug_ineligibility_duration=0,
+                 node_property_restrictions=[]):
         self.start = start
         self.drug = drug or ['Artemether', 'Lumefantrine']
         self.targets = targets or [{'trigger': 'NewClinicalCase', 'coverage': 0.8, 'seek': 0.6, 'rate': 0.2}]
         self.nodes = nodes or {"class": "NodeSetAll"}
         self.node_property_restrictions=node_property_restrictions
+        self.durg_ineligibility_duration=drug_ineligibility_duration
 
     def __call__(self, cb):
         return self.fn(cb)
 
     def fn(self, cb):
         add_health_seeking(cb, start_day=self.start, drug=self.drug, targets=self.targets, nodes=self.nodes,
+                           drug_ineligibility_duration=self.durg_ineligibility_duration,
                            node_property_restrictions=self.node_property_restrictions)
         cb.update_params({'PKPD_Model': 'CONCENTRATION_VERSUS_TIME'})
 
@@ -289,6 +306,7 @@ class add_seasonal_HS_by_node_id_fn:
 
                 add_health_seeking(cb, start_day=start_day, targets=targets,
                                    duration=duration, repetitions=-1,
+                                   drug_ineligibility_duration=14,
                                    nodes={'Node_List': hscov['nodes'], "class": "NodeSetNodeList"})
 
 class add_seasonal_HS_by_NP_fn:
@@ -378,17 +396,16 @@ class add_itn_by_node_id_fn:
         return self.fn(cb)
 
     def fn(self, cb) :
-        birth_durations = [self.itn_dates[x + 1] - self.itn_dates[x] for x in range(len(self.itn_dates)-1)]
-        itn_distr = zip(self.itn_dates[:-1], self.itn_fracs)
+        birth_durations = [self.itn_dates[x] - self.itn_dates[x + 1] for x in range(len(self.itn_dates) - 1)]
+        # itn_distr = zip(self.itn_dates[:-1], self.itn_fracs)
         with open(self.reffname) as fin :
             cov = json.loads(fin.read())
         for itncov in cov[self.channel] :
             if itncov['coverage'] > 0 :
-                for i, (itn_date, itn_frac) in enumerate(itn_distr) :
-                    c = itncov['coverage']*itn_frac
-                    if i < len(self.itn_fracs)-1 :
-                        c /= np.prod([1 - x*itncov['coverage'] for x in self.itn_fracs[i+1:]])
-                    # coverage = { 'min' : 0, 'max' : 200, 'coverage' : c}
+                for i, (itn_date, itn_frac) in enumerate(zip(self.itn_dates, self.itn_fracs)):
+                    c = itncov['coverage'] * itn_frac
+                    if i < len(self.itn_fracs) - 1:
+                        c /= np.prod([1 - x * itncov['coverage'] for x in self.itn_fracs[i + 1:]])
                     add_ITN(cb, itn_date,
                             coverage_by_ages=[{'min': 0, 'max': 5, 'coverage': min([1, c*1.3])},
                                               {'birth': 1, 'coverage': min([1,c*1.3]), 'duration': max([-1, birth_durations[i]])},
@@ -435,9 +452,9 @@ class add_node_level_irs_by_node_id_fn:
 # drug campaign
 class add_drug_campaign_fn:
     def __init__(self, campaign_type, drug_code, start_days, coverage=1.0, repetitions=3,
-                         interval=60, diagnostic_threshold=40,
+                         interval=60, diagnostic_threshold=40, diagnostic_type='TRUE_PARASITE_DENSITY',
                          snowballs=0, delay=0, nodes=None, target_group='Everyone',
-                 node_property_restrictions=[]):
+                 node_property_restrictions=[], drug_ineligibility_duration=0):
         self.campaign_type = campaign_type
         self.drug_code = drug_code
         self.start_days = start_days
@@ -445,17 +462,21 @@ class add_drug_campaign_fn:
         self.repetitions = repetitions
         self.interval = interval
         self.diagnostic_threshold = diagnostic_threshold
+        self.diagnostic_type = diagnostic_type
         self.snowballs = snowballs
         self.delay = delay
         self.nodes = nodes or []
         self.target_group = target_group
         self.NP_restrictions = node_property_restrictions
+        self.drug_ineligibility_duration = drug_ineligibility_duration
 
     def __call__(self, cb):
         from malaria.interventions.malaria_drug_campaigns import add_drug_campaign
         return add_drug_campaign(cb, self.campaign_type, self.drug_code, start_days=self.start_days,
                                  coverage=self.coverage, repetitions=self.repetitions, interval=self.interval,
                                  diagnostic_threshold=self.diagnostic_threshold,
+                                 diagnostic_type=self.diagnostic_type,
+                                 drug_ineligibility_duration=self.drug_ineligibility_duration,
                                  snowballs=self.snowballs, treatment_delay=self.delay, nodes=self.nodes,
                                  target_group=self.target_group, node_property_restrictions=self.NP_restrictions)
 

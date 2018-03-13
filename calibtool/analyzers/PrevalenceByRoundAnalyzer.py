@@ -19,14 +19,14 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
 
     def __init__(self, site, weight=1, compare_fn=LL_calculators.euclidean_distance, **kwargs):
         super(PrevalenceByRoundAnalyzer, self).__init__(site, weight, compare_fn)
-        self.testdays = kwargs.get('testdays')
         self.reference = site.get_reference_data('prevalence_by_round')
-        self.regions = site.get_region_list()
+        # self.regions = site.get_region_list()
+        self.regions = self.reference['grid_cell'].unique()
         self.filenames = ['output/ReportMalariaFiltered.json']
         region_filenames = ['output/ReportMalariaFiltered' + x + '.json' for x in self.regions if x != 'all']
         if 'all' in self.regions :
             self.filenames += region_filenames
-            self.regions.insert(0, self.regions.pop(self.regions.index('all')))
+            # self.regions.insert(0, self.regions.pop(self.regions.index('all')))
         else :
             self.filenames = region_filenames
 
@@ -43,14 +43,29 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
         Extract data from output data
         '''
         dfs = []
+        set_N = False
+        if 'N' not in self.reference.columns:
+            set_N = True
+            Ndf = pd.DataFrame()
+
         for i, region in enumerate(self.regions) :
-            data = [parser.raw_data[self.filenames[i]]['Channels'][self.y]['Data'][x] for x in self.testdays]
+            data = [parser.raw_data[self.filenames[i]]['Channels'][self.y]['Data'][x] for x in self.reference['sim_date'].values]
+            pop = [parser.raw_data[self.filenames[i]]['Channels']['Statistical Population']['Data'][x] for x in self.reference['sim_date'].values]
 
             df = pd.DataFrame({ self.y: data},
-                                index=self.testdays)
+                                index=self.reference['sim_date'].values)
             df.region = region
-            df.index.name = 'testdays'
+            df.index.name = 'sim_date'
             dfs.append(df)
+
+            if set_N :
+                t = pd.DataFrame({ 'grid_cell' : [region]*len(pop),
+                                   'N' : pop})
+                t['sim_date'] = self.reference['sim_date']
+                Ndf = pd.concat([Ndf, t])
+
+        if set_N :
+            self.reference = pd.merge(left=self.reference, right=Ndf, on=['grid_cell', 'sim_date'])
 
         c = pd.concat(dfs, axis=1, keys=self.regions, names=['region'])
         channel_data = c.stack(['region'])
@@ -68,7 +83,7 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
                              keys=[(d.sample, d.sim_id) for d in selected],
                              names=self.data_group_names)
         stacked = combined.stack(['sample', 'sim_id'])
-        self.data = stacked.groupby(level=['sample', 'region', 'testdays']).mean()
+        self.data = stacked.groupby(level=['sample', 'region', 'sim_date']).mean()
         logger.debug(self.data)
 
     def compare(self, sample):
@@ -76,7 +91,7 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
         Assess the result per sample, in this case the likelihood
         comparison between simulation and reference data.
         '''
-        return sum([self.compare_fn(self.reference[region],
+        return sum([self.compare_fn(self.reference[self.reference['grid_cell']==region]['prev'].values,
                                     df[self.y].tolist()) for (region, df) in sample.groupby(level='region')])
 
     def finalize(self):
@@ -114,7 +129,11 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
         if kwargs.pop('reference', False): # this seems switched around to me? but is working properly
             ref = True
         if ref:
-            region_list = data.keys()
+            if isinstance(data, str) :
+                from io import StringIO
+                data = pd.read_csv(StringIO(data), sep='\s+')
+            region_list = data['grid_cell'].unique()
+            data = { r : rdf['prev'].values for r,rdf in data.groupby('grid_cell')}
         else :
             region_list = data['region']
             channelname = [x for x in data.keys() if 'region' not in x][0]
