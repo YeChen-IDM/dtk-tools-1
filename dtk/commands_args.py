@@ -26,10 +26,11 @@ def populate_catalyst_arguments(subparsers, func):
     parser_catalyst = subparsers.add_parser('catalyst', help='Run a timestep or population-scaling sweep to evaluate '
                                                         'model performance.')
     parser_catalyst = in_common_run_and_catalyst_arguments(parser_catalyst)
-    parser_catalyst.add_argument('-s', '--sweep_type', dest='sweep_type', required=True, choices=['timestep', 'popscaling'],
-                                 help='The type of performance sweep to run and report on. Required.')
+    parser_catalyst.add_argument('-s', '--sweep_type', dest='sweep_type',
+                                 choices=['timestep', 'popscaling'], default='popscaling',
+                                 help='The type of performance sweep to run and report on (Default: popscaling).')
     parser_catalyst.add_argument('-m', '--sweep_method', dest='sweep_method', type=str, default=None,
-                                 help='The sweeping method to use (depends on sweep_type). Required.')
+                                 help='The sweeping method to use (Default: depends on sweep_type).')
     parser_catalyst.add_argument('-r', '--report', dest='report_type', type=str, default=None,
                                  help='The type of report to generate '
                                       '(Default: determined by Simulation_Type in config.json).')
