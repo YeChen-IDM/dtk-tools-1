@@ -23,16 +23,16 @@ def add_event_reporter(cb,
     event_type_l = event_type.lower()
     if event_type_l == "individual":
         event_recorder = {
-            "Report_Individual_Event_Recorder": 1,
-            "Report_Individual_Event_Recorder_Events": events_list,
-            "Report_Individual_Event_Recorder_Ignore_Events_In_List": ignore_events_in_list
+            "Report_Event_Recorder": 1,
+            "Report_Event_Recorder_Events": events_list,
+            "Report_Event_Recorder_Individual_Properties":individual_properties,
+            "Report_Event_Recorder_Ignore_Events_In_List": ignore_events_in_list
         }
     elif event_type_l == "node":
         event_recorder = {
             "Report_Node_Event_Recorder": 1,
             "Report_Node_Event_Recorder_Events": events_list,
             "Report_Node_Event_Recorder_Node_Properties": node_properties,
-            "Report_Node_Event_Recorder_Stats_By_IPs": individual_properties,
             "Report_Node_Event_Recorder_Ignore_Events_In_List": ignore_events_in_list
         }
     elif event_type_l == "coordinator":
@@ -53,7 +53,7 @@ def add_surveillance_event_recorder(cb,
                        ignore_events_in_list=0
                        ):
     """
-        Adds surveillance event recorder
+        Adds surveillance event recorder.
 
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
@@ -77,6 +77,7 @@ def add_surveillance_event_recorder(cb,
 
 def add_coordinator_event(cb,
                           start_day=0,
+                          node_ids=None,
                           cost_to_consumer=0,
                           coordinator_name="BroadcastCoordinatorEvent",
                           event=None
@@ -95,9 +96,15 @@ def add_coordinator_event(cb,
     if not event:
         raise ValueError("event needs to be explicitly defined")
 
+    if not node_ids:
+        nodeset_config = {"class": "NodeSetAll"}
+    else:
+        nodeset_config = {"class": "NodeSetNodeList", "Node_List": node_ids}
+
     broadcaster = {
         "class": "CampaignEvent",
         "Start_Day": start_day,
+        "Nodeset_Config": nodeset_config,
         "Event_Coordinator_Config": {
             "class": "BroadcastCoordinatorEvent",
             "Coordinator_Name": coordinator_name,
@@ -305,7 +312,8 @@ def add_triggered_surveillance_coordinator(cb,
                                            action_list=None
                                            ):
     """
-        Adds a triggered environmental diagnostic.
+        Adds a triggered surveillance. Once triggered, surveys indefinitely every count period. To stop after the first
+        run: use the Completion_Event as the Stop Trigger event (both would have to be set explicitly)
 
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
