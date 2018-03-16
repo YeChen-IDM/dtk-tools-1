@@ -117,7 +117,7 @@ def map_sample_to_model_input(cb, sample):
 
 optimtool = OptimToolSPSA(params=params,
                           constrain_sample_fn=constrain_sample,  # <-- WILL NOT BE SAVED IN ITERATION STATE
-                          comps_per_iteration=8  # <-- computations per iteration, includes center repeats.
+                          comps_per_iteration=7  # <-- computations per iteration
                           )
 calib_manager = CalibManager(name='ExampleOptimizationSPSA',  # <-- Please customize this name
                              config_builder=cb,
@@ -125,7 +125,7 @@ calib_manager = CalibManager(name='ExampleOptimizationSPSA',  # <-- Please custo
                              sites=sites,
                              next_point=optimtool,
                              sim_runs_per_param_set=1,  # <-- Replicates
-                             max_iterations=6,  # <-- Iterations
+                             max_iterations=10,  # <-- Iterations
                              plotters=plotters)
 
 run_calib_args = {'calib_manager': calib_manager}
