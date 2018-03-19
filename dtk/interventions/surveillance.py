@@ -33,6 +33,7 @@ def add_event_reporter(cb,
             "Report_Node_Event_Recorder": 1,
             "Report_Node_Event_Recorder_Events": events_list,
             "Report_Node_Event_Recorder_Node_Properties": node_properties,
+            "Report_Surveillance_Event_Recorder_Stats_By_IPs": individual_properties,
             "Report_Node_Event_Recorder_Ignore_Events_In_List": ignore_events_in_list
         }
     elif event_type_l == "coordinator":
@@ -424,7 +425,7 @@ def add_triggered_vaccination(cb,
                               coordinator_name="The_Vaccinator",
                               start_triggers_list=None,
                               stop_triggers_list=[],
-                              completion_event="",
+                              completion_event="NoTrigger",
                               node_ids=[],
                               node_property_restrictions=[],
                               ind_property_restrictions=[],
@@ -528,6 +529,105 @@ def add_triggered_vaccination(cb,
 
     cb.add_event(triggered_coordinator)
 
+def add_delay_event(cb,
+                  start_day=0,
+                  node_ids=[],
+                  duration=-1,
+                  coordinator_name="Delay",
+                  start_triggers_list=None,
+                  stop_triggers_list=[],
+                  broadcast_event=None,
+                  delay_distribution="FIXED_DURATION",
+                  delay_period=0,
+                  delay_period_min=None,
+                  delay_period_max=None,
+                  delay_period_mean=None,
+                  delay_period_stddev=None,
+                  delay_period_scale=None,
+                  delay_period_shape=None
+                  ):
+    """
+        This is a triggered vaccination of as AquisitionBlocking SimpleVaccine that uses a BOXDURABILITY profile with a
+        WaningEffectBox.
+
+        :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
+        intervention.
+        :param start_day: date upon which to change biting risk
+        :param duration: duration of time for which the diagnostic exists and listens for the trigger, -1 is forever
+        :param coordinator_name: name of the coordinator (used by the reporter)
+        :param start_triggers_list: list of coordinator-type events for which the diagnostic listens to start running,
+        cannot be empty
+        :param stop_triggers_list: list of coordinator-type events which stop the diagnostic run (can be initiated by
+        diagnostic)
+        :param node_ids: nodes to which this will be distributed - doesn't apply to this guy, I think
+        :param broadcast_event: coordinator-type event to be broadcast at the end of the delay period
+        :param delay_distribution: When starting an action, the duration of the delay will be selected from this type
+        of distribution. Possible values are: FIXED_DURATION, UNIFORM_DURATION, GAUSSIAN_DURATION, EXPONENTIAL_DURATION,
+         WEIBULL_DURATION
+        :param delay_period: Required if Delay_Distribution is FIXED_DURATION OR EXPONENTIAL_DURATION
+        :param delay_period_min: If a UNIFORM_DURATION is specified as the Delay_Distribution, add this parameter
+        Delay_Period_Min to directly specify the minimum time delay (in number of days)
+        :param delay_period_max: If a UNIFORM_DURATION is specified as the Delay_Distribution, add this parameter
+        Delay_Period_Max to directly specify the maximum time delay (in number of days)
+        :param delay_period_mean: If a GAUSSIAN_DURATION is specified as the Delay_Distribution, add this parameter
+        Delay_Period_Mean to directly specify the mean time delay (in number of days)
+        :param delay_period_stddev: If a GAUSSIAN_DURATION is specified as the Delay_Distribution, add this parameter
+        Delay_Period_Std_Dev to specify the standard deviation describing the Gaussian distribution (in number of days)
+        :param delay_period_scale: If a WEIBULL_DURATION is specified as the Delay_Distribution, add this parameter
+         Delay_Period_Scale to specify scale (lambda > 0) of the distribution (in days).",
+        :param delay_period_shape: If a WEIBULL_DURATION is specified as the Delay_Distribution, add this parameter
+        Delay_Period_Shape to specify the shape (kappa > 0) of the distribution.
+        """
+    if not start_triggers_list or not broadcast_event:
+        raise ValueError("start_triggers_list and broadcast event need to be explicitly defined")
+
+    # setting up the triggered coordinator
+    if not node_ids:
+        nodeset_config = {"class": "NodeSetAll"}
+    else:
+        nodeset_config = {"class": "NodeSetNodeList", "Node_List": node_ids}
+
+    if delay_distribution == "FIXED_DURATION" or delay_distribution == "EXPONENTIAL_DURATION":
+        delay = {"Delay_Period": delay_period}
+    elif delay_distribution == "UNIFORM_DURATION":
+        if not delay_period_min or not delay_period_max:
+            raise ValueError("delay_period_min and delay_period_max need to be explicitly defined")
+        delay = {"Delay_Period_Min": delay_period_min,
+                 "Delay_Period_Max": delay_period_max}
+    elif delay_distribution == "GAUSSIAN_DURATION":
+        if not delay_period_mean or not delay_period_stddev:
+            raise ValueError("delay_period_mean and delay_period_stddev need to be explicitly defined")
+        delay = {"Delay_Period_Mean": delay_period_mean,
+                 "Delay_Period_StdDev": delay_period_stddev}
+    elif delay_distribution == "WEIBULL_DURATION":
+        if not delay_period_scale or not delay_period_shape:
+            raise ValueError("delay_period_scale and delay_period_shape need to be explicitly defined")
+        delay = {"Delay_Period_Scale": delay_period_scale,
+                 "Delay_Period_Shape": delay_period_shape}
+    else:
+        raise  ValueError("{} distribution not found, possible values are "
+                          "FIXED_DURATION, UNIFORM_DURATION, GAUSSIAN_DURATION, EXPONENTIAL_DURATION, WEIBULL_DURATION"
+                          "".format(delay_distribution))
+
+    triggered_coordinator = {
+        "class": "CampaignEvent",
+        "Start_Day": start_day,
+        "Nodeset_Config": nodeset_config,
+        "Event_Coordinator_Config": {
+            "class": "DelayEventCoordinator",
+            "Coordinator_Name": coordinator_name,
+            "Start_Trigger_Condition_List": start_triggers_list,
+            "Stop_Trigger_Condition_List": stop_triggers_list,
+            "Duration": duration,
+            "Delay_Distribution": delay_distribution,
+            "Delay_Complete_Event": broadcast_event
+        }
+    }
+    triggered_coordinator["Event_Coordinator_Config"] = {**triggered_coordinator["Event_Coordinator_Config"],
+                                                         **delay}  # this concatenates the two dictionaries
+
+    cb.add_event(triggered_coordinator)
+
 
 def add_triggered_property_value_changer(cb,
                                          start_day=0,
@@ -539,7 +639,7 @@ def add_triggered_property_value_changer(cb,
                                          node_property_restrictions=[],
                                          ind_property_restrictions=[],
                                          target_demographic="Everyone",
-                                         completion_event="",
+                                         completion_event="NoTrigger",
                                          demographic_coverage=1,
                                          target_property_name=None,
                                          target_property_value=None,
