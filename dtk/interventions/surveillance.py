@@ -33,7 +33,7 @@ def add_event_reporter(cb,
             "Report_Node_Event_Recorder": 1,
             "Report_Node_Event_Recorder_Events": events_list,
             "Report_Node_Event_Recorder_Node_Properties": node_properties,
-            "Report_Surveillance_Event_Recorder_Stats_By_IPs": individual_properties,
+            "Report_Node_Event_Recorder_Stats_By_IPs": individual_properties,
             "Report_Node_Event_Recorder_Ignore_Events_In_List": ignore_events_in_list
         }
     elif event_type_l == "coordinator":
