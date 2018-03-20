@@ -212,6 +212,7 @@ def add_broadcast_event(cb,
 
 def add_triggered_environmental_diagnostic(cb,
                                          start_day=0,
+                                         start_day_location="None",
                                          duration=-1,
                                          coordinator_name="TriggeredEnvironmentalDiagnostic",
                                          start_triggers_list=None,
@@ -233,7 +234,8 @@ def add_triggered_environmental_diagnostic(cb,
 
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
-        :param start_day: date upon which to change biting risk
+        :param start_day: day on which the intervention is created (doesn't run until triggered)
+        :param start_day_location: a marked_up day on which the intervention is created (doesn't run until triggered)
         :param coordinator_name: the name of the coordinator (used in reports)
         :param duration: duration of time for which the diagnostic exists and listens for the trigger
         :param start_triggers_list: list of coordinator-type events for which the diagnostic listens to start running, cannot be empty
@@ -275,6 +277,7 @@ def add_triggered_environmental_diagnostic(cb,
     triggered_coordinator = {
         "class": "CampaignEvent",
         "Start_Day": start_day,
+        "Start_Day__KP_DX_{}".fromat(start_day_location): "<--MARKER",
         "Nodeset_Config": nodeset_config,
         "Event_Coordinator_Config": {
             "class": "TriggeredEventCoordinator",
