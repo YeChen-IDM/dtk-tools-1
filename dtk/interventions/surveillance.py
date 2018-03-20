@@ -277,7 +277,7 @@ def add_triggered_environmental_diagnostic(cb,
     triggered_coordinator = {
         "class": "CampaignEvent",
         "Start_Day": start_day,
-        "Start_Day__KP_DX_{}".fromat(start_day_location): "<--MARKER",
+        "Start_Day__KP_DX_{}".format(start_day_location): "<--MARKER",
         "Nodeset_Config": nodeset_config,
         "Event_Coordinator_Config": {
             "class": "TriggeredEventCoordinator",
