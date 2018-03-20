@@ -31,13 +31,19 @@ class COMPSCache:
         cls._simulations[str(s.id)] = s
 
     @classmethod
-    def load_simulation(cls, sid, criteria=None, children=None):
+    def load_simulation(cls, sid, criteria=None, children=None, force=False):
+        if sid in cls._simulations and not force:
+            return
+
         s = cls.query_simulation(sid, criteria, children)
         cls._simulations[sid] = s
         cls.load_experiment(s.experiment_id)
 
     @classmethod
-    def load_experiment(cls, eid, criteria=None, children=None):
+    def load_experiment(cls, eid, criteria=None, children=None, force=False):
+        if eid in cls._experiments and not force:
+            return
+
         e = cls.query_experiment(eid, criteria, children)
         cls._experiments[eid] = e
 
