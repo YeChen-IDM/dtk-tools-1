@@ -505,8 +505,8 @@ class DTKConfigBuilder(SimConfigBuilder):
 
 
         # remove repeats, empty strings and combine with already present events
-        if 'Report_Event_Recorder_Events' in self.config['parameters']:
-            ind_events_list = set(list(filter(None,ind_events_list)) + self.config['parameters']['Report_Event_Recorder_Events'])
+        if 'Custom_Individual_Events' in self.config['parameters']:
+            ind_events_list = set(list(filter(None,ind_events_list)) + self.config['parameters']['Custom_Individual_Events'])
         else:
             ind_events_list = set(list(filter(None, ind_events_list)))
         if 'Custom_Node_Events' in self.config['parameters']:
@@ -589,7 +589,7 @@ class DTKConfigBuilder(SimConfigBuilder):
             write_fn(name, dump(content))
 
         # Add missing item from campaign individual events into Listed_Events
-        self.config['parameters']['Report_Event_Recorder_Events'] = self.check_custom_events()["Custom_Individual_Events"]
+        self.config['parameters']['Custom_Individual_Events'] = self.check_custom_events()["Custom_Individual_Events"]
         self.config['parameters']['Custom_Node_Events'] = self.check_custom_events()["Custom_Node_Events"]
         self.config['parameters']['Custom_Coordinator_Events'] = self.check_custom_events()["Custom_Coordinator_Events"]
 

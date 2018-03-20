@@ -436,7 +436,8 @@ def add_triggered_vaccination(cb,
                               cost_to_consumer=0,
                               vaccine_take=1,
                               box_duration=730,
-                              initial_effect=0.59
+                              initial_effect=0.59,
+                              received_vaccine_event=None
                               ):
     """
         This is a triggered vaccination of as AquisitionBlocking SimpleVaccine that uses a BOXDURABILITY profile with a
@@ -468,6 +469,7 @@ def add_triggered_vaccination(cb,
         achieve the desired efficacy.
         :param box_duration: The box duration of the effect in days.
         :param initial_effect: Initial strength of the effect.
+        :param received_vaccine_event: string, when set sends out an individual event when vaccine is given out
 
         """
     if not start_triggers_list:
@@ -487,6 +489,15 @@ def add_triggered_vaccination(cb,
             },
             "class": "SimpleVaccine"
         }
+    # making a list for multiinterventiondistributor
+    interventions = [vaccine]
+
+    if received_vaccine_event:
+        vaccine_event = {
+            "class": "BroadcastEvent",
+            "Broadcast_Event": received_vaccine_event
+        }
+        interventions.append(vaccine_event)
 
     # setting up the triggered coordinator
     if not node_ids:
@@ -509,7 +520,10 @@ def add_triggered_vaccination(cb,
             "Timesteps_Between_Repetitions": tsteps_btwn_repetitions,
             "Node_Property_Restrictions": node_property_restrictions,
             "Property_Restrictions_Within_Node": ind_property_restrictions,
-            "Intervention_Config": vaccine,
+            "Intervention_Config": {
+                        "class": "MultiInterventionDistributor",
+                        "Intervention_List": interventions
+                    },
             "Completion_Event": completion_event
         }
     }
