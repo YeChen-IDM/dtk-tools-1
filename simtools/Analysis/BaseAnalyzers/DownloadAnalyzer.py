@@ -1,6 +1,4 @@
-import json
 import os
-from io import BytesIO
 
 from simtools.Analysis.BaseAnalyzers.BaseAnalyzer import BaseAnalyzer
 
