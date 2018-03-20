@@ -4,7 +4,7 @@ import inspect
 class EMODL:
 
     @classmethod
-    def all_options(cls):
+    def all_operators(cls):
         return (cls_attribute for cls_attribute in cls.__dict__.values()
                 if inspect.isclass(cls_attribute))
 
