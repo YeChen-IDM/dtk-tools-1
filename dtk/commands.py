@@ -703,6 +703,22 @@ def catalyst(args, unknownArgs):
                                                             config_filename=args.sweep_definitions)
     defn = FidelityReportExperimentDefinition(catalyst_config, args)
 
+    # Verify the user wishes to run with the determined configuration
+    print(''.join(['-']*80))
+    lines = [
+        'Sweep type: %s' % args.sweep_type,
+        'Sweep method: %s' % defn.sweep_method,
+        'Report type: %s' % report_type
+        ]
+    print('\n'.join(lines))
+    print(''.join(['-']*80))
+    user_input = None
+    while user_input not in ('Y', 'N'):
+        user_input = input('OK to generate catalyst report according to these options? (Y/N): ').upper()
+    if user_input == 'N':
+        print('Exiting without generating report.')
+        exit()
+
     # redefine the experiment name so it doesn't conflict with the likely follow-up non-catalyst experiment
     mod.run_sim_args['exp_name'] = 'Catalyst-' + mod.run_sim_args['exp_name']
 

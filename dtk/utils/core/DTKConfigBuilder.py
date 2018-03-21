@@ -289,11 +289,13 @@ class DTKConfigBuilder(SimConfigBuilder):
         params_dict = self.config['parameters']
         ignored = ignored
         input_files = []
+        # Name check ensure we only test if the name starts with a letter and contains Filename
+        name_check = re.compile(r'^[a-zA-Z].+Filename[s]?.*')
 
         # Retrieve all the parameters with "Filename" in it
         # Also do not add them if they are part of the ignored or blank
         for (filename, filepath) in params_dict.items():
-            if 'Filename' not in filename or filename in ignored or filepath == '': continue
+            if not name_check.match(filename) or filename in ignored or filepath == '': continue
 
             # If it is a list of files -> add them all
             if isinstance(filepath, list):
