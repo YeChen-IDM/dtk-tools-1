@@ -47,6 +47,7 @@ def add_event_reporter(cb,
 
     cb.update_params(event_recorder)
 
+
 def add_surveillance_event_recorder(cb,
                        events_list=[],
                        country_resources=[],
@@ -321,14 +322,14 @@ def add_triggered_surveillance_coordinator(cb,
 
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
-        :param start_day: date upon which to change biting risk
+        :param start_day: date upon which to start existence
         :param coordinator_name: name of the coordinator (used in reporting)
-        :param duration: duration of time for which the diagnostic exists and listens for the trigger
-        :param start_triggers_list: list of coordinator-type events for which the diagnostic listens to start running,
+        :param duration: duration of time for which the surveillance coordinator exists and listens for the trigger
+        :param start_triggers_list: list of coordinator-type events for which the coordinator listens to start running,
         cannot be empty
-        :param stop_triggers_list: list of coordinator-type events which stop the diagnostic run (can be initiated by
-        diagnostic)
-        :param node_ids: list of node IDs which diagnostic will test, there will be a diagnostic per node
+        :param stop_triggers_list: list of coordinator-type events which stop the coordinator run (can be initiated by
+        coordinator itself)
+        :param node_ids: list of node IDs from which the surveillance coordinator listens for triggers
         :param counter_type: PERIODIC - Events are counted during the period. At the end of the period, the
         counter will notify the Responder that it is done counting.
         ROLLING_WINDOW - The counter will count events for a user defined period. Once the counter has been active for
@@ -339,7 +340,7 @@ def add_triggered_surveillance_coordinator(cb,
          depending on counter_type
         :param counter_event_type: This defines the type of event that the counter will be counting
         :param counter_event_list: list of the events you're counting
-        :param node_property_restrictions: list of dictionaries of node properties to which the diagnostic will be
+        :param node_property_restrictions: list of dictionaries of node properties to which the coordinator will be
         restricted : [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
         :param ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
         [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
@@ -449,15 +450,15 @@ def add_triggered_vaccination(cb,
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
         :param start_day: date upon which to change biting risk
-        :param duration: duration of time for which the diagnostic exists and listens for the trigger, -1 is forever
+        :param duration: duration of time for which the coordinator exists and listens for the trigger, -1 is forever
         :param coordinator_name: name of the coordinator (used by the reporter)
-        :param start_triggers_list: list of coordinator-type events for which the diagnostic listens to start running,
+        :param start_triggers_list: list of coordinator-type events for which the coordinator listens to start running,
         cannot be empty
-        :param stop_triggers_list: list of coordinator-type events which stop the diagnostic run (can be initiated by
-        diagnostic)
+        :param stop_triggers_list: list of coordinator-type events which stop the coordinator run (can be initiated by
+        itself)
         :param completion_event: coordinator-type event sent out at the end of the campaign
-        :param node_ids: list of node IDs which diagnostic will test, there will be a diagnostic per node
-        :param node_property_restrictions: list of dictionaries of node properties to which the diagnostic will be
+        :param node_ids: list of node IDs which the vaccination will be restricted to
+        :param node_property_restrictions: list of dictionaries of node properties to which the vaccination will be
         restricted : [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
         :param ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
         [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
@@ -546,6 +547,7 @@ def add_triggered_vaccination(cb,
 
     cb.add_event(triggered_coordinator)
 
+
 def add_delay_event(cb,
                   start_day=0,
                   node_ids=[],
@@ -570,12 +572,12 @@ def add_delay_event(cb,
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
         :param start_day: date upon which to change biting risk
-        :param duration: duration of time for which the diagnostic exists and listens for the trigger, -1 is forever
+        :param duration: duration of time for which the coordinator exists and listens for the trigger, -1 is forever
         :param coordinator_name: name of the coordinator (used by the reporter)
-        :param start_triggers_list: list of coordinator-type events for which the diagnostic listens to start running,
+        :param start_triggers_list: list of coordinator-type events for which the coordinator listens to start running,
         cannot be empty
-        :param stop_triggers_list: list of coordinator-type events which stop the diagnostic run (can be initiated by
-        diagnostic)
+        :param stop_triggers_list: list of coordinator-type events which stop the coordinator run (can be initiated by
+        coordinator)
         :param node_ids: nodes to which this will be distributed - doesn't apply to this guy, I think
         :param broadcast_event: coordinator-type event to be broadcast at the end of the delay period
         :param delay_distribution: When starting an action, the duration of the delay will be selected from this type
@@ -671,14 +673,14 @@ def add_triggered_property_value_changer(cb,
         :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
         intervention.
         :param start_day: date upon which to change biting risk
-        :param duration: duration of time for which the diagnostic exists and listens for the trigger, -1 is forever
-        :param start_triggers_list: list of coordinator-type events for which the diagnostic listens to start running,
+        :param duration: duration of time for which the coordinator exists and listens for the trigger, -1 is forever
+        :param start_triggers_list: list of coordinator-type events for which the coordinator listens to start running,
         cannot be empty
-        :param stop_triggers_list: list of coordinator-type events which stop the diagnostic run (can be initiated by
-        diagnostic)
+        :param stop_triggers_list: list of coordinator-type events which stop the coordinator run (can be initiated by
+        coordinator itself)
         :param coordinator_name: name of the coordinator (used by the reporter)
-        :param node_ids: list of node IDs which diagnostic will test, there will be a diagnostic per node
-        :param node_property_restrictions: list of dictionaries of node properties to which the diagnostic will be
+        :param node_ids: list of node IDs which coordinator is restricted to
+        :param node_property_restrictions: list of dictionaries of node properties to which the coordinator will be
         restricted : [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
         :param ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
         [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
