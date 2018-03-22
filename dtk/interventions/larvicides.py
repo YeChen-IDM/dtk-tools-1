@@ -36,7 +36,7 @@ def add_larvicides(config_builder, start, killing=None, reduction=None, habitat_
         event["Nodeset_Config"] = {"class": "NodeSetNodeList", "Node_List": nodesIDs}
 
     # Copy the default event
-    larvicides_event = copy.deepcopy(default_larvicides)
+    larvicides_event = default_larvicides.copy()
 
     # Change according to parameters
     if killing:

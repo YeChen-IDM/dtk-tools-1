@@ -1,6 +1,10 @@
+from uuid import UUID
+
+
 class COMPSCache:
     _simulations = {}
     _experiments = {}
+    _collections = {}
 
     @classmethod
     def simulation(cls, sid, criteria=None, children=None):
@@ -23,12 +27,28 @@ class COMPSCache:
         return cls._experiments[eid]
 
     @classmethod
+    def collection(cls, cid):
+        if cid not in cls._collections:
+            cls.load_collection(cid)
+
+        return cls._collections[cid]
+
+    @classmethod
     def add_experiment_to_cache(cls, e):
         cls._experiments[str(e.id)] = e
 
     @classmethod
     def add_simulation_to_cache(cls, s):
         cls._simulations[str(s.id)] = s
+
+    @classmethod
+    def load_collection(cls, cid):
+        try:
+            UUID(cid)
+            collection = cls.query_collection(cid)
+        except ValueError:
+            collection = cls.query_collection(cname=cid)
+        cls._collections[cid] = collection
 
     @classmethod
     def load_simulation(cls, sid, criteria=None, children=None, force=False):
@@ -53,6 +73,18 @@ class COMPSCache:
     @staticmethod
     def get_experiment_simulations(exp):
         return exp.get_simulations()
+
+    @staticmethod
+    def query_collection(cid=None, cname=None, criteria=None):
+        from COMPS.Data import QueryCriteria
+        from COMPS.Data import AssetCollection
+        criteria = criteria or QueryCriteria().select_children('assets')
+        if cid:
+            return AssetCollection.get(id=cid, query_criteria=criteria)
+
+        criteria.where_tag('Name={}'.format(cname))
+        results = AssetCollection.get(query_criteria=criteria)
+        if len(results) >= 1: return results[0]
 
     @staticmethod
     def query_experiment(eid=None, criteria=None, children=None):

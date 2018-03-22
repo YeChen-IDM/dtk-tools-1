@@ -174,7 +174,7 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                  irs_ineligibility_duration=0, nodeIDs=[], node_property_restrictions=[],
                  triggered_campaign_delay=0,trigger_condition_list=[], listening_duration=-1):
 
-    irs_config = copy.deepcopy(node_irs_config)
+    irs_config = node_irs_config.copy()
     irs_config['Killing_Config']['class'] = waning_effect_type
     irs_config['Killing_Config']['Initial_Effect'] = initial_killing
     irs_config['Killing_Config']['Decay_Time_Constant'] = box_duration

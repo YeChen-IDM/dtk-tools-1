@@ -64,7 +64,7 @@ cohort_params = {
     "Genome_Markers": [ ]
 }
 
-params = copy.deepcopy(cohort_params)
+params = cohort_params.copy()
 params.update(disease_params)
 params.update(larval_habitat.params)
 set_params_by_species(params, ["arabiensis", "funestus", "gambiae"])
@@ -73,14 +73,14 @@ set_params_by_species(params, ["arabiensis", "funestus", "gambiae"])
 # Individual-mosquito model (rather than cohort-based model)
 # --------------------------------------------------------------
 
-individual_params = copy.deepcopy(cohort_params)
+individual_params = cohort_params.copy()
 individual_params["Vector_Sampling_Type"] = "TRACK_ALL_VECTORS"
 
 # --------------------------------------------------------------
 # Using VECTOR_SIM as a vivax model
 # --------------------------------------------------------------
 
-vivax_semitropical_params = copy.deepcopy(disease_params)
+vivax_semitropical_params = disease_params.copy()
 vivax_semitropical_params.update({
     "Incubation_Period_Distribution": "FIXED_DURATION",
     "Base_Incubation_Period": 18,  # shorter time until gametocyte emergence
@@ -93,7 +93,7 @@ vivax_semitropical_params.update({
     "Max_Individual_Infections": 1,
 })
 
-vivax_chesson_params = copy.deepcopy(vivax_semitropical_params)
+vivax_chesson_params = vivax_semitropical_params.copy()
 vivax_chesson_params.update({
     "Base_Infectious_Period": 40,  # French Guiana
 })
