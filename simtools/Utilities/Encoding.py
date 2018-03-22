@@ -1,6 +1,8 @@
 import base64
 import datetime
 import json
+from uuid import UUID
+
 import numpy as np
 
 
@@ -44,6 +46,8 @@ class GeneralEncoder(NumpyEncoder):
             return str(obj)
         elif isinstance(obj, Simulation):
             return obj.toJSON()
+        elif isinstance(obj, UUID):
+            return str(obj)
         return super(GeneralEncoder, self).default(obj)
 
 

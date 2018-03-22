@@ -44,7 +44,7 @@ class TemplateHelper():
         # Modify the config builder according to the dynamic_parameters
 
         #logger.info('-----------------------------------------')
-        all_params = copy.deepcopy(dynamic_params)
+        all_params = dynamic_params.copy()
 
         tags = {}
         if 'TAGS' in all_params:
