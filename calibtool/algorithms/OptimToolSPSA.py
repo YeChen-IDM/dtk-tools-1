@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 class OptimToolSPSA(NextPointAlgorithm):
     """
-    OptimTool
+    OptimToolSPSA
 
-    The basic idea of OptimTool is
+    The basic idea of OptimToolSPSA is
     """
 
     def cleanup(self):
@@ -118,7 +118,7 @@ class OptimToolSPSA(NextPointAlgorithm):
 
     def clamp(self, X):
 
-        print("X.before:\n{}".format(X))
+        # print("X.before:\n{}".format(X))
 
         # X should be a data frame
         for pname in X.columns:
@@ -202,7 +202,7 @@ class OptimToolSPSA(NextPointAlgorithm):
         largest_step_size = np.abs(np.array([1] * p) - np.array([0] * p)) / 5
 
         # optimization parameters
-        A0, step = 3, .5
+        A0, step = 3, .75
         a0 = step * (1 + A0) ** (0.602)
         a = a0 * (iteration + 1 + A0) ** (-0.602)
         # TODO: assumed here that there is no prior Hessian information 
@@ -241,8 +241,8 @@ class OptimToolSPSA(NextPointAlgorithm):
 
         # update x
         update = H_2bar_INV.dot(G)
-        if (np.abs(update) > largest_step_size).any():
-            update = np.linalg.norm(largest_step_size) * update / np.linalg.norm(update)
+        # if (np.abs(update) > largest_step_size).any():
+        #     update = np.linalg.norm(largest_step_size) * update / np.linalg.norm(update)
 
         X_next_scaled = X_current_scaled - a * update  # x_{n+1} = x_n - a_n H_n^{-1} G_n
         X_next = X_next_scaled * (X_max - X_min) + X_min
@@ -253,6 +253,13 @@ class OptimToolSPSA(NextPointAlgorithm):
         old_center = self._get_X_center(iteration - 1)
         old_center_of_dynamic_params = old_center[dynamic_params].values
         new_dynamic_center = X_next.tolist()
+
+        # max_idx = np.argmax(latest_results)
+        # if np.max(latest_results) >
+        # 'Stepping to argmax of %f at:' % latest_results[max_idx], latest_dynamic_samples[max_idx]
+        # new_dynamic_center = latest_dynamic_samples[max_idx].tolist()
+
+
         new_center_dict = old_center.to_dict()  # {k:v for k,v in zip(self.get_param_names(), old_center)}
         new_center_dict.update({k: v for k, v in zip(dynamic_params, new_dynamic_center)})
 
@@ -310,7 +317,7 @@ class OptimToolSPSA(NextPointAlgorithm):
 
         return samples  # Order shouldn't matter now, so dropped [self.get_param_names()]
 
-    def sample_simultaneous_perturbation(self, M, iteration, state):
+    def sample_simultaneous_perturbation(self, M, iteration, state, resolution=None):
         # Pick samples x+c\Delta, x-c\Delta, x+c\Delta+c_tilde\Delta_tilde, x-c\Delta+c_tilde\Delta_tilde
 
         assert (M > 0)
@@ -322,14 +329,23 @@ class OptimToolSPSA(NextPointAlgorithm):
         X_max = np.array([dynamic_state_by_param.loc[pname, 'Max'] for pname in dynamic_state['Parameter']])
         X_current = np.array([dynamic_state_by_param.loc[pname, 'Center'] for pname in dynamic_state['Parameter']])
 
-        c0 = .05 * (X_max - X_min) / M ** 0.5
+        c0 = .03 * (X_max - X_min) / M ** 0.5
 
-        for i in range(len(c0)):
-            while (X_current[i] - 3 * c0[i] < X_min[i]) or (X_current[i] + 3 * c0[i] > X_max[i]):
-                c0[i] = .8 * min(X_current[i] - X_min[i], X_max[i] - X_current[i]) / 3
+        if resolution is None:
+            resolution = 0.01 * c0
+
+            # making sure all plus/minus points in range
+        too_big = (X_current + c0) > X_max
+        too_small = (X_current - c0) < X_min
+        c0[too_big] = np.maximum(X_max[too_big] - X_current[too_big], resolution[too_big])
+        c0[too_small] = np.maximum(X_current[too_small] - X_min[too_small], resolution[too_small])
+
+        # for i in range(len(c0)):
+        #     while (X_current[i] - 3 * c0[i] < X_min[i]) or (X_current[i] + 3 * c0[i] > X_max[i]):
+        #         c0[i] = .8 * min(X_current[i] - X_min[i], X_max[i] - X_current[i]) / 3
 
         c = c0 * (iteration + 1) ** (-0.101)
-        c_tilde = 2 * c
+        #c_tilde = 2 * c
 
         deviations = []
 
@@ -340,22 +356,30 @@ class OptimToolSPSA(NextPointAlgorithm):
             thetaPlus = X_current + (c * Delta)
             thetaMinus = X_current - (c * Delta)
 
-            while (X_min > thetaPlus).any() or (thetaPlus > X_max).any() or (thetaMinus < X_min).any() or (
-                thetaMinus > X_max).any():
-                Delta = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
-                thetaPlus = X_current + (c * Delta)
-                thetaMinus = X_current - (c * Delta)
+            if (X_min > thetaPlus).any() or (thetaPlus > X_max).any():
+                thetaPlus = X_current
+
+            if (thetaMinus < X_min).any() or (thetaMinus > X_max).any():
+                thetaMinus = X_current
+
+            # while (X_min > thetaPlus).any() or (thetaPlus > X_max).any() or (thetaMinus < X_min).any() or (
+            #     thetaMinus > X_max).any():
+            #     Delta = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
+            #     thetaPlus = X_current + (c * Delta)
+            #     thetaMinus = X_current - (c * Delta)
 
             deviations.append((c * Delta).tolist())
             deviations.append((-c * Delta).tolist())
 
             Delta_tilde = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
+            c_tilde = np.random.uniform(low=0.75, high=2) * c
             thetaPlusPlus = thetaPlus + c_tilde * Delta_tilde
             thetaMinusPlus = thetaMinus + c_tilde * Delta_tilde
 
             while (thetaPlusPlus < X_min).any() or (thetaPlusPlus > X_max).any() or (thetaMinusPlus < X_min).any() or (
                 thetaMinusPlus > X_max).any():
                 Delta_tilde = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
+                c_tilde = np.random.uniform(low=0.75, high=2) * c
                 thetaPlusPlus = thetaPlus + c_tilde * Delta_tilde
                 thetaMinusPlus = thetaMinus + c_tilde * Delta_tilde
 

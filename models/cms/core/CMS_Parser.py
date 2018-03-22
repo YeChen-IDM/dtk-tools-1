@@ -2,7 +2,7 @@ import os
 import re
 
 
-class CMSParser(object):
+class CMSParser:
     """
     With current version it only supports the following key CMS components:
      - start-model
@@ -22,16 +22,17 @@ class CMSParser(object):
         'func': r'\(\s*(?P<key>func)\s+(?P<name>\S+)\s+(?P<func>.*)\s*\)',
         'bool': r'\(\s*(?P<key>bool)\s+(?P<name>\S+)\s+(?P<expr>.*)\s*\)',
         'observe': r'\(\s*(?P<key>observe)\s+(?P<label>\S+)\s+(?P<func>.*)\s*\)',
-        'species': r'\(\s*(?P<key>species)\s+(?P<name>\S+)\s+(?P<value>[\w\-]+)\s*\)',
-        'species2': r'\(\s*(?P<key>species)\s+(?P<name>\S+)\s*\)',
+        'species1': r'\(\s*(?P<key>species)\s+(?P<name>\S+)\s*\)',
+        'species2': r'\(\s*(?P<key>species)\s+(?P<name>\S+)\s+(?P<value>.+)\s*\)',
         'reaction': r'\(\s*(?P<key>reaction)\s+(?P<name>\S+)\s+(?P<input>\(.*?\))\s+(?P<output>\(.*?\))\s+(?P<func>.*)\s*\)',
-        'time-event': r'\(\s*(?P<key>time-event)\s+(?P<name>\S+)\s+(?P<time>\S+)\s+(?P<iteration>\S+)\s+\((?P<pairs>\(.*\))\s*\)',
-        'time-event2': r'\(\s*(?P<key>time-event)\s+(?P<name>\S+)\s+(?P<time>\S+)\s+\((?P<pairs>\(.*\))\s*\)',
+        'time-event1': r'\(\s*(?P<key>time-event)\s+(?P<name>\S+)\s+(?P<time>\S+)\s+\((?P<pairs>\(.*\))\s*\)',
+        'time-event2': r'\(\s*(?P<key>time-event)\s+(?P<name>\S+)\s+(?P<time>\S+)\s+(?P<iteration>\S+)\s+\((?P<pairs>\(.*\))\s*\)',
         'state-event': r'\(\s*(?P<key>state-event)\s+(?P<name>\S+)\s+(?P<predicate>.*?)\s+\((?P<pairs>.*)\)\s*\)'
     }
 
-    reg_pair = r'(\(.*\))+'
+    reg_pair = r'(\s*\(\s*(.*)\s*\))+'
 
+    @staticmethod
     def parse_model_from_file(model_file, cb):
         """
         parse model and build up cb
@@ -48,6 +49,7 @@ class CMSParser(object):
         # parse the model
         CMSParser.parse_model(model, cb)
 
+    @staticmethod
     def parse_model(model, cb):
         """
         parse model and populate cb properties
@@ -58,9 +60,6 @@ class CMSParser(object):
             matches = reg.finditer(model)
             for match in matches:
                 term = match.groups()
-                # print(term)
-                # for g in term:
-                #     print(g)
                 if term[0] == 'start-model':
                     cb.start_model_name = term[2]
                 elif term[0] == 'species':
@@ -88,6 +87,10 @@ class CMSParser(object):
                 else:
                     raise Exception('{} is not supported at moment.'.format([0]))
 
+            # clear parsed text (workaround to distinguish two species cases)
+            model = CMSParser.clean_model(model, exp)
+
+    @staticmethod
     def parse_pairs(line):
         """
         parse pair string and return as a list
@@ -101,8 +104,9 @@ class CMSParser(object):
 
         return pairs
 
-    def clean_model(model):
+    @staticmethod
+    def clean_model(model, expr=r';.*'):
         """
-        remove comments
+        default: remove comments
         """
-        return re.sub(r';.*', '', model)
+        return re.sub(expr, '', model)

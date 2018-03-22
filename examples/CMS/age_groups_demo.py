@@ -1,9 +1,8 @@
 import collections
 import copy
 from enum import Enum
-
 from models.cms.core.CMSConfigBuilder import CMSConfigBuilder
-from models.cms.core.CMS_Object import Observe
+from models.cms.core.CMS_Object import *
 from models.cms.core.CMS_Operator import EMODL
 
 
@@ -30,7 +29,8 @@ class GroupManager:
     def create_species(self):
         for g in self.groups:
             for species, value in g.species.items():
-                print("{}_{} = {}".format(species, g.name, value))
+                # print("{}_{} = {}".format(species, g.name, value))
+                self.cb.add_species('{}_{}'.format(species, g.name), str(value) if value else value)
 
     def add_group(self, group):
         self.available_species = self.available_species.union(group.species.keys())
@@ -39,48 +39,32 @@ class GroupManager:
         self.species = Enum('Species', list(self.available_species))
         self.parameters = Enum('Parameters', list(self.available_parameters))
 
-    def create_item(self, *attributes, across_group=False):
+    def create_item(self, obj, across_group=False):
         if not across_group:
             for group in self.groups:
-                g = []
-                for attr in attributes:
-                    a = copy.deepcopy(attr)
-                    g.append(self.transform_emodl(a, group.name))
-
-                print(g)
+                o = copy.deepcopy(obj)
+                g = self.transform_emodl(o, group.name)
+                self.add_to_config_builder(g, group.name)
         else:
-            g = []
-            for attr in attributes:
-                a = copy.deepcopy(attr)
-                g.append(self.transform_emodl(a))
+            g = self.transform_emodl(obj)
+            self.add_to_config_builder(g)
 
-            print(g)
-
-    def transform_emodl_orig(self, element, group_name):
-        # print(element, type(element))
-        if type(element) in EMODL.all_options():
-            for attr, value in element.__dict__.items():
-                if not isinstance(value, str) and isinstance(value, collections.Iterable):
-                    setattr(element, attr, list(map(lambda e: self.transform_emodl(e, group_name), value)))
-                else:
-                    setattr(element, attr, self.transform_emodl(value, group_name))
-            return element
-
-        if isinstance(element, self.species) or isinstance(element, self.parameters):
-            return "{}_{}".format(element.name, group_name)
-
-        return element
+    def add_to_config_builder(self, g, group_name=None):
+        if isinstance(g, Observe):
+            self.cb.observe.append(g)
+        elif isinstance(g, Reaction):
+            g.name = '{}-{}'.format(g.name, group_name)
+            self.cb.reaction.append(g)
 
     def transform_emodl(self, element, group_name=None):
-        if type(element) in EMODL.all_options():
+        all_objects = list_all_objects()
+        if type(element) in EMODL.all_operators() or type(element) in all_objects:
             for attr, value in element.__dict__.items():
                 if not isinstance(value, str) and isinstance(value, collections.Iterable):
                     if group_name:
                         setattr(element, attr, list(map(lambda e: self.transform_emodl(e, group_name), value)))
                     else:
                         result = list(map(lambda e: self.transform_emodl(e), value))
-                        # print(type(result))
-                        # print(result)
                         values = []
                         for v in result:
                             if isinstance(v, list):
@@ -106,24 +90,6 @@ class GroupManager:
         return element
 
 
-
-def test(gm):
-    e = gm.transform_emodl('func', 'Test')
-    print(e)
-
-    e = gm.transform_emodl(gm.species.S, 'Test')
-    print(e)
-
-    e = gm.transform_emodl(EMODL.ADD(2, 3), 'Test')
-    print(e)
-
-    e = gm.transform_emodl(EMODL.ADD(2, EMODL.MULTIPLY(5, 8)), 'Test')
-    print(e)
-
-    e = gm.transform_emodl(EMODL.MULTIPLY("lambda", EMODL.SUBTRACT(a.parameters.alpha, "3"), a.species.S), 'Test')
-    print(e)
-
-
 if __name__ == "__main__":
     g = Group(
         species={"S": 1000, "I": 200, "R": 300},
@@ -145,36 +111,20 @@ if __name__ == "__main__":
 
     cb = CMSConfigBuilder.from_defaults()
     a = GroupManager(
-        groups=(g, g1, g2),
+        groups=(g, g1),
         cb=cb
     )
 
-    # test(a)
-    # exit()
+    # create species
+    a.create_species()
 
-    # a.create_species()
+    # create reactions
+    a.create_item(Reaction("infection-latent", a.species.S, a.species.R, EMODL.MULTIPLY("lambda", EMODL.SUBTRACT(a.parameters.alpha, "3"), a.species.S)))
 
-    a.create_item("reaction",
-                  "infection-latent",
-                  a.species.S,
-                  a.species.R,
-                  EMODL.MULTIPLY("lambda", EMODL.SUBTRACT(a.parameters.alpha, "3"), a.species.S))
-    # ['reaction', 'infection-latent', 'S_0_5', 'R_0_5', (* lambda (- alpha_0_5 3) S_0_5)]
-    # ['reaction', 'infection-latent', 'S_5_10', 'R_5_10', (* lambda (- alpha_5_10 3) S_5_10)]
-
-    # a.create_item("observe",
-    #               "all-s",
-    #               EMODL.ADD(a.species.S),
-    #               across_group=True)
-
+    # create observes
     a.create_item(Observe("all-s", EMODL.ADD(a.species.S)), across_group=True)
-    #  (observe all-s (+ S_0_5 S_5_10))
 
-    # a.create_item("observe",
-    #               "all-i",
-    #               EMODL.SUBTRACT(EMODL.ADD(a.species.I, 7, 8, 9), 2),
-    #               across_group=True)
-    # (observe all-i (+ I_0_5 I_5_10))
+    # test: check results
+    model = a.cb.to_model()
+    print(model)
 
-
-    print(cb.observe[0]) # -> (observe all-s (+ S_0_5 S_5_10))

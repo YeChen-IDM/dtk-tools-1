@@ -1,3 +1,6 @@
+import sys
+import inspect
+
 class Species(object):
     def __init__(self, name, value=None):
         self.name = name
@@ -132,3 +135,17 @@ class Locale(object):
 
     def __repr__(self):
         return "(locale {})".format(self.name)
+
+
+def list_all_objects():
+    cm = sys.modules[__name__]
+    clsmembers = inspect.getmembers(cm, inspect.isclass)
+    cls_dict = {k: v for k, v in clsmembers}
+
+    return list(cls_dict.values())
+
+
+if __name__ == "__main__":
+    list_all_objects()
+
+    pass
