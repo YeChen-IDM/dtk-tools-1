@@ -95,8 +95,8 @@ class IterationState:
             self.exp_manager = ExperimentManagerFactory.from_experiment(retrieve_experiment(self.experiment_id))
 
         # step 2: restore next_point
-        if iter_step not in (StatusPoint.plot, StatusPoint.next_point) and self.iteration != 0:
-            if iter_step == StatusPoint.commission:
+        if iter_step not in (StatusPoint.plot, StatusPoint.next_point, StatusPoint.running) and self.iteration != 0:
+            if iter_step == StatusPoint.commission or iter_step == StatusPoint.iteration_start:
                 iteration_state = IterationState.restore_state(self.calibration_name, self.iteration - 1)
                 self.next_point_algo.set_state(iteration_state.next_point, self.iteration - 1)
             elif iter_step == StatusPoint.analyze:
