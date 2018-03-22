@@ -318,13 +318,12 @@ class CalibManager(object):
         - Handle location change case: may resume from commission instead
         """
         # Step 1: Checking possible location changes
-        try:
-            exp_id = iteration_state.experiment_id
-            exp = retrieve_experiment(exp_id)
-        except:
-            exp = None
-            import traceback
-            traceback.print_exc()
+        exp_id = iteration_state.experiment_id
+
+        if not exp_id and iteration_state.status == StatusPoint.iteration_start.name:
+            return
+
+        exp = retrieve_experiment(exp_id)
 
         if not exp:
             var = input("Cannot restore Experiment 'exp_id: %s'. Force to resume from commission... Continue ? [Y/N]" % exp_id if exp_id else 'None')
