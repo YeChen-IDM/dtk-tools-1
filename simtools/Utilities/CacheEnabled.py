@@ -1,8 +1,12 @@
 from tempfile import mkdtemp
 
 import shutil
-from diskcache import FanoutCache, Cache, Deque
+from diskcache import FanoutCache, Cache, Deque, DEFAULT_SETTINGS
 
+MAX_CACHE_SIZE = int(2**33)  # 8GB
+DEFAULT_SETTINGS["size_limit"] = MAX_CACHE_SIZE
+DEFAULT_SETTINGS["sqlite_mmap_size"] = 2 ** 28
+DEFAULT_SETTINGS["sqlite_cache_size"] = 2 ** 15
 
 class CacheEnabled:
 
@@ -19,13 +23,13 @@ class CacheEnabled:
 
         # Create a queue?
         if queue:
-            self.cache = Deque(directory=self.cache_directory, size_limit=int(1e10))
+            self.cache = Deque(directory=self.cache_directory)
             self.queue = True
         elif shards:
-            self.cache = FanoutCache(self.cache_directory, shards=shards, timeout=timeout, size_limit=int(1e10))
+            self.cache = FanoutCache(self.cache_directory, shards=shards, timeout=timeout)
             self.queue = False
         else:
-            self.cache = Cache(self.cache_directory, timeout=timeout, size_limit=int(1e10))
+            self.cache = Cache(self.cache_directory, timeout=timeout)
             self.queue = False
 
         return self.cache
