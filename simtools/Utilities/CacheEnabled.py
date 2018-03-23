@@ -19,13 +19,13 @@ class CacheEnabled:
 
         # Create a queue?
         if queue:
-            self.cache = Deque(directory=self.cache_directory)
+            self.cache = Deque(directory=self.cache_directory, size_limit=int(1e10))
             self.queue = True
         elif shards:
-            self.cache = FanoutCache(self.cache_directory, shards=shards, timeout=timeout)
+            self.cache = FanoutCache(self.cache_directory, shards=shards, timeout=timeout, size_limit=int(1e10))
             self.queue = False
         else:
-            self.cache = Cache(self.cache_directory, timeout=timeout)
+            self.cache = Cache(self.cache_directory, timeout=timeout, size_limit=int(1e10))
             self.queue = False
 
         return self.cache
