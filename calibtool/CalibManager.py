@@ -300,6 +300,9 @@ class CalibManager(object):
             iter_step = latest_step.name
 
         given_step = StatusPoint[iter_step]
+        if given_step == StatusPoint.analyze:
+            given_step = StatusPoint.running
+            
         if given_step.value > latest_step.value:
             raise Exception("The iter_step '%s' is beyond the latest step '%s'" % (given_step.name, latest_step.name))
 
