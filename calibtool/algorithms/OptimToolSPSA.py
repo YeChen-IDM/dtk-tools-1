@@ -149,18 +149,24 @@ class OptimToolSPSA(NextPointAlgorithm):
         self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
 
         self.n_dimensions = len(self.params)
-
+        size_of_dynamic_params = sum(self.Dynamic.values())
         iteration = 0
 
         # Clear self.state in case of resuming iteration 0 from commission
         self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Hessian', 'Min', 'Max', 'Dynamic'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
 
+        # dummy_counter = -1
         for param in self.params:
-            print (iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic'])
-            self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], param['aprioriHessian'],
+            Hessian_dict = {p['Name']: p['aprioriHessian'] for p in self.params}
+            # if (param['Dynamic'] is True):
+            #     dummy_counter += 1
+            print(iteration, param['Name'], param['Guess'], param['Min'], param['Max'], param['Dynamic'])
+            self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], Hessian_dict,
                                                param['Min'], param['Max'], param['Dynamic']]
-            # print(self.state)
+            # self.state.loc[len(self.state)] = [iteration, param['Name'], param['Guess'], param['aprioriHessian']*np.eye(1,size_of_dynamic_params,dummy_counter),
+            #                                    param['Min'], param['Max'], param['Dynamic']]
+            print(self.state)
 
         initial_samples = self.choose_and_clamp_samples_for_iteration(iteration)
 
@@ -175,7 +181,14 @@ class OptimToolSPSA(NextPointAlgorithm):
         def proj_spd(A):
             # NOTE: the input matrix is assumed to be symmetric
             d, v = np.linalg.eigh(A)
-            A = (v * np.maximum(abs(d), 1e-5)).dot(v.T)
+            A = v*np.diag(np.maximum(abs(d), 1e-5))*(v.T) #(v * np.maximum(abs(d), 1e-5)).dot(v.T)
+            A = (A + A.T) / 2
+            return (A)
+
+        def proj_nd(A):
+            # NOTE: the input matrix is assumed to be symmetric
+            d, v = np.linalg.eigh(A)
+            A = v*np.diag(np.minimum(-abs(d), -1e-5))*(v.T) #(v * np.maximum(abs(d), 1e-5)).dot(v.T)
             A = (A + A.T) / 2
             return (A)
 
@@ -196,13 +209,17 @@ class OptimToolSPSA(NextPointAlgorithm):
         # H_sign = -1 # Hessian should be neg. semi definite (maximization)
         p = X_current.size
         M = self.comps_per_iteration
-        Hessian_elements = [r['Hessian'] for idx, r in state_prev_iter.iterrows() if r['Dynamic']]
-        H_current_est = np.diag(Hessian_elements)
+        Hessian_dynamic = [r['Hessian'] for idx, r in state_prev_iter.iterrows() if r['Dynamic']]
+        H_current_list = [] #np.asmatrix(np.concatenate(Hessian_elements))
+        for i in range(len(dynamic_params)):
+            H_current_list.append([p for idx, p in Hessian_dynamic[i].items() if idx in dynamic_params])
+        H_current_est = np.asmatrix(np.array(H_current_list))
+
 
         largest_step_size = np.abs(np.array([1] * p) - np.array([0] * p)) / 5
 
         # optimization parameters
-        A0, step = 3, .75
+        A0, step = 2, .85
         a0 = step * (1 + A0) ** (0.602)
         a = a0 * (iteration + 1 + A0) ** (-0.602)
         # TODO: assumed here that there is no prior Hessian information 
@@ -227,8 +244,8 @@ class OptimToolSPSA(NextPointAlgorithm):
             f_PlusPlus = latest_results[4 * k + 3]
             f_MinusPlus = latest_results[4 * k + 4]
 
-            G_p = (f_PlusPlus - f_plus) / (thetaPlusPlus - thetaMinusPlus)
-            G_m = (f_MinusPlus - f_minus) / (thetaPlusPlus - thetaMinusPlus)
+            G_p = (f_PlusPlus - f_plus) / (thetaPlusPlus - thetaPlus)
+            G_m = (f_MinusPlus - f_minus) / (thetaPlusPlus - thetaPlus)
 
             Sk = np.dot((1 / (thetaPlus - thetaMinus))[:, None], (G_p - G_m)[None, :])
             S_avg[:, :, k] = k / (k + 1) * S_avg[:, :, k - 1] + 1 / (k + 1) * Sk
@@ -236,17 +253,18 @@ class OptimToolSPSA(NextPointAlgorithm):
         G = G_avg[:, M - 1]
         H_hat = .5 * (S_avg[:, :, M - 1] + S_avg[:, :, M - 1].T)
         H_bar = (1 - w) * H_current_est + w * H_hat
-        H_2bar = -1 * proj_spd(-H_bar)  # H_bar#.5*(H_bar - sqrtm(np.linalg.matrix_power(H_bar,2)+1e-6*np.eye(p)))
+        H_2bar = proj_nd(H_bar)  # H_bar#.5*(H_bar - sqrtm(np.linalg.matrix_power(H_bar,2)+1e-6*np.eye(p)))
         H_2bar_INV = np.linalg.inv(H_2bar)
 
         # update x
-        update = H_2bar_INV.dot(G)
-        # if (np.abs(update) > largest_step_size).any():
-        #     update = np.linalg.norm(largest_step_size) * update / np.linalg.norm(update)
+        update = np.array(H_2bar_INV.dot(G)).flatten()
+
+        if (np.abs(update) > largest_step_size).any():
+            update = np.linalg.norm(largest_step_size) * update / np.linalg.norm(update)
 
         X_next_scaled = X_current_scaled - a * update  # x_{n+1} = x_n - a_n H_n^{-1} G_n
         X_next = X_next_scaled * (X_max - X_min) + X_min
-        Hessian_next = np.diag(H_bar)
+        Hessian_next = H_bar
 
         self.data.reset_index(inplace=True)
 
@@ -264,8 +282,17 @@ class OptimToolSPSA(NextPointAlgorithm):
         new_center_dict.update({k: v for k, v in zip(dynamic_params, new_dynamic_center)})
 
         old_Hessian = self._get_Hessian(iteration - 1)
+        old_dynamic_Hessian = [old_Hessian[p] for p in dynamic_params]
+
         old_Hessian_of_dynamic_params = old_Hessian[dynamic_params].values
-        new_dynamic_Hessian = Hessian_next.tolist()
+        new_list_dynamic_Hessian = Hessian_next.tolist()
+        new_list_dynamic_Hessian.append(dynamic_params)
+        keys = new_list_dynamic_Hessian[-1]
+
+        new_dynamic_Hessian = old_dynamic_Hessian
+        for i in range(len(dynamic_params)):
+            new_dynamic_Hessian[i].update({k: v for k, v in zip(dynamic_params, new_list_dynamic_Hessian[i])})
+
         new_Hessian_dict = old_Hessian.to_dict()
         new_Hessian_dict.update({k: v for k, v in zip(dynamic_params, new_dynamic_Hessian)})
 
@@ -329,23 +356,17 @@ class OptimToolSPSA(NextPointAlgorithm):
         X_max = np.array([dynamic_state_by_param.loc[pname, 'Max'] for pname in dynamic_state['Parameter']])
         X_current = np.array([dynamic_state_by_param.loc[pname, 'Center'] for pname in dynamic_state['Parameter']])
 
-        c0 = .03 * (X_max - X_min) / M ** 0.5
+        c0 = .02 * (X_max - X_min) / M ** 0.5
+        c = c0 * (iteration + 1) ** (-0.101)
 
         if resolution is None:
-            resolution = 0.01 * c0
+            resolution = 0.5 * c0
 
-            # making sure all plus/minus points in range
-        too_big = (X_current + c0) > X_max
-        too_small = (X_current - c0) < X_min
-        c0[too_big] = np.maximum(X_max[too_big] - X_current[too_big], resolution[too_big])
-        c0[too_small] = np.maximum(X_current[too_small] - X_min[too_small], resolution[too_small])
-
-        # for i in range(len(c0)):
-        #     while (X_current[i] - 3 * c0[i] < X_min[i]) or (X_current[i] + 3 * c0[i] > X_max[i]):
-        #         c0[i] = .8 * min(X_current[i] - X_min[i], X_max[i] - X_current[i]) / 3
-
-        c = c0 * (iteration + 1) ** (-0.101)
-        #c_tilde = 2 * c
+        # making sure all plus/minus points in range
+        too_big = (X_current + c) > X_max
+        too_small = (X_current - c) < X_min
+        c[too_big] = np.maximum(X_max[too_big] - X_current[too_big], resolution[too_big])
+        c[too_small] = np.maximum(X_current[too_small] - X_min[too_small], resolution[too_small])
 
         deviations = []
 
@@ -362,24 +383,18 @@ class OptimToolSPSA(NextPointAlgorithm):
             if (thetaMinus < X_min).any() or (thetaMinus > X_max).any():
                 thetaMinus = X_current
 
-            # while (X_min > thetaPlus).any() or (thetaPlus > X_max).any() or (thetaMinus < X_min).any() or (
-            #     thetaMinus > X_max).any():
-            #     Delta = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
-            #     thetaPlus = X_current + (c * Delta)
-            #     thetaMinus = X_current - (c * Delta)
-
             deviations.append((c * Delta).tolist())
             deviations.append((-c * Delta).tolist())
 
             Delta_tilde = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
-            c_tilde = np.random.uniform(low=0.75, high=2) * c
+            c_tilde = np.random.uniform(low=1, high=2) * c
             thetaPlusPlus = thetaPlus + c_tilde * Delta_tilde
             thetaMinusPlus = thetaMinus + c_tilde * Delta_tilde
 
             while (thetaPlusPlus < X_min).any() or (thetaPlusPlus > X_max).any() or (thetaMinusPlus < X_min).any() or (
                 thetaMinusPlus > X_max).any():
                 Delta_tilde = np.round(np.random.uniform(0, 1, len(c0))) * 2 - 1
-                c_tilde = np.random.uniform(low=0.75, high=2) * c
+                c_tilde = np.random.uniform(low=1, high=2) * c
                 thetaPlusPlus = thetaPlus + c_tilde * Delta_tilde
                 thetaMinusPlus = thetaMinus + c_tilde * Delta_tilde
 
