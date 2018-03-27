@@ -132,7 +132,7 @@ class CalibManager(object):
         return ModBuilder.from_combos(
                 [ModFn(self.config_builder.__class__.set_param, 'Run_Number', i+1) for i in range(n_replicates)],
                 [ModFn(site.setup_fn) for site in self.sites],
-                [ModFn(self.map_sample_to_model_input_fn, index, samples) for index, samples in  enumerate(next_params)]
+                [ModFn(self.map_sample_to_model_input_fn, index, samples.copy() if n_replicates > 1 else samples) for index, samples in  enumerate(next_params)]
         )
 
     def create_iteration_state(self, iteration):
@@ -300,6 +300,9 @@ class CalibManager(object):
             iter_step = latest_step.name
 
         given_step = StatusPoint[iter_step]
+        if given_step == StatusPoint.analyze:
+            given_step = StatusPoint.running
+            
         if given_step.value > latest_step.value:
             raise Exception("The iter_step '%s' is beyond the latest step '%s'" % (given_step.name, latest_step.name))
 
@@ -318,13 +321,12 @@ class CalibManager(object):
         - Handle location change case: may resume from commission instead
         """
         # Step 1: Checking possible location changes
-        try:
-            exp_id = iteration_state.experiment_id
-            exp = retrieve_experiment(exp_id)
-        except:
-            exp = None
-            import traceback
-            traceback.print_exc()
+        exp_id = iteration_state.experiment_id
+
+        if not exp_id and iteration_state.status == StatusPoint.iteration_start.name:
+            return
+
+        exp = retrieve_experiment(exp_id)
 
         if not exp:
             var = input("Cannot restore Experiment 'exp_id: %s'. Force to resume from commission... Continue ? [Y/N]" % exp_id if exp_id else 'None')
@@ -376,8 +378,12 @@ class CalibManager(object):
         if not exp: return
 
         # Cancel simulations for all active managers
-        exp_manager = ExperimentManagerFactory.from_experiment(exp)
-        exp_manager.cancel_experiment()
+        try:
+            exp_manager = ExperimentManagerFactory.from_experiment(exp)
+            exp_manager.cancel_experiment()
+        except RuntimeError:
+            logger.info("Could not delete the associated experiment...")
+            return
 
         logger.info("Waiting to complete cancellation...")
         exp_manager.wait_for_finished(verbose=False, sleep_time=1)

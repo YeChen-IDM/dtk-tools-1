@@ -47,12 +47,12 @@ class IterationState:
         self.calibration_start = None
 
         if 'calibration_start' in kwargs:
-            cs = kwargs.pop('calibration_start')
+            cs = kwargs.pop('calibration_start') or datetime.now().replace(microsecond=0)
             if not isinstance(cs, datetime): self.calibration_start = datetime.strptime(cs, '%Y-%m-%d %H:%M:%S')
             else: self.calibration_start = cs
 
         if 'iteration_start' in kwargs:
-            cs = kwargs.pop('iteration_start')
+            cs = kwargs.pop('iteration_start') or datetime.now().replace(microsecond=0)
             if not isinstance(cs, datetime): self.iteration_start = datetime.strptime(cs, '%Y-%m-%d %H:%M:%S')
             else: self.iteration_start = cs
 
@@ -95,8 +95,8 @@ class IterationState:
             self.exp_manager = ExperimentManagerFactory.from_experiment(retrieve_experiment(self.experiment_id))
 
         # step 2: restore next_point
-        if iter_step not in (StatusPoint.plot, StatusPoint.next_point) and self.iteration != 0:
-            if iter_step == StatusPoint.commission:
+        if iter_step not in (StatusPoint.plot, StatusPoint.next_point, StatusPoint.running) and self.iteration != 0:
+            if iter_step == StatusPoint.commission or iter_step == StatusPoint.iteration_start:
                 iteration_state = IterationState.restore_state(self.calibration_name, self.iteration - 1)
                 self.next_point_algo.set_state(iteration_state.next_point, self.iteration - 1)
             elif iter_step == StatusPoint.analyze:
@@ -167,9 +167,6 @@ class IterationState:
         logger.info('---- Starting Iteration %d ----' % self.iteration)
 
     def commission_step(self):
-        # Ready for commissioning
-        self.status = StatusPoint.commission
-
         # Get the params from the next_point
         next_params = self.next_point_algo.get_samples_for_iteration(self.iteration)
         self.set_samples_for_iteration(next_params, self.next_point_algo)
@@ -177,15 +174,18 @@ class IterationState:
         # Then commission
         self.commission_iteration(next_params)
 
+        # Ready for commissioning
+        self.status = StatusPoint.commission
+
         # Call the plot for post commission plots
         self.plot_iteration()
 
     def analyze_step(self):
-        # Ready for analyzing
-        self.status = StatusPoint.analyze
-
         # Analyze the iteration
         self.analyze_iteration()
+
+        # Ready for analyzing
+        self.status = StatusPoint.analyze
 
     def plotting_step(self):
         # Ready for plotting

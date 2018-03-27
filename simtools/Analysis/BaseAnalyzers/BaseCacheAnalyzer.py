@@ -2,8 +2,8 @@ from simtools.Analysis.BaseAnalyzers.BaseAnalyzer import BaseAnalyzer
 
 class BaseCacheAnalyzer(BaseAnalyzer):
 
-    def __init__(self, cache_location=None, force=False):
-        super().__init__()
+    def __init__(self, cache_location=None, force=False, **kwargs):
+        super().__init__(**kwargs)
         self.cache_location = cache_location
         self.cache = None
         self.force = force
