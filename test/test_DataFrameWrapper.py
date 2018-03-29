@@ -37,8 +37,23 @@ class TestDataFrameWrapper(unittest.TestCase):
         self.stratifiers = ['Year', 'AgeBin', 'Gender', 'Province']
         self.dfw = DataFrameWrapper(dataframe=self.dataframe, stratifiers=self.stratifiers)
 
+        # for merge() tests
+        self.merged_col = 'Sim_Prevalence'
+        merged_data_array = deepcopy(data_array)
+        for h in merged_data_array:
+            h[self.merged_col] = h['NationalPrevalence'] * 1.1
+            h.pop('NationalPrevalence')
+            h.pop('On_ART', None)
+        # modify to have one item not in data_array, and one item data_array that is missing
+        merged_data_array[-1]['Year'] = 2005.5
+
+        self.merging_dfw = DataFrameWrapper(dataframe=pd.DataFrame(merged_data_array), stratifiers=self.stratifiers)
+
         # for directory loading tests
         self.data_directory = os.path.join(os.path.dirname(__file__), 'input', 'DataFrameWrapper')
+
+        self.data_array = data_array
+        self.merging_data_array = merged_data_array
 
     def tearDown(self):
         pass
@@ -242,6 +257,57 @@ class TestDataFrameWrapper(unittest.TestCase):
                                                                   'Year': 'int64'})
         filtered_dfw, expected_dfw = self.ensure_same_column_order(filtered_dfw, expected_dfw)
         self.assertTrue(filtered_dfw.equals(expected_dfw))
+
+    # merge tests
+
+    def test_merge_returns_object_of_right_type(self):
+        # create an object of a derived type of DataFrameWrapper and verify we get that type back after merging
+        from dtk.utils.observations.PopulationObs import PopulationObs
+        merging_pop = PopulationObs(dataframe=self.dfw._dataframe, stratifiers=self.stratifiers)
+        self.stratifiers.remove('Province')
+        keep = [self.merged_col, 'NationalPrevalence']
+        merged = merging_pop.merge(other_dfw=self.merging_dfw, index=self.stratifiers, keep_only=keep)
+        self.assertEqual(type(merged), type(merging_pop))
+
+    def test_raise_if_not_merging_with_a_dfw(self):
+        not_a_dfw = pd.DataFrame([{'a':1, 'b':2}, {'a':3, 'b':4}])
+        self.assertRaises(Exception, self.dfw.merge, other_dfw=not_a_dfw, drop_nan=self.merged_col)
+
+    def test_raise_if_merge_objects_missing_a_requested_stratifier(self):
+        self.merging_dfw.stratifiers.pop()
+        self.stratifiers.append('missing_stratifier')
+        self.assertRaises(DataFrameWrapper.MissingRequiredData, self.dfw.merge,
+                          other_dfw=self.merging_dfw, index=self.stratifiers, keep_only=self.merged_col)
+
+    def test_merge_result_is_correct_with_and_without_drop_nan(self):
+        # # test with drop_nan
+
+        self.stratifiers.remove('Province')
+        keep = [self.merged_col, 'NationalPrevalence']
+        merged = self.dfw.merge(other_dfw=self.merging_dfw, index=self.stratifiers, keep_only=keep)
+        expected_data = self.data_array[0:2]
+        for i in range(len(expected_data)):
+            expected_data[i][self.merged_col] = self.merging_data_array[i][self.merged_col]
+            expected_data[i].pop('Province', None)
+            expected_data[i].pop('On_ART', None)
+        expected_df = pd.DataFrame(data=expected_data)
+        expected_dfw = DataFrameWrapper(dataframe=expected_df, stratifiers=self.stratifiers)
+        expected_dfw, merged = self.ensure_same_column_order(expected_dfw, merged)
+        self.assertTrue(merged.equals(expected_dfw))
+
+        # test without drop_nan
+
+        merged = self.dfw.merge(other_dfw=self.merging_dfw, index=self.stratifiers)
+        # there is an un-merged pair of Province columns and On_ART in addition to the prior test
+        expected_df = pd.DataFrame(
+            [
+                {'Year': 2000.0, 'AgeBin': '[0:5)', 'Gender': 'Male', 'NationalPrevalence': 0.05, 'Sim_Prevalence':0.05*1.1},
+                {'Year': 2005.0, 'AgeBin': '[0:5)', 'Gender': 'Male', 'NationalPrevalence': 0.06, 'On_ART': 5000.0, 'Province_x': 'Washington', 'Province_y': 'Washington', 'Sim_Prevalence':0.066},
+            ]
+        )
+        expected_dfw = DataFrameWrapper(dataframe=expected_df, stratifiers=self.stratifiers)
+        expected_dfw, merged = self.ensure_same_column_order(expected_dfw, merged)
+        self.assertTrue(merged.equals(expected_dfw))
 
     def ensure_same_column_order(self, dfw1, dfw2):
         self.assertEqual(sorted(dfw1._dataframe.columns), sorted(dfw2._dataframe.columns))

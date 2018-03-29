@@ -24,7 +24,7 @@ from utils import make_campaign_template
 SetupParser.default_block= "HPC"
 
 #
-#  ***************************** PRINCIPLE SECTION OF THIS EXAMPLE ********************************
+#  ***************************** PRINCIPAL SECTION OF THIS EXAMPLE ********************************
 #
 
 # The excel file with parameter, analyzer, and reference data to parse
@@ -42,8 +42,12 @@ sites = [ SEARCHCalibSite( # note that the internal site structure is a bit diff
         ]
 
 #
-# ***************************** END PRINCIPLE SECTION OF THIS EXAMPLE ****************************
+# ***************************** END PRINCIPAL SECTION OF THIS EXAMPLE ****************************
 #
+
+# dtk analyze compatibility
+site = sites[0]
+analyzers = site.analyzers
 
 # Restrict to only those params that are initially active
 params = [p for p in params if p['Dynamic']]

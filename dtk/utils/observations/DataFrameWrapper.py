@@ -36,13 +36,13 @@ class DataFrameWrapper:
 
         if not stratifiers:
             # determine stratifying channels and remove stratifying decoration from channel names
-            self.stratifiers = []
+            stratifiers = []
             self.data_channels = []
             columns = list(self._dataframe.columns)
             for i in range(0, len(columns)):
                 channel = Channel(columns[i])
                 if channel.is_stratifier:
-                    self.stratifiers.append(channel.name)
+                    stratifiers.append(channel.name)
                     columns[i] = channel.name
                 else:
                     self.data_channels.append(channel.name)
@@ -54,9 +54,8 @@ class DataFrameWrapper:
             missing_stratifiers = [s for s in stratifiers if s not in self._dataframe.columns]
             if len(missing_stratifiers) > 0:
                 raise self.MissingRequiredData('Specified stratifier(s): %s not in dataframe.' % missing_stratifiers)
-            stratifiers = set(stratifiers)
-            self.data_channels = list(set(self._dataframe.columns) - stratifiers)
-            self.stratifiers = sorted(list(stratifiers))
+        self.stratifiers = sorted(set(stratifiers))
+        self.data_channels = sorted(set(self._dataframe.columns) - set(self.stratifiers))
 
     @property
     def channels(self):
@@ -92,6 +91,29 @@ class DataFrameWrapper:
             self.verify_required_items(needed=kept_channels)
             filtered_df = filtered_df[kept_channels].dropna(subset=kept_non_stratifiers)
         return type(self)(dataframe=filtered_df, stratifiers=self.stratifiers)
+
+    def merge(self, other_dfw, index, keep_only=None):
+        """
+        Attempts to merge two DataFrameWrapper objects into one using the provided index list as a multi-index.
+        :param other_dfw: the DataFrameWrapper object to merge with.
+        :param index: a list of columns to merge on. All are required in both DataFrameWrapper objects.
+        :param keep_only: a list of columns. Triggers removal of result rows where NaN appears in any of these specified
+            columns. Result will contain these columns AND those from provided index.
+        :return: A newly created, merged object of the exact type of self and the stratifiers equal to the provided
+            index.
+        """
+        if not isinstance(other_dfw, DataFrameWrapper):
+            raise Exception('Can only merge DataFrameWrapper objects, not: %s' % type(other_dfw))
+
+        # we technically need the 'keep_only' items, too, but that is more complicated due to the merge
+        self.verify_required_items(needed=index)
+        other_dfw.verify_required_items(needed=index)
+        
+        this_df = self._dataframe.set_index(index)
+        other_df = other_dfw._dataframe.set_index(index)
+        merged_df = pd.merge(this_df, other_df, left_index=True, right_index=True)
+        merged_df.reset_index(inplace=True)
+        return type(self)(dataframe=merged_df, stratifiers=index).filter(keep_only=keep_only)
 
     def verify_required_items(self, needed, available=None):
         """

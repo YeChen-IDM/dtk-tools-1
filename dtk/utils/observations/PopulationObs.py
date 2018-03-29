@@ -5,9 +5,6 @@ from dtk.utils.observations.DataFrameWrapper import DataFrameWrapper
 
 class PopulationObs(DataFrameWrapper):
 
-    class NoStratifiers(Exception): pass
-    class NoKnownData(Exception): pass
-
     def __init__(self, filename=None, dataframe=None, stratifiers=None):
         super().__init__(filename=filename, dataframe=dataframe, stratifiers=stratifiers)
 

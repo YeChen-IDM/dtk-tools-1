@@ -24,7 +24,7 @@ class SEARCHCalibSite(CalibSite):
 
         self.analyzers = []
         for analyzer, weight in analyzers.items():
-            AnalyzerClass = getattr(importlib.import_module('hiv.analyzers.%s'%analyzer), analyzer)
+            AnalyzerClass = getattr(importlib.import_module('analyzers.%s'%analyzer), analyzer)
 
             self.analyzers.append(
                 AnalyzerClass(
