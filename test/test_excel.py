@@ -18,9 +18,9 @@ class TestExcel(unittest.TestCase):
 
     def test_read_row(self):
         ws_name = 'Observations metadata'
-        defined_name = self.defined_names[ws_name]['obs_stratifiers']
+        defined_name = self.defined_names[ws_name]['obs_data_channels']
         data = excel.read_list(ws=self.wb[ws_name], range=defined_name)
-        expected = ['Year', None, 'AgeBin', 'Gender'] + [None for i in range(8)]
+        expected = ['NationalPrevalence', None, 'ProvincialPrevalence'] + [None for i in range(21)]
         self.assertEqual(data, expected)
 
 
@@ -33,21 +33,21 @@ class TestExcel(unittest.TestCase):
 
 
     def test_read_block(self):
-        ws_name = 'Observations-NationalPrevalence'
+        ws_name = 'Obs-NationalPrevalence'
         defined_name = self.defined_names[ws_name]['csv']
         data = excel.read_block(ws=self.wb[ws_name], range=defined_name)
         expected = []
-        expected.append(['Year', 'AgeBin', 'Gender', 'NationalPrevalence', 'confidence_interval'])
-        expected.append([2015, '[15:49)', 'Male', 0.05, 0.01])
-        expected.append([2016, '[15:49)', 'Male', 0.06, 0.011])
+        expected.append(['Year', 'AgeBin', 'Gender', 'NationalPrevalence'])
+        expected.append([2015, '[15:49)', 'Male', 0.05])
+        expected.append([2016, '[15:49)', 'Male', 0.06])
         for i in range(998):
-            expected.append([None for i in range(5)])
+            expected.append([None for i in range(4)])
         self.assertEqual(len(data), len(expected))
         self.assertEqual(data, expected)
 
 
     def test_should_fail_if_reading_block_as_list(self):
-        ws_name = 'Observations-NationalPrevalence'
+        ws_name = 'Obs-NationalPrevalence'
         defined_name = self.defined_names[ws_name]['csv']
         self.assertRaises(Exception, excel.read_list, ws=self.wb[ws_name], range=defined_name)
 

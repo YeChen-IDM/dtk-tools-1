@@ -16,7 +16,7 @@ class ParameterOutOfRange(Exception): pass
 class InvalidAnalyzerWeight(Exception): pass
 
 EMPTY = [None, '', '--select--']  # not sure if this could be something else
-OBS_SHEET_REGEX = re.compile('^Observations-.+$')
+OBS_SHEET_REGEX = re.compile('^Obs-.+$')
 
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
@@ -130,16 +130,16 @@ def _parse_reference_data(wb, wb_path):
     # temp_dir = 'temp_dir'
     with tempfile.TemporaryDirectory() as temp_dir:
         os.makedirs(temp_dir, exist_ok=True)
-        metadata_sheetname = 'Observations metadata'
-
-        ws = get_sheet_from_workbook(wb, sheet_name=metadata_sheetname, wb_path=wb_path)
-
-        stratifiers = excel.read_list(ws=ws, range=defined_names[metadata_sheetname]['obs_stratifiers'])
-        stratifiers = [s for s in stratifiers if s not in EMPTY]
 
         obs_sheets = [sn for sn in wb.sheetnames if OBS_SHEET_REGEX.match(sn)]
         for sheet_name in obs_sheets:
             ws = get_sheet_from_workbook(wb, sheet_name=sheet_name, wb_path=wb_path)
+
+            # detect stratifiers for this channel
+            stratifiers = excel.read_list(ws=ws, range=defined_names[sheet_name]['stratifiers'])
+            stratifiers = [s for s in stratifiers if s not in EMPTY]
+
+            # read sheet data
             csv_data = excel.read_block(ws=ws, range=defined_names[sheet_name]['csv'])
 
             # only keep data rows with no empty values, error on rows that are partially empty (incomplete)

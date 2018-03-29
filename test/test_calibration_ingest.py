@@ -125,7 +125,7 @@ class TestCalibrationIngest(unittest.TestCase):
         self.assertEqual(sorted(reference.stratifiers), sorted(expected_stratifiers))
 
         # non-stratifier columns in the dataframe
-        expected_channels = ['NationalPrevalence', 'ProvincialPrevalence', 'confidence_interval']
+        expected_channels = ['NationalPrevalence', 'ProvincialPrevalence'] #, 'confidence_interval']
         self.assertEqual(sorted(reference.channels), sorted(expected_channels))
 
         n_expected_rows = 4
@@ -133,10 +133,10 @@ class TestCalibrationIngest(unittest.TestCase):
 
         # data check
         data = [
-            {'Year': 2005, 'Gender': 'Male', 'AgeBin': '[0:99)', 'Province': 'ALL', 'NationalPrevalence': 0.25, 'confidence_interval': 0.05},
-            {'Year': 2005, 'Gender': 'Female', 'AgeBin': '[0:99)', 'Province': 'ALL', 'NationalPrevalence': 0.2, 'confidence_interval': 0.04},
-            {'Year': 2010, 'Gender': 'Male', 'AgeBin': '[5:15)', 'Province': 'Washington', 'ProvincialPrevalence': 0.3, 'confidence_interval': 0.07},
-            {'Year': 2010, 'Gender': 'Female', 'AgeBin': '[15:25)', 'Province': 'Oregon', 'ProvincialPrevalence': 0.33, 'confidence_interval': 0.08},
+            {'Year': 2005, 'Gender': 'Male', 'AgeBin': '[0:99)', 'NationalPrevalence': 0.25}, #, 'confidence_interval': 0.05},
+            {'Year': 2005, 'Gender': 'Female', 'AgeBin': '[0:99)', 'NationalPrevalence': 0.2}, #, 'confidence_interval': 0.04},
+            {'Year': 2010, 'Gender': 'Male', 'AgeBin': '[5:15)', 'Province': 'Washington', 'ProvincialPrevalence': 0.3}, #, 'confidence_interval': 0.07},
+            {'Year': 2010, 'Gender': 'Female', 'AgeBin': '[15:25)', 'Province': 'Oregon', 'ProvincialPrevalence': 0.33}, #, 'confidence_interval': 0.08},
         ]
         df = pd.DataFrame(data)
         expected_reference = PopulationObs(dataframe=df, stratifiers=expected_stratifiers)
