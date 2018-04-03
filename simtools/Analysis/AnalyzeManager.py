@@ -57,8 +57,6 @@ class AnalyzeManager(CacheEnabled):
             analyzer_list = analyzers if isinstance(analyzers, collections.Iterable) else [analyzers]
             for a in analyzer_list: self.add_analyzer(a)
 
-        # Initialize the cache
-        self.cache = self.initialize_cache(shards=self.max_threads)
 
     def filter_simulations(self, simulations):
         if self.force_analyze:
@@ -200,3 +198,5 @@ class AnalyzeManager(CacheEnabled):
             print("\r | Analysis done. Took {} (~ {:.3f} per simulation)"
                   .format(verbose_timedelta(total_time), total_time / scount if scount != 0 else 0))
 
+        for a in self.analyzers:
+            a.destroy()
