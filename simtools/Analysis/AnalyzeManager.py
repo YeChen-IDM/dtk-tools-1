@@ -200,3 +200,5 @@ class AnalyzeManager(CacheEnabled):
             print("\r | Analysis done. Took {} (~ {:.3f} per simulation)"
                   .format(verbose_timedelta(total_time), total_time / scount if scount != 0 else 0))
 
+        for a in self.analyzers:
+            a.destroy()
