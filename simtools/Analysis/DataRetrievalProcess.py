@@ -18,7 +18,7 @@ def retrieve_data(simulation, analyzers, cache):
     filenames = set(itertools.chain(*(a.filenames for a in filtered_analysis)))
 
     # We dont have anything to do :)
-    if not filenames or not filtered_analysis:
+    if not filtered_analysis:
         cache.set(simulation.id, None)
         return
 
@@ -46,7 +46,6 @@ def retrieve_data(simulation, analyzers, cache):
                         raise e
 
         else:
-            byte_arrays = []
             for filename in filenames:
                 path = os.path.join(simulation.get_path(), filename)
                 with open(path, 'rb') as output_file:
