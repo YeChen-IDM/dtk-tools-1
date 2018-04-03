@@ -57,6 +57,8 @@ class AnalyzeManager(CacheEnabled):
             analyzer_list = analyzers if isinstance(analyzers, collections.Iterable) else [analyzers]
             for a in analyzer_list: self.add_analyzer(a)
 
+        # Initialize the cache
+        self.cache = self.initialize_cache(shards=self.max_threads)
 
     def filter_simulations(self, simulations):
         if self.force_analyze:
