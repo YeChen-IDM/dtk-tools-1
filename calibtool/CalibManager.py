@@ -507,7 +507,7 @@ class CalibManager(object):
         """
         exp_orphan_list = self.list_orphan_experiments()
         for experiment in exp_orphan_list:
-            ExperimentManagerFactory.from_experiment(experiment).delete_experiment()
+            ExperimentManagerFactory.from_experiment(experiment).hard_delete()
 
         if len(exp_orphan_list) > 0:
             orphan_str_list = ['- %s - %s' % (exp.exp_id, exp.exp_name) for exp in exp_orphan_list]
