@@ -60,8 +60,13 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
                     hab_scales = { x : y for x,y in zip(habitat_cols, gn)}
             else :
                 if len(habitat_names) == 1 :
-                    hab, sp = habitat_cols[0].split('.')
-                    hab_scales = { hab : {sp : gn } }
+                    if len(habitat_cols) == 1 :
+                        hab, sp = habitat_cols[0].split('.')
+                        hab_scales = { hab : {sp : gn } }
+                    else :
+                        hab = habitat_cols[0].split('.')[0]
+                        species = [x.split('.')[1] for x in habitat_cols]
+                        hab_scales = { hab : {sp : x for (sp,x) in zip(species, gn)} }
                 else :
                     hab_scales = {}
                     for ih, hab in enumerate(habitat_names) :

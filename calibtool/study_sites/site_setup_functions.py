@@ -66,7 +66,7 @@ class survey_report_fn:
                                  nreports=self.nreports)
 
 class filtered_report_fn:
-    def __init__(self, start, end, nodes, description=''):
+    def __init__(self, start, end=100000, nodes=[], description=''):
         self.start = start
         self.end = end
         self.nodes = nodes

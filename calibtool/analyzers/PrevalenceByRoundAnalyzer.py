@@ -20,8 +20,9 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
     def __init__(self, site, weight=1, compare_fn=LL_calculators.euclidean_distance, **kwargs):
         super(PrevalenceByRoundAnalyzer, self).__init__(site, weight, compare_fn)
         self.reference = site.get_reference_data('prevalence_by_round')
-        # self.regions = site.get_region_list()
-        self.regions = self.reference['grid_cell'].unique()
+        self.refdf = pd.DataFrame(self.reference)
+        self.regions = site.get_region_list()
+        # self.regions = self.reference['grid_cell'].unique()
         self.filenames = ['output/ReportMalariaFiltered.json']
         region_filenames = ['output/ReportMalariaFiltered' + x + '.json' for x in self.regions if x != 'all']
         if 'all' in self.regions :
@@ -44,16 +45,16 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
         '''
         dfs = []
         set_N = False
-        if 'N' not in self.reference.columns:
+        if 'N' not in self.refdf.columns:
             set_N = True
             Ndf = pd.DataFrame()
 
         for i, region in enumerate(self.regions) :
-            data = [parser.raw_data[self.filenames[i]]['Channels'][self.y]['Data'][x] for x in self.reference['sim_date'].values]
-            pop = [parser.raw_data[self.filenames[i]]['Channels']['Statistical Population']['Data'][x] for x in self.reference['sim_date'].values]
+            data = [parser.raw_data[self.filenames[i]]['Channels'][self.y]['Data'][x] for x in self.refdf['sim_date'].values]
+            pop = [parser.raw_data[self.filenames[i]]['Channels']['Statistical Population']['Data'][x] for x in self.refdf['sim_date'].values]
 
             df = pd.DataFrame({ self.y: data},
-                                index=self.reference['sim_date'].values)
+                                index=self.refdf['sim_date'].values)
             df.region = region
             df.index.name = 'sim_date'
             dfs.append(df)
@@ -61,11 +62,11 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
             if set_N :
                 t = pd.DataFrame({ 'grid_cell' : [region]*len(pop),
                                    'N' : pop})
-                t['sim_date'] = self.reference['sim_date']
+                t['sim_date'] = self.refdf['sim_date']
                 Ndf = pd.concat([Ndf, t])
 
         if set_N :
-            self.reference = pd.merge(left=self.reference, right=Ndf, on=['grid_cell', 'sim_date'])
+            self.refdf = pd.merge(left=self.refdf, right=Ndf, on=['grid_cell', 'sim_date'])
 
         c = pd.concat(dfs, axis=1, keys=self.regions, names=['region'])
         channel_data = c.stack(['region'])
@@ -91,7 +92,7 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
         Assess the result per sample, in this case the likelihood
         comparison between simulation and reference data.
         '''
-        return sum([self.compare_fn(self.reference[self.reference['grid_cell']==region]['prev'].values,
+        return sum([self.compare_fn(self.refdf[self.refdf['grid_cell']==region]['prev'].values,
                                     df[self.y].tolist()) for (region, df) in sample.groupby(level='region')])
 
     def finalize(self):
@@ -132,6 +133,8 @@ class PrevalenceByRoundAnalyzer(BaseCalibrationAnalyzer):
             if isinstance(data, str) :
                 from io import StringIO
                 data = pd.read_csv(StringIO(data), sep='\s+')
+            else :
+                data = pd.DataFrame(data)
             region_list = data['grid_cell'].unique()
             data = { r : rdf['prev'].values for r,rdf in data.groupby('grid_cell')}
         else :
