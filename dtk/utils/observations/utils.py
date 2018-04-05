@@ -128,6 +128,7 @@ def _parse_reference_data(wb, wb_path):
     defined_names = excel.DefinedName.load_from_workbook(wb)
 
     # temp_dir = 'temp_dir'
+    stratifiers = set()
     with tempfile.TemporaryDirectory() as temp_dir:
         os.makedirs(temp_dir, exist_ok=True)
 
@@ -136,8 +137,9 @@ def _parse_reference_data(wb, wb_path):
             ws = get_sheet_from_workbook(wb, sheet_name=sheet_name, wb_path=wb_path)
 
             # detect stratifiers for this channel
-            stratifiers = excel.read_list(ws=ws, range=defined_names[sheet_name]['stratifiers'])
-            stratifiers = [s for s in stratifiers if s not in EMPTY]
+            sheet_stratifiers = excel.read_list(ws=ws, range=defined_names[sheet_name]['stratifiers'])
+            sheet_stratifiers = [s for s in sheet_stratifiers if s not in EMPTY]
+            stratifiers.update(sheet_stratifiers) # union of all stratifiers of all sheets
 
             # read sheet data
             csv_data = excel.read_block(ws=ws, range=defined_names[sheet_name]['csv'])
@@ -167,5 +169,5 @@ def _parse_reference_data(wb, wb_path):
             obs_path = os.path.join(temp_dir, obs_filename)
             with open(obs_path, 'w') as f:
                 f.write(csv_data_string)
-        reference = PopulationObs.from_directory(directory=temp_dir, stratifiers=stratifiers)
+        reference = PopulationObs.from_directory(directory=temp_dir, stratifiers=list(stratifiers))
     return reference
