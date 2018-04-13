@@ -3,7 +3,8 @@ from dtk.vector.species import set_larval_habitat, set_species_param, set_params
 from dtk.interventions.input_EIR import add_InputEIR
 from dtk.interventions.mosquito_release import add_mosquito_release
 from dtk.interventions.itn import add_ITN
-from dtk.interventions.irs import add_node_IRS
+from dtk.interventions.itn_age_season import add_ITN_age_season
+from dtk.interventions.irs import add_node_IRS, add_IRS
 from dtk.interventions.outbreakindividual import recurring_outbreak
 from dtk.interventions.migrate_to import add_migration_event
 from dtk.interventions.health_seeking import add_health_seeking
@@ -382,6 +383,25 @@ class add_itn_fn:
         coverage_by_age = {'min': 0, 'max': 200, 'coverage': self.coverage}
         add_ITN(cb, start=self.start, coverage_by_ages=[coverage_by_age], waning=self.waning, nodeIDs=self.nodeIDs)
 
+class add_itn_age_season_fn:
+    def __init__(self, start=0, coverage=1, age_dep=[], seasonal_dep={}, discard={}):
+        self.start = start
+        self.coverage = coverage
+        self.age_dep = age_dep
+        self.seasonal_dep = seasonal_dep
+        self.discard = discard
+
+    def __call__(self, cb):
+        return self.fn(cb)
+
+    def fn(self, cb):
+        add_ITN_age_season(cb, start=self.start,
+                           age_dep=self.age_dep,
+                           coverage_all=self.coverage,
+                           as_birth=False,
+                           seasonal_dep=self.seasonal_dep,
+                           discard=self.discard)
+
 
 # ITNs from nodeid-coverage specified in json
 class add_itn_by_node_id_fn:
@@ -413,6 +433,21 @@ class add_itn_by_node_id_fn:
                                               {'min': 20, 'max': 100, 'coverage': min([1, c*1.3])}],
                             waning=self.waning, nodeIDs=itncov['nodes'])
 
+
+# IRS
+class add_irs_fn:
+    def __init__(self, start=0, coverage=1, waning=None, nodeIDs=None):
+        self.start = start
+        self.coverage = coverage
+        self.waning = waning or {}
+        self.nodeIDs = nodeIDs or []
+
+    def __call__(self, cb):
+        return self.fn(cb)
+
+    def fn(self, cb):
+        coverage_by_age = {'min': 0, 'max': 200, 'coverage': self.coverage}
+        add_IRS(cb, start=self.start, coverage_by_ages=[coverage_by_age], waning=self.waning, nodeIDs=self.nodeIDs)
 
 # IRS from nodeid-coverage specified in json
 class add_node_level_irs_by_node_id_fn:
