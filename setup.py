@@ -12,7 +12,8 @@ from distutils.version import LooseVersion
 from enum import Enum
 from urllib.request import Request, urlopen
 
-import pip
+import pkg_resources
+import subprocess
 
 from simtools.Utilities.General import timestamp_filename
 from simtools.Utilities.GitHub.MultiPartFile import GitHubFile
@@ -35,7 +36,7 @@ GITHUB = 'GITHUB'
 GITHUB_URL_PREFIX = 'http://%s' % GITHUB
 
 # Get the installed packages on the system
-installed_packages = {package.project_name: package.version for package in pip.get_installed_distributions()}
+installed_packages = {package.project_name: package.version for package in pkg_resources.working_set}
 
 # Load the list of requirements
 requirements = json.load(open('requirements.json', 'r'), object_pairs_hook=OrderedDict)
@@ -80,11 +81,10 @@ def install_package(package, version=None, wheel=None, upgrade=False, method=Dow
             install_str += "=={}".format(version)
 
     # Handle the upgrade by forcing the reinstall
+    install_args = ['pip', 'install', install_str]
     if upgrade:
-        pip.main(['install', install_str, '-I'])
-    else:
-        pip.main(['install', install_str])
-
+        install_args.append('-I')
+    subprocess.call(' '.join(install_args))
 
 def test_package(package, version, test):
     """
