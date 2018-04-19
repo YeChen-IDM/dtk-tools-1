@@ -220,7 +220,7 @@ def get_md5(filename):
 
     return uuid.UUID(md5calc.hexdigest())
 
-class CommandlineGenerator(object):
+class CommandlineGenerator:
     """
     A class to construct command line strings from executable, options, and params
     """
@@ -228,7 +228,7 @@ class CommandlineGenerator(object):
     def __init__(self, exe_path, options, params):
         self._exe_path = exe_path
         self._options = options
-        self._params = params
+        self._params = [str(p) for p in params]
 
     @property
     def Executable(self):
@@ -239,7 +239,7 @@ class CommandlineGenerator(object):
         options = []
         for k, v in self._options.items():
             # Handles spaces
-            value = '"%s"' % v if ' ' in v else v
+            value = '"%s"' % v if ' ' in str(v) else str(v)
             if k[-1] == ':':
                 options.append(k + value)  # if the option ends in ':', don't insert a space
             else:

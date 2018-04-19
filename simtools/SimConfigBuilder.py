@@ -137,5 +137,5 @@ class SimConfigBuilder(metaclass=ABCMeta):
         exe = {self.assets.exe_path} if self.assets.exe_path else {}
         experiment_files = {f.file_name for f in self.experiment_files.files}
 
-        return set.union(dlls,inputs,exe,experiment_files)
+        return set.union(dlls, inputs, exe, experiment_files)
 
