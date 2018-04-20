@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import lz4
+from lz4 import block
 
 
 # noinspection PyCamelCase
@@ -19,11 +19,11 @@ class EllZeeFour(object):
 
     @classmethod
     def compress(cls, data):
-        return lz4.block.compress(data)
+        return block.compress(data.encode())
 
     @classmethod
     def uncompress(cls, data):
-        return lz4.block.decompress(data)
+        return block.decompress(data)
 
 
 class SerialObject(dict):

@@ -5,9 +5,11 @@ Support for three formats of serialized population files:
 1. "Original version": single payload chunk with simulation and all nodes, uncompressed or snappy or LZ4
 2. "First chunked version": multiple payload chunks, one for simulation and one each for nodes
 3. "Second chunked version": multiple payload chunks, simulation and node objects are "root" objects in each chunk
+4. "Metadata update": compressed: true|false + engine: NONE|LZ4|SNAPPY replaced with compression: NONE|LZ4|SNAPPY
 """
 
 from . import dtkFileSupport as support
+import copy
 import json
 import os
 import snappy
@@ -17,6 +19,7 @@ IDTK = 'IDTK'
 NONE = 'NONE'
 LZ4 = 'LZ4'
 SNAPPY = 'SNAPPY'
+MAX_VERSION = 4
 
 
 __engines__ = {LZ4: support.EllZeeFour, SNAPPY: snappy, NONE: support.Uncompressed}
@@ -105,7 +108,7 @@ class DtkFile(object):
             try:
                 contents = self.__parent__.contents[index]
                 item = json.loads(contents, object_hook=support.SerialObject)
-            except:
+            except Exception as e:
                 raise UserWarning("Could not parse JSON in chunk {0}".format(index))
             return item
 
@@ -289,11 +292,15 @@ class DtkFileV2(DtkFile):
 
     @property
     def simulation(self):
-        return self.objects[0]['simulation']
+        sim = self.objects[0]['simulation']
+        del sim['nodes']
+        return sim
 
     @simulation.setter
     def simulation(self, value):
-        self.objects[0] = {'simulation': value}
+        sim = copy.deepcopy(value)
+        sim['nodes'] = []
+        self.objects[0] = {'simulation': sim}
         return
 
 
@@ -334,11 +341,20 @@ class DtkFileV3(DtkFile):
 
     @property
     def simulation(self):
-        return self.objects[0]
+        if len(self.objects) > 0:
+            sim = self.objects[0]
+            del sim['nodes']
+        else:
+            sim = {}
+        return sim
 
     @simulation.setter
     def simulation(self, value):
-        self.objects[0] = value
+        sim = copy.deepcopy(value)
+        sim['nodes'] = []
+        if len(self.objects) == 0:
+            self.objects.append(None)
+        self.objects[0] = sim
         return
 
 
@@ -371,7 +387,7 @@ def read(filename):
 
 
 def __check_magic_number__(handle):
-    magic = handle.read(4)
+    magic = handle.read(4).decode()
     if magic != IDTK:
         raise UserWarning("File has incorrect magic 'number': '{0}'".format(magic))
     return
@@ -395,13 +411,11 @@ def __read_header__(handle):
         header.engine = SNAPPY if header.compressed else NONE
         header.chunkcount = 1
         header.chunksizes = [header.bytecount]
-
-    if header.version >= 4:
-        header.engine = LZ4
-    else:
-        header.engine = header.engine.upper()
-
     __check_version__(header.version)
+    if header.version < 4:
+        header.engine = header.engine.upper()
+    else:
+        header['engine'] = header.compression.upper()
     __check_chunk_sizes__(header.chunksizes)
 
     return header
@@ -422,7 +436,7 @@ def __try_parse_header_text__(header_text):
 
 
 def __check_version__(version):
-    if version <= 0 or version > 4:
+    if version <= 0 or version > MAX_VERSION:
         raise UserWarning("Unknown version: {0}".format(version))
     return
 
@@ -442,9 +456,10 @@ def write(dtk_file, filename):
     with open(filename, 'wb') as handle:
         __write_magic_number__(handle)
         if dtk_file.version <= 3:
-            header = json.dumps({ 'metadata': dtk_file.header }, separators=(',', ':'))
+            header = json.dumps({'metadata': dtk_file.header}, separators=(',', ':'))
         else:
-            header = json.dumps(dtk_file.header, separators=(',', ':'))
+            header = json.dumps(dtk_file.header, separators=(',', ':')).replace('"engine"', '"compression"')
+
         __write_header_size__(len(header), handle)
         __write_header__(header, handle)
         __write_chunks__(dtk_file.chunks, handle)
@@ -453,18 +468,18 @@ def write(dtk_file, filename):
 
 
 def __write_magic_number__(handle):
-    handle.write('IDTK')
+    handle.write('IDTK'.encode())
     return
 
 
 def __write_header_size__(size, handle):
     size_string = '{:>12}'.format(size)     # decimal value right aligned in 12 character space
-    handle.write(size_string)
+    handle.write(size_string.encode())
     return
 
 
 def __write_header__(string, handle):
-    handle.write(string)
+    handle.write(string.encode())
     return
 
 

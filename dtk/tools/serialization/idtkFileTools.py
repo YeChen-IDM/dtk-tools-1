@@ -53,7 +53,7 @@ def read_idtk_file_components(filename):
     with open(filename, 'rb') as input_handle:
 
         magic = input_handle.read(4)
-        if magic != 'IDTK':
+        if magic != b'IDTK':
             raise UserWarning("Specified file '{0}' has incorrect magic 'number': '{1}'".format(filename, magic))
 
         size_string = input_handle.read(12)
@@ -96,7 +96,7 @@ def write_idtk_file_components(header, payload, filename):
     header_string = json.dumps(header, indent=None, separators=(',', ':'))   # Most compact representation
     size_string = '{:>12}'.format(len(header_string))  # decimal value right aligned in 12 character space
 
-    with open(filename, 'wb') as output_handle:
+    with open(filename, 'w') as output_handle:
 
         output_handle.write('IDTK')
         output_handle.write(size_string)
@@ -170,11 +170,11 @@ def _do_read():
     header, payload, contents, data = read_idtk_file(args.filename)
 
     if args.header is not None:
-        with open(args.header, 'wb') as handle:
+        with open(args.header, 'w') as handle:
             json.dump(header, handle, indent=4, separators=(',', ': '))
 
     if args.payload is not None:
-        with open(args.payload, 'wb') as handle:
+        with open(args.payload, 'w') as handle:
             timing(lambda: handle.write(payload), message_index=WRITE_PAYLOAD)
 
     if args.output is not None:
@@ -183,7 +183,7 @@ def _do_read():
         basename, _ = os.path.splitext(args.filename)
         output_filename = basename + '.json'
 
-    with open(output_filename, 'wb') as handle:
+    with open(output_filename, 'w') as handle:
         if args.format:
             timing(lambda: json.dump(data, handle, indent=2, separators=(',', ': ')), message_index=WRITE_JSON)
         else:
