@@ -573,7 +573,6 @@ def list_package_versions(args, unknownArgs):
 
 
 def get_package(args, unknownArgs):
-    import pip
     import tempfile
     import zipfile
     is_test = args.is_test if hasattr(args, 'is_test') else None # test == no pip install
@@ -625,7 +624,7 @@ def get_package(args, unknownArgs):
 
         # install
         if not is_test:
-            pip.main(['install', '--no-dependencies', '--ignore-installed', release_dir])
+            subprocess.call(' '.join(['pip', 'install', '--no-dependencies', '--ignore-installed', release_dir]))
 
         # update the local DB with the version
         db_key = github.disease_package_db_key
