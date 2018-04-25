@@ -112,13 +112,13 @@ class CalibManager(object):
             self.current_iteration = self.create_iteration_state(i)
             self.current_iteration.run()
             self.post_iteration()
+            self.finalize_calibration()
 
         # Print the calibration finish time
         current_time = datetime.now()
         calibration_time_elapsed = current_time - self.calibration_start
         logger.info("Calibration done (took %s)" % verbose_timedelta(calibration_time_elapsed))
 
-        self.finalize_calibration()
 
     def post_iteration(self):
         self.all_results = self.current_iteration.all_results
