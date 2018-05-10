@@ -51,6 +51,8 @@ class GeneralEncoder(NumpyEncoder):
             return obj.toJSON()
         elif isinstance(obj, UUID):
             return str(obj)
+        elif isinstance(obj, pd.Series):
+            return obj.to_json(orient='split')
         return super(GeneralEncoder, self).default(obj)
 
 
