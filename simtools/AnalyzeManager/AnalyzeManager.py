@@ -1,3 +1,4 @@
+import json
 import multiprocessing
 import os
 from multiprocessing.pool import ThreadPool
@@ -199,10 +200,16 @@ class AnalyzeManager:
             parser.join()
 
         plotting_processes = []
+        finalize_result = {}
         from multiprocessing import Process
         for a in self.analyzers:
             a.combine({parser.sim_id: parser for parser in self.parsers})
-            a.finalize()
+
+            # record finalize return value for writing out to file
+            # we are assuming res is a DataFrame or Series
+            res = a.finalize()
+            finalize_result[str(type(a))] = res.to_json(orient='split')
+            
             # Plot in another process
             try:
                 # If on mac just plot and continue
@@ -221,3 +228,7 @@ class AnalyzeManager:
         for p in plotting_processes:
             p.join()
 
+        output_filename = os.path.join(self.working_dir, 'analyzer_likelihoods.json')
+        print('Writing analyzer results to file: %s' % output_filename)
+        with open(output_filename, 'w') as f:
+            json.dump(finalize_result, f)
