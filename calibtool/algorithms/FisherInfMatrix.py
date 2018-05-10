@@ -6,10 +6,27 @@ from matplotlib.patches import Ellipse
 from scipy.linalg import sqrtm
 
 
-def perturbed_points(center, Xmin, Xmax, M=3, N=5, n=1, resolution=None):
+def perturbed_points(center, Xmin, Xmax, M=10, N=5, n=1, resolution_raw=None):
     """
     Atiye Alaeddini, 12/11/2017
     generate perturbed points around the center
+
+    Having the estimated optimal point (θ*), the next step is generating a set of perturbed
+    points (samples). At this step, you can specify the size of perturbation (resolution).
+    In case you do not input the perturbation size (resolution_raw=None), the script will
+    pick a perturbation using the given range for each parameter (Xmin-Xmax).
+    You need to allocate per-realization (M) and cross-realization (N). Note that M>p^2,
+    where p is the number of parameters (size of θ). The number of cross-realization (N)
+    should be set depending on the uncertainty of the model at the given final point (θ*).
+    To choose N, you can use Chebyshev's inequality.
+    You can allocate number of replicates of the model (n). The log-likelihood at each point
+    obtains from n replicates of the model with different run numbers. Then these n
+    replicates are used to compute the likelihood at that point. When we have a model with
+    high uncertainty, the easiest way to compute the likelihood might be taking average of
+    the multiple (n) replicates of the model run to compute the likelihood. Note that the
+    algorithm only accepts n=1 now. But the Cramer Rao script has the potential to accept
+    higher n, whenever a smoothing technique which requires multiple replicates of the model
+    for computing the likelihood be added to the Analyzers.
 
      ------------------------------------------------------------------------
     INPUTS:
@@ -19,7 +36,7 @@ def perturbed_points(center, Xmin, Xmax, M=3, N=5, n=1, resolution=None):
     M    number of Hessian estimates    scalar-positive integer
     N    number of pseudodata vectors    scalar-positive integer
     n    sample size    scalar-positive integer
-    resolution    minimum perturbation for each parameter    1xp nparray
+    resolution_raw    minimum perturbation for each parameter    1xp nparray
      ------------------------------------------------------------------------
     OUTPUTS:
     X_perturbed    perturbed points    (4MNn x 4+p) nparray
@@ -28,8 +45,10 @@ def perturbed_points(center, Xmin, Xmax, M=3, N=5, n=1, resolution=None):
     # dimension of center point
     p = len(center)
 
-    if resolution is None:
-        resolution = 0.01*np.ones(p)
+    if resolution_raw is None:
+        resolution = 0.05*np.ones(p)
+    else:
+        resolution = (resolution_raw - Xmin) / (Xmax - Xmin)
 
     X_scaled = (center - Xmin) / (Xmax - Xmin)
 
@@ -121,6 +140,9 @@ def FisherInfMatrix(center_point, df_LL_points, data_columns):
     """
     Atiye Alaeddini, 12/15/2017
     compute the Fisher Information matrix using the LL of perturbed points
+
+    Computation of the Fisher information matrix (covariance matrix)
+    This step returns a p×p covariance matrix, called Σ.
 
      ------------------------------------------------------------------------
     INPUTS:

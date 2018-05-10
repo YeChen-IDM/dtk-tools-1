@@ -42,7 +42,7 @@ params = [
         'Name': 'Clinical Fever Threshold High',
         'Dynamic': True,
         # 'MapTo': 'Clinical_Fever_Threshold_High', # <-- DEMO: Custom mapping, see map_sample_to_model_input below
-        'Guess': 1.75,
+        'Guess': random.uniform(0.6, 2.4),
         'aprioriHessian': -1,  # set zero if there is no information of Hessian
         'Min': 0.5,
         'Max': 2.5
@@ -60,7 +60,7 @@ params = [
         'Name': 'Falciparum PfEMP1 Variants',
         'Dynamic': True,
         'MapTo': 'Falciparum_PfEMP1_Variants',
-        'Guess': 1500,
+        'Guess': random.uniform(100, 4900),
         'aprioriHessian': -1,  # set zero if there is no information of Hessian
         'Min': 1,  # 900 [0]
         'Max': 5000  # 1700 [1e5]
@@ -117,7 +117,7 @@ def map_sample_to_model_input(cb, sample):
 
 optimtool = OptimToolSPSA(params=params,
                           constrain_sample_fn=constrain_sample,  # <-- WILL NOT BE SAVED IN ITERATION STATE
-                          comps_per_iteration=4  # <-- computations per iteration >2
+                          comps_per_iteration=40  # <-- computations per iteration >2
                           )
 calib_manager = CalibManager(name='ExampleOptimizationSPSA',  # <-- Please customize this name
                              config_builder=cb,
