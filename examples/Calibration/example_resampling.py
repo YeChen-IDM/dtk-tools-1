@@ -177,7 +177,15 @@ calib_manager = CalibManager(name='ExampleOptimization_cramer',    # <-- Please 
 # Define the resamplers to run (one or more) in list order.
 resample_steps = [
     # can pass kwargs directly to the underlying resampling routines if needed
-    RandomPerturbationResampler(N=8),
+    # We need to allocate per-realization (M) and cross-realization (N).
+    # Note that M>p^2, where p is the number of parameters (size of θ).
+    # The number of cross-realization (N) should be set depending on the uncertainty
+    # of the model at the given final point (θ*).
+    # To choose N, you can use Chebyshev's inequality.
+    RandomPerturbationResampler(M=10,N=8),
+    # We need to determine the number of sample point (num_of_pts).
+    # The algorithm gives num_of_pts samples from a multi-variant gaussian with mean=θ*
+    # and covariance matrix=Σ along with their corresponding log-likelihood values.
     CramerRaoResampler(num_of_pts=10)
 ]
 
