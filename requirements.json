@@ -74,9 +74,9 @@
   "networkx": null,
   "patsy": null,
   "catalyst": {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "test": ">=",
-    "wheel": "catalyst_report-1.0.2-py3-none-any.whl"
+    "wheel": "catalyst_report-1.0.3-py3-none-any.whl"
   },
   "openpyxl": {
     "version": "2.5.3",
