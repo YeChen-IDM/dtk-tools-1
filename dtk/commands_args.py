@@ -23,12 +23,15 @@ def populate_ini_arguments(subparsers, func):
 
 # 'dtk run' options for catalyst, after all, it runs and then does a set-piece analysis
 def populate_catalyst_arguments(subparsers, func):
+    import catalyst_report
+    import os
+
     parser_catalyst = subparsers.add_parser('catalyst', help='Run a timestep or population-scaling sweep to evaluate '
                                                         'model performance.')
     parser_catalyst = in_common_run_and_catalyst_arguments(parser_catalyst)
     parser_catalyst.add_argument('-s', '--sweep_type', dest='sweep_type',
-                                 choices=['timestep', 'popscaling'], default='popscaling',
-                                 help='The type of performance sweep to run and report on (Default: popscaling).')
+                                 choices=['timestep', 'popsampling'], default='popsampling',
+                                 help='The type of performance sweep to run and report on (Default: popsampling).')
     parser_catalyst.add_argument('-m', '--sweep_method', dest='sweep_method', type=str, default=None,
                                  help='The sweeping method to use (Default: depends on sweep_type).')
     parser_catalyst.add_argument('-r', '--report', dest='report_type', type=str, default=None,
@@ -49,10 +52,11 @@ def populate_catalyst_arguments(subparsers, func):
 
 
     parser_catalyst.add_argument('--sweep_definitions', default=None, type=str,
-                                 help='A JSON file that defines the available sweeps for use (Default: built-in JSON)')
+                                 help='A JSON file that defines the available sweeps for use (Default: built-in JSON '
+                                      'at %s' % os.path.join(catalyst_report.__path__[0], '{pop_sampling.json, time_steps.json} )'))
     parser_catalyst.add_argument('--report_definitions', default=None, type=str,
                                  help='A JSON file that defines the available report types '
-                                      '(Default: simtools/Catalyst/reports.json)')
+                                      '(Default: %s)' % os.path.join(catalyst_report.__path__[0], 'reports.json'))
 
     parser_catalyst.set_defaults(func=func)
 
