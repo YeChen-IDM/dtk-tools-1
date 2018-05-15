@@ -255,6 +255,28 @@ def get_simulation_by_id(sim_id, query_criteria=None):
     return Simulation.get(id=sim_id, query_criteria=query_criteria)
 
 
+def get_all_experiments_for_user(user, max_date=None):
+    # COMPS limits the retrieval to 1000 so to make sure we get all experiments for a given user, we need to be clever
+    # We will retrieve the first 1000 and then retrieve the enxt 1000 with a date < to the latest date
+    if max_date:
+        batch = Experiment.get(
+            query_criteria=QueryCriteria().where(["owner={}".format(user), "date_created<{}".format(max_date)]))
+    else:
+        batch = Experiment.get(query_criteria=QueryCriteria().where(["owner={}".format(user)]))
+
+    if len(batch) < 1000:
+        return batch
+
+    # The batch is 1000, we need to make sure we continue
+    all_experiments = batch
+    while len(batch) == 1000:
+        # retrieve a new one
+        batch = get_all_experiments_for_user(user, batch[-1].date_created)
+        # Merge the current batch
+        all_experiments = all_experiments + batch
+
+    return all_experiments
+
 def get_experiments_per_user_and_date(user, limit_date):
     limit_date_str = limit_date.strftime("%Y-%m-%d")
     return Experiment.get(query_criteria=QueryCriteria().where('owner=%s,DateCreated>%s' % (user, limit_date_str)))
