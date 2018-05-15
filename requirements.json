@@ -59,6 +59,7 @@
     "version": "1.2.4",
     "test": "=="
   },
+  "monotonic":null,
   "fasteners": {
     "version": "0.14.1",
     "test": "=="
