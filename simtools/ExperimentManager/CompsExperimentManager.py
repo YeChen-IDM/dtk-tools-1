@@ -141,9 +141,13 @@ class CompsExperimentManager(BaseExperimentManager):
         # Mark experiment for deletion in COMPS.
         COMPS_login(self.endpoint)
         self.comps_experiment.delete()
+
         # Delete in the DB
-        from simtools.DataAccess.DataStore import DataStore
-        DataStore.delete_experiment(self.experiment)
+        try:
+            from simtools.DataAccess.DataStore import DataStore
+            DataStore.delete_experiment(self.experiment)
+        except:
+            pass
 
     def kill_simulation(self, simulation):
         s = get_simulation_by_id(simulation)
