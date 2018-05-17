@@ -149,16 +149,20 @@ def map_sample_to_model_input(cb, sample):
     return tags
 
 # Just for fun, let the numerical derivative baseline scale with the number of dimensions
-volume_fraction = 0.05   # desired fraction of N-sphere area to unit cube area for numerical derivative (automatic radius scaling with N)
+volume_fraction = 0.01   # desired fraction of N-sphere area to unit cube area for numerical derivative (automatic radius scaling with N)
 num_params = len([p for p in params if p['Dynamic']])
-r = math.exp(1/float(num_params)*(math.log(volume_fraction) + gammaln(num_params/2.+1) - num_params/2.*math.log(math.pi)))
+
+r = math.exp(1/float(num_params)*(math.log(volume_fraction) - gammaln(num_params/2.+1) + num_params/2.*math.log(math.pi)))
+# it used to be r=(volume_fraction/V_n)^(1/n), which can be greater than 1 for large n(num_params > 18)
+# now r = (volume_fraction * V_n)^(1/n)
+
 
 optimtool = OptimTool(params,
     constrain_sample,   # <-- WILL NOT BE SAVED IN ITERATION STATE
     mu_r = r,           # <-- radius for numerical derivatve.  CAREFUL not to go too small with integer parameters
     sigma_r = r/10.,    # <-- stdev of radius
     center_repeats = 2, # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
-    samples_per_iteration = 4  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
+    samples_per_iteration = 6  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
 )
 
 calib_manager = CalibManager(name='ExampleOptimization',    # <-- Please customize this name
