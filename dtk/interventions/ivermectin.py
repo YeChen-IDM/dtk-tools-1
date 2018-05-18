@@ -7,6 +7,13 @@ ivermectin_cfg = { "class": "Ivermectin",
                                        "Initial_Effect": 0.95 },
                    "Cost_To_Consumer": 15.0 }
 
+# set up events to broadcast when receiving campaign drug
+receiving_IV_event = {
+    "class": "BroadcastEvent",
+    "Broadcast_Event": "Received_Ivermectin"
+}
+
+
 def ivermectin_config_by_duration(drug_code=None):
     """
     Returns the correct ``Killing_Config`` parameter depending on the ``drug_code``
@@ -34,7 +41,8 @@ def ivermectin_config_by_duration(drug_code=None):
     return cfg
 
 
-def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_condition_list=[], listening_duration=-1):
+def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_condition_list=[],
+                   listening_duration=-1, nodeids=[], target_residents_only=1):
     """
     Add an ivermectin event to the config_builder passed.
 
@@ -48,6 +56,15 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
     """
 
     cfg=ivermectin_config_by_duration(drug_code)
+    cfg = [cfg] + [receiving_IV_event]
+    intervention_cfg = {"Intervention_List": cfg,
+                        "class": "MultiInterventionDistributor"}
+
+    if nodeids :
+        node_cfg = {"class": "NodeSetNodeList",
+                    'Node_List' : nodeids}
+    else :
+        node_cfg = {"class": "NodeSetAll"}
 
     for start_day in start_days:
         IVM_event = {"class": "CampaignEvent",
@@ -56,22 +73,22 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
                         "class": "StandardInterventionDistributionEventCoordinator"
 
                     },
-                     "Nodeset_Config": {"class": "NodeSetAll"}}
+                     "Nodeset_Config": node_cfg}
 
         if trigger_condition_list:
             IVM_event['Event_Coordinator_Config']['Intervention_Config'] = {
-                "class" : "NodeLevelHealthTriggeredIV",
-                "Trigger_Condition_List": trigger_condition_list,
-                "Target_Residents_Only": 1,
-                "Duration": listening_duration,
-                "Demographic_Coverage": coverage,
-                "Actual_IndividualIntervention_Config" : cfg
-            }
+                    "class" : "NodeLevelHealthTriggeredIV",
+                    "Trigger_Condition_List": trigger_condition_list,
+                    "Target_Residents_Only": target_residents_only,
+                    "Duration": listening_duration,
+                    "Demographic_Coverage": coverage,
+                    "Actual_IndividualIntervention_Config" : intervention_cfg
+                }
         else:
             IVM_event['Event_Coordinator_Config'].update( {
                 "Target_Residents_Only": 1,
                 "Demographic_Coverage": coverage,
-                'Intervention_Config' : cfg
+                'Intervention_Config' : intervention_cfg
             })
 
         config_builder.add_event(IVM_event)
