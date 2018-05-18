@@ -16,6 +16,8 @@ def populate_resample_arguments(subparsers, func):
     parser_resample.add_argument('--priority', default=None, help='Specify priority of COMPS simulation (only for HPC).')
     parser_resample.add_argument('--node_group', default=None, help='Specify node group of COMPS simulation (only for HPC).')
     parser_resample.add_argument('-q', '--quiet', action='store_true', help='Runs quietly.')
+    parser_resample.add_argument('-r', '--restart', default=None, type=int, help='Restart resampling at this resampling step (0-indexed) (Default: start at beginning).')
+
     parser_resample.set_defaults(func=func)
 
 # 'calibtool resume' options

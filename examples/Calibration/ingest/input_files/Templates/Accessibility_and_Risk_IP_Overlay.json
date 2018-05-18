@@ -1,0 +1,419 @@
+
+{
+    "Metadata":
+    {
+        "DateCreated": "02-Dec-2016",
+        "Tool": "Notepad++, Matlab R2016b, Excel for MS Office 2013",
+        "Author": "bjewell",
+        "RegionName": "SEARCH_Community",
+        "IdReference": "0",
+        "NodeCount": 6
+    },
+    "Nodes": [
+        {
+            "NodeID": 1,
+            "IndividualProperties": [
+                {
+                    "Comment": "80% Healthcare Accessible",
+                    "Property": "Accessibility",
+                    "Values": [ "Yes", "No" ],
+                    "Initial_Distribution": [ 1, 0 ],
+                    "Transitions": []
+                },
+                {
+                   "Initial_Distribution": [
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                   ],
+                   "Property": "CascadeState",
+                   "Transitions": [],
+                   "Values": [
+                      "None",
+                      "ARTStaging",
+                      "ARTStagingDiagnosticTest",
+                      "LinkingToART",
+                      "LinkingToPreART",
+                      "OnART",
+                      "OnPreART",
+                      "HCTTestingLoop",
+                      "HCTUptakeAtDebut",
+                      "HCTUptakePostDebut",
+                      "TestingOnANC",
+                      "TestingOnChild6w",
+                      "TestingOnSymptomatic",
+                      "LostForever",
+                      "CommercialSex",
+                      "VMMC",
+                      "ReceivingVMMC"
+                   ]
+                },
+                {
+                    "Property": "Resident",
+                    "Values": [ "YES", "NO"],
+                    "Initial_Distribution": [0, 1],
+                    "Transitions": []
+                },
+                {
+                    "Property": "Risk",
+                    "Values": [ "LOW","MEDIUM", "HIGH" ],
+                    "Initial_Distribution": [ 0.8499999999999999778, 0.14999999999999999445 , 0],
+                    "Transitions": [],
+                    "Initial_Distribution__KP_Risk_ControlLowPrevalence": "<-- MARKER"
+                } ],
+            "NodeName": "ControlLowPrevalence"
+        },
+        {
+            "NodeID": 2,
+            "IndividualProperties": [
+                {
+                    "Comment": "80% Healthcare Accessible",
+                    "Property": "Accessibility",
+                    "Values": [ "Yes", "No" ],
+                    "Initial_Distribution": [ 1, 0 ],
+                    "Transitions": []
+                },
+                {
+                   "Initial_Distribution": [
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                   ],
+                   "Property": "CascadeState",
+                   "Transitions": [],
+                   "Values": [
+                      "None",
+                      "ARTStaging",
+                      "ARTStagingDiagnosticTest",
+                      "LinkingToART",
+                      "LinkingToPreART",
+                      "OnART",
+                      "OnPreART",
+                      "HCTTestingLoop",
+                      "HCTUptakeAtDebut",
+                      "HCTUptakePostDebut",
+                      "TestingOnANC",
+                      "TestingOnChild6w",
+                      "TestingOnSymptomatic",
+                      "LostForever",
+                      "CommercialSex",
+                      "VMMC",
+                      "ReceivingVMMC"
+                   ]
+                },
+                {
+                    "Property": "Resident",
+                    "Values": [ "YES", "NO"],
+                    "Initial_Distribution": [0, 1],
+                    "Transitions": []
+                },
+                {
+                    "Property": "Risk",
+                    "Values": [ "LOW","MEDIUM", "HIGH" ],
+                    "Initial_Distribution": [ 0.8499999999999999778, 0.14999999999999999445 , 0],
+                    "Transitions": [],
+                    "Initial_Distribution__KP_Risk_ControlMediumPrevalence": "<-- MARKER"
+                } ],
+            "NodeName": "ControlMediumPrevalence"
+        },
+        {
+            "NodeID": 3,
+            "IndividualProperties": [
+                {
+                    "Comment": "80% Healthcare Accessible",
+                    "Property": "Accessibility",
+                    "Values": [ "Yes", "No" ],
+                    "Initial_Distribution": [ 1, 0 ],
+                    "Transitions": []
+                },
+                {
+                   "Initial_Distribution": [
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                   ],
+                   "Property": "CascadeState",
+                   "Transitions": [],
+                   "Values": [
+                      "None",
+                      "ARTStaging",
+                      "ARTStagingDiagnosticTest",
+                      "LinkingToART",
+                      "LinkingToPreART",
+                      "OnART",
+                      "OnPreART",
+                      "HCTTestingLoop",
+                      "HCTUptakeAtDebut",
+                      "HCTUptakePostDebut",
+                      "TestingOnANC",
+                      "TestingOnChild6w",
+                      "TestingOnSymptomatic",
+                      "LostForever",
+                      "CommercialSex",
+                      "VMMC",
+                      "ReceivingVMMC"
+                   ]
+                },
+                {
+                    "Property": "Resident",
+                    "Values": [ "YES", "NO"],
+                    "Initial_Distribution": [0, 1],
+                    "Transitions": []
+                },
+                {
+                    "Property": "Risk",
+                    "Values": [ "LOW","MEDIUM", "HIGH" ],
+                    "Initial_Distribution": [ 0.8499999999999999778, 0.14999999999999999445 , 0],
+                    "Transitions": [],
+                    "Initial_Distribution__KP_Risk_ControlHighPrevalence": "<-- MARKER"
+                } ],
+            "NodeName": "ControlHighPrevalence"
+        },
+        {
+            "NodeID": 4,
+            "IndividualProperties": [
+                {
+                    "Comment": "80% Healthcare Accessible",
+                    "Property": "Accessibility",
+                    "Values": [ "Yes", "No" ],
+                    "Initial_Distribution": [ 1, 0 ],
+                    "Transitions": []
+                },
+                {
+                   "Initial_Distribution": [
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                   ],
+                   "Property": "CascadeState",
+                   "Transitions": [],
+                   "Values": [
+                      "None",
+                      "ARTStaging",
+                      "ARTStagingDiagnosticTest",
+                      "LinkingToART",
+                      "LinkingToPreART",
+                      "OnART",
+                      "OnPreART",
+                      "HCTTestingLoop",
+                      "HCTUptakeAtDebut",
+                      "HCTUptakePostDebut",
+                      "TestingOnANC",
+                      "TestingOnChild6w",
+                      "TestingOnSymptomatic",
+                      "LostForever",
+                      "CommercialSex",
+                      "VMMC",
+                      "ReceivingVMMC"
+                   ]
+                },
+
+                {
+                    "Property": "Resident",
+                    "Values": [ "YES", "NO"],
+                    "Initial_Distribution": [0, 1],
+                    "Transitions": []
+                },
+                {
+                    "Property": "Risk",
+                    "Values": [ "LOW","MEDIUM", "HIGH" ],
+                    "Initial_Distribution": [ 0.8499999999999999778, 0.14999999999999999445 , 0],
+                    "Transitions": [],
+                    "Initial_Distribution__KP_Risk_InterventionLowPrevalence": "<-- MARKER"
+                } ],
+            "NodeName": "InterventionLowPrevalence"
+        },
+        {
+            "NodeID": 5,
+            "IndividualProperties": [
+                {
+                    "Comment": "80% Healthcare Accessible",
+                    "Property": "Accessibility",
+                    "Values": [ "Yes", "No" ],
+                    "Initial_Distribution": [ 1, 0 ],
+                    "Transitions": []
+                },
+                {
+                   "Initial_Distribution": [
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                   ],
+                   "Property": "CascadeState",
+                   "Transitions": [],
+                   "Values": [
+                      "None",
+                      "ARTStaging",
+                      "ARTStagingDiagnosticTest",
+                      "LinkingToART",
+                      "LinkingToPreART",
+                      "OnART",
+                      "OnPreART",
+                      "HCTTestingLoop",
+                      "HCTUptakeAtDebut",
+                      "HCTUptakePostDebut",
+                      "TestingOnANC",
+                      "TestingOnChild6w",
+                      "TestingOnSymptomatic",
+                      "LostForever",
+                      "CommercialSex",
+                      "VMMC",
+                      "ReceivingVMMC"
+                   ]
+                },
+
+                {
+                    "Property": "Resident",
+                    "Values": [ "YES", "NO"],
+                    "Initial_Distribution": [0, 1],
+                    "Transitions": []
+                },
+                {
+                    "Property": "Risk",
+                    "Values": [ "LOW","MEDIUM", "HIGH" ],
+                    "Initial_Distribution": [ 0.8499999999999999778, 0.14999999999999999445 , 0],
+                    "Transitions": [],
+                    "Initial_Distribution__KP_Risk_InterventionMediumPrevalence": "<-- MARKER"
+                } ],
+            "NodeName": "InterventionMediumPrevalence"
+        },
+        {
+            "NodeID": 6,
+            "IndividualProperties": [
+                {
+                    "Comment": "80% Healthcare Accessible",
+                    "Property": "Accessibility",
+                    "Values": [ "Yes", "No" ],
+                    "Initial_Distribution": [ 1, 0 ],
+                    "Transitions": []
+                },
+                {
+                   "Initial_Distribution": [
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                   ],
+                   "Property": "CascadeState",
+                   "Transitions": [],
+                   "Values": [
+                      "None",
+                      "ARTStaging",
+                      "ARTStagingDiagnosticTest",
+                      "LinkingToART",
+                      "LinkingToPreART",
+                      "OnART",
+                      "OnPreART",
+                      "HCTTestingLoop",
+                      "HCTUptakeAtDebut",
+                      "HCTUptakePostDebut",
+                      "TestingOnANC",
+                      "TestingOnChild6w",
+                      "TestingOnSymptomatic",
+                      "LostForever",
+                      "CommercialSex",
+                      "VMMC",
+                      "ReceivingVMMC"
+                   ]
+                },
+
+                {
+                    "Property": "Resident",
+                    "Values": [ "YES", "NO"],
+                    "Initial_Distribution": [0, 1],
+                    "Transitions": []
+                },
+                {
+                    "Property": "Risk",
+                    "Values": [ "LOW","MEDIUM", "HIGH" ],
+                    "Initial_Distribution": [ 0.8499999999999999778, 0.14999999999999999445 , 0],
+                    "Transitions": [],
+                    "Initial_Distribution__KP_Risk_InterventionHighPrevalence": "<-- MARKER"
+                } ],
+            "NodeName": "InterventionHighPrevalence"
+        }
+        ]
+}

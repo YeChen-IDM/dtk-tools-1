@@ -46,16 +46,18 @@ class SiteDataPlotter(BasePlotter):
         iteration_status = self.iteration_state.status
         if iteration_status != StatusPoint.plot:
             return  # Only plot once results are available
-
-        if self.combine_sites:
-            for site_name, analyzer_names in self.site_analyzer_names.items():
-                sorted_results = self.all_results.sort_values(by='total', ascending=False).reset_index()
-                self.plot_analyzers(site_name, analyzer_names, sorted_results)
-        else:
-            for site_name, analyzer_names in self.site_analyzer_names.items():
-                self.combine_by_site(site_name, analyzer_names, self.all_results)
-                sorted_results = self.all_results.sort_values(by='%s_total' % site_name, ascending=False).reset_index()
-                self.plot_analyzers(site_name, analyzer_names, sorted_results)
+        try:
+            if self.combine_sites:
+                for site_name, analyzer_names in self.site_analyzer_names.items():
+                    sorted_results = self.all_results.sort_values(by='total', ascending=False).reset_index()
+                    self.plot_analyzers(site_name, analyzer_names, sorted_results)
+            else:
+                for site_name, analyzer_names in self.site_analyzer_names.items():
+                    self.combine_by_site(site_name, analyzer_names, self.all_results)
+                    sorted_results = self.all_results.sort_values(by='%s_total' % site_name, ascending=False).reset_index()
+                    self.plot_analyzers(site_name, analyzer_names, sorted_results)
+        except:
+            logger.info("SiteDataPlotter could not plot for one or more analyzer(s).")
 
         try:
             self.write_LL_csv(self.iteration_state.exp_manager.experiment)

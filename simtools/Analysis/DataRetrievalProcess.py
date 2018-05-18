@@ -3,6 +3,8 @@ import itertools
 import os
 import traceback
 
+import time
+
 from simtools.Analysis.OutputParser import SimulationOutputParser
 from simtools.Utilities.COMPSCache import COMPSCache
 from simtools.Utilities.COMPSUtilities import COMPS_login, get_asset_files_for_simulation_id
@@ -16,7 +18,7 @@ def retrieve_data(simulation, analyzers, cache):
     filenames = set(itertools.chain(*(a.filenames for a in filtered_analysis)))
 
     # We dont have anything to do :)
-    if not filenames or not filtered_analysis:
+    if not filtered_analysis:
         cache.set(simulation.id, None)
         return
 
@@ -25,17 +27,25 @@ def retrieve_data(simulation, analyzers, cache):
 
     try:
         if simulation.experiment.location == "HPC":
-            COMPS_login(simulation.experiment.endpoint)
-            COMPS_simulation = COMPSCache.simulation(simulation.id)
-            assets = [path for path in filenames if path.lower().startswith("assets")]
-            transient = [path for path in filenames if not path.lower().startswith("assets")]
-            if transient:
-                byte_arrays.update(dict(zip(transient, COMPS_simulation.retrieve_output_files(paths=transient))))
-            if assets:
-                byte_arrays.update(get_asset_files_for_simulation_id(simulation.id, paths=assets, remove_prefix='Assets'))
+            retries = 5
+            while True:
+                try:
+                    COMPS_login(simulation.experiment.endpoint)
+                    COMPS_simulation = COMPSCache.simulation(simulation.id)
+                    assets = [path for path in filenames if path.lower().startswith("assets")]
+                    transient = [path for path in filenames if not path.lower().startswith("assets")]
+                    if transient:
+                        byte_arrays.update(dict(zip(transient, COMPS_simulation.retrieve_output_files(paths=transient))))
+                    if assets:
+                        byte_arrays.update(get_asset_files_for_simulation_id(simulation.id, paths=assets, remove_prefix='Assets'))
+                    break
+                except ConnectionResetError as e:
+                    retries -= 1
+                    time.sleep(3)
+                    if retries == 0:
+                        raise e
 
         else:
-            byte_arrays = []
             for filename in filenames:
                 path = os.path.join(simulation.get_path(), filename)
                 with open(path, 'rb') as output_file:

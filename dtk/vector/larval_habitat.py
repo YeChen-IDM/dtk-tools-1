@@ -25,7 +25,7 @@ params = {
 # Notre Dame modifications for instar-specific behavior
 # --------------------------------------------------------------
 
-notre_dame_params = copy.deepcopy(params)
+notre_dame_params = params.copy()
 notre_dame_params.update({
     "Egg_Hatch_Delay_Distribution": "EXPONENTIAL_DURATION",
     "Egg_Saturation_At_Oviposition": "NO_SATURATION",

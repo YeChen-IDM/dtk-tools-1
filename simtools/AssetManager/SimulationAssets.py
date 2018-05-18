@@ -105,7 +105,7 @@ class SimulationAssets(object):
     @property
     def collection_id(self):
         if not self.prepared or not self.master_collection:
-            raise self.NotPrepared("Cannot query asset collection id if collection is not prepared.")
+            return None
         return self.master_collection.collection_id
 
     def set_base_collection(self, collection_type, collection):
@@ -171,8 +171,9 @@ class SimulationAssets(object):
         self.collections = {cid:collection for cid, collection in self.collections.items() if collection.collection_id}
 
         logger.debug("Creating master collection with %d files" % len(asset_files))
-        self.master_collection = AssetCollection(remote_files=asset_files.values())
-        self.master_collection.prepare(location=location)
+        if len(asset_files) != 0:
+            self.master_collection = AssetCollection(remote_files=asset_files.values())
+            self.master_collection.prepare(location=location)
         self.prepared = True
 
     def create_collections(self, config_builder):

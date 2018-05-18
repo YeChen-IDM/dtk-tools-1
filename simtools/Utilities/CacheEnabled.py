@@ -1,8 +1,12 @@
 from tempfile import mkdtemp
 
 import shutil
-from diskcache import FanoutCache, Cache, Deque
+from diskcache import FanoutCache, Cache, Deque, DEFAULT_SETTINGS
 
+MAX_CACHE_SIZE = int(2**33)  # 8GB
+DEFAULT_SETTINGS["size_limit"] = MAX_CACHE_SIZE
+DEFAULT_SETTINGS["sqlite_mmap_size"] = 2 ** 28
+DEFAULT_SETTINGS["sqlite_cache_size"] = 2 ** 15
 
 class CacheEnabled:
 

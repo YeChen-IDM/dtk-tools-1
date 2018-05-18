@@ -248,4 +248,4 @@ class DTKGitHub(GitHub):
 
 class DependencyGitHub(GitHub):
     DEFAULT_REPOSITORY_NAME = 'PythonDependencies'
-    AUTH_TOKEN = 'f93b1465c073a01e6de2f3ea9449fdfe92848db1' # set token here to the default RO user
+    AUTH_TOKEN = 'cbc2246366745da9f079e508d46a01af0580115d' # set token here to the default RO user

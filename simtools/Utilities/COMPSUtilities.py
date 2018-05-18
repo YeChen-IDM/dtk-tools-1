@@ -1,4 +1,5 @@
 import zipfile
+from datetime import datetime, timedelta
 
 from simtools.Utilities.General import init_logging, get_md5, retry_function
 
@@ -254,10 +255,39 @@ def get_experiment_by_id(exp_id, query_criteria=None):
 def get_simulation_by_id(sim_id, query_criteria=None):
     return Simulation.get(id=sim_id, query_criteria=query_criteria)
 
+def get_all_experiments_for_user(user):
+    # COMPS limits the retrieval to 1000 so to make sure we get all experiments for a given user, we need to be clever
+    # Also COMPS does not have an order_by so we have to go through all date ranges
+    interval = 365
+    results = {}
+    end_date = start_date = datetime.today()
+    limit_date = datetime.strptime("2014-03-31", '%Y-%m-%d') # Oldest simulation in COMPS
+
+    while start_date > limit_date:
+        start_date = end_date - timedelta(days=interval)
+        batch = Experiment.get(query_criteria=QueryCriteria().where(["owner={}".format(user),
+                                                                     "date_created<={}".format(end_date.strftime('%Y-%m-%d')),
+                                                                     "date_created>={}".format(start_date.strftime('%Y-%m-%d'))]))
+        if len(batch) == 1000:
+            # We hit a limit, reduce the interval and run again
+            interval = interval / 2
+            continue
+
+        if len(batch) == 0:
+            interval *= 2
+        else:
+            # Add the experiments to the dict
+            for e in batch:
+                results[e.id] = e
+
+        # Go from there
+        end_date = start_date
+
+    return results.values()
 
 def get_experiments_per_user_and_date(user, limit_date):
     limit_date_str = limit_date.strftime("%Y-%m-%d")
-    return Experiment.get(query_criteria=QueryCriteria().where('owner=%s,DateCreated>%s' % (user, limit_date_str)))
+    return Experiment.get(query_criteria=QueryCriteria().where('owner=%s,DateCreated>=%s' % (user, limit_date_str)))
 
 @retry_function
 def get_experiments_by_name(name, user=None):

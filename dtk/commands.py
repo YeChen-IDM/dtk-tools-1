@@ -573,7 +573,6 @@ def list_package_versions(args, unknownArgs):
 
 
 def get_package(args, unknownArgs):
-    import pip
     import tempfile
     import zipfile
     is_test = args.is_test if hasattr(args, 'is_test') else None # test == no pip install
@@ -625,7 +624,7 @@ def get_package(args, unknownArgs):
 
         # install
         if not is_test:
-            pip.main(['install', '--no-dependencies', '--ignore-installed', release_dir])
+            subprocess.call(' '.join(['pip', 'install', '--no-dependencies', '--ignore-installed', release_dir]))
 
         # update the local DB with the version
         db_key = github.disease_package_db_key
@@ -702,6 +701,22 @@ def catalyst(args, unknownArgs):
     catalyst_config = catalyst_utils.load_sweep_configs(sweep_type=args.sweep_type,
                                                             config_filename=args.sweep_definitions)
     defn = FidelityReportExperimentDefinition(catalyst_config, args)
+
+    # Verify the user wishes to run with the determined configuration
+    print(''.join(['-']*80))
+    lines = [
+        'Sweep type: %s' % args.sweep_type,
+        'Sweep method: %s' % defn.sweep_method,
+        'Report type: %s' % report_type
+        ]
+    print('\n'.join(lines))
+    print(''.join(['-']*80))
+    user_input = None
+    while user_input not in ('Y', 'N'):
+        user_input = input('OK to generate catalyst report according to these options? (Y/N): ').upper()
+    if user_input == 'N':
+        print('Exiting without generating report.')
+        exit()
 
     # redefine the experiment name so it doesn't conflict with the likely follow-up non-catalyst experiment
     mod.run_sim_args['exp_name'] = 'Catalyst-' + mod.run_sim_args['exp_name']

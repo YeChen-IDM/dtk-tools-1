@@ -1,9 +1,10 @@
 # Execute directly: 'python example_optimization.py'
 # or via the calibtool.py script: 'calibtool run example_optimization.py'
+import copy
 import random
 
 from calibtool.CalibManager import CalibManager
-from calibtool.algorithms.OptimToolPSPO import OptimToolPSPO
+from calibtool.algorithms.OptimToolSPSA import OptimToolSPSA
 from calibtool.plotters.LikelihoodPlotter import LikelihoodPlotter
 from calibtool.plotters.OptimToolSPSAPlotter import OptimToolSPSAPlotter
 from calibtool.plotters.SiteDataPlotter import SiteDataPlotter
@@ -41,7 +42,7 @@ params = [
         'Name': 'Clinical Fever Threshold High',
         'Dynamic': True,
         # 'MapTo': 'Clinical_Fever_Threshold_High', # <-- DEMO: Custom mapping, see map_sample_to_model_input below
-        'Guess': 1.75,
+        'Guess': random.uniform(0.6, 2.4),
         'aprioriHessian': -1,  # set zero if there is no information of Hessian
         'Min': 0.5,
         'Max': 2.5
@@ -59,7 +60,7 @@ params = [
         'Name': 'Falciparum PfEMP1 Variants',
         'Dynamic': True,
         'MapTo': 'Falciparum_PfEMP1_Variants',
-        'Guess': 1500,
+        'Guess': random.uniform(100, 4900),
         'aprioriHessian': -1,  # set zero if there is no information of Hessian
         'Min': 1,  # 900 [0]
         'Max': 5000  # 1700 [1e5]
@@ -87,6 +88,9 @@ def constrain_sample(sample):
 def map_sample_to_model_input(cb, sample):
     tags = {}
 
+    # Make a copy of samples so we can alter it safely
+    sample = copy.deepcopy(sample)
+
     # Can perform custom mapping, e.g. a trivial example
     if 'Clinical Fever Threshold High' in sample:
         value = sample.pop('Clinical Fever Threshold High')
@@ -111,9 +115,9 @@ def map_sample_to_model_input(cb, sample):
     return tags
 
 
-optimtool = OptimToolPSPO(params=params,
+optimtool = OptimToolSPSA(params=params,
                           constrain_sample_fn=constrain_sample,  # <-- WILL NOT BE SAVED IN ITERATION STATE
-                          comps_per_iteration=4  # <-- computations per iteration, includes center repeats.
+                          comps_per_iteration=4  # <-- computations per iteration >2
                           )
 calib_manager = CalibManager(name='ExampleOptimizationSPSA',  # <-- Please customize this name
                              config_builder=cb,
@@ -121,7 +125,7 @@ calib_manager = CalibManager(name='ExampleOptimizationSPSA',  # <-- Please custo
                              sites=sites,
                              next_point=optimtool,
                              sim_runs_per_param_set=1,  # <-- Replicates
-                             max_iterations=3,  # <-- Iterations
+                             max_iterations=5,  # <-- Iterations
                              plotters=plotters)
 
 run_calib_args = {'calib_manager': calib_manager}

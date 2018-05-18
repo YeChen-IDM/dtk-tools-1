@@ -14,7 +14,7 @@ from COMPS.Data import Experiment, QueryCriteria
 from diskcache import FanoutCache
 
 from simtools.SetupParser import SetupParser
-from simtools.Utilities.COMPSUtilities import COMPS_login
+from simtools.Utilities.COMPSUtilities import COMPS_login, get_all_experiments_for_user
 from simtools.Utilities.General import file_size, animation
 
 
@@ -29,18 +29,14 @@ class ExperimentInfo:
 
 
 class DiskSpaceUsage:
-
     # How many experiments to display in the TOP?
     TOP_COUNT = 15      # default
 
     # Usernames
     OWNERS = []         # default: will  be the login user passed in
 
-    # By default we prefer using the cache over querying COMPS
-    FORCE_REFRESH = False
-
     @staticmethod
-    def get_experiment_info(experiment, cache):
+    def get_experiment_info(experiment, cache, refresh):
         """
         Adds the experiment information for a given experiment to the cache:
         - raw_size: the size in bytes
@@ -50,7 +46,7 @@ class DiskSpaceUsage:
 
         :param experiment: The experiment to analyze
         """
-        if experiment.id in cache and not DiskSpaceUsage.FORCE_REFRESH:
+        if experiment.id in cache and cache.get(experiment.id) and not refresh:
             return
 
         # Login to COMPS
@@ -128,11 +124,7 @@ class DiskSpaceUsage:
             print("")
 
     @staticmethod
-    def display(users, top=15, save=False, refresh=False):
-        DiskSpaceUsage.OWNERS = users
-        DiskSpaceUsage.TOP_COUNT = top if top else 15
-        DiskSpaceUsage.FORCE_REFRESH = refresh
-
+    def gather_experiment_info(refresh=False):
         # Create/open the cache
         current_folder = os.path.dirname(os.path.realpath(__file__))
         cache_folder = os.path.join(current_folder, "cache")
@@ -140,14 +132,14 @@ class DiskSpaceUsage:
 
         # All experiments
         all_experiments = list(
-            itertools.chain(*(Experiment.get(query_criteria=QueryCriteria().where(["owner={}".format(owner)]))
-                              for owner in DiskSpaceUsage.OWNERS)))
+            itertools.chain(*(get_all_experiments_for_user(owner) for owner in DiskSpaceUsage.OWNERS)))
 
         all_experiments_len = len(all_experiments)
 
         # Create the pool of worker
         p = Pool(6)
-        r = p.starmap_async(DiskSpaceUsage.get_experiment_info, itertools.product(all_experiments, (cache,)))
+        r = p.starmap_async(DiskSpaceUsage.get_experiment_info,
+                            itertools.product(all_experiments, (cache,), (refresh,)))
         p.close()
 
         print("Analyzing disk space for:")
@@ -170,13 +162,24 @@ class DiskSpaceUsage:
 
         sys.stdout.write("\r | Experiment analyzed: {}/{}".format(all_experiments_len, all_experiments_len))
         sys.stdout.flush()
+        print("\n")
 
         # Get all the results
         experiments_info = [cache.get(e.id) for e in all_experiments if cache.get(e.id)]
         cache.close()
 
+        return experiments_info
+
+    @staticmethod
+    def display(users, top=15, save=False, refresh=False):
+        DiskSpaceUsage.OWNERS = users
+        DiskSpaceUsage.TOP_COUNT = top if top else 15
+
+        # Get all the results
+        experiments_info = DiskSpaceUsage.gather_experiment_info(refresh)
+
         # Display
-        print("\n\n---------------------------")
+        print("\n---------------------------")
         DiskSpaceUsage.top_count_experiments(experiments_info)
         print("\n---------------------------")
         DiskSpaceUsage.total_size_per_user(experiments_info)

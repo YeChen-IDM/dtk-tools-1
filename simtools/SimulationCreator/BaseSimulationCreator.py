@@ -1,4 +1,5 @@
 import copy
+import pickle
 from abc import abstractmethod, ABCMeta
 from multiprocessing import Process
 
@@ -38,11 +39,11 @@ class BaseSimulationCreator(Process):
 
         while self.function_set:
             mod_fn_list = self.function_set.pop()
-            cb = copy.deepcopy(self.config_builder)
+            cb = pickle.loads(pickle.dumps(self.config_builder, protocol=pickle.HIGHEST_PROTOCOL))
 
             # modify next simulation according to experiment builder
             # also retrieve the returned metadata
-            tags = copy.deepcopy(self.initial_tags) if self.initial_tags else {}
+            tags = self.initial_tags.copy() if self.initial_tags else {}
             for func in mod_fn_list:
                 md = func(cb)
                 tags.update(md)

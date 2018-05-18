@@ -1,6 +1,9 @@
 import base64
 import datetime
 import json
+from uuid import UUID
+import pandas as pd
+
 import numpy as np
 
 
@@ -24,6 +27,8 @@ class NumpyEncoder(json.JSONEncoder):
             return dict(__ndarray__=data_b64,
                         dtype=str(obj.dtype),
                         shape=obj.shape)
+        elif isinstance(obj, pd.DataFrame):
+            return json.loads(obj.to_json())
         try:
             # Let the base class default method raise the TypeError
             return super(NumpyEncoder, self).default(obj)
@@ -44,6 +49,10 @@ class GeneralEncoder(NumpyEncoder):
             return str(obj)
         elif isinstance(obj, Simulation):
             return obj.toJSON()
+        elif isinstance(obj, UUID):
+            return str(obj)
+        elif isinstance(obj, pd.Series):
+            return obj.to_json(orient='split')
         return super(GeneralEncoder, self).default(obj)
 
 

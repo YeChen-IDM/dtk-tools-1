@@ -59,3 +59,10 @@ class BaseAnalyzer(metaclass=ABCMeta):
         """
         pass
 
+    def destroy(self):
+        """
+        Called after the analysis is done
+        :return:
+        """
+        pass
+

@@ -131,3 +131,11 @@ class SimConfigBuilder(metaclass=ABCMeta):
     def get_input_file_paths(self):
         return []
 
+    def get_all_needed_files(self):
+        dlls = set(self.get_dll_paths_for_asset_manager())
+        inputs = set(self.get_input_file_paths())
+        exe = {self.assets.exe_path} if self.assets.exe_path else {}
+        experiment_files = {f.file_name for f in self.experiment_files.files}
+
+        return set.union(dlls, inputs, exe, experiment_files)
+

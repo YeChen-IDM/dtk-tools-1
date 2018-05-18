@@ -1,3 +1,4 @@
+import json
 import multiprocessing
 import os
 from multiprocessing.pool import ThreadPool
@@ -10,6 +11,7 @@ from COMPS.Data.Simulation import SimulationState
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
+from simtools.Utilities.Encoding import GeneralEncoder
 from simtools.Utilities.General import init_logging
 from simtools.Utilities.LocalOS import LocalOS
 
@@ -20,7 +22,7 @@ logger = init_logging('AnalyzeManager')
 
 class AnalyzeManager:
     def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False, verbose=False,
-                 create_dir_map=False):
+                 create_dir_map=False, record_finalize_results=False, finalize_results_filename=None):
         self.experiments = []
         self.simulations = []
         self.parsers = []
@@ -33,6 +35,10 @@ class AnalyzeManager:
         self.parse = True
 
         self.working_dir = working_dir or os.getcwd()
+
+        self.record_finalize_results = record_finalize_results
+        self.finalize_results_filename = finalize_results_filename or os.path.join(self.working_dir,
+                                                                                   'finalize_results.json')
 
         with SetupParser.TemporarySetup() as sp:
             self.maxThreadSemaphore = multiprocessing.Semaphore(int(sp.get('max_threads', 16)))
@@ -199,10 +205,16 @@ class AnalyzeManager:
             parser.join()
 
         plotting_processes = []
+        finalize_result = {}
         from multiprocessing import Process
         for a in self.analyzers:
             a.combine({parser.sim_id: parser for parser in self.parsers})
-            a.finalize()
+
+            # record finalize return value for writing out to file
+            # we are assuming res is a DataFrame or Series
+            res = a.finalize()
+            finalize_result[str(type(a))] = res
+            
             # Plot in another process
             try:
                 # If on mac just plot and continue
@@ -220,4 +232,8 @@ class AnalyzeManager:
 
         for p in plotting_processes:
             p.join()
+
+        if self.record_finalize_results:
+            with open(self.finalize_results_filename, 'w') as f:
+                json.dump(finalize_result, f, cls=GeneralEncoder)
 

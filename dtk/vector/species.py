@@ -31,10 +31,10 @@ param_block = {
 }
 
 # An. arabiensis
-arabiensis_param_block = copy.deepcopy(param_block)
+arabiensis_param_block = param_block.copy()
 
 # An. funestus
-funestus_param_block = copy.deepcopy(param_block)
+funestus_param_block = param_block.copy()
 mod_funestus_params = {
     "Larval_Habitat_Types": {
         "WATER_VEGETATION": 2e7
@@ -44,14 +44,14 @@ mod_funestus_params = {
 funestus_param_block.update(mod_funestus_params)
 
 # extra funestus for Munyumbwe
-munyumbwe_funestus_param_block = copy.deepcopy(funestus_param_block)
+munyumbwe_funestus_param_block =funestus_param_block.copy()
 
 # An. gambiae
-gambiae_param_block = copy.deepcopy(param_block)
+gambiae_param_block = param_block.copy()
 gambiae_param_block["Indoor_Feeding_Fraction"] = 0.95
 
 # An. farauti
-farauti_param_block = copy.deepcopy(param_block)
+farauti_param_block = param_block.copy()
 mod_farauti_params = {
 
     "Larval_Habitat_Types": {
@@ -81,7 +81,7 @@ farauti_param_block.update(mod_farauti_params)
 # on 161103, modified to mean values across sites from Trung Trop Med 2005 for anthropophily, indoor feeding fraction
 # maculatus seasonal with rainfall (Durnez Malar J 2013), but also found in permanent/semipermanent bodies of water
 # near forest camps or rice fields. For more info see https://wiki.idmod.org/display/EMOD/2016/10/21/SE+Asia+Larval+Habitats+Lit+Review
-maculatus_param_block = copy.deepcopy(param_block)
+maculatus_param_block = param_block.copy()
 mod_maculatus_params = {
 
     "Larval_Habitat_Types": {
@@ -112,7 +112,7 @@ maculatus_param_block.update(mod_maculatus_params)
 # on 161103, modified to mean values across sites from Trung Trop Med 2005 for anthropophily, indoor feeding fraction
 # minimus more present during drier periods after rainy season
 # for more info see https://wiki.idmod.org/display/EMOD/2016/10/21/SE+Asia+Larval+Habitats+Lit+Review
-minimus_param_block = copy.deepcopy(param_block)
+minimus_param_block = param_block.copy()
 mod_minimus_params = {
 
     "Larval_Habitat_Types": {
@@ -135,7 +135,7 @@ minimus_param_block.update(mod_minimus_params)
 # on 161103, modified to mean values across sites from Trung Trop Med 2005 for anthropophily, indoor feeding fraction
 # dirus more abundant during rainy season but also some constant portion in forest
 # dirus also has longer lifespan, see https://wiki.idmod.org/display/EMOD/2016/10/21/SE+Asia+Larval+Habitats+Lit+Review
-dirus_param_block = copy.deepcopy(param_block)
+dirus_param_block = param_block.copy()
 mod_dirus_params = {
 
     "Larval_Habitat_Types": {
@@ -155,7 +155,7 @@ dirus_param_block.update(mod_dirus_params)
 
 # An. albimanus
 # CDC Malar J 2016 review
-albimanus_param_block = copy.deepcopy(param_block)
+albimanus_param_block = param_block.copy()
 mod_albimanus_params = {
 
     "Larval_Habitat_Types": { # seasonal with rainfall
@@ -226,7 +226,7 @@ def set_params_by_species(params, ss, sim_type="VECTOR_SIM"):
     """
     pp = {}
     for s in ss:
-        pp[s] = copy.deepcopy(vector_params_by_species[s])
+        pp[s] = vector_params_by_species[s].copy()
         if sim_type == "MALARIA_SIM":
             pp[s]["Acquire_Modifier"] = 0.8  ## gametocyte success modeled explicitly
 

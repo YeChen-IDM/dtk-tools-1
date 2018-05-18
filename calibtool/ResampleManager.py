@@ -1,32 +1,82 @@
+import os
+import pandas as pd
+
 from calibtool.resamplers.CalibrationPoint import CalibrationPoint, CalibrationParameter
 from calibtool.resamplers.CalibrationPoints import CalibrationPoints
 
 class ResampleManager:
-    def __init__(self, steps, calibration_manager):
+    def __init__(self, steps, calibration_manager, restart_at_step=None):
         for resampler in steps:
             resampler.set_calibration_manager(calibration_manager)
         self.steps = steps
         self.calibration_manager = calibration_manager
 
+        # the place to store information needed to perform restarts between resampling steps in case things go wrong
+        self.restart_state_directory = self.steps[0].output_location + '_restart_state'
+        self.restart_filename_pattern = 'resample_restart_step_%d.json'
+        self.restart_selection_filename_pattern = 'resample_restart_selection_value_step_%d.csv'
+        os.makedirs(self.restart_state_directory, exist_ok=True)
+
+        if restart_at_step is None:
+            self.first_step = 0
+        elif restart_at_step > 0:
+            if restart_at_step < len(self.steps):
+                self.first_step = restart_at_step
+            else:
+                raise Exception('Cannot restart resampling at step %d . Can restart at step %d or lower.' % (restart_at_step, len(self.steps)-1))
+        else:
+            raise Exception("Cannot restart from step 0. Run with no restart selected if resampling from the beginning is desired.")
+
 
     def resample_and_run(self):
+        print('Resampling (re)starting at step: %s' % self.first_step)
+
         # set the initial parameter points to resample from
         initial_calibrated_points = self.get_calibrated_points()
-        calibrated_points = initial_calibrated_points
 
-        resample_step = 0
-        selection_values = None
-        for resampler in self.steps:
+        if self.first_step == 0:
+            calibrated_points = initial_calibrated_points
+            selection_values = None
+        else:
+            # ck4, load up the restart files for step first_step
+            calibrated_points, selection_values = self.load_restart(step=self.first_step)
+
+        for resample_step in range(self.first_step, len(self.steps)):
+            # for resampler in self.steps:
+            resampler = self.steps[resample_step]
             calibrated_points, selection_values = resampler.resample_and_run(calibrated_points=calibrated_points,
                                                                              resample_step=resample_step,
                                                                              selection_values=selection_values,
                                                                              initial_calibration_points=initial_calibrated_points)
             resample_step += 1
-        self.results = calibrated_points
+            self.results = calibrated_points
+            self.write_restart(step=resample_step, selection_values=selection_values)
 
 
-    def write_results(self, filename):
-        CalibrationPoints(points=self.results).write(filename=filename)
+    def write_restart(self, step, selection_values):
+        restart_filename = self._create_restart_filename(step=step)
+        CalibrationPoints(points=self.results).write(filename=restart_filename)
+
+        selection_filename = self._create_restart_selection_fiilename(step=step)
+        selection_values.to_csv(selection_filename)
+
+
+    def load_restart(self, step):
+        restart_filename = self._create_restart_filename(step=step)
+        calibrated_points = CalibrationPoints.read(restart_filename).points # because the resamplers are using lists of them, not CalibrationPoints objects
+
+        selection_filename = self._create_restart_selection_fiilename(step=step)
+        selection_values = pd.read_csv(selection_filename)
+
+        return calibrated_points, selection_values
+
+
+    def _create_restart_filename(self, step):
+        return os.path.join(self.restart_state_directory, self.restart_filename_pattern % step)
+
+
+    def _create_restart_selection_fiilename(self, step):
+        return os.path.join(self.restart_state_directory, self.restart_selection_filename_pattern % step)
 
 
     def get_calibrated_points(self):

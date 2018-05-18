@@ -77,8 +77,24 @@ class CalibrationPoint:
 
 
     def to_dict(self):
+        """
+        Converts CalibrationPoint objects to a dictionary. Useful e.g. for dumping to a json file.
+        :return: a dict containing all needed information for recreating a CalibrationPoint object via from_dict()
+        """
         return {"parameters": [param.to_dict() for param in self.parameters],
                 "likelihood": self.likelihood}
+
+
+    @classmethod
+    def from_dict(cls, dict):
+        """
+        Inverse method of to_dict
+        :param dict: a dictionary equivalent to one returned by to_dict()
+        :return: a CalibrationPoint object
+        """
+        params = [CalibrationParameter.from_dict(p) for p in dict['parameters']]
+        likelihood = dict['likelihood']
+        return cls(parameters=params, likelihood=likelihood)
 
 
     def to_dataframe(self, parameter_type=None):

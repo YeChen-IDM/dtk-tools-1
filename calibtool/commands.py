@@ -61,7 +61,8 @@ def resample(args, unknownArgs):
     # step 1: Get the resamplers and calibration manager
     resamplers = get_resamplers(args, unknownArgs)
     calib_manager = get_calib_manager(args, unknownArgs)
-    resample_manager = ResampleManager(steps=resamplers, calibration_manager=calib_manager)
+    resample_manager = ResampleManager(steps=resamplers, calibration_manager=calib_manager,
+                                       restart_at_step=args.restart)
 
     # step 2: Resample!
     resample_manager.resample_and_run()

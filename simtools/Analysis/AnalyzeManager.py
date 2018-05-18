@@ -18,8 +18,8 @@ from simtools.Utilities.General import init_logging, animation
 
 logger = init_logging('AnalyzeManager')
 
-ANALYZE_TIMEOUT = 3600  # Maximum seconds before timing out - set to 1h
-WAIT_TIME = 1.15        # How much time to wait between check if the analysis is done
+ANALYZE_TIMEOUT = 3600*8  # Maximum seconds before timing out - set to 1h
+WAIT_TIME = 1.15          # How much time to wait between check if the analysis is done
 EXCEPTION_KEY = "__EXCEPTION__"
 
 
@@ -200,3 +200,5 @@ class AnalyzeManager(CacheEnabled):
             print("\r | Analysis done. Took {} (~ {:.3f} per simulation)"
                   .format(verbose_timedelta(total_time), total_time / scount if scount != 0 else 0))
 
+        for a in self.analyzers:
+            a.destroy()

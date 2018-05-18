@@ -43,7 +43,7 @@ waypoints_home_params = {
     "x_Family_Migration": 1
 }
 
-single_roundtrip_params = copy.deepcopy(waypoints_home_params)
+single_roundtrip_params = waypoints_home_params.copy()
 single_roundtrip_params.update({
     "Migration_Pattern": "SINGLE_ROUND_TRIPS",
 
@@ -67,5 +67,5 @@ single_roundtrip_params.update({
     "Sea_Family_Migration_Probability": 0.2
 })
 
-no_migration_params = copy.deepcopy(waypoints_home_params)
+no_migration_params = waypoints_home_params.copy()
 no_migration_params.update({"Migration_Model": "NO_MIGRATION"})
