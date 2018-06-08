@@ -10,12 +10,13 @@ import unittest
 def do_stuff():
     SetupParser.default_block = 'HPC'
     gen_cb = DTKConfigBuilder.from_defaults('GENERIC_SIM_SEIR')
+    gen_cb.params["Simulation_Duration"] = 200
     exp_tags = {}
     exp_tags['role'] = 'serialization_test'
     exp_tags['model'] = 'generic'
     s_ts = [5, 25, 150]
     T = skt.SerializationKsTest(config_builder=gen_cb,
-                                experiment_name='Vector serialization test',
+                                experiment_name='Generic serialization test',
                                 experiment_tags=exp_tags,
                                 timesteps_to_serialize=s_ts,
                                 inset_channels=['New Infections',
