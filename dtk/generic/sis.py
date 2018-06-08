@@ -18,14 +18,11 @@ params = {
     "Climate_Model": "CLIMATE_OFF",
     "Config_Name": "08_SIS",
     "Custom_Reports_Filename": "NoCustomReports",
-    "Death_Rate_Dependence": "NONDISEASE_MORTALITY_OFF",
     "Default_Geography_Initial_Node_Population": 1000,
     "Default_Geography_Torus_Size": 10,
     "Demographics_Filenames": [
         "generic_scenarios_demographics.json"
     ],
-    "Enable_Aging": 1,
-    "Enable_Birth": 0,
     "Enable_Default_Reporting": 1,
     "Enable_Default_Shedding_Function": 1,
     "Enable_Demographics_Birth": 0,
