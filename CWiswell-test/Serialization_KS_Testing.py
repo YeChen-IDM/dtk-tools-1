@@ -162,12 +162,14 @@ class SerializationKsTest(object):
                 ref_path=self.baseline_charts[original_report_name],
                 test_path=test_report_path,
                 channel_list=channels_to_test)
+            new_tags = {}
             for c in channels_to_test:
                 stat, p_val = KsTester.test_channel(c)
                 tag_name = c.replace(' ','_')
                 tag_name = tag_name.replace(':','_')
-                tag_name = tag_name + '_PVal'
-                sim.tags[tag_name] = p_val
+                tag_name = "step_{0}_{1}_{2}".format(ts_string, tag_name, 'PVal')
+                new_tags[tag_name] = p_val
+            self.exp_manager.merge_tags(new_tags)
         # get the reloaded sim
         # # for c in channels_to_test
 
