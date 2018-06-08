@@ -231,4 +231,4 @@ class SiteDataPlotter(BasePlotter):
         if os.path.exists(csv_path):
             current = pd.read_csv(csv_path, index_col=['iteration', 'sample'])
             results_df = pd.concat([current, results_df])
-        results_df.sort_values(by='total', ascending=True).to_csv(csv_path)
+        results_df.sort_values(by='total', ascending=False).to_csv(csv_path)

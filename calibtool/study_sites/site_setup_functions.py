@@ -3,7 +3,8 @@ from dtk.vector.species import set_larval_habitat, set_species_param, set_params
 from dtk.interventions.input_EIR import add_InputEIR
 from dtk.interventions.mosquito_release import add_mosquito_release
 from dtk.interventions.itn import add_ITN
-from dtk.interventions.irs import add_node_IRS
+from dtk.interventions.itn_age_season import add_ITN_age_season
+from dtk.interventions.irs import add_node_IRS, add_IRS
 from dtk.interventions.outbreakindividual import recurring_outbreak
 from dtk.interventions.migrate_to import add_migration_event
 from dtk.interventions.health_seeking import add_health_seeking
@@ -66,7 +67,7 @@ class survey_report_fn:
                                  nreports=self.nreports)
 
 class filtered_report_fn:
-    def __init__(self, start, end, nodes, description=''):
+    def __init__(self, start, end=100000, nodes=[], description=''):
         self.start = start
         self.end = end
         self.nodes = nodes
@@ -88,6 +89,20 @@ class filtered_spatial_report_fn:
         from malaria.reports.MalariaReport import add_filtered_spatial_report
         return add_filtered_spatial_report(cb, start=self.start, end=self.end, channels=self.channels,
                                            nodes=self.nodes, description=self.description)
+
+class event_counter_report_fn:
+    def __init__(self, channels, start, duration, nodes, description=''):
+        self.start = start
+        self.duration = duration
+        self.channels = channels
+        self.nodes = nodes
+        self.description = description
+
+    def __call__(self, cb):
+        from malaria.reports.MalariaReport import add_event_counter_report
+        return add_event_counter_report(cb, self.channels, start=self.start, duration=self.duration,
+                                        nodes=self.nodes, description=self.description)
+
 
 # vector
 class larval_habitat_fn:
@@ -209,18 +224,21 @@ class add_mosquito_release_fn:
 
 # health-seeking
 class add_treatment_fn:
-    def __init__(self, start=0, drug=None, targets=None, nodes=None, node_property_restrictions=[]):
+    def __init__(self, start=0, drug=None, targets=None, nodes=None, drug_ineligibility_duration=0,
+                 node_property_restrictions=[]):
         self.start = start
         self.drug = drug or ['Artemether', 'Lumefantrine']
         self.targets = targets or [{'trigger': 'NewClinicalCase', 'coverage': 0.8, 'seek': 0.6, 'rate': 0.2}]
         self.nodes = nodes or {"class": "NodeSetAll"}
         self.node_property_restrictions=node_property_restrictions
+        self.durg_ineligibility_duration=drug_ineligibility_duration
 
     def __call__(self, cb):
         return self.fn(cb)
 
     def fn(self, cb):
         add_health_seeking(cb, start_day=self.start, drug=self.drug, targets=self.targets, nodes=self.nodes,
+                           drug_ineligibility_duration=self.durg_ineligibility_duration,
                            node_property_restrictions=self.node_property_restrictions)
         cb.update_params({'PKPD_Model': 'CONCENTRATION_VERSUS_TIME'})
 
@@ -289,6 +307,7 @@ class add_seasonal_HS_by_node_id_fn:
 
                 add_health_seeking(cb, start_day=start_day, targets=targets,
                                    duration=duration, repetitions=-1,
+                                   drug_ineligibility_duration=14,
                                    nodes={'Node_List': hscov['nodes'], "class": "NodeSetNodeList"})
 
 class add_seasonal_HS_by_NP_fn:
@@ -332,7 +351,7 @@ class add_seasonal_HS_by_NP_fn:
             sev_cov = 0.8
 
             for start_month in range(len(self.scale_by_month)):
-                start_day = self.date + np.cumsum(self.days_in_month)[start_month]
+                start_day = int(self.date + np.cumsum(self.days_in_month)[start_month])
                 duration = self.days_in_month[start_month + 1]
                 scale = self.scale_by_month[start_month]
                 targets = [
@@ -364,6 +383,25 @@ class add_itn_fn:
         coverage_by_age = {'min': 0, 'max': 200, 'coverage': self.coverage}
         add_ITN(cb, start=self.start, coverage_by_ages=[coverage_by_age], waning=self.waning, nodeIDs=self.nodeIDs)
 
+class add_itn_age_season_fn:
+    def __init__(self, start=0, coverage=1, age_dep=[], seasonal_dep={}, discard={}):
+        self.start = start
+        self.coverage = coverage
+        self.age_dep = age_dep
+        self.seasonal_dep = seasonal_dep
+        self.discard = discard
+
+    def __call__(self, cb):
+        return self.fn(cb)
+
+    def fn(self, cb):
+        add_ITN_age_season(cb, start=self.start,
+                           age_dep=self.age_dep,
+                           coverage_all=self.coverage,
+                           as_birth=False,
+                           seasonal_dep=self.seasonal_dep,
+                           discard=self.discard)
+
 
 # ITNs from nodeid-coverage specified in json
 class add_itn_by_node_id_fn:
@@ -378,17 +416,16 @@ class add_itn_by_node_id_fn:
         return self.fn(cb)
 
     def fn(self, cb) :
-        birth_durations = [self.itn_dates[x + 1] - self.itn_dates[x] for x in range(len(self.itn_dates)-1)]
-        itn_distr = zip(self.itn_dates[:-1], self.itn_fracs)
+        birth_durations = [self.itn_dates[x] - self.itn_dates[x + 1] for x in range(len(self.itn_dates) - 1)]
+        # itn_distr = zip(self.itn_dates[:-1], self.itn_fracs)
         with open(self.reffname) as fin :
             cov = json.loads(fin.read())
         for itncov in cov[self.channel] :
             if itncov['coverage'] > 0 :
-                for i, (itn_date, itn_frac) in enumerate(itn_distr) :
-                    c = itncov['coverage']*itn_frac
-                    if i < len(self.itn_fracs)-1 :
-                        c /= np.prod([1 - x*itncov['coverage'] for x in self.itn_fracs[i+1:]])
-                    # coverage = { 'min' : 0, 'max' : 200, 'coverage' : c}
+                for i, (itn_date, itn_frac) in enumerate(zip(self.itn_dates, self.itn_fracs)):
+                    c = itncov['coverage'] * itn_frac
+                    if i < len(self.itn_fracs) - 1:
+                        c /= np.prod([1 - x * itncov['coverage'] for x in self.itn_fracs[i + 1:]])
                     add_ITN(cb, itn_date,
                             coverage_by_ages=[{'min': 0, 'max': 5, 'coverage': min([1, c*1.3])},
                                               {'birth': 1, 'coverage': min([1,c*1.3]), 'duration': max([-1, birth_durations[i]])},
@@ -396,6 +433,21 @@ class add_itn_by_node_id_fn:
                                               {'min': 20, 'max': 100, 'coverage': min([1, c*1.3])}],
                             waning=self.waning, nodeIDs=itncov['nodes'])
 
+
+# IRS
+class add_irs_fn:
+    def __init__(self, start=0, coverage=1, waning=None, nodeIDs=None):
+        self.start = start
+        self.coverage = coverage
+        self.waning = waning or {}
+        self.nodeIDs = nodeIDs or []
+
+    def __call__(self, cb):
+        return self.fn(cb)
+
+    def fn(self, cb):
+        coverage_by_age = {'min': 0, 'max': 200, 'coverage': self.coverage}
+        add_IRS(cb, start=self.start, coverage_by_ages=[coverage_by_age], waning=self.waning, nodeIDs=self.nodeIDs)
 
 # IRS from nodeid-coverage specified in json
 class add_node_level_irs_by_node_id_fn:
@@ -435,9 +487,9 @@ class add_node_level_irs_by_node_id_fn:
 # drug campaign
 class add_drug_campaign_fn:
     def __init__(self, campaign_type, drug_code, start_days, coverage=1.0, repetitions=3,
-                         interval=60, diagnostic_threshold=40,
+                         interval=60, diagnostic_threshold=40, diagnostic_type='TRUE_PARASITE_DENSITY',
                          snowballs=0, delay=0, nodes=None, target_group='Everyone',
-                 node_property_restrictions=[]):
+                 node_property_restrictions=[], drug_ineligibility_duration=0):
         self.campaign_type = campaign_type
         self.drug_code = drug_code
         self.start_days = start_days
@@ -445,17 +497,21 @@ class add_drug_campaign_fn:
         self.repetitions = repetitions
         self.interval = interval
         self.diagnostic_threshold = diagnostic_threshold
+        self.diagnostic_type = diagnostic_type
         self.snowballs = snowballs
         self.delay = delay
         self.nodes = nodes or []
         self.target_group = target_group
         self.NP_restrictions = node_property_restrictions
+        self.drug_ineligibility_duration = drug_ineligibility_duration
 
     def __call__(self, cb):
         from malaria.interventions.malaria_drug_campaigns import add_drug_campaign
         return add_drug_campaign(cb, self.campaign_type, self.drug_code, start_days=self.start_days,
                                  coverage=self.coverage, repetitions=self.repetitions, interval=self.interval,
                                  diagnostic_threshold=self.diagnostic_threshold,
+                                 diagnostic_type=self.diagnostic_type,
+                                 drug_ineligibility_duration=self.drug_ineligibility_duration,
                                  snowballs=self.snowballs, treatment_delay=self.delay, nodes=self.nodes,
                                  target_group=self.target_group, node_property_restrictions=self.NP_restrictions)
 

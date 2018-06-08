@@ -41,7 +41,8 @@ def ivermectin_config_by_duration(drug_code=None):
     return cfg
 
 
-def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_condition_list=[], listening_duration=-1):
+def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_condition_list=[],
+                   listening_duration=-1, nodeids=[], target_residents_only=1, ind_property_restrictions=[]):
     """
     Add an ivermectin event to the config_builder passed.
 
@@ -59,28 +60,36 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
     intervention_cfg = {"Intervention_List": cfg,
                         "class": "MultiInterventionDistributor"}
 
+    if nodeids :
+        node_cfg = {"class": "NodeSetNodeList",
+                    'Node_List' : nodeids}
+    else :
+        node_cfg = {"class": "NodeSetAll"}
+
     for start_day in start_days:
         IVM_event = {"class": "CampaignEvent",
                      "Start_Day": start_day,
                      "Event_Coordinator_Config": {
                         "class": "StandardInterventionDistributionEventCoordinator"
-
                     },
-                     "Nodeset_Config": {"class": "NodeSetAll"}}
+                     "Nodeset_Config": node_cfg}
 
         if trigger_condition_list:
             IVM_event['Event_Coordinator_Config']['Intervention_Config'] = {
                     "class" : "NodeLevelHealthTriggeredIV",
                     "Trigger_Condition_List": trigger_condition_list,
-                    "Target_Residents_Only": 1,
+                    "Target_Residents_Only": target_residents_only,
+                    "Property_Restrictions_Within_Node": ind_property_restrictions,
                     "Duration": listening_duration,
                     "Demographic_Coverage": coverage,
                     "Actual_IndividualIntervention_Config" : intervention_cfg
                 }
+
         else:
             IVM_event['Event_Coordinator_Config'].update( {
                 "Target_Residents_Only": 1,
                 "Demographic_Coverage": coverage,
+                "Property_Restrictions_Within_Node": ind_property_restrictions,
                 'Intervention_Config' : intervention_cfg
             })
 
