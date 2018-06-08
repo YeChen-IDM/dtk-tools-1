@@ -1,4 +1,4 @@
-from simtools import SetupParser
+from simtools.SetupParser import SetupParser
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.ModBuilder import SingleSimulationBuilder
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
