@@ -162,14 +162,16 @@ class SerializationKsTest(object):
                 ref_path=self.baseline_charts[original_report_name],
                 test_path=test_report_path,
                 channel_list=channels_to_test)
-            new_tags = {}
+            new_tags = ts_reloaded.tags
             for c in channels_to_test:
                 stat, p_val = KsTester.test_channel(c)
                 tag_name = c.replace(' ','_')
                 tag_name = tag_name.replace(':','_')
                 tag_name = "step_{0}_{1}_{2}".format(ts_string, tag_name, 'PVal')
                 new_tags[tag_name] = p_val
-            self.exp_manager.merge_tags(new_tags)
+            ts_reloaded.set_tags(new_tags)
+            ts_reloaded.description = "<img src=\"https://blog.arpinphilately.com/wp-content/uploads/2014-10-23_1428-128x128.png\" >"
+            ts_reloaded.save()
         # get the reloaded sim
         # # for c in channels_to_test
 
