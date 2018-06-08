@@ -91,7 +91,9 @@ class BaseCalibrationAnalyzer(BaseComparisonAnalyzer):
 
         """
 
-        samples = sorted([str(e) for e in df.columns.levels[0]])
+        samples = [str(e) for e in df.columns.levels[0]]
+        s = sorted([int(x) for x in samples if 'ref' not in x])
+        samples = [str(x) for x in s] + ['ref']
         output = {'samples': [df[int(sample)].reset_index().to_dict(orient='list') for sample in samples if sample != 'ref']}
         if 'ref' in samples:
             output['ref'] = df['ref'].reset_index().to_dict(orient='list')

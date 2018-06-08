@@ -1,4 +1,5 @@
 from .CustomReport import BaseReport
+from .CustomReport import BaseVectorStatsReport
 
 
 def add_habitat_report(cb):
@@ -6,8 +7,10 @@ def add_habitat_report(cb):
 
 
 def add_vector_stats_report(cb):
-    cb.add_reports(BaseReport(type="ReportVectorStats"))
+    cb.add_reports(BaseVectorStatsReport(type="ReportVectorStats"))
 
+def add_vector_stats_malaria_report(cb):
+    cb.add_reports(BaseVectorStatsReport(type="ReportVectorStatsMalaria"))
 
 def add_vector_migration_report(cb):
     cb.add_reports(BaseReport(type="ReportVectorMigration"))

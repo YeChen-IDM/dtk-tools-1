@@ -29,7 +29,7 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
             event_to_send_out = random.randrange(100000)
             for x in range(repetitions):
                 # create a trigger for each of the delays.
-                triggered_campaign_delay_event(config_builder, start_day, nodesfrom,
+                triggered_campaign_delay_event(cb, start_day, nodesfrom,
                                                triggered_campaign_delay + x * tsteps_btwn,
                                                trigger_condition_list,
                                                listening_duration, event_to_send_out)

@@ -39,7 +39,8 @@ class BaseReport(object):
 
 class BaseVectorStatsReport(BaseReport):
 
-    dlls = {'ReportVectorStats': 'libvectorstats.dll'}
+    dlls = {'ReportVectorStats': 'libvectorstats.dll',
+            'ReportVectorStatsMalaria': 'libvectorstatsmalaria.dll'}
 
     def __init__(self,
                  stratify_by_species=1,
