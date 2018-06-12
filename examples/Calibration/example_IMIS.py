@@ -10,7 +10,6 @@ from calibtool.plotters.LikelihoodPlotter import LikelihoodPlotter
 from calibtool.plotters.SiteDataPlotter import SiteDataPlotter
 from simtools.SetupParser import SetupParser
 try:
-    from malaria.study_sites.RafinMarkeAgeSeasonCalibSite import RafinMarkeAgeSeasonCalibSite
     from malaria.study_sites.DielmoCalibSite import DielmoCalibSite
 except ImportError as e:
     message = "The malaria package needs to be installed before running this example...\n" \
@@ -23,8 +22,7 @@ SetupParser.default_block = 'HPC'
 cb = DTKConfigBuilder.from_defaults('MALARIA_SIM')
 
 sites = [
-    RafinMarkeAgeSeasonCalibSite(),
-    DielmoCalibSite(),
+    DielmoCalibSite()
 ]
 
 prior = MultiVariatePrior.by_range(
