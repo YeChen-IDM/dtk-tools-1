@@ -15,25 +15,21 @@ configure_site(cb, 'Namawala')
 
 # event counter can help you keep track of events that are happening
 add_event_counter_report(cb, ["HappyBirthday", "Party", "PartyHarder", "IRS_Blackout_Event_Trigger"])
-# adding an incidence counter, which starts on day 20, and counts "Happy Birthday" events for 30 days.
-# the default thresholds are 10 and 100 event counts and default events being sent out when the threshold is reached are Action1 and Action2
-add_incidence_counter(cb,
-                          start_day=20,
+# adding an incidence counter, which starts on day 20, and counts "Happy Birthday" events for 30 days. the default
+# thresholds are 10 and 100 event counts and default events being sent out when the threshold is reached are Action1 and Action2
+add_incidence_counter(cb, start_day=20,
                           count_duration=30,
                           count_triggers=['HappyBirthday'],
                           threshold_type='COUNT', #this is the default, we can also look at % per eligible population
                           thresholds=[13, 254],
-                          triggered_events=['Party', 'PartyHarder']
-                          )
+                          triggered_events=['Party', 'PartyHarder'])
 
 
-add_incidence_counter(cb,
-                          start_day=50,
+add_incidence_counter(cb, start_day=50,
                           count_duration=30,
                           count_triggers=['HappyBirthday'],
                           thresholds=[1, 9],
-                          triggered_events=['Party', 'PartyHarder']
-                          )
+                          triggered_events=['Party', 'PartyHarder'])
 
 # adding an intervention node IRS intervention that starts listening for Action1 trigger and when/if it hears it,
 # listening_duration of -1 indicates that this intervention will listen forever and perform the tasks whenever Action1 is sent out
@@ -46,17 +42,15 @@ add_node_IRS(cb, 60, triggered_campaign_delay=1000, trigger_condition_list=["Par
 # listens for 15 days and, as the result, hears nothing and does nothing.
 add_node_IRS(cb, 60, trigger_condition_list=["PartyHarder"], listening_duration=15)
 
-
-
 # run_sim_args is what the `dtk run` command will look for
-run_sim_args =  {
+run_sim_args = {
     'exp_name': 'Example Event Counter and Triggered and Delayed IRS',
     'config_builder': cb
 }
 
 
-
-# If you prefer running with `python example_example_event_count_and_triggered_events.py`, you will need the following block
+# If you prefer running with `python example_example_event_count_and_triggered_events.py`, you will need the
+# following block
 if __name__ == "__main__":
     SetupParser.init()
     exp_manager = ExperimentManagerFactory.init()
