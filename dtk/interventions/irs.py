@@ -12,7 +12,7 @@ irs_housingmod = {"class": "IRSHousingModification",
 import copy, random
 from dtk.interventions.triggered_campaign_delay_event import triggered_campaign_delay_event
 
-irs_housingmod = { "class": "IRSHousingModification",
+irs_housingmod_master = { "class": "IRSHousingModification",
                 "Killing_Config": {
                     "Initial_Effect": 0.5,
                     "Decay_Time_Constant": 90,
@@ -73,6 +73,8 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
         "class": "BroadcastEvent",
         "Broadcast_Event": "Received_IRS"
     }
+
+    irs_housingmod = copy.deepcopy(irs_housingmod_master)
 
     irs_housingmod['Killing_Config']['Initial_Effect'] = initial_killing
     irs_housingmod['Killing_Config']['Decay_Time_Constant'] = duration

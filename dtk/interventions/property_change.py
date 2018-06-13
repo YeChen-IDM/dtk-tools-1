@@ -115,7 +115,8 @@ def change_individual_property_at_age(cb, target_property_name, target_property_
 
 def change_individual_property(cb, target_property_name, target_property_value, target='Everyone', start_day=0,
                                coverage=1, daily_prob=1, max_duration=0, revert=0, nodeIDs=[],
-                               node_property_restrictions=[], ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1
+                               node_property_restrictions=[], ind_property_restrictions=[], triggered_campaign_delay=0,
+                               trigger_condition_list=[], listening_duration=-1
                                ):
 
     node_cfg = {'class': 'NodeSetAll'}
