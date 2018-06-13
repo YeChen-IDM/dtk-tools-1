@@ -376,23 +376,6 @@ def file_size(bytes, system=labels):
             suffix = multiple
     return str(amount) + suffix
 
-def trim_leading_file_path(file_path, call_depth=1):
-    """
-    Removes the leading (left/top-most) path component of the provided file_path
-    :param file_path: the file path to remote a compenet from
-    :param call_depth: internally used param only; used for correct return when original file_path has only 1 component
-    :return: the reconstructed leading-component trimmed file path
-    """
-    fp, part = os.path.split(file_path)
-    if len(fp) == 0: # no leading file path components
-        if call_depth == 1: # first pass, keep the one component
-            return file_path
-        else:
-            return '' # ignore last part
-    else:
-        reconstructed_path = trim_leading_file_path(fp, call_depth=call_depth+1)
-        return os.path.join(reconstructed_path, part)
-
 def files_in_dir(dir, filters=None):
     """
     Discovers and returns all files in the provided directory matching the provided glob filters. Returned
@@ -408,8 +391,8 @@ def files_in_dir(dir, filters=None):
     for root, dirnames, filenames in os.walk(dir):
         for filter in filters:
             for filename in fnmatch.filter(filenames, filter):
-                trimmed_root = trim_leading_file_path(root)
-                discovered_files.append(os.path.join(trimmed_root, filename))
+                trimmed = os.path.join(root, filename).replace("{}{}".format(dir, os.sep), "")
+                discovered_files.append(trimmed)
     return discovered_files
 
 def timestamp(time=None):
