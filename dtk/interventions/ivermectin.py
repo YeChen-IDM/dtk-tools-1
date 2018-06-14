@@ -87,7 +87,7 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
 
         else:
             IVM_event['Event_Coordinator_Config'].update( {
-                "Target_Residents_Only": 1,
+                "Target_Residents_Only": target_residents_only,
                 "Demographic_Coverage": coverage,
                 "Property_Restrictions_Within_Node": ind_property_restrictions,
                 'Intervention_Config' : intervention_cfg
