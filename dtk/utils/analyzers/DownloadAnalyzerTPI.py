@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 
 from dtk.utils.analyzers.BaseShelfAnalyzer import BaseShelfAnalyzer
@@ -52,15 +53,13 @@ class DownloadAnalyzerTPI(BaseShelfAnalyzer):
             # sorting all downloaded results by requested filename
             subdirectory, _ = os.path.splitext(os.path.basename(source_filename))
             file_path = os.path.join(output_dir, subdirectory, os.path.basename(dest_filename))
-            try:
-                os.makedirs(os.path.dirname(file_path)) # just in case!
-            except Exception:
-                pass
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
             with open(file_path, 'wb') as outfile:
-                try:
-                    outfile.write(parser.raw_data[source_filename])
-                except Exception:
-                    pass
+                if isinstance(parser.raw_data[source_filename], BytesIO):
+                    outfile.write(parser.raw_data[source_filename].read())
+                else:
+                    json.dump(parser.raw_data[filename], outfile)
 
         # # now update the shelf/cache
         self.update_shelf(key=parser.sim_id, value=self.DONE)
