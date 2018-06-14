@@ -1,7 +1,5 @@
-__all__ = ['calibration',
-           'generic',
+__all__ = ['generic',
            'interventions',
-           'malaria',
            'tools',
            'utils',
            'vector']

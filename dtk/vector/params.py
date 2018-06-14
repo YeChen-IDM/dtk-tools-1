@@ -1,6 +1,3 @@
-import copy
-
-
 # --------------------------------------------------------------
 # Cohort model parameters
 # --------------------------------------------------------------
@@ -9,7 +6,7 @@ from dtk.vector.species import set_params_by_species
 
 disease_params = {
     "Incubation_Period_Distribution": "FIXED_DURATION",
-    "Base_Incubation_Period": 25, ###
+    "Base_Incubation_Period": 25,  ###
 
     "Infectious_Period_Distribution": "EXPONENTIAL_DURATION",
     "Base_Infectious_Period": 180,
@@ -17,7 +14,12 @@ disease_params = {
 
     "Enable_Superinfection": 1,
     "Max_Individual_Infections": 5,
-    "Infection_Updates_Per_Timestep": 1 ###
+    "Infection_Updates_Per_Timestep": 1,  ###
+
+    "Post_Infection_Acquisition_Multiplier": 1,
+    "Post_Infection_Mortality_Multiplier": 1,
+    "Post_Infection_Transmission_Multiplier": 1
+
 }
 
 cohort_params = {
@@ -30,7 +32,7 @@ cohort_params = {
     "Enable_Vector_Migration_Human": 0,
     "Enable_Vector_Migration_Local": 0,
     "Enable_Vector_Migration_Wind": 0,
-    "Enable_Temperature_Dependent_Feeding_Cycle":0,
+    "Enable_Temperature_Dependent_Feeding_Cycle": 0,
     "Enable_Vector_Migration_Regional": 0,
     "x_Vector_Migration_Local": 0,
     "x_Vector_Migration_Regional": 0,
@@ -61,7 +63,7 @@ cohort_params = {
     "Enable_Drought_Egg_Hatch_Delay": 0,
     "Temperature_Dependent_Feeding_Cycle": "NO_TEMPERATURE_DEPENDENCE",
 
-    "Genome_Markers": [ ]
+    "Genome_Markers": []
 }
 
 params = cohort_params.copy()
