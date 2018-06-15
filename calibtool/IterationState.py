@@ -243,9 +243,17 @@ class IterationState:
         if not self.exp_manager:
             self.exp_manager = ExperimentManagerFactory.from_experiment(self.experiment_id)
 
-        analyzerManager = AnalyzeManager(exp_list=self.exp_manager.experiment,
-                                         analyzers=self.analyzer_list,
-                                         working_dir=self.iteration_directory)
+        from simtools.Analysis.BaseAnalyzers.BaseAnalyzer import BaseAnalyzer
+        from simtools.Analysis.AnalyzeManager import AnalyzeManager as am
+        if all(isinstance(a, BaseAnalyzer) for a in self.analyzer_list):
+            analyzerManager = am(exp_list=self.exp_manager.experiment,
+                                 analyzers=self.analyzer_list,
+                                 working_dir=self.iteration_directory,
+                                 verbose=True)
+        else:
+            analyzerManager = AnalyzeManager(exp_list=self.exp_manager.experiment,
+                                             analyzers=self.analyzer_list,
+                                             working_dir=self.iteration_directory)
         analyzerManager.analyze()
 
         # Ask the analyzers to cache themselves
