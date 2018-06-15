@@ -33,7 +33,7 @@ class AnalyzeManager(CacheEnabled):
         self.ignored_simulations = {}
         try:
             with SetupParser.TemporarySetup() as sp:
--                self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
+                self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
         except:
             self.max_threads = min(os.cpu_count(), 16)
         self.verbose = verbose
