@@ -1,33 +1,55 @@
 import shutil
 import os
-from dtk.generic.serialization import load_Serialized_Population
-from dtk.utils.analyzers.DownloadAnalyzer import DownloadAnalyzer
+from dtk.generic.serialization import load_Serialized_Population, add_SerializationTimesteps
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
+from dtk.vector.study_sites import configure_site
+from simtools.Analysis.AnalyzeManager import AnalyzeManager
+from simtools.Analysis.BaseAnalyzers import DownloadAnalyzer
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
 
 SetupParser.default_block = 'HPC'
+timestep_to_reload=150
 
-cb = DTKConfigBuilder.from_defaults('VECTOR_SIM')
-state_file = 'cleared-state-25550.dtk'
-temp_path = 'tempdl'
-source_simulation = '6ce475d8-15aa-e711-9414-f0921c16b9e5'
 
 if __name__ == "__main__":
+    # Initialize the SetupParser
+    SetupParser.init()
+
+    # Create a configbuilder for the simulation to serialize
+    cb_serializing = DTKConfigBuilder.from_defaults('VECTOR_SIM')
+    configure_site(cb_serializing, 'Namawala')
+    cb_serializing.set_param("Simulation_Duration", 365)
+
+    # Create an experiment manager
+    exp_manager = ExperimentManagerFactory.init()
+
+    # Set the serialization
+    add_SerializationTimesteps(config_builder=cb_serializing, timesteps=[timestep_to_reload], end_at_final=True)
+
+    s_pop_filename = "state-{0:05d}.dtk".format(timestep_to_reload)
+    # Run the simulation
+    exp_manager.run_simulations(config_builder=cb_serializing,
+                                exp_name="Sample serialization test")
+
+    exp_manager.wait_for_finished(verbose=True)
+
     # Download the state file
-    da = DownloadAnalyzer(filenames=["output\\{}".format(state_file)], output_path=temp_path)
-    am = AnalyzeManager(sim_list=[source_simulation], analyzers=[da])
+    simulation = exp_manager.experiment.simulations[0]
+    da = DownloadAnalyzer(filenames=["output\\{}".format(s_pop_filename)], output_path="temp")
+    am = AnalyzeManager(sim_list=[simulation], analyzers=[da])
     am.analyze()
 
     # Add the state file
-    cb.experiment_files.add_file(os.path.join(temp_path, source_simulation, state_file))
-    load_Serialized_Population(cb, 'Assets', [state_file])
+    cb_reload = DTKConfigBuilder.from_defaults('VECTOR_SIM')
+    configure_site(cb_reload, 'Namawala')
+    cb_reload.set_param("Simulation_Duration", 365)
+    cb_reload.experiment_files.add_file(os.path.join("temp", simulation.id, s_pop_filename))
+
+    load_Serialized_Population(cb_reload, 'Assets', [s_pop_filename])
 
     # Run !
-    SetupParser.init()
-    exp_manager = ExperimentManagerFactory.from_cb(cb)
-    exp_manager.run_simulations(exp_name='test serialization')
+    exp_manager.run_simulations(config_builder=cb_reload)
 
     # Cleanup temp directory
-    shutil.rmtree(temp_path)
+    shutil.rmtree("temp")
