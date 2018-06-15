@@ -31,9 +31,11 @@ class AnalyzeManager(CacheEnabled):
         self.experiments = set()
         self.simulations = {}
         self.ignored_simulations = {}
-
-        with SetupParser.TemporarySetup() as sp:
-            self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
+        try:
+            with SetupParser.TemporarySetup() as sp:
+-                self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
+        except:
+            self.max_threads = min(os.cpu_count(), 16)
         self.verbose = verbose
         self.force_analyze = force_analyze
         self.working_dir = working_dir or os.getcwd()
