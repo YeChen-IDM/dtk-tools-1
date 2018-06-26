@@ -5,6 +5,10 @@ from calibtool.resamplers.BaseResampler import BaseResampler
 from calibtool.resamplers.CalibrationPoint import CalibrationPoint
 from calibtool.algorithms.FisherInfMatrix import FisherInfMatrix, plot_cov_ellipse, trunc_gauss
 
+import seaborn as sns
+import matplotlib.pyplot as plt
+import sklearn
+from sklearn.decomposition import PCA
 
 class CramerRaoResampler(BaseResampler):
     def __init__(self, **kwargs):
@@ -73,6 +77,15 @@ class CramerRaoResampler(BaseResampler):
         fisher_inf_matrix = FisherInfMatrix(center_point_as_list, likelihood_df, names)
         covariance = np.linalg.inv(fisher_inf_matrix)
 
+        ## the 2 principal components using PCA
+        scaled_covariance = np.dot(np.dot(np.asmatrix(np.diag(1/(np.array(maximums)-np.array(minimums)))), covariance), np.asmatrix(np.diag(1/(np.array(maximums)-np.array(minimums)))))
+        pca = PCA(n_components=2)
+        pca.fit(scaled_covariance)
+        print('covariance (scaled): \n', scaled_covariance)
+        print('principal axes: \n', pca.components_)
+        print('variance of first 2 principal components: \n', pca.explained_variance_)
+
+
         resampled_points_list = trunc_gauss(center_point_as_list, covariance, minimums, maximums,
                                             **self.resample_kwargs)
 
@@ -99,6 +112,19 @@ class CramerRaoResampler(BaseResampler):
         points = CalibrationPoints(resampled_points)
         points.write(filename)
 
+        # pp = sns.pairplot(resampled_points_df[original_column_names], size=1.8, aspect=1.8,
+        #              plot_kws=dict(edgecolor="k", linewidth=0.5), diag_kind="kde", diag_kws=dict(shade=True))
+        #
+        # fig = pp.fig
+        # fig.subplots_adjust(top=0.93, wspace=0.3)
+        # fig.savefig(os.path.join(self.output_location, 'samples_pairs.pdf'))
+        # fig.clf()
+        # plt.close(fig)
+        # del pp, fig
+
+
+
+
         # ck4, Verification, for review
         # J is the same as K, except for an additional indexing column in J
         # D is the same as E except for the LL column and end-of-line whitespace chars
@@ -114,15 +140,41 @@ class CramerRaoResampler(BaseResampler):
     def post_analysis(self, resampled_points, analyzer_results):
         super().post_analysis(resampled_points, analyzer_results)
         output_filename = os.path.join(self.output_location, 'cr-resampled-points-ll.csv')
-        pd.DataFrame([rp.to_value_dict(include_likelihood=True) for rp in resampled_points]).to_csv(output_filename)
+        resampled_points_ll_df = pd.DataFrame([rp.to_value_dict(include_likelihood=True) for rp in resampled_points])
+        resampled_points_ll_df.to_csv(output_filename)
 
-        # # plotting
-        # df_point = center_point.to_dataframe()
-        # center = df_point['Value'].values  # nparray
-        # Xmin = df_point['Min'].values  # nparray
-        # Xmax = df_point['Max'].values  # nparray
-        # self.plot(center, Xmin, Xmax, df_perturbed_points, df_perturbed_points_ll)
+        """ plotting """
+        resampled_points_dynamic = pd.DataFrame([rp.to_value_dict(parameter_type=CalibrationPoint.DYNAMIC, include_likelihood=True) for rp in resampled_points])
 
+
+        pp = sns.pairplot(resampled_points_dynamic[resampled_points_dynamic.columns[0:-1]], size=1.8, aspect=1.8,
+                     plot_kws=dict(edgecolor="k", linewidth=0.5), diag_kind="kde", diag_kws=dict(shade=True))
+
+        fig = pp.fig
+        fig.subplots_adjust(top=0.93, wspace=0.3)
+        fig.savefig(os.path.join(self.output_location, 'samples_pairs.pdf'))
+        fig.clf()
+        plt.close(fig)
+        del pp, fig
+
+        ## just to test plot the first two dynamic parameters
+        fig, ax = plt.subplots()
+        x = resampled_points_dynamic[resampled_points_dynamic.columns[0]]
+        y = resampled_points_dynamic[resampled_points_dynamic.columns[1]]
+        colors = resampled_points_dynamic[resampled_points_dynamic.columns[-1]]
+        plt.scatter(x, y, c=colors, alpha=0.3, cmap='viridis')
+        plt.xlabel(resampled_points_dynamic.columns.values[0])
+        plt.ylabel(resampled_points_dynamic.columns.values[1])
+        plt.title('log-likelihood of the samples')
+        plt.xlim([rp._filter_parameters(parameter_type=CalibrationPoint.DYNAMIC) for rp in resampled_points][0][0].min,
+                 [rp._filter_parameters(parameter_type=CalibrationPoint.DYNAMIC) for rp in resampled_points][0][0].max)
+        plt.ylim([rp._filter_parameters(parameter_type=CalibrationPoint.DYNAMIC) for rp in resampled_points][0][1].min,
+                 [rp._filter_parameters(parameter_type=CalibrationPoint.DYNAMIC) for rp in resampled_points][0][1].max)
+        plt.colorbar()
+        plt.savefig(os.path.join(self.output_location, 'samples_pairs_LL.pdf'))
+        fig.clf()
+        plt.close(fig)
+        del ax, fig
 
     def plot(self, center, Xmin, Xmax, df_perturbed_points, ll):
         """

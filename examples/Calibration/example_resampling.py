@@ -157,17 +157,17 @@ optimtool = OptimTool(params,
     constrain_sample,   # <-- WILL NOT BE SAVED IN ITERATION STATE
     mu_r = r,           # <-- radius for numerical derivatve.  CAREFUL not to go too small with integer parameters
     sigma_r = r/10.,    # <-- stdev of radius
-    center_repeats = 2, # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
-    samples_per_iteration = 4  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
+    center_repeats = 1, # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
+    samples_per_iteration = 2  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
 )
 
-calib_manager = CalibManager(name='ExampleOptimization_cramer',    # <-- Please customize this name
+calib_manager = CalibManager(name='ExampleOptimization_cramer_test',    # <-- Please customize this name
                              config_builder=cb,
                              map_sample_to_model_input_fn=map_sample_to_model_input,
                              sites=sites,
                              next_point=optimtool,
-                             sim_runs_per_param_set=3,  # <-- Replicates
-                             max_iterations=3,          # <-- Iterations
+                             sim_runs_per_param_set=2,  # <-- Replicates
+                             max_iterations=2,          # <-- Iterations
                              plotters=plotters)
 
 # *******************************************************************
@@ -182,11 +182,11 @@ resample_steps = [
     # The number of cross-realization (N) should be set depending on the uncertainty
     # of the model at the given final point (θ*).
     # To choose N, you can use Chebyshev's inequality.
-    RandomPerturbationResampler(M=10,N=8),
+    RandomPerturbationResampler(M=10,N=10),
     # We need to determine the number of sample point (num_of_pts).
     # The algorithm gives num_of_pts samples from a multi-variant gaussian with mean=θ*
     # and covariance matrix=Σ along with their corresponding log-likelihood values.
-    CramerRaoResampler(num_of_pts=10)
+    CramerRaoResampler(num_of_pts=200)
 ]
 
 # REQUIRED variable name: run_calib_args . Required key: 'resamplers'
