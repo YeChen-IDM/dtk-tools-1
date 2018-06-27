@@ -1,68 +1,39 @@
+def add_ATSB(cb, start=0, coverage=0.15, killing_cfg={}, duration=180, duration_std_dev=14,
+             repetitions=1, interval=365,
+             nodeIDs=[], node_property_restrictions=[]):
 
-def add_ATSB_individual_vector(config_builder, start, initial_killing=0.15, duration=180, cost=0, nodeIDs=[]):
+    for key, val in killing_cfg.items() :
+        val['Initial_Effect'] *= coverage
 
-    atsb_config = { 
-                    "Cost_To_Consumer": cost, 
-                    "Killing_Config": {
-                        "Decay_Time_Constant": duration, 
-                        "Initial_Effect": initial_killing, 
-                        "class": "WaningEffectExponential"
-                    }, 
-                    "class": "SugarTrap"
-                }
-
-    ATSB_event = {   "Event_Coordinator_Config": {
-                        "Intervention_Config": atsb_config, 
-                        "class": "NodeEventCoordinator"
-                    }, 
-                    "Nodeset_Config": {
-                        "class": "NodeSetAll"
-                    }, 
-                    "Start_Day": start, 
-                    "Event_Name": "Attractive Toxic Sugar Bait",
-                    "class": "CampaignEvent"
-                }
-
-    if nodeIDs:
-        ATSB_event["Nodeset_Config"] = { "class": "NodeSetNodeList", "Node_List": nodeIDs }
-
-    config_builder.add_event(ATSB_event)
-
-
-def add_ATSB_cohort_vector(config_builder, start, coverage=0.15, initial_killing=1.0, duration=180, cost=0, nodeIDs=[]):
-
-    atsb_config = {  "Reduction_Config": {
-                        "Decay_Time_Constant": 365,
-                        "Initial_Effect": 0,
-                        "class": "WaningEffectBox"
-                    },
-                    "Habitat_Target": "ALL_HABITATS",
-                    "Cost_To_Consumer": cost,
-                    "Killing_Config": {
-                        "Decay_Time_Constant": duration,
-                        "Initial_Effect": initial_killing*coverage,
-                        "class": "WaningEffectExponential"
-                    },
-                    "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
-                    "class": "SpaceSpraying"
-                }
+    atsb_config = {
+        "class": "SugarTrap",
+        "Cost_To_Consumer": 3.75,
+        "Killing_Config": killing_cfg,
+        "Expiration_Distribution_Type" : "GAUSSIAN_DURATION",
+        "Expiration_Period_Mean" : duration,
+        "Expiration_Period_Std_Dev" : duration_std_dev
+    }
 
     ATSB_event = {  "Event_Coordinator_Config": {
                         "Intervention_Config": atsb_config,
-                        "class": "NodeEventCoordinator"
+                        "class": "StandardInterventionDistributionEventCoordinator"
                     },
                     "Nodeset_Config": {
                         "class": "NodeSetAll"
                     },
                     "Start_Day": start,
-                    "Event_Name": "Attractive Toxic Sugar Bait",
+                    "Intervention_Name": "Attractive Toxic Sugar Bait",
+                    "Demographic_Coverage" : 1,
+                    "Number_Repetitions": repetitions,
+                    "Timesteps_Between_Repetitions": interval,
+                    "Node_Property_Restrictions": node_property_restrictions,
                     "class": "CampaignEvent"
                 }
 
     if nodeIDs:
         ATSB_event["Nodeset_Config"] = { "class": "NodeSetNodeList", "Node_List": nodeIDs }
 
-    config_builder.add_event(ATSB_event)
+    cb.add_event(ATSB_event)
 
 
 def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initial_blocking=0.95, duration=0.3,
