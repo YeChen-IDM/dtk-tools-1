@@ -1,0 +1,9 @@
+{
+  "SimpleVaccine": {
+    "Waning_Config": {
+      "description": "The configuration of Ivermectin killing efficacy and waning over time.",
+      "type": "idmType:WaningEffect"
+    },
+    "class": "SimpleVaccine"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "idmType:IncidenceCounter": {
+    "Count_Events_For_Num_Timesteps": {
+      "default": 1,
+      "description": "TBD",
+      "max": 2147480000.0,
+      "min": 1,
+      "type": "integer"
+    },
+    "Demographic_Coverage": {
+      "default": 1,
+      "description": "The fraction of individuals in the target demographic that will receive this intervention.",
+      "max": 1,
+      "min": 0,
+      "type": "float"
+    },
+    "Node_Property_Restrictions": {
+      "description": "TBD",
+      "type": "idmType:NodePropertyRestrictions"
+    },
+    "Property_Restrictions": {
+      "default": [],
+      "description": "A list of the IndividualProperty key:value pairs, as defined in the demographics file, that individuals must have to be targeted by this intervention.",
+      "type": "Dynamic String Set",
+      "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
+    },
+    "Property_Restrictions_Within_Node": {
+      "description": "A list of the IndividualProperty key:value pairs, as defined in the demographics file, that individuals must have to be targeted by this intervention.",
+      "type": "idmType:PropertyRestrictions"
+    },
+    "Target_Age_Max": {
+      "default": 3.40282e+38,
+      "depends-on": {
+        "Target_Demographic": "ExplicitAgeRanges,ExplicitAgeRangesAndGender"
+      },
+      "description": "The upper end of ages targeted for an intervention, in years.",
+      "max": 3.40282e+38,
+      "min": 0,
+      "type": "float"
+    },
+    "Target_Age_Min": {
+      "default": 0,
+      "depends-on": {
+        "Target_Demographic": "ExplicitAgeRanges,ExplicitAgeRangesAndGender"
+      },
+      "description": "The lower end of ages targeted for an intervention, in years.",
+      "max": 3.40282e+38,
+      "min": 0,
+      "type": "float"
+    },
+    "Target_Demographic": {
+      "default": "Everyone",
+      "description": "The target demographic group.",
+      "enum": [
+        "Everyone",
+        "ExplicitAgeRanges",
+        "ExplicitAgeRangesAndGender",
+        "ExplicitGender",
+        "PossibleMothers",
+        "ArrivingAirTravellers",
+        "DepartingAirTravellers",
+        "ArrivingRoadTravellers",
+        "DepartingRoadTravellers",
+        "AllArrivingTravellers",
+        "AllDepartingTravellers",
+        "ExplicitDiseaseState"
+      ],
+      "type": "enum"
+    },
+    "Target_Gender": {
+      "default": "All",
+      "description": "Specifies the gender restriction for the intervention.",
+      "enum": [
+        "All",
+        "Male",
+        "Female"
+      ],
+      "type": "enum"
+    },
+    "Target_Residents_Only": {
+      "default": 0,
+      "description": "When set to true (1), the intervention is only distributed to individuals that began the simulation in the node (i.e. those that claim the node as their residence).",
+      "type": "bool"
+    },
+    "Trigger_Condition_List": {
+      "Built-in": [
+        "NoTrigger",
+        "Births",
+        "EveryUpdate",
+        "EveryTimeStep",
+        "NewInfectionEvent",
+        "TBActivation",
+        "NewClinicalCase",
+        "NewSevereCase",
+        "DiseaseDeaths",
+        "OpportunisticInfectionDeath",
+        "NonDiseaseDeaths",
+        "TBActivationSmearPos",
+        "TBActivationSmearNeg",
+        "TBActivationExtrapulm",
+        "TBActivationPostRelapse",
+        "TBPendingRelapse",
+        "TBActivationPresymptomatic",
+        "TestPositiveOnSmear",
+        "ProviderOrdersTBTest",
+        "TBTestPositive",
+        "TBTestNegative",
+        "TBTestDefault",
+        "TBRestartHSB",
+        "TBMDRTestPositive",
+        "TBMDRTestNegative",
+        "TBMDRTestDefault",
+        "TBFailedDrugRegimen",
+        "TBRelapseAfterDrugRegimen",
+        "TBStartDrugRegimen",
+        "TBStopDrugRegimen",
+        "PropertyChange",
+        "STIDebut",
+        "StartedART",
+        "StoppedART",
+        "InterventionDisqualified",
+        "HIVNewlyDiagnosed",
+        "GaveBirth",
+        "Pregnant",
+        "Emigrating",
+        "Immigrating",
+        "HIVTestedNegative",
+        "HIVTestedPositive",
+        "HIVSymptomatic",
+        "TwelveWeeksPregnant",
+        "FourteenWeeksPregnant",
+        "SixWeeksOld",
+        "EighteenMonthsOld",
+        "STIPreEmigrating",
+        "STIPostImmigrating",
+        "STINewInfection",
+        "NewExternalHIVInfection",
+        "NodePropertyChange",
+        "HappyBirthday",
+        "EnteredRelationship",
+        "ExitedRelationship",
+        "FirstCoitalAct"
+      ],
+      "default": "NoTrigger",
+      "description": "TBD",
+      "type": "Vector String",
+      "value_source": "'<configuration>:Listed_Events.*' or Built-in"
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "vector_species_name_goes_here": {
+    "idmType:LarvalHabitats": null,
+    "Larval_Habitat_Types": {
+      "description": "A measure of the habitat type and scaling factors to use to estimate larval population. You can specify this with a dictionary specifying habitat type with a simple numeric scaling factor or, for LINEAR_SPLINE, with a more detailed configuration for scaling. Possible habitat values are: CONSTANT TEMPORARY_RAINFALL WATER_VEGETATION HUMAN_POPULATION BRACKISH_SWAMP LINEAR_SPLINE.",
+      "type": "idmType:LarvalHabitats"
+    },
+    "Aquatic_Arrhenius_1": {
+      "min": 0,
+      "max": 1e+15,
+      "default": 8.42e+10,
+      "description": "The duration of aquatic development is a decreasing function of temperature.  The daily rate of fractional progression from egg-hatching to emergence is parameterized by the Arrhenius equation, a1 * exp( -a2 / T ), with T in degrees Kelvin.  This parameter, a1, is a temperature-independent scale factor on the development rate.  Reference: Craig M.H., Snow R.W., et al. (1999). A climate-based distribution model of malaria transmission in sub-Saharan Africa. Parasitology Today 15(3) 105-111.",
+      "type": "float"
+    },
+    "Aquatic_Arrhenius_2": {
+      "min": 0,
+      "max": 1e+15,
+      "default": 8328,
+      "description": "The duration of aquatic development is a decreasing function of temperature.  The daily rate of fractional progression from egg-hatching to emergence is parameterized by the Arrhenius equation, a1 * exp( -a2 / T ), with T in degrees Kelvin.   This parameter, a2, governs how quickly the rate changes with temperature. Reference: Craig M.H., Snow R.W., et al. (1999). A climate-based distribution model of malaria transmission in sub-Saharan Africa. Parasitology Today 15(3) 105-111.",
+      "type": "float"
+    },
+    "Infected_Arrhenius_1": {
+      "min": 0,
+      "max": 1e+15,
+      "default": 1.17e+11,
+      "description": "The duration of sporogony is a decreasing function of temperature.  The daily rate of fractional progression of infected mosquitoes to an infectious state is parameterized by the Arrhenius equation, a1 * exp( -a2 / T ), with T in degrees Kelvin.   This parameter, a1, is a temperature-independent scale factor on the development rate.  Reference: Craig M.H., Snow R.W., et al. (1999). A climate-based distribution model of malaria transmission in sub-Saharan Africa. Parasitology Today 15(3) 105-111.",
+      "type": "float"
+    },
+    "Infected_Arrhenius_2": {
+      "min": 0,
+      "max": 1e+15,
+      "default": 8340,
+      "description": "The duration of sporogony is a decreasing function of temperature.  The daily rate of fractional progression of infected mosquitoes to an infectious state is parameterized by the Arrhenius equation, a1 * exp( -a2 / T ), with T in degrees Kelvin.   This parameter, a2, governs how quickly the rate changes with temperature.   Reference: Craig M.H., Snow R.W., et al. (1999). A climate-based distribution model of malaria transmission in sub-Saharan Africa. Parasitology Today 15(3) 105-111.",
+      "type": "float"
+    },
+    "Cycle_Arrhenius_1": {
+      "min": 0,
+      "max": 1e+15,
+      "default": 4.09e+10,
+      "description": "The duration of the feeding cycle is a decreasing function of temperature.  The daily rate is parameterized by the Arrhenius equation, a1 * exp( -a2 / T ), with T in degrees Kelvin.  This parameter, a1, is a temperature-independent scale factor on the rate at which a mosquito goes through is feeding cycle. Focks, D. A., et al. Dynamic life table model for Aedes aegypti (Diptera: Culicidae): simulation results and validation. Journal of Medical Entomology30.6 (1993): 1018-1028.",
+      "type": "float",
+      "depends-on": {
+        "Temperature_Dependent_Feeding_Cycle": "ARRHENIUS_DEPENDENCE"
+      }
+    },
+    "Cycle_Arrhenius_2": {
+      "min": 0,
+      "max": 1e+15,
+      "default": 7740,
+      "description": "The duration of the feeding cycle is a decreasing function of temperature.  The daily rate is parameterized by the Arrhenius equation, a1 * exp( -a2 / T ), with T in degrees Kelvin.  This parameter, a2, governs how quickly the rate changes with temperature.  Reference: Focks, D. A., et al. Dynamic life table model for Aedes aegypti (Diptera: Culicidae): simulation results and validation. Journal of Medical Entomology30.6 (1993): 1018-1028.",
+      "type": "float",
+      "depends-on": {
+        "Temperature_Dependent_Feeding_Cycle": "ARRHENIUS_DEPENDENCE"
+      }
+    },
+    "Cycle_Arrhenius_Reduction_Factor": {
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "description": "The duration of subsequent cycles, from oviposition to oviposition, is shorter because primary follicles are at stage II following oviposition rather than I in the case of newly emerged females.  Reference: Focks, D. A., et al. Dynamic life table model for Aedes aegypti (Diptera: Culicidae): simulation results and validation. Journal of Medical Entomology30.6 (1993): 1018-1028.",
+      "type": "float",
+      "depends-on": {
+        "Temperature_Dependent_Feeding_Cycle": "ARRHENIUS_DEPENDENCE"
+      }
+    },
+    "Immature_Duration": {
+      "min": 0,
+      "max": 730,
+      "default": 2,
+      "description": "Factor (in days) used to calculate the rate at which immature organisms develop into adult mosquitoes, which equals 1 / (value of this parameter). Note that development from immature individual to adult is not dependent on temperature.",
+      "type": "float"
+    },
+    "Days_Between_Feeds": {
+      "min": 1,
+      "max": 730,
+      "default": 3,
+      "description": "Factor (in days) used to calculate the rate at which female mosquitoes attempt to feed. The rate equals 1 / (value of this parameter). The Days_Between_Feeds parameter represents a 3-day feeding cycle at normal tropical temperatures (30 C). If it is colder, the cycle is 4 days at 24 C, and if the temperature is warmer, the cycle is shorter, increasing the fraction of 2-day cycles from 30 C to 48 C. Whole temperature-dependent distribution can be shifted by changing Days_Between_Feeds which is always the value at 30 C. See Enable_Temperature_Dependent_Feeding_Cycle for weather-dependent feeding. ",
+      "type": "float",
+      "depends-on": {
+        "Temperature_Dependent_Feeding_Cycle": "NO_TEMPERATURE_DEPENDENCE,BOUNDED_DEPENDENCE"
+      }
+    },
+    "Anthropophily": {
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "description": "Propensity (dimensionless) of the mosquito to feed on humans instead of animals, measured as a fraction of blood meals from human hosts. This propensity is important in differentiating the mosquito species.",
+      "type": "float"
+    },
+    "Egg_Batch_Size": {
+      "min": 0,
+      "max": 10000,
+      "default": 100,
+      "description": "Size of egg batch laid by one female mosquito that has fed successfully.",
+      "type": "float"
+    },
+    "Infected_Egg_Batch_Factor": {
+      "min": 0,
+      "max": 10,
+      "default": 0.8,
+      "description": "Factor (dimensionless) used to modify egg batch size to account for effects of infection in a female mosquito. Female mosquitoes undergoing sporogony have reduced fertility.",
+      "type": "float"
+    },
+    "Aquatic_Mortality_Rate": {
+      "min": 0,
+      "max": 1,
+      "default": 0.1,
+      "description": "Base aquatic mortality per day for the species before adjustment for effects of overpopulation and drying. The rate is locally adjusted for other considerations, including overpopulation and drying out of the aquatic habitat.",
+      "type": "float"
+    },
+    "Adult_Life_Expectancy": {
+      "min": 0,
+      "max": 730,
+      "default": 10,
+      "description": "Number of days an average mosquito survives. The daily adult mortality rate is 1 / (value of this parameter).",
+      "type": "float"
+    },
+    "Transmission_Rate": {
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "description": "Probability of success of an infectious bite on an immunologically naive and uninfected individual, or the modifier of the probability of success for an individual with pre-erythrocytic immunity.",
+      "type": "float"
+    },
+    "Acquire_Modifier": {
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "description": "Modifier of the probability of successful infection of a mosquito by a malaria-infected individual, given the individual's infectiousness.",
+      "type": "float"
+    },
+    "Infectious_Human_Feed_Mortality_Factor": {
+      "min": 0,
+      "max": 1000,
+      "default": 1.5,
+      "description": "Correction factor (dimensionless) used to modify the death rate of mosquitoes when feeding on humans, to account for the increase caused by infections in mosquitoes. Infected mosquitoes have a higher mortality rate while feeding on humans than uninfected mosquitoes.  References: Wekesa J. W., Copeland R. S. , et al. (1992). Effect of Plasmodium Falciparum on Blood Feeding Behavior of Naturally Infected Anopheles Mosquitoes in Western Kenya. Am J Trop Med Hyg 47(4): 484-488.Anderson R. A., Knols B. G. J., et al. (2000). Plasmodium falciparum sporozoites increase feeding-associated mortality of their mosquito hosts Anopheles gambiae s.l. Parasitology 120(04): 329-333.",
+      "type": "float"
+    },
+    "Indoor_Feeding_Fraction": {
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "description": "Fraction (dimensionless) of feeds on humans that occur indoors. Thus the fraction of feeds on humans that occur outdoors equals 1 - (value of this parameter).",
+      "type": "float"
+    },
+    "Nighttime_Feeding_Fraction": {
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "description": "Fraction (dimensionless) of feeds on humans that occur during the nighttime. Thus the fraction of feeds on humans that occur during the day equals 1 - (value of this parameter).",
+      "type": "float"
+    }
+  }
+}

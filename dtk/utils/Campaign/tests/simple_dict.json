@@ -1,0 +1,15 @@
+{
+  "SimpleBednet": {
+    "Blocking_Config": {
+      "description": "Configures the rate of blocking for indoor mosquito feeds on individuals with an ITN; decays over time. ",
+      "type": "idmType:WaningEffect"
+    },
+    "Cost_To_Consumer": {
+      "default": 3.75,
+      "description": "Unit cost per bednet (unamortized).",
+      "max": 999999,
+      "min": 0,
+      "type": "float"
+    }
+  }
+}

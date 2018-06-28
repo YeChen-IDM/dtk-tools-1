@@ -3,6 +3,9 @@ import os
 import re  # find listed events by regex
 import shutil
 
+from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
+from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
+
 import dtk.dengue.params as dengue_params
 import dtk.generic.params as generic_params
 import dtk.generic.seir as seir_params
@@ -274,7 +277,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         """
 
         config = json2dict(config_name)
-        campaign = json2dict(campaign_name) if campaign_name else empty_campaign
+        campaign = CampaignManager.transform_campaign_json_to_classes(campaign_name) if campaign_name else empty_campaign
 
         return cls(config, campaign, **kwargs)
 
@@ -350,33 +353,40 @@ class DTKConfigBuilder(SimConfigBuilder):
         Add an event to the campaign held by the config builder.
 
         Args:
-            event (dict): The dictionary holding the event to be added.
+            event: The CampaignEvent class to be added.
 
         Examples:
             To add an event to an existing config builder, one can do::
 
-                event = {
-                    "Event_Coordinator_Config": {
-                        "Intervention_Config": {
-                            [...]
-                        },
-                        "Number_Repetitions": 1,
-                        "class": "StandardInterventionDistributionEventCoordinator"
-                    },
-                    "Event_Name": "Input EIR intervention",
-                    [...]
-                    }
+                event = CampaignEvent(
+                    Start_Day=1,
+                    Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                        Target_Residents_Only=True
+                    )
+                )
 
                 cb.add_event(event)
 
         """
-        self.campaign["Events"].append(event)
+        if isinstance(event, dict):
+            warning_note = \
+                """
+                /!\\ WARNING /!\\ the cb.add_event() method will soon only accepts Campaign classes. 
+                If your class is not yet supported in the schema, you can still use dictionaries 
+                but they need to be wrapped into a RawCampaignObject(). Example: my_dict = {...}  
+                
+                    cb.add_event(RawCampaignObject(my_dict))                    
+                """
+            print(warning_note)
+            self.campaign.add_campaign_event(RawCampaignObject(event))
+        else:
+            self.campaign.add_campaign_event(event)
 
     def clear_events(self):
         """
         Removes all events from the campaign
         """
-        self.campaign["Events"] = []
+        self.campaign.Events = []
 
     def add_reports(self, *reports):
         """
@@ -448,7 +458,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         """
         Returns the custom events listed in the campaign along with user-defined ones in the Listed_Events (config.json)
         """
-        campaign_str = json.dumps(self.campaign, cls=NumpyEncoder)
+        campaign_str = self.campaign.to_json(self.campaign.Use_Defaults, False)
 
         # Retrieve all the events in the campaign file
         events_from_campaign = re.findall(r"['\"](?:Broadcast_Event|Event_Trigger|Event_To_Broadcast|Blackout_Event_Trigger|Took_Dose_Event|Discard_Event|Received_Event|Using_Event)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL)
@@ -512,7 +522,8 @@ class DTKConfigBuilder(SimConfigBuilder):
         else:
             dump = lambda content: json.dumps(content, sort_keys=True, cls=NumpyEncoder).strip('"')
 
-        write_fn(self.config['parameters']['Campaign_Filename'], dump(self.campaign))
+        write_fn(self.config['parameters']['Campaign_Filename'],
+                 self.campaign.to_json(self.campaign.Use_Defaults, self.human_readability))
 
         if self.custom_reports:
             self.set_param('Custom_Reports_Filename', 'custom_reports.json')

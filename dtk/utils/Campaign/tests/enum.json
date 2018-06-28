@@ -1,0 +1,21 @@
+{
+    "Target_Demographic": {
+        "type": "enum",
+        "enum": [
+            "Everyone",
+            "ExplicitAgeRanges",
+            "ExplicitAgeRangesAndGender",
+            "ExplicitGender",
+            "PossibleMothers",
+            "ArrivingAirTravellers",
+            "DepartingAirTravellers",
+            "ArrivingRoadTravellers",
+            "DepartingRoadTravellers",
+            "AllArrivingTravellers",
+            "AllDepartingTravellers",
+            "ExplicitDiseaseState"
+        ],
+        "description": "The demographic group (from a list of possibles) targeted by this intervention (e.g., Infants).",
+        "default": "Everyone"
+    }
+}

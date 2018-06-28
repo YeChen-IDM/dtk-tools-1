@@ -1,3 +1,6 @@
+from dtk.utils.Campaign.CampaignClass import *
+
+
 def add_incidence_counter(cb,
                           start_day=0,
                           count_duration=365,
@@ -39,14 +42,14 @@ def add_incidence_counter(cb,
     """
 
     counter_config = {
-        'Count_Events_For_Num_Timesteps' : count_duration,
-        'Trigger_Condition_List' : count_triggers,
+        'Count_Events_For_Num_Timesteps': count_duration,
+        'Trigger_Condition_List': count_triggers,
         "Target_Demographic": "Everyone",
         "Demographic_Coverage": coverage
     }
     responder_config = {
-        'Threshold_Type' : threshold_type,
-        'Action_List' : [ { 'Threshold' : t, 'Event_To_Broadcast' : e} for t,e in zip(thresholds, triggered_events)]
+        'Threshold_Type': threshold_type,
+        'Action_List': [ { 'Threshold' : t, 'Event_To_Broadcast': e} for t, e in zip(thresholds, triggered_events)]
     }
 
     if target_group != 'Everyone':
@@ -62,25 +65,21 @@ def add_incidence_counter(cb,
     if ind_property_restrictions:
         counter_config["Property_Restrictions_Within_Node"] = ind_property_restrictions
 
-    monitoring_event = {
-        "class": "CampaignEvent",
-        "Start_Day": start_day,
-        "Nodeset_Config": {
-            "class": "NodeSetAll"
-        },
-        "Event_Coordinator_Config": {
-            "class": "IncidenceEventCoordinator",
-            "Number_Repetitions": repetitions,
-            "Timesteps_Between_Repetitions": tsteps_btwn_repetitions,
-            "Incidence_Counter": counter_config,
-            "Responder" : responder_config
-        }
-    }
+    monitoring_event = CampaignEvent(
+        Start_Day=start_day,
+        Nodeset_Config=NodeSetAll(),
+        Event_Coordinator_Config=IncidenceEventCoordinator(
+            Number_Repetitions=repetitions,
+            Timesteps_Between_Repetitions=tsteps_btwn_repetitions,
+            Incidence_Counter=counter_config,
+            Responder=responder_config
+        )
+    )
 
     if not nodeIDs:
-        monitoring_event["Nodeset_Config"] = {"class": "NodeSetAll"}
+        monitoring_event.Nodeset_Config = NodeSetAll()
     else:
-        monitoring_event["Nodeset_Config"] = {"class": "NodeSetNodeList", "Node_List": nodeIDs}
+        monitoring_event.Nodeset_Config = NodeSetNodeList(Node_List=nodeIDs)
 
     cb.add_event(monitoring_event)
     listed_events = cb.get_param('Listed_Events')

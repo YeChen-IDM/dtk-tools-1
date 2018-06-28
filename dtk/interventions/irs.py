@@ -1,4 +1,4 @@
-''' OLD
+""" OLD
 # IRS parameters
 irs_housingmod = {"class": "IRSHousingModification",
                   "Blocking_Rate": 0.0,  # i.e. repellency
@@ -8,39 +8,39 @@ irs_housingmod = {"class": "IRSHousingModification",
                   "Secondary_Decay_Time_Constant": 365,  # blocking
                   "Cost_To_Consumer": 8.0
                   }
-'''
+"""
+
+
 import copy, random
 from dtk.interventions.triggered_campaign_delay_event import triggered_campaign_delay_event
+from dtk.utils.Campaign.CampaignClass import *
 
-irs_housingmod_master = { "class": "IRSHousingModification",
-                "Killing_Config": {
-                    "Initial_Effect": 0.5,
-                    "Decay_Time_Constant": 90,
-                    "class": "WaningEffectExponential"
-                },
-                "Blocking_Config": {
-                    "Initial_Effect": 0.0,
-                    "Decay_Time_Constant": 730,
-                    "class": "WaningEffectExponential"
-                },
-               "Cost_To_Consumer": 8.0
-}
 
-node_irs_config = { "Reduction_Config": {
-                        "Decay_Time_Constant": 365, 
-                        "Initial_Effect": 0, 
-                        "class": "WaningEffectExponential"
-                    }, 
-                    "Cost_To_Consumer": 1.0, 
-                    "Habitat_Target": "ALL_HABITATS", 
-                    "Killing_Config": {
-                        "Decay_Time_Constant": 90, 
-                        "Initial_Effect": 0.5, 
-                        "class": "WaningEffectExponential"
-                    }, 
-                    "Spray_Kill_Target": "SpaceSpray_Indoor", 
-                    "class": "SpaceSpraying"
-                }
+irs_housingmod_master = IRSHousingModification(
+    Killing_Config=WaningEffectExponential(
+        Initial_Effect=0.5,
+        Decay_Time_Constant=90
+    ),
+    Blocking_Config=WaningEffectExponential(
+        Initial_Effect=0.0,
+        Decay_Time_Constant=730
+    ),
+    Cost_To_Consumer=8.0
+)
+
+node_irs_config = SpaceSpraying(
+    Reduction_Config=WaningEffectExponential(
+        Decay_Time_Constant=365,
+        Initial_Effect=0
+    ),
+    Cost_To_Consumer=1.0,
+    Habitat_Target=SpaceSpraying_Habitat_Target_Enum.ALL_HABITATS,
+    Killing_Config=WaningEffectExponential(
+        Decay_Time_Constant=90,
+        Initial_Effect=0.5
+    ),
+    Spray_Kill_Target=SpaceSpraying_Spray_Kill_Target_Enum.SpaceSpray_Indoor
+)
 
 
 def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
@@ -68,30 +68,26 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
     :param listening_duration: how long the distributed event will listen for the trigger for, default is -1, which is indefinitely
     :return: Nothing
     """
-    
-    receiving_irs_event = {
-        "class": "BroadcastEvent",
-        "Broadcast_Event": "Received_IRS"
-    }
+
+    receiving_irs_event = BroadcastEvent(Broadcast_Event="Received_IRS")
 
     irs_housingmod = copy.deepcopy(irs_housingmod_master)
 
-    irs_housingmod['Killing_Config']['Initial_Effect'] = initial_killing
-    irs_housingmod['Killing_Config']['Decay_Time_Constant'] = duration
+    irs_housingmod.Killing_Config.Initial_Effect = initial_killing
+    irs_housingmod.Killing_Config.Decay_Time_Constant = duration
 
     if waning:
-        for cfg in waning :
-            irs_housingmod[cfg].update(waning[cfg])
+        for cfg in waning:
+            ih = getattr(irs_housingmod, cfg)
+            ih.update(waning[cfg])
+            setattr(irs_housingmod, cfg, ih)
 
     if cost:
-        irs_housingmod['Cost_To_Consumer'] = cost
+        irs_housingmod.Cost_To_Consumer = cost
 
-    irs_housingmod_w_event = {
-        "Intervention_List" : [irs_housingmod, receiving_irs_event] ,
-        "class" : "MultiInterventionDistributor"
-        }
+    irs_housingmod_w_event = MultiInterventionDistributor(Intervention_List=[irs_housingmod, receiving_irs_event])
 
-    nodeset_config = {"class": "NodeSetAll"} if not nodeIDs else {"class": "NodeSetNodeList", "Node_List": nodeIDs}
+    nodeset_config = NodeSetAll() if not nodeIDs else NodeSetNodeList(Node_List=nodeIDs)
 
     if triggered_campaign_delay :
         trigger_condition_list = [triggered_campaign_delay_event(config_builder, start, nodeIDs,
@@ -102,116 +98,102 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
     for coverage_by_age in coverage_by_ages:
         if trigger_condition_list:
             if 'birth' not in coverage_by_age.keys():
-                IRS_event = {"class": "CampaignEvent",
-                             "Start_Day": int(start),
-                             "Nodeset_Config": nodeset_config,
-                             "Event_Coordinator_Config": {
-                                 "class": "StandardInterventionDistributionEventCoordinator",
-                                 "Intervention_Config":{
-                                     "class": "NodeLevelHealthTriggeredIV",
-                                     "Trigger_Condition_List": trigger_condition_list,
-                                     "Duration": listening_duration,
-                                     "Property_Restrictions_Within_Node": ind_property_restrictions,
-                                     "Node_Property_Restrictions": node_property_restrictions,
-                                     "Demographic_Coverage": coverage_by_age["coverage"],
-                                     "Target_Residents_Only": 1,
-                                     "Actual_IndividualIntervention_Config": irs_housingmod_w_event
-                                }
-                             }
-                            }
+                IRS_event = CampaignEvent(
+                    Start_Day=int(start),
+                    Nodeset_Config=nodeset_config,
+                    Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                        Intervention_Config=NodeLevelHealthTriggeredIV(
+                            Trigger_Condition_List=trigger_condition_list,
+                            Duration=listening_duration,
+                            Property_Restrictions_Within_Node=ind_property_restrictions,
+                            Node_Property_Restrictions=node_property_restrictions,
+                            Demographic_Coverage=coverage_by_age["coverage"],
+                            Target_Residents_Only=True,
+                            Actual_IndividualIntervention_Config=irs_housingmod_w_event
+                        )
+                    )
+                )
 
                 if all([k in coverage_by_age.keys() for k in ['min', 'max']]):
-                    IRS_event["Event_Coordinator_Config"]["Intervention_Config"].update({
-                        "Target_Demographic": "ExplicitAgeRanges",
-                        "Target_Age_Min": coverage_by_age["min"],
-                        "Target_Age_Max": coverage_by_age["max"]})
+                    IRS_event.Event_Coordinator_Config.Intervention_Config.Target_Demographic = NodeLevelHealthTriggeredIV_Target_Demographic_Enum.ExplicitAgeRanges
+                    IRS_event.Event_Coordinator_Config.Intervention_Config.Target_Age_Min = coverage_by_age["min"]
+                    IRS_event.Event_Coordinator_Config.Intervention_Config.Target_Age_Max = coverage_by_age["max"]
 
                 config_builder.add_event(IRS_event)
 
         else:
-            IRS_event = {"class": "CampaignEvent",
-                         "Start_Day": int(start),
-                         "Nodeset_Config": nodeset_config,
-                         "Event_Coordinator_Config": {
-                             "class": "StandardInterventionDistributionEventCoordinator",
-                             "Demographic_Coverage": coverage_by_age["coverage"],
-                             "Target_Residents_Only": 1,
-                             "Intervention_Config": irs_housingmod_w_event
-                         }
-                         }
+            IRS_event = CampaignEvent(
+                Start_Day=int(start),
+                Nodeset_Config=nodeset_config,
+                Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                    Demographic_Coverage=coverage_by_age["coverage"],
+                    Target_Residents_Only=True,
+                    Intervention_Config=irs_housingmod_w_event
+                )
+            )
 
             if all([k in coverage_by_age.keys() for k in ['min', 'max']]):
-                IRS_event["Event_Coordinator_Config"].update({
-                    "Target_Demographic": "ExplicitAgeRanges",
-                    "Target_Age_Min": coverage_by_age["min"],
-                    "Target_Age_Max": coverage_by_age["max"]})
+                IRS_event.Event_Coordinator_Config.Target_Demographic = StandardInterventionDistributionEventCoordinator_Target_Demographic_Enum.ExplicitAgeRanges
+                IRS_event.Event_Coordinator_Config.Target_Age_Min = coverage_by_age["min"]
+                IRS_event.Event_Coordinator_Config.Target_Age_Max = coverage_by_age["max"]
 
             if 'birth' in coverage_by_age.keys() and coverage_by_age['birth']:
-                birth_triggered_intervention = {
-                    "class": "BirthTriggeredIV",
-                    "Duration": coverage_by_age.get('duration', -1), # default to forever if duration not specified
-                    "Demographic_Coverage": coverage_by_age["coverage"],
-                    "Actual_IndividualIntervention_Config": irs_housingmod_w_event
-                }
+                birth_triggered_intervention = BirthTriggeredIV(
+                    Duration=coverage_by_age.get('duration', -1),  # default to forever if duration not specified
+                    Demographic_Coverage=coverage_by_age["coverage"],
+                    Actual_IndividualIntervention_Config=irs_housingmod_w_event
+                )
 
-                IRS_event["Event_Coordinator_Config"]["Intervention_Config"] = birth_triggered_intervention
-                IRS_event["Event_Coordinator_Config"].pop("Demographic_Coverage")
-                IRS_event["Event_Coordinator_Config"].pop("Target_Residents_Only")
+                IRS_event.Event_Coordinator_Config.Intervention_Config = birth_triggered_intervention
+                del IRS_event.Event_Coordinator_Config.Demographic_Coverage
+                del IRS_event.Event_Coordinator_Config.Target_Residents_Only
 
             if ind_property_restrictions and 'birth' in coverage_by_age.keys() and coverage_by_age['birth']:
-                IRS_event["Event_Coordinator_Config"]["Intervention_Config"][
-                    "Property_Restrictions_Within_Node"] = ind_property_restrictions
+                IRS_event.Event_Coordinator_Config.Intervention_Config.Property_Restrictions_Within_Node = ind_property_restrictions
             elif ind_property_restrictions:
-                IRS_event["Event_Coordinator_Config"][
-                    "Property_Restrictions_Within_Node"] = ind_property_restrictions
+                IRS_event.Event_Coordinator_Config.Property_Restrictions_Within_Node = ind_property_restrictions
 
             if node_property_restrictions:
-                IRS_event['Event_Coordinator_Config'][
-                    'Node_Property_Restrictions'] = node_property_restrictions
+                IRS_event.Event_Coordinator_Config.Node_Property_Restrictions = node_property_restrictions
 
             config_builder.add_event(IRS_event)
+
 
 def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                  waning_effect_type='WaningEffectExponential', cost=None,
                  irs_ineligibility_duration=0, nodeIDs=[], node_property_restrictions=[],
-                 triggered_campaign_delay=0,trigger_condition_list=[], listening_duration=-1):
+                 triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1):
 
-    irs_config = node_irs_config.copy()
+    irs_config = copy.deepcopy(node_irs_config)
     irs_config['Killing_Config']['class'] = waning_effect_type
-    irs_config['Killing_Config']['Initial_Effect'] = initial_killing
-    irs_config['Killing_Config']['Decay_Time_Constant'] = box_duration
-    if waning_effect_type == 'WaningEffectBox' :
-        irs_config['Killing_Config']['Box_Duration'] = box_duration
+    irs_config.Killing_Config.Initial_Effect = initial_killing
+    irs_config.Killing_Config.Decay_Time_Constant = box_duration
+
+    if waning_effect_type == 'WaningEffectBox':
+        irs_config.Killing_Config.Box_Duration = box_duration
         del irs_config['Killing_Config']['Decay_Time_Constant']
 
     if not nodeIDs:
-        nodeset_config = {"class": "NodeSetAll"}
+        nodeset_config = NodeSetAll()
     else:
-        nodeset_config = {"class": "NodeSetNodeList", "Node_List": nodeIDs}
+        nodeset_config = NodeSetNodeList(Node_List=nodeIDs)
 
     if cost:
         node_irs_config['Cost_To_Consumer'] = cost
-    node_sprayed_event = {
-                           "class": "BroadcastEvent",
-                           "Broadcast_Event": "Node_Sprayed"
-                         }
 
-    IRS_event = {
-                 "class": "CampaignEvent",
-                 "Start_Day": int(start),
-                 "Nodeset_Config" : nodeset_config,
-                 "Event_Coordinator_Config": {
-                     "class": "StandardInterventionDistributionEventCoordinator",
-                     'Node_Property_Restrictions': node_property_restrictions,
-                     "Intervention_Config": {
-                        "Intervention_List" : [irs_config,
-                                               node_sprayed_event
-                                               ] ,
-                        "class" : "MultiInterventionDistributor"
-                        }
-                 },
-                 "Event_Name": "Node Level IRS"
-                 }
+    node_sprayed_event = BroadcastEvent(Broadcast_Event="Node_Sprayed")
+
+    IRS_event = CampaignEvent(
+        Start_Day=int(start),
+        Nodeset_Config=nodeset_config,
+        Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+            Node_Property_Restrictions=node_property_restrictions,
+            Intervention_List=MultiInterventionDistributor(
+                Intervention_List=[irs_config, node_sprayed_event]
+            )
+        ),
+        Event_Name="Node Level IRS"
+    )
 
     if trigger_condition_list:
         if triggered_campaign_delay:
@@ -219,47 +201,46 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                                                                          triggered_campaign_delay,
                                                                          trigger_condition_list,
                                                                          listening_duration))]
-        IRS_event['Event_Coordinator_Config']['Intervention_Config'] = {
-            "class": "NodeLevelHealthTriggeredIV",
-            "Blackout_On_First_Occurrence": 1,
-            "Blackout_Event_Trigger": "IRS_Blackout_%d" % random.randint(0, 10000),
-            "Blackout_Period": 1,
-            'Node_Property_Restrictions': node_property_restrictions,
-            "Duration": listening_duration,
-            "Trigger_Condition_List": trigger_condition_list,
-            "Actual_IndividualIntervention_Config": {
-                        "Intervention_List" : [irs_config,
-                                               node_sprayed_event
-                                               ] ,
-                        "class" : "MultiInterventionDistributor"
-                        },
-            "Target_Residents_Only": 1
-        }
-        del IRS_event['Event_Coordinator_Config']['Node_Property_Restrictions']
+
+        IRS_event.Event_Coordinator_Config.Intervention_Config = NodeLevelHealthTriggeredIV(
+            Blackout_On_First_Occurrence=True,
+            Blackout_Event_Trigger="IRS_Blackout_%d" % random.randint(0, 10000),
+            Blackout_Period=1,
+            Node_Property_Restrictions=node_property_restrictions,
+            Duration=listening_duration,
+            Trigger_Condition_List=trigger_condition_list,
+            Actual_IndividualIntervention_Config=MultiInterventionDistributor(
+                Intervention_List=[irs_config, node_sprayed_event]
+            ),
+            Target_Residents_Only=True
+        )
+
+        del IRS_event.Event_Coordinator_Config.Node_Property_Restrictions
 
     IRS_cfg = copy.copy(IRS_event)
     if irs_ineligibility_duration > 0:
-        recent_irs = {"class": "NodePropertyValueChanger",
-                      "Target_NP_Key_Value": "SprayStatus:RecentSpray",
-                      "Daily_Probability": 1.0,
-                      "Maximum_Duration": 0,
-                      'Revert': irs_ineligibility_duration
-                      }
+        recent_irs = NodePropertyValueChanger(
+            Target_NP_Key_Value="SprayStatus:RecentSpray",
+            Daily_Probability=1.0,
+            Maximum_Duration=0,
+            Revert=irs_ineligibility_duration
+        )
+
         if trigger_condition_list:
-            IRS_cfg['Event_Coordinator_Config']['Intervention_Config']['Actual_IndividualIntervention_Config']["Intervention_List"].append(recent_irs)
-            if not node_property_restrictions :
-                IRS_cfg['Event_Coordinator_Config']['Intervention_Config']['Node_Property_Restrictions'] = [{'SprayStatus': 'None'}]
-            else :
+            IRS_cfg.Event_Coordinator_Config.Intervention_Config.Actual_IndividualIntervention_Config.Intervention_List.append(recent_irs)
+            if not node_property_restrictions:
+                IRS_cfg.Event_Coordinator_Config.Intervention_Config.Node_Property_Restrictions = [{'SprayStatus': 'None'}]
+            else:
                 for n, np in enumerate(node_property_restrictions) :
                     node_property_restrictions[n]['SprayStatus'] = 'None'
-                IRS_cfg['Event_Coordinator_Config']['Intervention_Config']['Node_Property_Restrictions'] = node_property_restrictions
+                IRS_cfg.Event_Coordinator_Config.Intervention_Config.Node_Property_Restrictions = node_property_restrictions
         else:
-            IRS_cfg['Event_Coordinator_Config']['Intervention_Config']['Intervention_List'].append(recent_irs)
+            IRS_cfg.Event_Coordinator_Config.Intervention_Config.Intervention_List.append(recent_irs)
             if not node_property_restrictions :
-                IRS_cfg['Event_Coordinator_Config']['Node_Property_Restrictions'] = [{'SprayStatus': 'None'}]
-            else :
+                IRS_cfg.Event_Coordinator_Config.Node_Property_Restrictions = [{'SprayStatus': 'None'}]
+            else:
                 for n, np in enumerate(node_property_restrictions) :
                     node_property_restrictions[n]['SprayStatus'] = 'None'
-                IRS_cfg['Event_Coordinator_Config']['Node_Property_Restrictions'] = node_property_restrictions
+                IRS_cfg.Event_Coordinator_Config.Node_Property_Restrictions = node_property_restrictions
 
     config_builder.add_event(IRS_cfg)

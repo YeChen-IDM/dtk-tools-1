@@ -1,0 +1,17 @@
+{
+  "MosquitoRelease": {
+    "Mated_Genetics": {
+      "depends-on": {
+        "Released_Gender": "VECTOR_FEMALE"
+      },
+      "description": "The genetic properties of the mate if released mosquitoes have mated, e.g. HEG and pesticide resistance.",
+      "type": "idmType:ResistanceHegGenetics"
+    },
+    "Released_Genetics": {
+      "description": "The genetic properties of the released mosquito, e.g. HEG and pesticide resistance.",
+      "type": "idmType:ResistanceHegGenetics"
+    },
+    "class": "MosquitoRelease",
+    "iv_type": "NodeTargeted"
+  }
+}

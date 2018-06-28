@@ -1,0 +1,23 @@
+{
+  "idmType:EventCoordinator": {
+    "idmType:NodePropertyRestrictions": [
+      {
+        "<key>": {
+          "type": "Constrained String",
+          "constraints": "<demographics>::NodeProperties.*.Property",
+          "description": "Node Property Key from demographics file."
+        },
+        "<value>": {
+          "type": "String",
+          "constraints": "<demographics>::NodeProperties.*.Values",
+          "description": "Node Property Value from demographics file."
+        }
+      }
+    ],
+    "Node_Property_Restrictions": {
+      "description": "TBD",
+      "type": "idmType:NodePropertyRestrictions"
+    },
+    "class": "CalendarEventCoordinator"
+  }
+}

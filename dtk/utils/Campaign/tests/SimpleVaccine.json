@@ -1,0 +1,64 @@
+{
+  "SimpleVaccine": {
+    "Cost_To_Consumer": {
+      "default": 10,
+      "description": "Unit cost per vaccine (unamortized). ",
+      "max": 999999,
+      "min": 0,
+      "type": "float"
+    },
+    "Disqualifying_Properties": {
+      "default": [],
+      "description": "A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.",
+      "type": "Dynamic String Set",
+      "value_source": ""
+    },
+    "Dont_Allow_Duplicates": {
+      "default": 0,
+      "description": "If an individual's container has an intervention, set to true (1) to prevent them from receiving another copy of the intervention. Supported by all intervention classes.",
+      "type": "bool"
+    },
+    "Efficacy_Is_Multiplicative": {
+      "default": 1,
+      "description": "The overall vaccine efficacy when individuals receive more than one vaccine. When set to true (1), the vaccine efficacies are multiplied together; when set to false (0), the efficacies are additive.",
+      "type": "bool"
+    },
+    "Intervention_Name": {
+      "default": "SimpleVaccine",
+      "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
+      "type": "string"
+    },
+    "New_Property_Value": {
+      "description": "An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ",
+      "type": "Constrained String",
+      "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
+    },
+    "Sim_Types": [
+      "*"
+    ],
+    "Vaccine_Take": {
+      "default": 1,
+      "description": "The rate at which delivered vaccines will successfully stimulate an immune response and achieve the desired efficacy.",
+      "max": 1,
+      "min": 0,
+      "type": "float"
+    },
+    "Vaccine_Type": {
+      "default": "Generic",
+      "description": "The type of vaccine to distribute in a vaccine intervention.",
+      "enum": [
+        "Generic",
+        "TransmissionBlocking",
+        "AcquisitionBlocking",
+        "MortalityBlocking"
+      ],
+      "type": "enum"
+    },
+    "Waning_Config": {
+      "description": "The configuration of Ivermectin killing efficacy and waning over time.",
+      "type": "idmType:WaningEffect"
+    },
+    "class": "SimpleVaccine",
+    "iv_type": "IndividualTargeted"
+  }
+}

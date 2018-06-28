@@ -1,0 +1,27 @@
+{
+    "Using_Event": {
+        "type": "Constrained String",
+        "default": "NoTrigger",
+        "description": "TBD-Broadcasted each time step that the net is used.",
+        "value_source": "'<configuration>:Listed_Events.*' or Built-in",
+        "test": [
+            {
+                "type": "float",
+                "min": 0,
+                "max": 3.40282e+38,
+                "description": "TBD-A single value can be specified so that it is applied to ALL_HABITATS."
+            },
+            {
+                "type": "string",
+                "description": "TBD-The habitat type/name for a specific multiplier - the 'key' of the key:value pair."
+            },
+            {
+                "type": "float",
+                "min": 0,
+                "max": 3.40282e+38,
+                "description": "TBD-A specific multiplier for the given habitat - the 'value' of the key:value pair."
+            }
+
+        ]
+    }
+}

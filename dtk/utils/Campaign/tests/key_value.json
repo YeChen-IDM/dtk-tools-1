@@ -1,0 +1,16 @@
+{
+  "idmType:NodePropertyRestrictions": [
+    {
+      "<key>": {
+        "constraints": "<demographics>::NodeProperties.*.Property",
+        "description": "Node Property Key from demographics file.",
+        "type": "Constrained String"
+      },
+      "<value>": {
+        "constraints": "<demographics>::NodeProperties.*.Values",
+        "description": "Node Property Value from demographics file.",
+        "type": "String"
+      }
+    }
+  ]
+}

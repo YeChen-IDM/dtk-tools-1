@@ -237,3 +237,13 @@ def populate_get_package_arguments(subparsers, func):
     parser.add_argument('-v', '--version', help="Obtain a specific package version (Default: latest)", dest="package_version",
                         default='latest')
     parser.set_defaults(func=func)
+
+
+# 'dtk generate_classes' options
+def populate_generate_classes_arguments(subparsers, func):
+    parser_sync = subparsers.add_parser('generate_classes', help='Generate classes and enums from Eradication SChema.')
+    parser_sync.add_argument('-e', help='Path to the Eradication EXE.', required=True, dest='exe')
+    parser_sync.add_argument('-o', help='Path of the output folder', required=True, dest='output')
+    parser_sync.add_argument('-d', '--debug', help="Obtain a specific package version (Default: latest)", dest="debug",
+                             action="store_true")
+    parser_sync.set_defaults(func=func)

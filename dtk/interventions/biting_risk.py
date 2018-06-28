@@ -1,5 +1,9 @@
+from dtk.utils.Campaign.CampaignClass import *
+from dtk.utils.Campaign.CampaignEnum import *
+
+
 def change_biting_risk(cb, start_day=0,
-                       risk_config={ 'Risk_Distribution_Type' : 'FIXED_DURATION','Constant' : 1},
+                       risk_config={'Risk_Distribution_Type': 'FIXED_DURATION', 'Constant': 1},
                        coverage=1,
                        repetitions=1,
                        tsteps_btwn_repetitions=365,
@@ -39,70 +43,63 @@ def change_biting_risk(cb, start_day=0,
     useful.
     """
 
-    risk_config["class"] = "BitingRisk"
+    risk_config = BitingRisk(
+        Risk_Distribution_Type=BitingRisk_Risk_Distribution_Type_Enum.FIXED_DURATION,
+        Constant=1
+    )
 
-    risk_event = {
-        "class": "CampaignEvent",
-        "Start_Day": start_day,
-        "Nodeset_Config": {
-            "class": "NodeSetAll"
-        },
-        "Event_Coordinator_Config": {
-            "class": "StandardInterventionDistributionEventCoordinator",
-            "Number_Repetitions": repetitions,
-            "Timesteps_Between_Repetitions": tsteps_btwn_repetitions,
-            "Target_Demographic": "Everyone",
-            "Demographic_Coverage": coverage,
-            "Intervention_Config": risk_config
-        }
-    }
+    risk_event = CampaignEvent(Start_Day=start_day,
+                               Nodeset_Config=NodeSetAll(),
+                               Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                                   Number_Repetitions=repetitions,
+                                   Timesteps_Between_Repetitions=tsteps_btwn_repetitions,
+                                   Target_Demographic=StandardInterventionDistributionEventCoordinator_Target_Demographic_Enum.Everyone,
+                                   Demographic_Coverage=coverage,
+                                   Intervention_Config=risk_config)
+                               )
 
     if target_group != 'Everyone':
-        risk_event['Event_Coordinator_Config'].update({
-            "Target_Demographic": "ExplicitAgeRanges",  # Otherwise default is Everyone
-            "Target_Age_Min": target_group['agemin'],
-            "Target_Age_Max": target_group['agemax']
-        })
+        risk_event.Event_Coordinator_Config.Target_Demographic = StandardInterventionDistributionEventCoordinator_Target_Demographic_Enum.ExplicitAgeRanges # Otherwise default is Everyone
+        risk_event.Event_Coordinator_Config.Target_Age_Min = target_group['agemin']
+        risk_event.Event_Coordinator_Config.Target_Age_Max = target_group['agemax']
 
     if not nodeIDs:
-        risk_event["Nodeset_Config"] = {"class": "NodeSetAll"}
+        risk_event.Nodeset_Config = NodeSetAll()
     else:
-        risk_event["Nodeset_Config"] = {"class": "NodeSetNodeList", "Node_List": nodeIDs}
+        risk_event.Nodeset_Config = NodeSetNodeList(Node_List=nodeIDs)
 
     if node_property_restrictions:
-        risk_event['Event_Coordinator_Config']['Node_Property_Restrictions'] =node_property_restrictions
+        risk_event.Event_Coordinator_Config.Node_Property_Restrictions = node_property_restrictions
 
     if ind_property_restrictions:
-        risk_event["Event_Coordinator_Config"]["Property_Restrictions_Within_Node"] = ind_property_restrictions
+        risk_event.Event_Coordinator_Config.Property_Restrictions_Within_Node = ind_property_restrictions
 
-    if trigger :
+    if trigger:
 
-        if 'birth' in trigger.lower() :
-            triggered_intervention = {
-                "class": "BirthTriggeredIV",
-                "Duration": triggered_biting_risk_duration,  # default to forever if  duration not specified
-                "Demographic_Coverage": coverage,
-                "Actual_IndividualIntervention_Config": risk_config  # itn_bednet
-            }
+        if 'birth' in trigger.lower():
+            triggered_intervention = BirthTriggeredIV(
+                Duration=triggered_biting_risk_duration,
+                Demographic_Coverage=coverage,
+                Actual_IndividualIntervention_Config=risk_config
+            )
 
-        else :
-            triggered_intervention = {
-                "class": "NodeLevelHealthTriggeredIV",
-                "Demographic_Coverage": coverage,
-                "Duration": triggered_biting_risk_duration,
-                "Trigger_Condition_List": [trigger],
-                "Actual_IndividualIntervention_Config" : risk_config
-            }
+        else:
+            triggered_intervention = NodeLevelHealthTriggeredIV(
+                Demographic_Coverage=coverage,
+                Duration=triggered_biting_risk_duration,
+                Trigger_Condition_List=[trigger],
+                Actual_IndividualIntervention_Config=risk_config
+            )
 
-        risk_event["Event_Coordinator_Config"]["Intervention_Config"] = triggered_intervention
+        risk_event.Event_Coordinator_Config.Intervention_Config = triggered_intervention
 
-        risk_event["Event_Coordinator_Config"].pop("Demographic_Coverage")
-        risk_event["Event_Coordinator_Config"].pop("Number_Repetitions")
-        risk_event["Event_Coordinator_Config"].pop("Timesteps_Between_Repetitions")
-        risk_event["Event_Coordinator_Config"].pop("Target_Demographic")
+        del risk_event.Event_Coordinator_Config.Demographic_Coverage
+        del risk_event.Event_Coordinator_Config.Number_Repetitions
+        del risk_event.Event_Coordinator_Config.Timesteps_Between_Repetitions
+        del risk_event.Event_Coordinator_Config.Target_Demographic
 
         if ind_property_restrictions:
-            risk_event["Event_Coordinator_Config"].pop("Property_Restrictions_Within_Node")
-            risk_event["Event_Coordinator_Config"]["Intervention_Config"]["Property_Restrictions_Within_Node"] = ind_property_restrictions
+            del risk_event.Event_Coordinator_Config.Property_Restrictions_Within_Node
+            risk_event.Event_Coordinator_Config.Intervention_Config.Property_Restrictions_Within_Node = ind_property_restrictions
 
     cb.add_event(risk_event)
