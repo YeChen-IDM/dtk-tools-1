@@ -1,10 +1,8 @@
 import json
-from enum import Enum
-from enum import auto
-from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
+
 from dtk.utils.Campaign.utils.CampaignEncoder import CampaignEncoder
 from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
-
+from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
 
 # Turn On/Off class members validation
 VALIDATE = True

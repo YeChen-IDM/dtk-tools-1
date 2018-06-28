@@ -3,9 +3,6 @@ import os
 import re  # find listed events by regex
 import shutil
 
-from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
-from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
-
 import dtk.dengue.params as dengue_params
 import dtk.generic.params as generic_params
 import dtk.generic.seir as seir_params
@@ -30,11 +27,11 @@ from dtk.interventions.sir_vaccinations_b_initial_seeding import sir_vaccination
 from dtk.interventions.sir_vaccinations_c_initial_seeding import sir_vaccinations_c_campaign
 from dtk.interventions.sirs_initial_seeding import sirs_campaign
 from dtk.interventions.sis_initial_seeding import sis_campaign
+from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
+from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
 from dtk.utils.parsers.JSON import json2dict
 from dtk.utils.reports.CustomReport import format as format_reports
-from simtools.AssetManager.SimulationAssets import SimulationAssets
 from simtools.SimConfigBuilder import SimConfigBuilder
-from simtools.Utilities.COMPSUtilities import get_asset_collection
 from simtools.Utilities.Encoding import NumpyEncoder
 from simtools.Utilities.General import init_logging
 

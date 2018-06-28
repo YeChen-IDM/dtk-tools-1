@@ -1,6 +1,17 @@
 import os
 from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
 
+"""
+This script allows to run exactly what the `dtk generate_classes` would run but in a convenient .py file.
+Simply adjust the following variables to your environment:
+- exe_path: where to find the Eradication executable for which we want to generate files
+- output_path: where to create the generated files 
+- debug: Do we want to keep the intermediate files?
+"""
+
+debug = True
+exe_path = r"F:\Temp\New Folder\Eradication.exe"
+output_path = r"F:\Temp\NewFolder"
 
 def validate_inputs(exe_path, output_path):
     """
@@ -36,13 +47,6 @@ def validate_inputs(exe_path, output_path):
 
 
 if __name__ == "__main__":
-    debug = True
-
-    # exe_path = r"F:\Temp\builds\1187\Eradication.exe"
-    # output_path = r"F:\Temp\builds\1187\1187"
-    exe_path = r"F:\Temp\New Folder\Eradication.exe"
-    output_path = r"F:\Temp\NewFolder"
-
     valid = validate_inputs(exe_path, output_path)
     if valid:
         CampaignManager.generate_campaign_classes(exe_path, output_path, debug)
