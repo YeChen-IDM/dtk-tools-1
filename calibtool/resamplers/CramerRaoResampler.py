@@ -1,14 +1,16 @@
 import os
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import itertools
+from sklearn.decomposition import PCA
+from matplotlib.patches import Ellipse
+
 from calibtool.resamplers.BaseResampler import BaseResampler
 from calibtool.resamplers.CalibrationPoint import CalibrationPoint
 from calibtool.algorithms.FisherInfMatrix import FisherInfMatrix, plot_cov_ellipse, trunc_gauss
 
-import seaborn as sns
-import matplotlib.pyplot as plt
-import sklearn
-from sklearn.decomposition import PCA
 
 class CramerRaoResampler(BaseResampler):
     def __init__(self, **kwargs):
@@ -179,39 +181,114 @@ class CramerRaoResampler(BaseResampler):
         plt.close(fig)
         del ax, fig
 
-    def plot(self, center, Xmin, Xmax, df_perturbed_points, ll):
+        ## scatter plot matrix
+        # fig = scatterplot_matrix(np.array(resampled_points_dynamic[resampled_points_dynamic.columns[0:-1]]).T, list(resampled_points_dynamic.columns.values),
+        #                          linestyle='none', marker='o', color='black', mfc='none')
+        minimums = resampled_points[0].get_attribute(key='Min', parameter_type=CalibrationPoint.DYNAMIC)
+        maximums = resampled_points[0].get_attribute(key='Max', parameter_type=CalibrationPoint.DYNAMIC)
+        fig = scatterplot_matrix(np.array(resampled_points_dynamic[resampled_points_dynamic.columns[0:-1]]).T,
+                                 list(resampled_points_dynamic.columns.values[0:-1]), minimums, maximums,
+                                 c=colors, alpha=0.3, cmap='Greens')
+        fig.savefig(os.path.join(self.output_location, 'scatterplot_matrix_entireRange.pdf'))
+        fig.clf
+        del fig
+
+        fig = scatterplot_matrix(np.array(resampled_points_dynamic[resampled_points_dynamic.columns[0:-1]]).T,
+                                 list(resampled_points_dynamic.columns.values[0:-1]), range_min=None, range_max=None,
+                                 c=colors, alpha=0.3, cmap='Greens')
+        fig.savefig(os.path.join(self.output_location, 'scatterplot_matrix_NoScale.pdf'))
+        fig.clf
+        del fig
+
+
+    def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
         """
-        :param center:
-        :param Xmin:
-        :param Xmax:
-        :param df_perturbed_points:
-        :param ll: df_perturbed_points with likelihood
-        :return:
+        Plots an `nstd` sigma error ellipse based on the specified covariance
+        matrix (`cov`). Additional keyword arguments are passed on to the
+        ellipse patch artist.
+
+        Parameters
+        ----------
+            cov : The 2x2 covariance matrix to base the ellipse on
+            pos : The location of the center of the ellipse. Expects a 2-element
+                sequence of [x0, y0].
+            nstd : The radius of the ellipse in numbers of standard deviations.
+                Defaults to 2 standard deviations.
+            ax : The axis that the ellipse will be plotted on. Defaults to the
+                current axis.
+            Additional keyword arguments are pass on to the ellipse patch.
+
+        Returns
+        -------
+            A matplotlib ellipse artist
         """
-        import numpy as np
-        import matplotlib
-        matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
 
-        Fisher = FisherInfMatrix(center, df_perturbed_points, ll)
-        Covariance = np.linalg.inv(Fisher)
+        def eigsorted(cov):
+            vals, vecs = np.linalg.eigh(cov)
+            order = vals.argsort()[::-1]
+            return vals[order], vecs[:, order]
 
-        print("eigs of fisher: ", np.linalg.eigvals(Fisher))
-        print("eigs of Covariance: ", np.linalg.eigvals(Covariance))
+        if ax is None:
+            ax = plt.gca()
 
-        fig3 = plt.figure('CramerRao')
-        ax = plt.subplot(111)
-        x, y = center[0:2]
-        plt.plot(x, y, 'g.')
-        plot_cov_ellipse(Covariance[0:2, 0:2], center[0:2], nstd=3, alpha=0.6, color='green')
-        plt.xlim(Xmin[0], Xmax[0])
-        plt.ylim(Xmin[1], Xmax[1])
-        plt.xlabel('X', fontsize=14)
-        plt.ylabel('Y', fontsize=14)
+        vals, vecs = eigsorted(cov)
+        theta = np.degrees(np.arctan2(*vecs[:, 0][::-1]))
 
-        # save fig to file
-        fig3.savefig(os.path.join(self.output_location, 'CramerRao.png'))
+        # Width and height are "full" widths, not radius
+        width, height = 2 * nstd * np.sqrt(vals)
+        ellip = Ellipse(xy=pos, width=width, height=height, angle=theta, **kwargs)
 
-        plt.show()
+        ax.add_artist(ellip)
+        return ellip
+
+    def scatterplot_matrix(samples, names, range_min, range_max, **kwargs):
+        """Plots a scatterplot matrix of subplots.  Each row of "data" is plotted
+        against other rows, resulting in a nrows by nrows grid of subplots with the
+        diagonal subplots labeled with "names".  Additional keyword arguments are
+        passed on to matplotlib's "plot" command. Returns the matplotlib figure
+        object containg the subplot grid."""
+        numvars, numdata = samples.shape
+        fig, axes = plt.subplots(nrows=numvars, ncols=numvars, figsize=(8, 8))
+        fig.subplots_adjust(right=0.8, hspace=0.05, wspace=0.05)
+
+        for ax in axes.flat:
+            # Hide all ticks and labels
+            ax.xaxis.set_visible(False)
+            ax.yaxis.set_visible(False)
+
+            # Set up ticks only on one side for the "edge" subplots...
+            if ax.is_first_col():
+                ax.yaxis.set_ticks_position('left')
+            if ax.is_last_col():
+                ax.yaxis.set_ticks_position('right')
+            if ax.is_first_row():
+                ax.xaxis.set_ticks_position('top')
+            if ax.is_last_row():
+                ax.xaxis.set_ticks_position('bottom')
+
+        # Plot the data.
+        for i, j in zip(*np.triu_indices_from(axes, k=1)):
+            for x, y in [(i, j), (j, i)]:
+                scatterPlot = axes[x, y].scatter(samples[y], samples[x], **kwargs)
+                # plot_cov_ellipse(Covariance[x, x], center_point[x], nstd=3, alpha=0.6, color='green')
+                if not (range_min is None):
+                    axes[x, y].set_xlim(range_min[y],range_max[y])
+                if not (range_max is None):
+                    axes[x, y].set_ylim(range_min[x],range_max[x])
+
+        cax = fig.add_axes([0.85, 0.2, 0.05, 0.6])
+        fig.colorbar(scatterPlot, cax=cax)
+        plt.suptitle('Cramer Rao samples')
 
 
+        # Label the diagonal subplots...
+        for i, label in enumerate(names):
+            axes[i, i].annotate(label, (0.5, 0.5), xycoords='axes fraction',
+                                ha='center', va='center')
+
+        # Turn on the proper x or y axes ticks.
+        for i, j in zip(range(numvars), itertools.cycle((-1, 0))):
+            axes[j, i].xaxis.set_visible(True)
+            axes[i, j].yaxis.set_visible(True)
+
+        return fig
