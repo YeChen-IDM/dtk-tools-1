@@ -37,11 +37,14 @@ class RandomPerturbationResampler(BaseResampler):
         self.resampled_points = self._transform_df_points_to_calibrated_points(self.center_point,
                                                                                self.resampled_points_df)
 
-        return self.resampled_points
+        # this can be anything; will be made available for use in post_analysis() method in the from_resample argument
+        for_post_analysis = None
+
+        return self.resampled_points, for_post_analysis
 
 
-    def post_analysis(self, resampled_points, analyzer_results):
-        super().post_analysis(resampled_points, analyzer_results)
+    def post_analysis(self, resampled_points, analyzer_results, from_resample=None):
+        super().post_analysis(resampled_points, analyzer_results, from_resample=from_resample)
 
         # write the initial center point for later reference
         output_filename = os.path.join(self.output_location, 'center.json')

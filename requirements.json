@@ -84,5 +84,9 @@
   "openpyxl": {
     "version": "2.5.3",
     "test": ">="
+  },
+  "sklearn": {
+    "version": "0.0",
+    "test": ">="
   }
 }

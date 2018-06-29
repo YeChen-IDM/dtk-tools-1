@@ -112,6 +112,9 @@ class CramerRaoResampler(BaseResampler):
         points = CalibrationPoints(resampled_points)
         points.write(filename)
 
+        # this can be anything; will be made available for use in post_analysis() method in the from_resample argument
+        for_post_analysis = None
+
         # pp = sns.pairplot(resampled_points_df[original_column_names], size=1.8, aspect=1.8,
         #              plot_kws=dict(edgecolor="k", linewidth=0.5), diag_kind="kde", diag_kws=dict(shade=True))
         #
@@ -134,11 +137,11 @@ class CramerRaoResampler(BaseResampler):
         #    e.g. col0 ~ 1.25, col1 ~ 2000, col2 ~ 0.65, col3 ~ 25
 
         # return reampled points
-        return resampled_points
+        return resampled_points, for_post_analysis
 
 
-    def post_analysis(self, resampled_points, analyzer_results):
-        super().post_analysis(resampled_points, analyzer_results)
+    def post_analysis(self, resampled_points, analyzer_results, from_resample=None):
+        super().post_analysis(resampled_points, analyzer_results, from_resample=from_resample)
         output_filename = os.path.join(self.output_location, 'cr-resampled-points-ll.csv')
         resampled_points_ll_df = pd.DataFrame([rp.to_value_dict(include_likelihood=True) for rp in resampled_points])
         resampled_points_ll_df.to_csv(output_filename)
