@@ -52,7 +52,7 @@ class CampaignManager(object):
         # Step #1: generate schema
         OUT_FOLDER = out_folder
         SCHEMA_FILE = "schema.json"
-        command = "{} --get-schema --schema-path \"{}\"".format(exe_file, os.path.join(OUT_FOLDER, SCHEMA_FILE))
+        command = '"{}" --get-schema --schema-path "{}"'.format(exe_file, os.path.join(OUT_FOLDER, SCHEMA_FILE))
 
         # temp files
         files = [os.path.join(OUT_FOLDER, file_name) for file_name in

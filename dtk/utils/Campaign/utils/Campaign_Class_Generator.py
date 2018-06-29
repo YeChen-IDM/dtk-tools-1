@@ -9,9 +9,9 @@ Simply adjust the following variables to your environment:
 - debug: Do we want to keep the intermediate files?
 """
 
-debug = True
-exe_path = r"F:\Temp\New Folder\Eradication.exe"
-output_path = r"F:\Temp\NewFolder"
+debug = False
+exe_path = r"F:\Temp\builds\1202\Eradication.exe"
+output_path = r"F:\Temp\builds\1202"
 
 def validate_inputs(exe_path, output_path):
     """

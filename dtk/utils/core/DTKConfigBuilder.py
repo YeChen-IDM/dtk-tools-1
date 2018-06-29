@@ -3,6 +3,9 @@ import os
 import re  # find listed events by regex
 import shutil
 
+from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
+from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
+
 import dtk.dengue.params as dengue_params
 import dtk.generic.params as generic_params
 import dtk.generic.seir as seir_params
