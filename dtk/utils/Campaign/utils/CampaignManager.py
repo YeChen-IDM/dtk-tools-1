@@ -424,27 +424,28 @@ class CampaignManager(object):
     ####################################################
 
     @classmethod
-    def transform_campaign_json_to_classes(cls, campaign_file):
+    def json_file_to_classes(cls, campaign_file):
+        try:
+            json_data = json.load(open(campaign_file, 'r'))
+        except IOError:
+            raise Exception('Unable to read file: %s' % campaign_file)
+
+        return cls.json_to_classes(json_data)
+
+
+    @classmethod
+    def json_to_classes(cls, json_data):
         from dtk.utils.Campaign.utils.CampaignDecoder import CampaignDecoder
-
-        campaign_data = cls.load_json_data(campaign_file)
-
         # add class so that we can use JSONDecoder to transform it to a Campaign Class
-        if 'class' not in campaign_data:
-            campaign_data['class'] = 'Campaign'
+        if 'class' not in json_data:
+            json_data['class'] = 'Campaign'
 
         # transform Campaign (JSON) to Campaign (Class)
-        json_str = json.dumps(campaign_data, indent=3)
+        json_str = json.dumps(json_data, indent=3)
         campaign = json.loads(json_str, cls=CampaignDecoder)
 
         return campaign
 
-    @classmethod
-    def load_json_data(cls, filename):
-        try:
-            return json.load(open(filename, 'rb'))
-        except IOError:
-            raise Exception('Unable to read file: %s' % filename)
 
 
 if __name__ == "__main__":

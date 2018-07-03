@@ -1,3 +1,4 @@
+from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
 from dtk.utils.parsers.JSON import json2dict
 import os
 import logging
@@ -210,7 +211,7 @@ class CampaignTemplate(TaggedTemplate):
         tags = self.set_params(params)
 
         cb.set_param('Campaign_Filename', self.get_filename())
-        cb.campaign = self.get_contents()
+        cb.campaign = CampaignManager.json_to_classes(self.get_contents())
 
         return tags
 

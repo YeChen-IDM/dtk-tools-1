@@ -277,7 +277,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         """
 
         config = json2dict(config_name)
-        campaign = CampaignManager.transform_campaign_json_to_classes(campaign_name) if campaign_name else empty_campaign
+        campaign = CampaignManager.json_file_to_classes(campaign_name) if campaign_name else empty_campaign
 
         return cls(config, campaign, **kwargs)
 
