@@ -1,6 +1,7 @@
-from PrevalenceAnalyzer import PrevalenceAnalyzer
+from malaria.study_sites.site_setup_functions import summary_report_fn
+
+from .PrevalenceAnalyzer import PrevalenceAnalyzer
 from calibtool.CalibSite import CalibSite
-from calibtool.study_sites.site_setup_functions import  summary_report_fn
 
 
 class MyanmarCalibSite(CalibSite):
