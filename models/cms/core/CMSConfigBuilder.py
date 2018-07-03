@@ -132,7 +132,7 @@ class CMSConfigBuilder(SimConfigBuilder):
 
     @staticmethod
     def trim_value(value):
-        return value.strip() if value else value
+        return str(value).strip() if value else value
 
     def add_species(self, name, value=None):
         value = self.trim_value(value)

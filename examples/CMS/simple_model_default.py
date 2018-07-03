@@ -1,6 +1,6 @@
 from models.cms.analyzers.SimpleCMSAnalyzer import SimpleCMSAnalyzer
 from models.cms.core.CMSConfigBuilder import CMSConfigBuilder
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
+from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.AssetManager.SimulationAssets import SimulationAssets
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
