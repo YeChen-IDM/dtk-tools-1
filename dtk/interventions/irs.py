@@ -77,10 +77,8 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
     irs_housingmod.Killing_Config.Decay_Time_Constant = duration
 
     if waning:
-        for cfg in waning:
-            ih = getattr(irs_housingmod, cfg)
-            ih.update(waning[cfg])
-            setattr(irs_housingmod, cfg, ih)
+        for w, w_config in waning.items():
+            setattr(irs_housingmod, w, w_config)
 
     if cost:
         irs_housingmod.Cost_To_Consumer = cost

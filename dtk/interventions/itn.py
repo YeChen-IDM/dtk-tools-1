@@ -38,8 +38,8 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=None, nodeI
     """
 
     if waning:
-        for cfg in waning:
-            setattr(itn_bednet, cfg, waning[cfg])
+        for w, w_config in waning.items():
+            setattr(itn_bednet, w, w_config)
 
     itn_bednet.Cost_To_Consumer = cost
 

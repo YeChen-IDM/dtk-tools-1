@@ -39,7 +39,6 @@ class SimConfigBuilder(metaclass=ABCMeta):
         else:
             for k, v in params.items():
                 self.validate_param(k)
-                logger.debug('Overriding: %s = %s' % (k, v))
                 self.set_param(k, v)
         return params  # for ModBuilder metadata
 
