@@ -2447,134 +2447,6 @@
                "class": "AntimalarialDrug",
                "iv_type": "IndividualTargeted"
             },
-            "AntipoliovirusDrug": {
-               "Adherence_Rate": {
-                  "default": 1,
-                  "description": "Adherence rate for doses subsequent to first dose. Per-dose adherece rate for a dropout model.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Cost_To_Consumer": {
-                  "default": 1,
-                  "description": "Unit cost per drug (unamortized).",
-                  "max": 99999,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Disqualifying_Properties": {
-                  "default": [],
-                  "description": "A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.",
-                  "type": "Dynamic String Set",
-                  "value_source": ""
-               },
-               "Dont_Allow_Duplicates": {
-                  "default": 0,
-                  "description": "If an individual's container has an intervention, set to true (1) to prevent them from receiving another copy of the intervention. Supported by all intervention classes.",
-                  "type": "bool"
-               },
-               "Dose_Interval": {
-                  "default": 1,
-                  "description": "The interval between doses, in days.",
-                  "max": 99999,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Drug_CMax": {
-                  "default": 1,
-                  "description": "The maximum drug concentration that can be used, and is in the same units as Drug_PKPD_C50.",
-                  "max": 10000,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Drug_PKPD_C50": {
-                  "default": 1,
-                  "description": "The concentration at which drug killing rates are half of the maximum. Must use the same units as Drug_Cmax.",
-                  "max": 5000,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Drug_Vd": {
-                  "default": 1,
-                  "description": "The volume of drug distribution. This value is the ratio of the volume of the second compartment to the volume of the first compartment in a two-compartment model, and is dimensionless.",
-                  "max": 10000,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Durability_Profile": {
-                  "default": "FIXED_DURATION_CONSTANT_EFFECT",
-                  "description": "The profile of durability decay.",
-                  "enum": [
-                     "FIXED_DURATION_CONSTANT_EFFECT",
-                     "CONCENTRATION_VERSUS_TIME"
-                  ],
-                  "type": "enum"
-               },
-               "Fraction_Defaulters": {
-                  "default": 0,
-                  "description": "The fraction of individuals who will not finish their drug treatment.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Infection_Duration_Efficacy": {
-                  "default": 1,
-                  "description": "efficacy in reducing infection duration.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Intervention_Name": {
-                  "default": "AntipoliovirusDrug",
-                  "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
-                  "type": "string"
-               },
-               "New_Property_Value": {
-                  "description": "An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ",
-                  "type": "Constrained String",
-                  "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
-               },
-               "Primary_Decay_Time_Constant": {
-                  "default": 1,
-                  "description": "The primary decay time constant (in days) of the decay profile.",
-                  "max": 999999,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Remaining_Doses": {
-                  "default": 0,
-                  "description": "The remaining doses in an intervention; enter a negative number for unlimited doses.",
-                  "max": 999999,
-                  "min": -1,
-                  "type": "integer"
-               },
-               "Responder_Rate": {
-                  "default": 1,
-                  "description": "Probability that an individual will have any response to the drug.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Secondary_Decay_Time_Constant": {
-                  "default": 1,
-                  "description": "The secondary decay time constant of the durability profile. ",
-                  "max": 999999,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Sim_Types": [
-                  "POLIO_SIM"
-               ],
-               "Titer_Efficacy": {
-                  "default": 1,
-                  "description": "efficacy in reducing log10 tcid50 shed titer.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "class": "AntipoliovirusDrug",
-               "iv_type": "IndividualTargeted"
-            },
             "ArtificialDietHousingModification": {
                "Blocking_Config": {
                   "description": "The configuration of pre-feed mosquito repellency and waning for housing modification.",
@@ -3926,8 +3798,7 @@
                   "value_source": "'<configuration>:Listed_Events.*' or Built-in"
                },
                "Sim_Types": [
-                  "HIV_SIM",
-                  "TBHIV_SIM"
+                  "HIV_SIM"
                ],
                "Threshold": {
                   "description": "If the individual's CD4 has ever been below the threshold specified, then the test will be positive.",
@@ -4787,8 +4658,7 @@
                   "value_source": "'<configuration>:Listed_Events.*' or Built-in"
                },
                "Sim_Types": [
-                  "HIV_SIM",
-                  "TBHIV_SIM"
+                  "HIV_SIM"
                ],
                "Treatment_Fraction": {
                   "default": 1,
@@ -5304,8 +5174,7 @@
                   "value_source": "'<configuration>:Listed_Events.*' or Built-in"
                },
                "Sim_Types": [
-                  "HIV_SIM",
-                  "TBHIV_SIM"
+                  "HIV_SIM"
                ],
                "Time_Value_Map": {
                   "description": "The years (times) and matching probabilities for test results. ",
@@ -5540,8 +5409,7 @@
                   "value_source": "'<configuration>:Listed_Events.*' or Built-in"
                },
                "Sim_Types": [
-                  "HIV_SIM",
-                  "TBHIV_SIM"
+                  "HIV_SIM"
                ],
                "Treatment_Fraction": {
                   "default": 1,
@@ -5746,8 +5614,7 @@
                   "type": "float"
                },
                "Sim_Types": [
-                  "HIV_SIM",
-                  "TBHIV_SIM"
+                  "HIV_SIM"
                ],
                "Treatment_Fraction": {
                   "default": 1,
@@ -5980,8 +5847,7 @@
                   "type": "float"
                },
                "Sim_Types": [
-                  "HIV_SIM",
-                  "TBHIV_SIM"
+                  "HIV_SIM"
                ],
                "Treatment_Fraction": {
                   "default": 1,
@@ -6221,9 +6087,7 @@
                   "min": -3.40282e+38,
                   "type": "float"
                },
-               "Sim_Types": [
-                  "TBHIV_SIM"
-               ],
+               "Sim_Types": [],
                "class": "HealthSeekingBehaviorUpdate",
                "iv_type": "IndividualTargeted"
             },
@@ -6329,9 +6193,7 @@
                   "type": "Constrained String",
                   "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
                },
-               "Sim_Types": [
-                  "TBHIV_SIM"
-               ],
+               "Sim_Types": [],
                "Single_Use": {
                   "default": 1,
                   "description": "If set to true (1), the health-seeking behavior gets used once and discarded. If set to false (0), it remains indefinitely.",
@@ -7677,30 +7539,6 @@
                "class": "OutbreakIndividual",
                "iv_type": "IndividualTargeted"
             },
-            "OutbreakIndividualDengue": {
-               "Ignore_Immunity": {
-                  "default": 1,
-                  "description": "Individuals will be force-infected (with a specific strain) regardless of actual immunity level when set to true (1).",
-                  "type": "bool"
-               },
-               "Incubation_Period_Override": {
-                  "default": -1,
-                  "description": "The incubation period, in days, that infected individuals will go through before becoming infectious. This value overrides the incubation period set in the configuration file. Set to -1 to honor the configuration parameter settings.",
-                  "max": 2147480000.0,
-                  "min": -1,
-                  "type": "integer"
-               },
-               "Sim_Types": [
-                  "DENGUE_SIM"
-               ],
-               "Strain_Id_Name": {
-                  "default": "UNINITIALIZED STRING",
-                  "description": "The Dengue strain to use in this outbreak. E.g., 'Strain_1' or 'Strain_4'.",
-                  "type": "string"
-               },
-               "class": "OutbreakIndividualDengue",
-               "iv_type": "IndividualTargeted"
-            },
             "OutbreakIndividualMalaria": {
                "Antigen": {
                   "default": 0,
@@ -7770,61 +7608,6 @@
                   "HIV_SIM"
                ],
                "class": "PMTCT",
-               "iv_type": "IndividualTargeted"
-            },
-            "PolioVaccine": {
-               "Cost_To_Consumer": {
-                  "default": 10,
-                  "description": "Cost of each polio vaccine.",
-                  "max": 100,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Disqualifying_Properties": {
-                  "default": [],
-                  "description": "A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.",
-                  "type": "Dynamic String Set",
-                  "value_source": ""
-               },
-               "Dont_Allow_Duplicates": {
-                  "default": 0,
-                  "description": "If an individual's container has an intervention, set to true (1) to prevent them from receiving another copy of the intervention. Supported by all intervention classes.",
-                  "type": "bool"
-               },
-               "Intervention_Name": {
-                  "default": "PolioVaccine",
-                  "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
-                  "type": "string"
-               },
-               "New_Property_Value": {
-                  "description": "An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ",
-                  "type": "Constrained String",
-                  "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
-               },
-               "Sim_Types": [
-                  "POLIO_SIM"
-               ],
-               "Time_Since_Vaccination": {
-                  "default": 0,
-                  "description": "Time since vaccination.",
-                  "max": 100,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Vaccine_Type": {
-                  "default": "tOPV",
-                  "description": "Polio vaccine type.",
-                  "enum": [
-                     "tOPV",
-                     "bOPV",
-                     "mOPV_1",
-                     "mOPV_2",
-                     "mOPV_3",
-                     "eIPV"
-                  ],
-                  "type": "enum"
-               },
-               "class": "PolioVaccine",
                "iv_type": "IndividualTargeted"
             },
             "PropertyValueChanger": {
@@ -8947,9 +8730,7 @@
                   "type": "Constrained String",
                   "value_source": "'<configuration>:Listed_Events.*' or Built-in"
                },
-               "Sim_Types": [
-                  "TBHIV_SIM"
-               ],
+               "Sim_Types": [],
                "Treatment_Fraction": {
                   "default": 1,
                   "description": "The fraction of positive diagnoses that are treated.",
@@ -9265,55 +9046,6 @@
                   "type": "string"
                },
                "class": "TBHIVConfigurableTBdrug",
-               "iv_type": "IndividualTargeted"
-            },
-            "TyphoidVaccine": {
-               "Changing_Effect": {
-                  "description": "A highly configurable effect that changes over time.",
-                  "type": "idmType:WaningEffect"
-               },
-               "Disqualifying_Properties": {
-                  "default": [],
-                  "description": "A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.",
-                  "type": "Dynamic String Set",
-                  "value_source": ""
-               },
-               "Dont_Allow_Duplicates": {
-                  "default": 0,
-                  "description": "If an individual's container has an intervention, set to true (1) to prevent them from receiving another copy of the intervention. Supported by all intervention classes.",
-                  "type": "bool"
-               },
-               "Effect": {
-                  "default": 1,
-                  "description": "The efficacy of the Typhoid vaccine.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Intervention_Name": {
-                  "default": "TyphoidVaccine",
-                  "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
-                  "type": "string"
-               },
-               "Mode": {
-                  "default": "Shedding",
-                  "description": "The mode of transmission targeted by the intervention.",
-                  "enum": [
-                     "Shedding",
-                     "Dose",
-                     "Exposures"
-                  ],
-                  "type": "enum"
-               },
-               "New_Property_Value": {
-                  "description": "An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ",
-                  "type": "Constrained String",
-                  "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
-               },
-               "Sim_Types": [
-                  "TYPHOID_SIM"
-               ],
-               "class": "TyphoidVaccine",
                "iv_type": "IndividualTargeted"
             },
             "UsageDependentBednet": {
@@ -11259,29 +10991,6 @@
                "class": "OvipositionTrap",
                "iv_type": "NodeTargeted"
             },
-            "PolioNodeSurvey": {
-               "Disqualifying_Properties": {
-                  "default": [],
-                  "description": "A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.",
-                  "type": "Dynamic String Set",
-                  "value_source": ""
-               },
-               "Intervention_Name": {
-                  "default": "PolioNodeSurvey",
-                  "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
-                  "type": "string"
-               },
-               "New_Property_Value": {
-                  "description": "An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ",
-                  "type": "Constrained String",
-                  "value_source": "'<demographics>::NodeProperties.*.Property':'<demographics>::NodeProperties.*.Values'"
-               },
-               "Sim_Types": [
-                  "POLIO_SIM"
-               ],
-               "class": "PolioNodeSurvey",
-               "iv_type": "NodeTargeted"
-            },
             "ScaleLarvalHabitat": {
                "Disqualifying_Properties": {
                   "default": [],
@@ -11451,60 +11160,6 @@
                   "DENGUE_SIM"
                ],
                "class": "SugarTrap",
-               "iv_type": "NodeTargeted"
-            },
-            "TyphoidWASH": {
-               "Changing_Effect": {
-                  "description": "A highly configurable effect that changes over time.",
-                  "type": "idmType:WaningEffect"
-               },
-               "Disqualifying_Properties": {
-                  "default": [],
-                  "description": "A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.",
-                  "type": "Dynamic String Set",
-                  "value_source": ""
-               },
-               "Effect": {
-                  "default": 1,
-                  "description": "The efficacy of the Typhoid vaccine.",
-                  "max": 1,
-                  "min": 0,
-                  "type": "float"
-               },
-               "Intervention_Name": {
-                  "default": "TyphoidWASH",
-                  "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
-                  "type": "string"
-               },
-               "Mode": {
-                  "default": "Shedding",
-                  "description": "The mode of transmission targeted by the intervention.",
-                  "enum": [
-                     "Shedding",
-                     "Dose",
-                     "Exposures"
-                  ],
-                  "type": "enum"
-               },
-               "New_Property_Value": {
-                  "description": "An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ",
-                  "type": "Constrained String",
-                  "value_source": "'<demographics>::NodeProperties.*.Property':'<demographics>::NodeProperties.*.Values'"
-               },
-               "Sim_Types": [
-                  "*"
-               ],
-               "Targeted_Individual_Properties": {
-                  "default": "default",
-                  "description": "Individual Property key-value pairs to be targeted (optional).",
-                  "type": "string"
-               },
-               "Use_Property_Targeting": {
-                  "default": 1,
-                  "description": "Set to 1 (true) -- or omit -- if you want to use the Targeted_Individual_Property parameter to limit the effect of this intervention to just certain individuals. Set to 0 to apply effect to everyone.",
-                  "type": "bool"
-               },
-               "class": "TyphoidWASH",
                "iv_type": "NodeTargeted"
             }
          }

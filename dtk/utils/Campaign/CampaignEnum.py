@@ -289,11 +289,6 @@ class AntimalarialDrug_Dosing_Type_Enum(Enum):
     FullTreatmentNewDetectionTech = auto()
 
 
-class AntipoliovirusDrug_Durability_Profile_Enum(Enum):
-    FIXED_DURATION_CONSTANT_EFFECT = auto()
-    CONCENTRATION_VERSUS_TIME = auto()
-
-
 class BCGVaccine_Vaccine_Type_Enum(Enum):
     Generic = auto()
     TransmissionBlocking = auto()
@@ -430,15 +425,6 @@ class MigrateIndividuals_Duration_Before_Leaving_Distribution_Type_Enum(Enum):
     DUAL_TIMESCALE_DURATION = auto()
 
 
-class PolioVaccine_Vaccine_Type_Enum(Enum):
-    tOPV = auto()
-    bOPV = auto()
-    mOPV_1 = auto()
-    mOPV_2 = auto()
-    mOPV_3 = auto()
-    eIPV = auto()
-
-
 class RTSSVaccine_Antibody_Type_Enum(Enum):
     CSP = auto()
     MSP1 = auto()
@@ -497,12 +483,6 @@ class StiCoInfectionDiagnostic_Event_Or_Config_Enum(Enum):
 class TBHIVConfigurableTBdrug_Durability_Profile_Enum(Enum):
     FIXED_DURATION_CONSTANT_EFFECT = auto()
     CONCENTRATION_VERSUS_TIME = auto()
-
-
-class TyphoidVaccine_Mode_Enum(Enum):
-    Shedding = auto()
-    Dose = auto()
-    Exposures = auto()
 
 
 class UsageDependentBednet_Expiration_Distribution_Type_Enum(Enum):
@@ -719,12 +699,6 @@ class SpaceSpraying_Spray_Kill_Target_Enum(Enum):
     SpaceSpray_MalesOnly = auto()
     SpaceSpray_FemalesAndMales = auto()
     SpaceSpray_Indoor = auto()
-
-
-class TyphoidWASH_Mode_Enum(Enum):
-    Shedding = auto()
-    Dose = auto()
-    Exposures = auto()
 
 
 class NodeSetPolygon_Polygon_Format_Enum(Enum):
