@@ -235,7 +235,7 @@ def install_packages(reqs):
     from setuptools import setup, find_packages
 
     setup(name='dtk-tools',
-          version='1.0b3',
+          version='1.0b5',
           description='Facilitating submission and analysis of simulations',
           url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
           author='Edward Wenger,'
