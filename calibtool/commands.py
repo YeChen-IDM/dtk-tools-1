@@ -22,6 +22,14 @@ def get_calib_manager(args, unknownArgs, force_metadata=False):
     else:
         manager = mod.run_calib_args['calib_manager']
 
+    # Atiye: uncomment this block if quiet is not being honored down below in the code. If it isn't we should fix
+    #  that anyway. This message will not self destruct, ever.
+    # try:
+    #     if args.quiet:
+    #         mod.run_sim_args['quiet'] = True
+    # except:
+    #     pass
+
     # Update the SetupParser to match the existing experiment environment/block if force_metadata == True
     if force_metadata:
         exp = manager.get_experiment_from_iteration(iteration=args.iteration, force_metadata=force_metadata)
