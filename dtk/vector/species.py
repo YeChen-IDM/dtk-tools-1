@@ -14,11 +14,13 @@ param_block = {
 
     "Immature_Duration": 2,
 
-    "Adult_Life_Expectancy": 10,
+    "Adult_Life_Expectancy": 20,
     "Days_Between_Feeds": 3,
-    "Anthropophily": 0.95,  # species- and site-specific feeding parameters
+    "Anthropophily": 0.85,  # species- and site-specific feeding parameters
     "Indoor_Feeding_Fraction": 0.5,
     "Egg_Batch_Size": 100,
+
+    "Vector_Sugar_Feeding_Frequency": "VECTOR_SUGAR_FEEDING_NONE",
 
     "Acquire_Modifier": 0.2,  # VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes
     "Infected_Arrhenius_1": 117000000000,
@@ -32,6 +34,10 @@ param_block = {
 
 # An. arabiensis
 arabiensis_param_block = param_block.copy()
+mod_arabiensis_params = {
+    "Anthropophily": 0.65,
+}
+arabiensis_param_block.update(mod_arabiensis_params)
 
 # An. funestus
 funestus_param_block = param_block.copy()
@@ -40,6 +46,7 @@ mod_funestus_params = {
         "WATER_VEGETATION": 2e7
     },
     "Indoor_Feeding_Fraction": 0.95,
+    "Anthropophily": 0.65,
 }
 funestus_param_block.update(mod_funestus_params)
 
@@ -57,6 +64,7 @@ mod_farauti_params = {
     "Larval_Habitat_Types": {
         "BRACKISH_SWAMP": 10000000000
     },
+    # WARNING: Adult_Life_Expectancy unadjusted for Prashanth's 2018 corrections
     "Adult_Life_Expectancy": 5.9,
     "Days_Between_Feeds": 2,
     "Anthropophily": 0.97,
@@ -89,7 +97,7 @@ mod_maculatus_params = {
         "WATER_VEGETATION": 1e6,
         "CONSTANT": 1e6
     },
-    "Adult_Life_Expectancy": 7,
+    # "Adult_Life_Expectancy": 7,
     "Days_Between_Feeds": 3,
     "Anthropophily": 0.19,
     "Indoor_Feeding_Fraction": 0.01,
@@ -119,12 +127,15 @@ mod_minimus_params = {
         "WATER_VEGETATION": 1e7, # update habitat type?
         "CONSTANT": 1e6
     },
-    "Adult_Life_Expectancy": 7,
+    # "Adult_Life_Expectancy": 7,
+    # "Anthropophily": 0.85,
+    # "Acquire_Modifier": 0.2,
+    "Adult_Life_Expectancy": 25,
+    "Anthropophily": 0.5,
+    "Acquire_Modifier": 0.8,
     "Days_Between_Feeds": 3,
-    "Anthropophily": 0.85,
-    "Indoor_Feeding_Fraction": 0.73,
+    "Indoor_Feeding_Fraction": 0.6,
     "Egg_Batch_Size": 70,
-    "Acquire_Modifier": 0.2,
     "Transmission_Rate": 0.8
 }
 minimus_param_block.update(mod_minimus_params)
@@ -142,9 +153,11 @@ mod_dirus_params = {
         "TEMPORARY_RAINFALL": 1e7,
         "CONSTANT": 1e6
     },
-    "Adult_Life_Expectancy": 14,
+    # "Adult_Life_Expectancy": 14,
+    "Adult_Life_Expectancy": 30,
     "Days_Between_Feeds": 3,
-    "Anthropophily": 0.96,
+    "Anthropophily": 0.5,
+    # "Anthropophily": 0.96,
     "Indoor_Feeding_Fraction": 0.01,
     "Egg_Batch_Size": 70,
     "Acquire_Modifier": 0.2,
@@ -162,6 +175,7 @@ mod_albimanus_params = {
         "TEMPORARY_RAINFALL": 1e7,
         "CONSTANT": 1e6
     },
+    # WARNING: Adult_Life_Expectancy unadjusted for Prashanth's 2018 corrections
     "Adult_Life_Expectancy": 5, # daily survival rate somewhere between 0.7 and 0.9
     "Days_Between_Feeds": 3, # observed 2.6 to 5.2
     "Anthropophily": 0.5,
@@ -176,6 +190,7 @@ albimanus_param_block.update(mod_albimanus_params)
 # Dengue
 aegypti_param_block = {
     "Acquire_Modifier": 1,
+    # WARNING: Adult_Life_Expectancy unadjusted for Prashanth's 2018 corrections
     "Adult_Life_Expectancy": 14,
     "Anthropophily": 0.95,
     "Aquatic_Arrhenius_1": 9752291.727,
