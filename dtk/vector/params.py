@@ -23,6 +23,8 @@ disease_params = {
 }
 
 cohort_params = {
+
+    'Enable_Vector_Species_Report' : 0,
     "Vector_Sampling_Type": "VECTOR_COMPARTMENTS_NUMBER",
     "Mosquito_Weight": 1,
 
@@ -48,7 +50,6 @@ cohort_params = {
     "Newborn_Biting_Risk_Multiplier": 0.2,  # for LINEAR option (also picked up by InputEIR)
     "Human_Feeding_Mortality": 0.1,
 
-    "Vector_Sugar_Feeding_Frequency": "VECTOR_SUGAR_FEEDING_NONE",
     "Wolbachia_Infection_Modification": 1.0,
     "Wolbachia_Mortality_Modification": 1.0,
     "HEG_Homing_Rate": 0.0,
