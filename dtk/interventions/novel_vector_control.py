@@ -1,37 +1,64 @@
-def add_ATSB(cb, start=0, coverage=0.15, killing_cfg={}, duration=180, duration_std_dev=14,
+import copy
+from dtk.utils.Campaign.CampaignClass import *
+
+
+def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=[], duration=180, duration_std_dev=14,
              repetitions=1, interval=365,
              nodeIDs=[], node_property_restrictions=[]):
 
-    for key, val in killing_cfg.items() :
-        val['Initial_Effect'] *= coverage
+    cfg_species = [x for x in cb.get_param('Vector_Species_Names') if cb.get_param('Vector_Species_Params')[x]['Vector_Sugar_Feeding_Frequency'] != 'VECTOR_SUGAR_FEEDING_NONE']
+    atsb_master = WaningEffectBoxExponential(Initial_Effect=0.15*coverage,
+                                             Box_Duration=180,
+                                             Decay_Time_Constant=30)
+    dummy_kill_cfg = WaningEffectConstant(Initial_Effect=0)
 
-    atsb_config = {
-        "class": "SugarTrap",
-        "Cost_To_Consumer": 3.75,
-        "Killing_Config": killing_cfg,
-        "Expiration_Distribution_Type" : "GAUSSIAN_DURATION",
-        "Expiration_Period_Mean" : duration,
-        "Expiration_Period_Std_Dev" : duration_std_dev
-    }
+    # default killing cfg
+    killing_cfg = [{ 'Species' : sp,
+                     'Killing_Config' : atsb_master} for sp in cfg_species]
 
-    ATSB_event = {  "Event_Coordinator_Config": {
-                        "Intervention_Config": atsb_config,
-                        "class": "StandardInterventionDistributionEventCoordinator"
-                    },
-                    "Nodeset_Config": {
-                        "class": "NodeSetAll"
-                    },
-                    "Start_Day": start,
-                    "Intervention_Name": "Attractive Toxic Sugar Bait",
-                    "Demographic_Coverage" : 1,
-                    "Number_Repetitions": repetitions,
-                    "Timesteps_Between_Repetitions": interval,
-                    "Node_Property_Restrictions": node_property_restrictions,
-                    "class": "CampaignEvent"
-                }
+    # if user has specified a kill cfg, just use dicts rather than CampaignClasses
+    if kill_cfg :
+        # if user-inputed killing cfg is dict and species not specified, make a list
+        if isinstance(kill_cfg, dict) :
+            kill_cfg['Killing_Config']['Initial_Effect'] *= coverage
+            if 'Species' not in kill_cfg :
+                killing_cfg = [{ 'Species' : sp,
+                                 'Killing_Config' : kill_cfg['Killing_Config']} for sp in cfg_species]
+            else :
+                killing_cfg = [kill_cfg]
+        # if user-inputed killing cfg is list, check if all cfg_species are listed. if not, put in a dummy no-effect kill_cfg.
+        elif isinstance(kill_cfg, list) :
+            for x in kill_cfg :
+                if 'Species' not in x :
+                    raise ValueError('Each config in SugarTrap killing config list must contain species name')
+                x['Killing_Config']['Initial_Effect'] *= coverage
+            listed_sp = [x['Species'] for x in kill_cfg]
+            if any([x not in cfg_species for x in listed_sp]) :
+                raise ValueError('A targeted SugarTrap species is not a sugar-feeding species in config')
+            killing_cfg = [x for x in kill_cfg if x['Species'] in cfg_species]
+        else :
+            raise ValueError('Invalid SugarTrap killing config')
 
-    if nodeIDs:
-        ATSB_event["Nodeset_Config"] = { "class": "NodeSetNodeList", "Node_List": nodeIDs }
+    atsb_config = SugarTrap(
+        Cost_To_Consumer=3.75,
+        Killing_Config_Per_Species=killing_cfg,
+        Expiration_Distribution_Type="GAUSSIAN_DURATION",
+        Expiration_Period_Mean=duration,
+        Expiration_Period_Std_Dev=duration_std_dev
+    )
+
+    node_cfg = NodeSetNodeList(Node_List=nodeIDs) if nodeIDs else NodeSetAll()
+
+    ATSB_event = CampaignEvent(
+        Start_Day=start,
+        Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(Intervention_Config=atsb_config),
+        Intervention_Name="Attractive Toxic Sugar Bait",
+        Demographic_Coverage=1,
+        Number_Repetitions=repetitions,
+        Timesteps_Between_Repetitions=interval,
+        Node_Property_Restrictions=node_property_restrictions,
+        Nodeset_Config=node_cfg
+    )
 
     cb.add_event(ATSB_event)
 

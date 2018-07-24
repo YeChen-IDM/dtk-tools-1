@@ -123,10 +123,11 @@ def change_individual_property(cb, target_property_name, target_property_value, 
 
     if trigger_condition_list:
         if triggered_campaign_delay:
-            trigger_condition_list = [str(triggered_campaign_delay_event(cb, start_day, nodeIDs,
-                                                                              triggered_campaign_delay,
-                                                                              trigger_condition_list,
-                                                                              listening_duration))]
+            trigger_condition_list = [triggered_campaign_delay_event(cb, start_day,
+                                                                     nodeIDs=nodeIDs,
+                                                                     triggered_campaign_delay=triggered_campaign_delay,
+                                                                     trigger_condition_list=trigger_condition_list,
+                                                                     listening_duration=listening_duration)]
 
         changer_event = CampaignEvent(
             Start_Day=start_day,

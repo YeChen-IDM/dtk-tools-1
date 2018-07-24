@@ -1,5 +1,6 @@
 import copy
 from dtk.utils.Campaign.CampaignClass import *
+from dtk.interventions.triggered_campaign_delay_event import triggered_campaign_delay_event
 
 
 # Ivermectin parameters
@@ -43,8 +44,10 @@ def ivermectin_config_by_duration(drug_code=None):
     return cfg
 
 
-def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_condition_list=[],
-                   listening_duration=-1, nodeids=[], target_residents_only=1, ind_property_restrictions=[]):
+def add_ivermectin(config_builder, drug_code, coverage, start_days,
+                   trigger_condition_list=[], triggered_campaign_delay=0,
+                   listening_duration=-1, nodeids=[], target_residents_only=1,
+                   node_property_restrictions=[], ind_property_restrictions=[]):
     """
     Add an ivermectin event to the config_builder passed.
 
@@ -63,6 +66,14 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
 
     intervention_cfg = MultiInterventionDistributor(Intervention_List=cfg)
 
+    if triggered_campaign_delay > 0:
+        trigger_condition_list = [triggered_campaign_delay_event(config_builder, start_days[0],
+                                                                 nodeIDs=nodeids,
+                                                                 triggered_campaign_delay=triggered_campaign_delay,
+                                                                 trigger_condition_list=trigger_condition_list,
+                                                                 listening_duration=listening_duration,
+                                                                 node_property_restrictions=node_property_restrictions)]
+
     if nodeids:
         node_cfg = NodeSetNodeList(Node_List=nodeids)
     else:
@@ -80,6 +91,7 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
                 Trigger_Condition_List=trigger_condition_list,
                 Target_Residents_Only=target_residents_only,
                 Property_Restrictions_Within_Node=ind_property_restrictions,
+                Node_Property_Restrictions=node_property_restrictions,
                 Duration=listening_duration,
                 Demographic_Coverage=coverage,
                 Actual_IndividualIntervention_Config=intervention_cfg
@@ -87,7 +99,8 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
         else:
             IVM_event.Event_Coordinator_Config.Target_Residents_Only = True if target_residents_only else False
             IVM_event.Event_Coordinator_Config.Demographic_Coverage = coverage
-            Property_Restrictions_Within_Node=ind_property_restrictions,
+            IVM_event.Event_Coordinator_Config.Property_Restrictions_Within_Node=ind_property_restrictions
+            IVM_event.Event_Coordinator_Config.Node_Property_Restrictions=node_property_restrictions
             IVM_event.Event_Coordinator_Config.Intervention_Config = intervention_cfg
 
         config_builder.add_event(IVM_event)
