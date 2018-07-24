@@ -1,0 +1,13 @@
+{
+  "ScaleLarvalHabitat": {
+    "idmType:LarvalHabitatMultiplier": [
+      {
+        "type": "float",
+        "min": 0,
+        "max": 3.40282e+38,
+        "description": "TBD-A single value can be specified so that it is applied to ALL_HABITATS."
+      }
+    ],
+    "class": "ScaleLarvalHabitat"
+  }
+}

@@ -1,0 +1,16 @@
+{
+    "Property_Restrictions": {
+        "default": [],
+        "description": "Fraction of individuals in the target demographic that will receive this intervention.",
+        "type": "Dynamic String Set",
+        "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
+    },
+    "Distribution_Coverages": {
+        "description": "Vector of floats for fraction of individuals that will receive this intervention in a CalendarEventCoordinator.",
+        "type": "Vector Float",
+        "min": 0,
+        "max": 1,
+        "default": 0,
+        "ascending": 0
+    }
+}

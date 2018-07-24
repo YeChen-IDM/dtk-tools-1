@@ -2,7 +2,6 @@
 # or via the calibtool.py script: 'calibtool run example_optimization.py'
 import copy
 import math
-import random
 
 from scipy.special import gammaln
 

@@ -29,6 +29,8 @@ from simtools.Utilities.GitHub.GitHub import GitHub, DTKGitHub
 import simtools.Utilities.Initialization as init
 from simtools.DataAccess.Schema import Experiment, Simulation
 
+from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
+
 from simtools.Utilities.General import init_logging
 logger = init_logging('Commands')
 
@@ -545,6 +547,39 @@ def db_list(args, unknownArgs):
         print("No experiments to display.")
 
 
+def generate_classes(args, unknownArgs):
+    """
+    called from commandline dtk generate_classes
+    """
+
+    file_exits = os.path.isfile(args.exe)
+    folder_exists = os.path.isdir(args.output)
+
+    # check file exists
+    if not file_exits:
+        print("File '{}' doesn't exist!".format(args.exe))
+        return
+
+    # check output location exists
+    if not folder_exists:
+        print("Output Location '{}' doesn't exist!".format(args.output))
+        return
+
+    # display inputs information
+    print("\nEXE Path: ", args.exe)
+    print("Output Location: ", args.output)
+
+    # make sure file is Eradication.exe
+    file_name = os.path.basename(args.exe)
+    if file_name.lower() != "eradication.exe":
+        print("File '{}' needs to be Eradication.exe!".format(args.exe))
+        return
+
+    # starts to generate schema and then generate CampaignClass.py and CampaignEnum.py
+    CampaignManager.generate_campaign_classes(args.exe, args.output, args.debug)
+    print('\nCampaign Classes successfully generated from Eradication EXE!')
+
+
 def list_packages(args, unknownArgs):
     print("The following packages are available to install:")
     package_names = DTKGitHub.get_package_list()
@@ -624,7 +659,7 @@ def get_package(args, unknownArgs):
 
         # install
         if not is_test:
-            subprocess.call(' '.join(['pip', 'install', '--no-dependencies', '--ignore-installed', release_dir]))
+            subprocess.call(['pip', 'install', '--no-dependencies', '--ignore-installed', release_dir])
 
         # update the local DB with the version
         db_key = github.disease_package_db_key
@@ -896,6 +931,9 @@ def main():
 
     # 'dtk diskspace' options
     commands_args.populate_diskspace_arguments(subparsers, diskspace)
+
+    # 'dtk generate_classes' options
+    commands_args.populate_generate_classes_arguments(subparsers, generate_classes)
 
     # # 'dtk catalyst' options
     # commands_args.populate_catalyst_arguments(subparsers, catalyst)

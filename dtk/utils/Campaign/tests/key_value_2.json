@@ -1,0 +1,27 @@
+{
+  "CalendarEventCoordinator": {
+    "Distribution_Coverages": {
+      "ascending": 0,
+      "default": 0,
+      "description": "A vector of floats for the fraction of individuals that will receive this intervention in a CalendarEventCoordinator.",
+      "max": 1,
+      "min": 0,
+      "type": "Vector Float"
+    },
+    "Node_Property_Restrictions": {
+      "description": "A list of the NodeProperty key:value pairs, as defined in the demographics file, that nodes must have to be targeted by the intervention.",
+      "type": "idmType:NodePropertyRestrictions"
+    },
+    "Property_Restrictions": {
+      "default": [],
+      "description": "A list of the IndividualProperty key:value pairs, as defined in the demographics file, that individuals must have to be targeted by this intervention.",
+      "type": "Dynamic String Set",
+      "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
+    },
+    "Property_Restrictions_Within_Node": {
+      "description": "A list of the IndividualProperty key:value pairs, as defined in the demographics file, that individuals must have to be targeted by this intervention.",
+      "type": "idmType:PropertyRestrictions"
+    },
+    "class": "CalendarEventCoordinator"
+  }
+}

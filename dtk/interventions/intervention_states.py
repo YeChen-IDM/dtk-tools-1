@@ -1,13 +1,15 @@
-def setup_recent_drug_states(cb, drug_events=["Received_Treatment", "Received_Campaign_Drugs", "Received_RCD_Drugs"],
-                             ineligible_window=14) :
+from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
 
-    cb.update_params( { "Valid_Intervention_States" : ["None", "Recent_Drug"]})
+
+def setup_recent_drug_states(cb, drug_events=["Received_Treatment", "Received_Campaign_Drugs", "Received_RCD_Drugs"],
+                             ineligible_window=14):
+
+    cb.update_params({"Valid_Intervention_States": ["None", "Recent_Drug"]})
 
     set_to_recent_drugs = {"class": "SetInterventionState",
                            "Invalid_Intervention_States": [],
                            "Intervention_State": "Recent_Drug"
                            }
-
 
     expire_recent_drugs = {"class": "DelayedIntervention",
                            "Delay_Distribution": "FIXED_DURATION",
@@ -19,7 +21,7 @@ def setup_recent_drug_states(cb, drug_events=["Received_Treatment", "Received_Ca
                                  }]
                            }
 
-    set_treatment_states = { "Event_Name": "InterventionState Set Drug State after Treatment",
+    set_treatment_states = {"Event_Name": "InterventionState Set Drug State after Treatment",
                              "class": "CampaignEvent",
                              "Start_Day": 1,
                              "Event_Coordinator_Config":
@@ -30,19 +32,19 @@ def setup_recent_drug_states(cb, drug_events=["Received_Treatment", "Received_Ca
                                          "Trigger_Condition_List": [drug_events],
                                          "Actual_IndividualIntervention_Config": {
                                              "class": "MultiInterventionDistributor",
-                                                      "Intervention_List" : [set_to_recent_drugs, expire_recent_drugs] }
+                                                      "Intervention_List": [set_to_recent_drugs, expire_recent_drugs]}
                                      }
                                  },
                              "Nodeset_Config": {"class": "NodeSetAll"}}
 
-    return set_treatment_states
+    return RawCampaignObject(set_treatment_states)
 
 
-def update_intervention_state_start_day(cb, start_day) :
+def update_intervention_state_start_day(cb, start_day):
 
-    for event in cb.campaign['Events'] :
-        try :
-            if event['Event_Name'].split()[0] == 'InterventionState' :
-                event['Start_Day'] = start_day
-        except KeyError :
+    for event in cb.campaign.Events:
+        try:
+            if event.Event_Name.split()[0] == 'InterventionState':
+                event.Start_Day = start_day
+        except KeyError:
             pass

@@ -1,0 +1,12 @@
+{
+  "Test": {
+    "Times": [
+      {
+        "type": "float",
+        "min": 0,
+        "max": 999999,
+        "description": "An array of years."
+      }
+    ]
+  }
+}

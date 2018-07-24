@@ -1,3 +1,6 @@
+from dtk.utils.Campaign.CampaignClass import *
+
+
 def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start_day=0, nodes={"class": "NodeSetAll"},
                  ind_property_restrictions=[]):
     """
@@ -12,25 +15,20 @@ def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start
     if len(monthlyEIRs) is not 12:
         raise Exception('The input argument monthlyEIRs should have 12 entries, not %d' % len(monthlyEIRs))
 
-    input_EIR_event = {
-            "Event_Name": "Input EIR intervention",
-            "Start_Day": start_day,
-            "class": "CampaignEvent",
-            "Event_Coordinator_Config":
-            {
-                "Number_Repetitions": -1,
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Intervention_Config":
-                {
-                    "Age_Dependence": age_dependence,
-                    "Monthly_EIR": monthlyEIRs,
-                    "class": "InputEIR",
-                }
-            },
-            "Nodeset_Config": nodes
-        }
+    input_EIR_event = CampaignEvent(
+        Event_Name="Input EIR intervention",
+        Start_Day=start_day,
+        Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+            Number_Repetitions=-1,
+            Intervention_Config=InputEIR(
+                Age_Dependence=InputEIR_Age_Dependence_Enum[age_dependence],
+                Monthly_EIR=monthlyEIRs
+            )
+        ),
+        Nodeset_Config=NodeSetAll()
+    )
 
     if ind_property_restrictions:
-        input_EIR_event["Event_Coordinator_Config"]['Intervention_Config']["Property_Restrictions_Within_Node"] = ind_property_restrictions
+        input_EIR_event.Event_Coordinator_Config.Intervention_Config["Property_Restrictions_Within_Node"] = ind_property_restrictions
 
     cb.add_event(input_EIR_event)

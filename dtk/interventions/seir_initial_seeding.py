@@ -1,25 +1,24 @@
-seir_campaign = {
-    "Campaign_Name": "Initial Seeding",
-    "Events": [
-        {
-            "Event_Coordinator_Config": {
-                "Demographic_Coverage": 0.0005,
-                "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "Outbreak_Source": "PrevalenceIncrease",
-                    "class": "OutbreakIndividual"
-                },
-                "Target_Demographic": "Everyone",
-                "class": "StandardInterventionDistributionEventCoordinator"
-            },
-            "Event_Name": "Outbreak",
-            "Nodeset_Config": {
-                "class": "NodeSetAll"
-            },
-            "Start_Day": 1,
-            "class": "CampaignEvent"
-        }
-    ],
-    "Use_Defaults": 1
-}
+from dtk.utils.Campaign.CampaignClass import *
+from dtk.utils.Campaign.CampaignEnum import *
+
+
+seir_campaign = Campaign(
+    Campaign_Name="Initial Seeding",
+    Use_Defaults=True,
+    Events=[
+        CampaignEvent(
+            Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                Demographic_Coverage=0.0005,
+                Intervention_Config=OutbreakIndividual(
+                    Antigen=0,
+                    Genome=0,
+                    Outbreak_Source="PrevalenceIncrease"        # [TODO]: un-defined
+                ),
+                Target_Demographic=StandardInterventionDistributionEventCoordinator_Target_Demographic_Enum.Everyone
+            ),
+            Event_Name="Outbreak",                              # [TODO]: un-defined
+            Nodeset_Config=NodeSetAll(),
+            Start_Day=1
+        )
+    ]
+)

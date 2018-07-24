@@ -1,0 +1,19 @@
+{
+  "ScaleLarvalHabitat": {
+    "idmType:LarvalHabitatMultiplier": [
+      {
+        "VectorHabitatType": {
+          "type": "string",
+          "description": "TBD-The habitat type/name for a specific multiplier - the 'key' of the key:value pair."
+        },
+        "Multiplier": {
+          "type": "float",
+          "min": 0,
+          "max": 3.40282e+38,
+          "description": "TBD-A specific multiplier for the given habitat - the 'value' of the key:value pair."
+        }
+      }
+    ],
+    "class": "ScaleLarvalHabitat"
+  }
+}

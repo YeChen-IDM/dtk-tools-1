@@ -1,0 +1,11 @@
+{
+  "CalendarEventCoordinator": {
+    "Property_Restrictions": {
+      "default": [],
+      "description": "A list of the IndividualProperty key:value pairs, as defined in the demographics file, that individuals must have to be targeted by this intervention.",
+      "type": "Dynamic String Set",
+      "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
+    },
+    "class": "CalendarEventCoordinator"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "ScaleLarvalHabitat": {
+    "Sim_Types": [
+      "VECTOR_SIM",
+      "MALARIA_SIM",
+      "DENGUE_SIM"
+    ],
+    "idmType:LarvalHabitatMultiplier": [
+      {
+        "type": "float",
+        "min": 0,
+        "max": 3.40282e+38,
+        "description": "TBD-A single value can be specified so that it is applied to ALL_HABITATS."
+      },
+      {
+        "VectorHabitatType": {
+          "type": "string",
+          "description": "TBD-The habitat type/name for a specific multiplier - the 'key' of the key:value pair."
+        },
+        "Multiplier": {
+          "type": "float",
+          "min": 0,
+          "max": 3.40282e+38,
+          "description": "TBD-A specific multiplier for the given habitat - the 'value' of the key:value pair."
+        }
+      },
+      {
+        "VectorHabitatType": {
+          "type": "string",
+          "description": "TBD - The habitat type/name for the specified species.",
+          "SpeciesName": {
+            "type": "string",
+            "description": "TBD - The name of the species from Vector_Species_Names to have specific multipliers for this habitat type.",
+            "depends-on": "Vector_Species_Names"
+          },
+          "Multiplier": {
+            "type": "float",
+            "min": 0,
+            "max": 3.40282e+38,
+            "description": "TBD - The multiplier for this specific habitat of this species."
+          }
+        }
+      }
+    ],
+    "Larval_Habitat_Multiplier": {
+      "description": "The value by which to scale the larval habitat availability specified in Larval_Habitat_Types across all habitat types, for specific habitat types, or for specific mosquito species within each habitat type.",
+      "type": "idmType:LarvalHabitatMultiplier"
+    },
+    "Intervention_Name": {
+      "default": "ScaleLarvalHabitat",
+      "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
+      "type": "string"
+    },
+    "Disqualifying_Properties": {
+      "default": [],
+      "description": "TBD-A list of Individual Property Key:Value pairs that cause an intervention to be aborted. Used to control the flow of health care access, e.g., to prevent the same individual from accessing health care via two different routes at the same time.",
+      "type": "Dynamic String Set",
+      "value_source": ""
+    },
+    "New_Property_Value": {
+      "description": "TBD-A marker associated with an intervention to indicate what the broad category of health care cascade to which an intervention belongs. This allows for additional control of the flow of health care, e.g., the use of Disqualifying_Properties to prevent simultaneous use of multiple pathways to care.",
+      "type": "Constrained String",
+      "value_source": "'<demographics>::NodeProperties.*.Property':'<demographics>::NodeProperties.*.Values'"
+    },
+    "iv_type": "NodeTargeted",
+    "class": "ScaleLarvalHabitat"
+  }
+}

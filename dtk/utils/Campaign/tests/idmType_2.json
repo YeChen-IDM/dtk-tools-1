@@ -1,0 +1,15 @@
+{
+  "ScaleLarvalHabitat": {
+    "Larval_Habitat_Multiplier": {
+      "description": "The value by which to scale the larval habitat availability (specified in Larval_Habitat_Types in the configuration file) per intervention, across all habitat types, for specific habitat types, or for specific mosquito species within each habitat type. ",
+      "type": "idmType:LarvalHabitatMultiplier"
+    },
+    "Sim_Types": [
+      "VECTOR_SIM",
+      "MALARIA_SIM",
+      "DENGUE_SIM"
+    ],
+    "class": "ScaleLarvalHabitat",
+    "iv_type": "NodeTargeted"
+  }
+}

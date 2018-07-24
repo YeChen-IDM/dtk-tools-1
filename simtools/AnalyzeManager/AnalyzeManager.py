@@ -23,6 +23,7 @@ logger = init_logging('AnalyzeManager')
 class AnalyzeManager:
     def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False, verbose=False,
                  create_dir_map=False, record_finalize_results=False, finalize_results_filename=None):
+
         self.experiments = []
         self.simulations = []
         self.parsers = []
@@ -174,10 +175,10 @@ class AnalyzeManager:
             new_am = am(exp_list=self.experiments, analyzers=self.analyzers, sim_list=itertools.chain(*self.experiments_simulations.values()), verbose=self.verbose)
             new_am.analyze()
             return
-
-        # print("The format of analyzer is changing! The new Analysis mode gives up to 5x speed up on average :)")
-        # print("Please update your analyzers to use the new simtools.Analysis.BaseAnalyzers.BaseAnalyzer")
-        # print("Also use the new AnalyzeManager found at simtools.Analysis.AnalyzeManager")
+        
+        print("The format of analyzers is changing! The new approach gives up to 5x speed up on average :)")
+        print("Please update your analyzers to use the new simtools.Analysis.BaseAnalyzers.BaseAnalyzer")
+        print("Also use the new AnalyzeManager found at simtools.Analysis.AnalyzeManager")
 
         # Empty the parsers
         self.parsers = []

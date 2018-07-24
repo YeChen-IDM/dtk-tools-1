@@ -1,3 +1,5 @@
+from malaria.interventions.malaria_drug_campaigns import add_drug_campaign
+
 from calibtool.algorithms.GenericIterativeNextPoint import GenericIterativeNextPoint
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from examples.example_iterative.MyanmarSite import MyanmarCalibSite
@@ -8,9 +10,6 @@ from calibtool.CalibManager import CalibManager
 from simtools.Utilities.Experiments import retrieve_experiment
 import pandas as pd
 import os
-
-from dtk.interventions.malaria_drug_campaigns import add_drug_campaign
-
 
 SetupParser.init('HPC')
 

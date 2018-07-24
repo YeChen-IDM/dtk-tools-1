@@ -30,6 +30,27 @@ class PopulationObs(DataFrameWrapper):
         self.verify_required_items(needed=required_data)
         self._dataframe['AgeBin'] = [age_bin.replace(':', ', ') for age_bin in self._dataframe['AgeBin']]
 
+    def get_age_bins(self):
+        required_data = ['AgeBin']
+        self.verify_required_items(needed=required_data)
+        return list(self._dataframe['AgeBin'].unique())
+
+    def get_provinces(self):
+        required_data = ['Province']
+        self.verify_required_items(needed=required_data)
+        return list(self._dataframe['Province'].unique())
+
+    def get_genders(self):
+        required_data = ['Gender']
+        self.verify_required_items(needed=required_data)
+        return list(self._dataframe['Gender'].unique())
+
+
+    def get_years(self):
+        required_data = ['Year']
+        self.verify_required_items(needed=required_data)
+        return list(self._dataframe['Year'].unique())
+
     @classmethod
     def construct_beta_channel(cls, channel, type):
         return '%s--Beta-%s' % (channel, type)

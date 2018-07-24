@@ -1,0 +1,352 @@
+{
+  "UsageDependentBednet": {
+    "Sim_Types": [
+      "MALARIA_SIM",
+      "VECTOR_SIM"
+    ],
+    "Cost_To_Consumer": {
+      "min": 0,
+      "max": 999999,
+      "default": 3.75,
+      "description": "Unit cost per bednet (unamortized).",
+      "type": "float"
+    },
+    "idmType:WaningEffect": {
+      "base": "interventions.idmType.WaningEffect"
+    },
+    "Killing_Config": {
+      "description": "TBD-A fraction of feed attempts that kill the vector. The rate at which the mosquito dies conditional on a successfully blocked feed. A parameter that is decayed.",
+      "type": "idmType:WaningEffect"
+    },
+    "Blocking_Config": {
+      "description": "TBD-A fraction of feed attempts that have been blocked. The rate of blocking indoor feeds on individuals with an ITN. A parameter that is decayed.",
+      "type": "idmType:WaningEffect"
+    },
+    "Intervention_Name": {
+      "default": "UsageDependentBednet",
+      "description": "The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.",
+      "type": "string"
+    },
+    "Dont_Allow_Duplicates": {
+      "default": 0,
+      "description": "If an individual's container has an intervention, set to 1 to prevent them from receiving another copy of the intervention. Supported by all intervention types.",
+      "type": "bool"
+    },
+    "Disqualifying_Properties": {
+      "default": [],
+      "description": "TBD-A list of Individual Property Key:Value pairs that cause an intervention to be aborted. Used to control the flow of health care access, e.g., to prevent the same individual from accessing health care via two different routes at the same time.",
+      "type": "Dynamic String Set",
+      "value_source": ""
+    },
+    "New_Property_Value": {
+      "description": "TBD-A marker associated with an intervention to indicate what the broad category of health care cascade to which an intervention belongs. This allows for additional control of the flow of health care, e.g., the use of Disqualifying_Properties to prevent simultaneous use of multiple pathways to care.",
+      "type": "Constrained String",
+      "value_source": "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"
+    },
+    "idmType:WaningConfigList": [
+      {
+        "type_name": "idmType:WaningEffect",
+        "type_schema": {
+          "base": "interventions.idmType.WaningEffect"
+        }
+      }
+    ],
+    "Usage_Config_List": {
+      "description": "TBD-List of WaningEffects who's effects are multipled together to get the usage effect.",
+      "type": "idmType:WaningConfigList"
+    },
+    "Expiration_Distribution_Type": {
+      "type": "enum",
+      "enum": [
+        "NOT_INITIALIZED",
+        "FIXED_DURATION",
+        "UNIFORM_DURATION",
+        "GAUSSIAN_DURATION",
+        "EXPONENTIAL_DURATION",
+        "POISSON_DURATION",
+        "LOG_NORMAL_DURATION",
+        "BIMODAL_DURATION",
+        "PIECEWISE_CONSTANT",
+        "PIECEWISE_LINEAR",
+        "WEIBULL_DURATION",
+        "DUAL_TIMESCALE_DURATION"
+      ],
+      "description": "TBD-The type of distribution to use when calculating the time to discare the net.",
+      "default": "NOT_INITIALIZED"
+    },
+    "Expiration_Period": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 6,
+      "description": "TBD",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "EXPONENTIAL_DURATION"
+      }
+    },
+    "Expiration_Period_Min": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 0,
+      "description": "TBD",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "UNIFORM_DURATION"
+      }
+    },
+    "Expiration_Period_Max": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 1,
+      "description": "TBD",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "UNIFORM_DURATION"
+      }
+    },
+    "Expiration_Period_Mean": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 6,
+      "description": "TBD",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "GAUSSIAN_DURATION"
+      }
+    },
+    "Expiration_Period_Std_Dev": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 1,
+      "description": "TBD",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "GAUSSIAN_DURATION"
+      }
+    },
+    "Expiration_Period_1": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 6,
+      "description": "TBD-Decay length of the first time scale.",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "DUAL_TIMESCALE_DURATION"
+      }
+    },
+    "Expiration_Period_2": {
+      "min": 0,
+      "max": 3.40282e+38,
+      "default": 6,
+      "description": "TBD-Decay length of the second time scale.",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "DUAL_TIMESCALE_DURATION"
+      }
+    },
+    "Expiration_Percentage_Period_1": {
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "description": "TBD-Percentage of draws where the first time scale is used.",
+      "type": "float",
+      "depends-on": {
+        "Expiration_Distribution_Type": "DUAL_TIMESCALE_DURATION"
+      }
+    },
+    "Received_Event": {
+      "type": "Constrained String",
+      "default": "NoTrigger",
+      "description": "TBD-Broadcasted when a new net is received - either first one or replacing existing one.",
+      "value_source": "'<configuration>:Listed_Events.*' or Built-in",
+      "Built-in": [
+        "NoTrigger",
+        "Births",
+        "EveryUpdate",
+        "EveryTimeStep",
+        "NewInfectionEvent",
+        "TBActivation",
+        "NewClinicalCase",
+        "NewSevereCase",
+        "DiseaseDeaths",
+        "OpportunisticInfectionDeath",
+        "NonDiseaseDeaths",
+        "TBActivationSmearPos",
+        "TBActivationSmearNeg",
+        "TBActivationExtrapulm",
+        "TBActivationPostRelapse",
+        "TBPendingRelapse",
+        "TBActivationPresymptomatic",
+        "TestPositiveOnSmear",
+        "ProviderOrdersTBTest",
+        "TBTestPositive",
+        "TBTestNegative",
+        "TBTestDefault",
+        "TBRestartHSB",
+        "TBMDRTestPositive",
+        "TBMDRTestNegative",
+        "TBMDRTestDefault",
+        "TBFailedDrugRegimen",
+        "TBRelapseAfterDrugRegimen",
+        "TBStartDrugRegimen",
+        "TBStopDrugRegimen",
+        "PropertyChange",
+        "STIDebut",
+        "StartedART",
+        "StoppedART",
+        "InterventionDisqualified",
+        "HIVNewlyDiagnosed",
+        "GaveBirth",
+        "Pregnant",
+        "Emigrating",
+        "Immigrating",
+        "HIVTestedNegative",
+        "HIVTestedPositive",
+        "HIVSymptomatic",
+        "TwelveWeeksPregnant",
+        "FourteenWeeksPregnant",
+        "SixWeeksOld",
+        "EighteenMonthsOld",
+        "STIPreEmigrating",
+        "STIPostImmigrating",
+        "STINewInfection",
+        "NewExternalHIVInfection",
+        "NodePropertyChange",
+        "HappyBirthday",
+        "EnteredRelationship",
+        "ExitedRelationship",
+        "FirstCoitalAct"
+      ]
+    },
+    "Using_Event": {
+      "type": "Constrained String",
+      "default": "NoTrigger",
+      "description": "TBD-Broadcasted each time step that the net is used.",
+      "value_source": "'<configuration>:Listed_Events.*' or Built-in",
+      "Built-in": [
+        "NoTrigger",
+        "Births",
+        "EveryUpdate",
+        "EveryTimeStep",
+        "NewInfectionEvent",
+        "TBActivation",
+        "NewClinicalCase",
+        "NewSevereCase",
+        "DiseaseDeaths",
+        "OpportunisticInfectionDeath",
+        "NonDiseaseDeaths",
+        "TBActivationSmearPos",
+        "TBActivationSmearNeg",
+        "TBActivationExtrapulm",
+        "TBActivationPostRelapse",
+        "TBPendingRelapse",
+        "TBActivationPresymptomatic",
+        "TestPositiveOnSmear",
+        "ProviderOrdersTBTest",
+        "TBTestPositive",
+        "TBTestNegative",
+        "TBTestDefault",
+        "TBRestartHSB",
+        "TBMDRTestPositive",
+        "TBMDRTestNegative",
+        "TBMDRTestDefault",
+        "TBFailedDrugRegimen",
+        "TBRelapseAfterDrugRegimen",
+        "TBStartDrugRegimen",
+        "TBStopDrugRegimen",
+        "PropertyChange",
+        "STIDebut",
+        "StartedART",
+        "StoppedART",
+        "InterventionDisqualified",
+        "HIVNewlyDiagnosed",
+        "GaveBirth",
+        "Pregnant",
+        "Emigrating",
+        "Immigrating",
+        "HIVTestedNegative",
+        "HIVTestedPositive",
+        "HIVSymptomatic",
+        "TwelveWeeksPregnant",
+        "FourteenWeeksPregnant",
+        "SixWeeksOld",
+        "EighteenMonthsOld",
+        "STIPreEmigrating",
+        "STIPostImmigrating",
+        "STINewInfection",
+        "NewExternalHIVInfection",
+        "NodePropertyChange",
+        "HappyBirthday",
+        "EnteredRelationship",
+        "ExitedRelationship",
+        "FirstCoitalAct"
+      ]
+    },
+    "Discard_Event": {
+      "type": "Constrained String",
+      "default": "NoTrigger",
+      "description": "TBD-Broadcasted when the user is discarding their net - either replacing existing one or due to expiration timer.",
+      "value_source": "'<configuration>:Listed_Events.*' or Built-in",
+      "Built-in": [
+        "NoTrigger",
+        "Births",
+        "EveryUpdate",
+        "EveryTimeStep",
+        "NewInfectionEvent",
+        "TBActivation",
+        "NewClinicalCase",
+        "NewSevereCase",
+        "DiseaseDeaths",
+        "OpportunisticInfectionDeath",
+        "NonDiseaseDeaths",
+        "TBActivationSmearPos",
+        "TBActivationSmearNeg",
+        "TBActivationExtrapulm",
+        "TBActivationPostRelapse",
+        "TBPendingRelapse",
+        "TBActivationPresymptomatic",
+        "TestPositiveOnSmear",
+        "ProviderOrdersTBTest",
+        "TBTestPositive",
+        "TBTestNegative",
+        "TBTestDefault",
+        "TBRestartHSB",
+        "TBMDRTestPositive",
+        "TBMDRTestNegative",
+        "TBMDRTestDefault",
+        "TBFailedDrugRegimen",
+        "TBRelapseAfterDrugRegimen",
+        "TBStartDrugRegimen",
+        "TBStopDrugRegimen",
+        "PropertyChange",
+        "STIDebut",
+        "StartedART",
+        "StoppedART",
+        "InterventionDisqualified",
+        "HIVNewlyDiagnosed",
+        "GaveBirth",
+        "Pregnant",
+        "Emigrating",
+        "Immigrating",
+        "HIVTestedNegative",
+        "HIVTestedPositive",
+        "HIVSymptomatic",
+        "TwelveWeeksPregnant",
+        "FourteenWeeksPregnant",
+        "SixWeeksOld",
+        "EighteenMonthsOld",
+        "STIPreEmigrating",
+        "STIPostImmigrating",
+        "STINewInfection",
+        "NewExternalHIVInfection",
+        "NodePropertyChange",
+        "HappyBirthday",
+        "EnteredRelationship",
+        "ExitedRelationship",
+        "FirstCoitalAct"
+      ]
+    },
+    "iv_type": "IndividualTargeted",
+    "class": "UsageDependentBednet"
+  }
+}

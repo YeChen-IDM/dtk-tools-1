@@ -1,0 +1,14 @@
+{
+  "SimpleVaccine": {
+    "Sim_Types": [
+      "*"
+    ],
+    "Cost_To_Consumer": {
+      "min": 0,
+      "max": 999999,
+      "default": 10,
+      "description": "Unit cost per vaccine (unamortized). The unit 'cost' assigned to the intervention. Setting Cost_To_Consumer to zero for all other interventions, and to a non-zero amount for one intervention, provides a convenient way to track the number of times the intervention has been applied in a simulation.",
+      "type": "float"
+    }
+  }
+}

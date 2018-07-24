@@ -84,7 +84,7 @@ def install_package(package, version=None, wheel=None, upgrade=False, method=Dow
     install_args = ['pip', 'install', install_str]
     if upgrade:
         install_args.append('-I')
-    subprocess.call(' '.join(install_args))
+    subprocess.call(install_args)
 
 def test_package(package, version, test):
     """
@@ -235,7 +235,7 @@ def install_packages(reqs):
     from setuptools import setup, find_packages
 
     setup(name='dtk-tools',
-          version='1.0b3',
+          version='1.0b5',
           description='Facilitating submission and analysis of simulations',
           url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
           author='Edward Wenger,'

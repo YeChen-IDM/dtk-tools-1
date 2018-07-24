@@ -166,6 +166,22 @@ mod_dirus_params = {
 dirus_param_block.update(mod_dirus_params)
 
 
+# An. darlingi
+# Parasites and Vectors, Sinka et al 2010
+darlingi_param_block = param_block.copy()
+mod_darlingi_params = {
+
+    "Larval_Habitat_Types": {
+        "WATER_VEGETATION": 1e8,
+        "CONSTANT": 1e6,
+        "BRACKISH_SWAMP": 1e5
+    },
+    "Anthropophily": 0.96,
+    "Indoor_Feeding_Fraction": 0.6,
+}
+darlingi_param_block.update(mod_darlingi_params)
+
+
 # An. albimanus
 # CDC Malar J 2016 review
 albimanus_param_block = param_block.copy()
@@ -226,6 +242,7 @@ vector_params_by_species = {
     "maculatus": maculatus_param_block,
     "minimus": minimus_param_block,
     "dirus": dirus_param_block,
+    "darlingi": darlingi_param_block,
     "albimanus": albimanus_param_block,
     "aegypti": aegypti_param_block
 }

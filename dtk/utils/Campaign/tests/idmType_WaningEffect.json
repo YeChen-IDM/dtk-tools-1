@@ -1,0 +1,12 @@
+{
+  "SimpleVaccine": {
+    "idmType:WaningEffect": {
+      "base": "interventions.idmType.WaningEffect"
+    },
+    "Waning_Config": {
+      "description": "The configuration of drug-killing efficacy and waning.",
+      "type": "idmType:WaningEffect"
+    },
+    "class": "SimpleVaccine"
+  }
+}

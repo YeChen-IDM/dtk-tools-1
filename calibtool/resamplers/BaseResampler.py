@@ -18,7 +18,7 @@ class BaseResampler(metaclass=ABCMeta):
 
 
     # extend if desired in subclasses
-    def post_analysis(self, resampled_points, analyzer_results):
+    def post_analysis(self, resampled_points, analyzer_results, from_resample=None):
         os.makedirs(self.output_location, exist_ok=True)
 
 
@@ -92,9 +92,9 @@ class BaseResampler(metaclass=ABCMeta):
         # Any _resample() methodology that depends on the likelihood of the provided points should reference
         #    the 'likelihood' attribute on the Point objects (e.g., use mypoint.likelihood, set it in the analyer
         #    return points.
-        points_to_run = self.resample(calibrated_points=calibrated_points,
-                                      selection_values=selection_values,
-                                      initial_calibration_points=initial_calibration_points)
+        points_to_run, for_post_analysis = self.resample(calibrated_points=calibrated_points,
+                                                         selection_values=selection_values,
+                                                         initial_calibration_points=initial_calibration_points)
 
         # # 2. run simulations
         experiment_manager = self._run(points=points_to_run, resample_step=resample_step)
@@ -105,7 +105,7 @@ class BaseResampler(metaclass=ABCMeta):
                                                                      analyzers=self.calib_manager.analyzer_list,
                                                                      points_ran=points_to_run)
         # 4. perform any post-analysis processing, if defined
-        self.post_analysis(self.resampled_points, self.analyzer_results)
+        self.post_analysis(self.resampled_points, self.analyzer_results, from_resample=for_post_analysis)
 
         return self.resampled_points, self.selection_values
 

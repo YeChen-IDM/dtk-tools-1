@@ -26,7 +26,7 @@
     "test": ">="
   },
   "pandas": {
-    "version": "0.20.3",
+  "version": "0.23.3",
     "test": "=="
   },
   "psutil": {
@@ -74,6 +74,8 @@
   "validators": null,
   "networkx": null,
   "patsy": null,
+  "astor": null,
+  "astunparse": null,
   "catalyst": {
     "version": "1.0.3",
     "test": ">=",
@@ -81,6 +83,10 @@
   },
   "openpyxl": {
     "version": "2.5.3",
+    "test": ">="
+  },
+  "sklearn": {
+    "version": "0.0",
     "test": ">="
   }
 }

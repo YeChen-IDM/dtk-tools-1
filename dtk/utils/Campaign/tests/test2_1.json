@@ -1,0 +1,23 @@
+{
+  "WaningEffectMapCount": {
+    "test:InterpolatedValueMap": {
+      "Times": [
+        {
+          "type": "float",
+          "min": 0,
+          "max": 999999,
+          "description": "An array of years."
+        }
+      ],
+      "Values": [
+        {
+          "type": "float",
+          "min": 0,
+          "max": 1,
+          "description": "An array of values to match the defined Times."
+        }
+      ]
+    },
+    "class": "WaningEffectMapCount"
+  }
+}

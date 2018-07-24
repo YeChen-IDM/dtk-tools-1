@@ -1,0 +1,9 @@
+{
+  "WaningEffectMapCount": {
+    "Durability_Map": {
+      "description": "Time, in days, since the intervention was distributed to a multiplier times the Initial_Effect.",
+      "type": "idmType:InterpolatedValueMap"
+    },
+    "class": "WaningEffectMapCount"
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "Using_Event": {
+        "type": "Constrained String",
+        "default": "NoTrigger",
+        "description": "TBD-Broadcasted each time step that the net is used.",
+        "value_source": "'<configuration>:Listed_Events.*' or Built-in",
+        "test": [1, 2, 3]
+    }
+}

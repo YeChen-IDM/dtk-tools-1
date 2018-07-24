@@ -1,0 +1,22 @@
+{
+  "vector_species_name_goes_here": {
+    "Acquire_Modifier": {
+      "default": 1,
+      "description": "Modifier of the probability of successful infection of a mosquito by a malaria-infected individual, given the individual's infectiousness.",
+      "max": 1,
+      "min": 0,
+      "type": "float"
+    },
+    "Larval_Habitat_Types": {
+      "description": "A measure of the habitat type and scale factors used to estimate larval population. You can specify a habitat type with a simple number scale factor or, for LINEAR_SPINE, with a more detailed scaling configuration.  See the documentation for more information.",
+      "type": "idmType:LarvalHabitats"
+    },
+    "Transmission_Rate": {
+      "default": 0.5,
+      "description": "Probability that the bite of an infected mosquito establishes a new infection in an immunologically naive and uninfected individual, or the modifier of the probability of success for an individual with pre-erythrocytic immunity.",
+      "max": 1,
+      "min": 0,
+      "type": "float"
+    }
+  }
+}
