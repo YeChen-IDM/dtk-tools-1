@@ -1,14 +1,54 @@
-def add_ATSB(cb, start=0, coverage=0.15, killing_cfg={}, duration=180, duration_std_dev=14,
+import copy
+
+
+def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=[], duration=180, duration_std_dev=14,
              repetitions=1, interval=365,
              nodeIDs=[], node_property_restrictions=[]):
 
-    for key, val in killing_cfg.items() :
-        val['Initial_Effect'] *= coverage
+    cfg_species = cb.get_param('Vector_Species_Names')
+    atsb_master = {
+        "class": "WaningEffectBoxExponential",
+        "Initial_Effect": 0.15*coverage,
+        "Box_Duration": 180,
+        "Decay_Time_Constant": 30
+    }
+    dummy_kill_cfg = {
+        'class' : "WaningEffectConstant",
+        'Initial_Effect': 0
+    }
+
+    # default killing cfg
+    killing_cfg = [{ 'Species' : sp,
+                     'Killing_Config' : atsb_master} for sp in cfg_species]
+
+    # if user has specified a kill cfg
+    if kill_cfg :
+        # if user-inputed killing cfg is dict and species not specified, make a list
+        if isinstance(kill_cfg, dict) :
+            kill_cfg['Killing_Config']['Initial_Effect'] *= coverage
+            if 'Species' not in kill_cfg :
+                killing_cfg = [{ 'Species' : sp,
+                                 'Killing_Config' : kill_cfg} for sp in cfg_species]
+            else :
+                killing_cfg = [kill_cfg]
+        # if user-inputed killing cfg is list, check if all cfg_species are listed. if not, put in a dummy no-effect kill_cfg.
+        elif isinstance(kill_cfg, list) :
+            for x in kill_cfg :
+                if 'Species' not in x :
+                    raise ValueError('Each config in SugarTrap killing config list must contain species name')
+                x['Killing_Config']['Initial_Effect'] *= coverage
+            listed_sp = [x['Species'] for x in kill_cfg]
+            unlisted_sp = [x for x in cfg_species if x not in listed_sp]
+            kill_cfg = [x for x in kill_cfg if x['Species'] in cfg_species]
+            killing_cfg = kill_cfg + [{ 'Species' : sp,
+                                        'Killing_Config' : dummy_kill_cfg} for sp in unlisted_sp]
+        else :
+            raise ValueError('Invalid SugarTrap killing config')
 
     atsb_config = {
         "class": "SugarTrap",
         "Cost_To_Consumer": 3.75,
-        "Killing_Config": killing_cfg,
+        "Killing_Config_Per_Species": killing_cfg,
         "Expiration_Distribution_Type" : "GAUSSIAN_DURATION",
         "Expiration_Period_Mean" : duration,
         "Expiration_Period_Std_Dev" : duration_std_dev

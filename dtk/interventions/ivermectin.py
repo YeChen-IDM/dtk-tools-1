@@ -1,3 +1,4 @@
+from dtk.interventions.triggered_campaign_delay_event import triggered_campaign_delay_event
 import copy
 
 # Ivermectin parameters
@@ -41,8 +42,10 @@ def ivermectin_config_by_duration(drug_code=None):
     return cfg
 
 
-def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_condition_list=[],
-                   listening_duration=-1, nodeids=[], target_residents_only=1, ind_property_restrictions=[]):
+def add_ivermectin(config_builder, drug_code, coverage, start_days,
+                   trigger_condition_list=[], triggered_campaign_delay=0,
+                   listening_duration=-1, nodeids=[], target_residents_only=1,
+                   node_property_restrictions=[], ind_property_restrictions=[]):
     """
     Add an ivermectin event to the config_builder passed.
 
@@ -59,6 +62,14 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
     cfg = [cfg] + [receiving_IV_event]
     intervention_cfg = {"Intervention_List": cfg,
                         "class": "MultiInterventionDistributor"}
+
+    if triggered_campaign_delay > 0:
+        trigger_condition_list = [triggered_campaign_delay_event(config_builder, start_days[0],
+                                                                 nodeIDs=nodeids,
+                                                                 triggered_campaign_delay=triggered_campaign_delay,
+                                                                 trigger_condition_list=trigger_condition_list,
+                                                                 listening_duration=listening_duration,
+                                                                 node_property_restrictions=node_property_restrictions)]
 
     if nodeids :
         node_cfg = {"class": "NodeSetNodeList",
@@ -77,6 +88,7 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
         if trigger_condition_list:
             IVM_event['Event_Coordinator_Config']['Intervention_Config'] = {
                     "class" : "NodeLevelHealthTriggeredIV",
+                    "Node_Property_Restrictions": node_property_restrictions,
                     "Trigger_Condition_List": trigger_condition_list,
                     "Target_Residents_Only": target_residents_only,
                     "Property_Restrictions_Within_Node": ind_property_restrictions,
@@ -90,6 +102,7 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days, trigger_cond
                 "Target_Residents_Only": target_residents_only,
                 "Demographic_Coverage": coverage,
                 "Property_Restrictions_Within_Node": ind_property_restrictions,
+                "Node_Property_Restrictions": node_property_restrictions,
                 'Intervention_Config' : intervention_cfg
             })
 
