@@ -175,7 +175,7 @@ class SchemaDecoder(json.JSONDecoder):
 
             default = value["default"]
             if 'min' in value and default < value["min"]:
-                d["default"] = value["min"]
+                d["default"] = value["max"]
 
             if 'max' in value and default > value["max"]:
                 d["default"] = value["max"]
