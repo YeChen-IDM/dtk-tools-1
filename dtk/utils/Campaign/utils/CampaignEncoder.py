@@ -28,72 +28,56 @@ class CampaignEncoder(json.JSONEncoder):
             return o.name
 
         # handle Number case
-        if isinstance(o, np.int32):
-            return int(o)
-
-        if isinstance(o, np.int64):
+        if isinstance(o, np.int32) or isinstance(o, np.int64):
             return int(o)
 
         if isinstance(o, RawCampaignObject):
             return o.get_json_object()
 
         # First get the dict
-        d = o.__dict__
+        object_dict = o.__dict__
 
+        # If the object does not have a _definition attribute, we cannot continue
         if not hasattr(o, "_definition"):
-            raise Exception()
+            raise Exception("Parsing cannot continue as the object provided does not have a _definition")
 
+        # Retrieve the object definition
         definition = o._definition
 
-        r = {}
-        for key, val in d.items():
+        result = {}
+        for key, val in object_dict.items():
+            # If the attribute is not in the definition, we assume it is a user-defined
+            # attribute and simply add it to the return dict
             if key not in definition:
-                r[key] = val
+                result[key] = val
                 continue
 
-            valid = definition[key]
+            # Retrieve the default value from the definition for the current field
+            validation = definition[key]
+            default_value = validation.get('default', None) if isinstance(validation, dict) else validation
 
+            # Root campaign ? If we are at the root of the campaign, we will output parameters regardless of defaults
+            campaign_root = o.__class__.__name__ == 'Campaign'
+
+            # If the value is a boolean
             if isinstance(val, bool):
-                if self.Use_Defaults:
-                    # For Root Campaign class, output all no matter of Use_Defaults
-                    if o.__class__.__name__ == 'Campaign':
-                        r[key] = self.convert_bool(val)
-                    else:
-                        if self.convert_bool(val) != valid.get('default', None):
-                            r[key] = self.convert_bool(val)
-                else:
-                    r[key] = self.convert_bool(val)
-            elif isinstance(valid, dict):
-                if self.Use_Defaults:
-                    # For Root Campaign class, output all no matter of Use_Defaults
-                    if o.__class__.__name__ == 'Campaign':
-                        r[key] = val
-                    else:
-                        if isinstance(val, Enum):
-                            if val.name != valid.get('default', None):
-                                r[key] = val
-                        elif val and val != valid.get('default', None):
-                            r[key] = val
-                else:
-                    r[key] = val
-            else:
-                if self.Use_Defaults:
-                    # For Root Campaign class, output all no matter of Use_Defaults
-                    if o.__class__.__name__ == 'Campaign':
-                        r[key] = val
-                    else:
-                        if val and val != valid:
-                            r[key] = val
-                else:
-                    r[key] = val
+                converted_value = self.convert_bool(val)
+                if campaign_root or (self.Use_Defaults and converted_value != default_value):
+                    result[key] = converted_value
 
-        d = r
+            elif isinstance(val, Enum):
+                if campaign_root or (self.Use_Defaults and val.name != default_value):
+                    result[key] = val
+
+            else:
+                if campaign_root or (self.Use_Defaults and val != default_value):
+                    result[key] = val
 
         # for Campaign class we defined, don't output class
         if o.__class__.__name__ != 'Campaign':
-            d["class"] = o.__class__.__name__
+            result["class"] = o.__class__.__name__
 
-        return d
+        return result
 
     @staticmethod
     def convert_bool(val):
