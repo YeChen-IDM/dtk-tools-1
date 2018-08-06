@@ -44,6 +44,9 @@ requirements = json.load(open('requirements.json', 'r'), object_pairs_hook=Order
 # Prepare the operators
 operators = {">": operator.gt, ">=": operator.ge, "<": operator.lt, "<=": operator.le, "==": operator.eq}
 
+# get right pip command
+PIP_COMMAND = LocalOS.get_pip_command()
+
 
 class PackageStatus(Enum):
     MISSING = 0
@@ -81,10 +84,11 @@ def install_package(package, version=None, wheel=None, upgrade=False, method=Dow
             install_str += "=={}".format(version)
 
     # Handle the upgrade by forcing the reinstall
-    install_args = ['pip', 'install', install_str]
+    install_args = [PIP_COMMAND, 'install', install_str]
     if upgrade:
         install_args.append('-I')
     subprocess.call(install_args)
+
 
 def test_package(package, version, test):
     """
@@ -122,9 +126,10 @@ def get_requirements_by_os():
     for name, val in requirements.items():
         # If no platform specified or the os is in the platforms, add it
         if not val or 'platform' not in val or LocalOS.name in val['platform']:
-            # OS: Mac or Linux. No wheel needed
+            # OS: Mac or Linux. No wheel needed except catalyst and pyCOMPS
             if LocalOS.name in (LocalOS.MAC, LocalOS.LINUX) and val and 'wheel' in val:
-                val.pop('wheel')
+                if name not in ('pyCOMPS', 'catalyst'):
+                    val.pop('wheel')
 
             # OS: Linux. No version for some packages
             if LocalOS.name == LocalOS.LINUX and name in ('numpy', 'scipy') and val:
@@ -140,37 +145,55 @@ def install_linux_pre_requisites():
     """
     Install pre-requisites for Linux
     """
-    # Doing the apt-get install pre-requisites
+    # Doing pre-requisites installation
     from subprocess import check_call, STDOUT
-    pre_requisites = [
-        'python-setuptools',
-        'python-pip',
-        'psutils',
-        'build-essential',
-        'python-dev',
-        'libsnappy-dev',
-        'ncurses-dev',
-        'libfreetype6-dev',
-        'python-numpy',
-        'liblapack-dev',
-        'python-scipy'
-    ]
 
-    supports_apt_get = False
+    linux_pre_requisites = {
+       "CentOS": {
+             "requirements": ["yum-utils",
+                              "gcc"
+                              ],
+             "install_command": "yum"
+       },
+       "Ubuntu": {
+           "requirements": ["python3-pip",
+                            "python3-setuptools",
+                            "build-essential",
+                            "python-dev",
+                            "libfreetype6-dev",
+                            "liblapack-dev",
+                            "python-scipy",
+                            "python3-tk"         
+                            ],
+           "install_command": "apt-get"
+       }
+    }
+
+    linux_dist = LocalOS.Distribution
+    pre_requisites = []
+    if linux_dist in linux_pre_requisites:
+        pre_requisites = linux_pre_requisites[linux_dist]["requirements"]
+        install_command = linux_pre_requisites[linux_dist]["install_command"]
+
+    if len(pre_requisites) == 0:
+        return      # do nothing!
+
+    supports_install_command = False
     try:
-        check_call('apt-get -h', stdout=open(os.devnull, 'wb'), stderr=STDOUT)
-        supports_apt_get = True
+        check_call('{} -h'.format(install_command), shell=True)
+        supports_install_command = True
     except OSError:
-        print ("Not able to automatically install packages via apt-get.  Please meke sure the following dependencies are installed on your system:")
-        print (pre_requisites)
+        print("Not able to automatically install packages via {}".format(install_command))
+        print("Please make sure the following dependencies are installed on your system:")
+        print(pre_requisites)
     except:
-        print ("Unexpected error checking for apt-get:", sys.exc_info()[0])
+        print("Unexpected error checking for {}:".format(install_command), sys.exc_info()[0])
         raise
 
-    if supports_apt_get:
+    if supports_install_command:
         for req in pre_requisites:
-            print ("Checking/Installing %s" % req)
-            check_call(['apt-get', 'install', '-y', req], stdout=open(os.devnull, 'wb'), stderr=STDOUT)
+            print("Checking/Installing %s" % req)
+            check_call([install_command, 'install', '-y', req], stdout=open(os.devnull, 'wb'), stderr=STDOUT)
 
 
 def install_packages(reqs):
@@ -229,8 +252,8 @@ def install_packages(reqs):
         print("---")
 
     # Add the develop by default
-    sys.argv.append('develop')
-    # sys.argv.append('--quiet')
+    # Find a way to empty the arguments and only have develop
+    sys.argv = [sys.argv[0], 'develop']
 
     from setuptools import setup, find_packages
 
@@ -334,7 +357,7 @@ def upgrade_pip():
     """
     import subprocess
 
-    if LocalOS.name in (LocalOS.MAC, LocalOS.LINUX):
+    if LocalOS.name in [LocalOS.MAC]:
         subprocess.call("pip install -U pip", shell=True)
     elif LocalOS.name == LocalOS.WINDOWS:
         subprocess.call("python -m pip install --upgrade pip", shell=True)
@@ -384,8 +407,8 @@ def cleanup_locks():
     :return:
     """
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    setupparser_lock = os.path.join(current_dir, 'simtools','.setup_parser_init_lock')
-    overseer_lock = os.path.join(current_dir, 'simtools','ExperimentManager','.overseer_check_lock')
+    setupparser_lock = os.path.join(current_dir, 'simtools', '.setup_parser_init_lock')
+    overseer_lock = os.path.join(current_dir, 'simtools', 'ExperimentManager', '.overseer_check_lock')
     if os.path.exists(setupparser_lock):
         try:
             os.remove(setupparser_lock)
@@ -430,9 +453,9 @@ def main():
     cleanup_locks()
 
     # Success !
-    print ("\n=======================================================")
-    print ("| Dtk-Tools and dependencies installed successfully.  |")
-    print ("=======================================================")
+    print("\n=======================================================")
+    print("| Dtk-Tools and dependencies installed successfully.  |")
+    print("=======================================================")
 
 
 if __name__ == "__main__":

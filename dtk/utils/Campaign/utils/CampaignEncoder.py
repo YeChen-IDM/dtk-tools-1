@@ -1,5 +1,4 @@
 import json
-import sys
 from enum import Enum
 import numpy as np
 from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
@@ -17,6 +16,7 @@ class CampaignEncoder(json.JSONEncoder):
     def default(self, o):
         """
         Specially handle cases:
+          - np.int32 and np.int64
           - Enum
           - bool
           - Campaign class
@@ -41,6 +41,9 @@ class CampaignEncoder(json.JSONEncoder):
         if not hasattr(o, "_definition"):
             raise Exception("Parsing cannot continue as the object provided does not have a _definition")
 
+        # Root campaign ? If we are at the root of the campaign, we will output parameters regardless of defaults
+        campaign_root = o.__class__.__name__ == 'Campaign'
+
         # Retrieve the object definition
         definition = o._definition
 
@@ -55,9 +58,6 @@ class CampaignEncoder(json.JSONEncoder):
             # Retrieve the default value from the definition for the current field
             validation = definition[key]
             default_value = validation.get('default', None) if isinstance(validation, dict) else validation
-
-            # Root campaign ? If we are at the root of the campaign, we will output parameters regardless of defaults
-            campaign_root = o.__class__.__name__ == 'Campaign'
 
             # If the value is a boolean
             if isinstance(val, bool):
@@ -74,7 +74,7 @@ class CampaignEncoder(json.JSONEncoder):
                     result[key] = val
 
         # for Campaign class we defined, don't output class
-        if o.__class__.__name__ != 'Campaign':
+        if not campaign_root:
             result["class"] = o.__class__.__name__
 
         return result
