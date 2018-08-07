@@ -11809,7 +11809,7 @@
                "type": "float"
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -11833,7 +11833,7 @@
                "type": "float"
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -11865,7 +11865,7 @@
          },
          "WaningEffectConstant": {
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -11882,7 +11882,7 @@
                "type": "float"
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -11915,7 +11915,7 @@
                }
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -11953,7 +11953,7 @@
                "type": "bool"
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -11993,7 +11993,7 @@
                }
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -12026,7 +12026,7 @@
                }
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -12064,7 +12064,7 @@
                "type": "bool"
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,
@@ -12088,7 +12088,7 @@
                "type": "float"
             },
             "Initial_Effect": {
-               "default": 0,
+               "default": 1,
                "description": "Initial strength of the effect. The effect decays over time.",
                "max": 1,
                "min": 0,

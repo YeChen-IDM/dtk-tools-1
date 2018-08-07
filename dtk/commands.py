@@ -19,6 +19,7 @@ from simtools.DataAccess.LoggingDataStore import LoggingDataStore
 from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.SetupParser import SetupParser
+from simtools.Utilities.LocalOS import LocalOS
 from simtools.Utilities.COMPSUtilities import get_experiments_per_user_and_date, get_experiments_by_name, COMPS_login, \
     get_experiment_ids_for_user
 from simtools.Utilities.DiskSpaceUsage import DiskSpaceUsage
@@ -32,6 +33,7 @@ from simtools.DataAccess.Schema import Experiment, Simulation
 from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
 
 from simtools.Utilities.General import init_logging
+
 logger = init_logging('Commands')
 
 def builtinAnalyzers():
@@ -659,7 +661,9 @@ def get_package(args, unknownArgs):
 
         # install
         if not is_test:
-            subprocess.call(['pip', 'install', '--no-dependencies', '--ignore-installed', release_dir])
+            # get right pip command
+            pip_command = LocalOS.get_pip_command()
+            subprocess.call([pip_command, 'install', '--no-dependencies', '--ignore-installed', release_dir])
 
         # update the local DB with the version
         db_key = github.disease_package_db_key

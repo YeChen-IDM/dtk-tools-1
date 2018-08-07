@@ -139,7 +139,7 @@ def change_individual_property(cb, target_property_name, target_property_value, 
                     Blackout_Period=1,
                     # so we only distribute the node event(s) once
                     Blackout_On_First_Occurrence=True,
-                    Target_Residents_Only=True,
+                    Target_Residents_Only=False,
                     Duration=listening_duration,
                     Trigger_Condition_List=trigger_condition_list,
                     # Target_Residents_Only=1,          # [ZDU]: duplicated

@@ -2048,10 +2048,10 @@ class NodeSetPolygon(BaseCampaign):
 
 
 class WaningEffectBox(BaseCampaign):
-    _definition = {'Box_Duration': {'default': 100, 'description': 'Box duration of effect in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectBox'}
+    _definition = {'Box_Duration': {'default': 100, 'description': 'Box duration of effect in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectBox'}
     _validator = ClassValidator(_definition, 'WaningEffectBox')
 
-    def __init__(self, Box_Duration=100, Initial_Effect=0, **kwargs):
+    def __init__(self, Box_Duration=100, Initial_Effect=1, **kwargs):
         super(WaningEffectBox, self).__init__(**kwargs)
         self.Box_Duration = Box_Duration
         self.Initial_Effect = Initial_Effect
@@ -2059,10 +2059,10 @@ class WaningEffectBox(BaseCampaign):
 
 
 class WaningEffectBoxExponential(BaseCampaign):
-    _definition = {'Box_Duration': {'default': 100, 'description': 'Box duration of effect in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Decay_Time_Constant': {'default': 100, 'description': 'The exponential decay length, in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectBoxExponential'}
+    _definition = {'Box_Duration': {'default': 100, 'description': 'Box duration of effect in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Decay_Time_Constant': {'default': 100, 'description': 'The exponential decay length, in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectBoxExponential'}
     _validator = ClassValidator(_definition, 'WaningEffectBoxExponential')
 
-    def __init__(self, Box_Duration=100, Decay_Time_Constant=100, Initial_Effect=0, **kwargs):
+    def __init__(self, Box_Duration=100, Decay_Time_Constant=100, Initial_Effect=1, **kwargs):
         super(WaningEffectBoxExponential, self).__init__(**kwargs)
         self.Box_Duration = Box_Duration
         self.Decay_Time_Constant = Decay_Time_Constant
@@ -2083,20 +2083,20 @@ class WaningEffectCombo(BaseCampaign):
 
 
 class WaningEffectConstant(BaseCampaign):
-    _definition = {'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectConstant'}
+    _definition = {'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectConstant'}
     _validator = ClassValidator(_definition, 'WaningEffectConstant')
 
-    def __init__(self, Initial_Effect=0, **kwargs):
+    def __init__(self, Initial_Effect=1, **kwargs):
         super(WaningEffectConstant, self).__init__(**kwargs)
         self.Initial_Effect = Initial_Effect
 
 
 
 class WaningEffectExponential(BaseCampaign):
-    _definition = {'Decay_Time_Constant': {'default': 100, 'description': 'The exponential decay length, in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectExponential'}
+    _definition = {'Decay_Time_Constant': {'default': 100, 'description': 'The exponential decay length, in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectExponential'}
     _validator = ClassValidator(_definition, 'WaningEffectExponential')
 
-    def __init__(self, Decay_Time_Constant=100, Initial_Effect=0, **kwargs):
+    def __init__(self, Decay_Time_Constant=100, Initial_Effect=1, **kwargs):
         super(WaningEffectExponential, self).__init__(**kwargs)
         self.Decay_Time_Constant = Decay_Time_Constant
         self.Initial_Effect = Initial_Effect
@@ -2104,10 +2104,10 @@ class WaningEffectExponential(BaseCampaign):
 
 
 class WaningEffectMapCount(BaseCampaign):
-    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectMapCount'}
+    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectMapCount'}
     _validator = ClassValidator(_definition, 'WaningEffectMapCount')
 
-    def __init__(self, Durability_Map=None, Initial_Effect=0, **kwargs):
+    def __init__(self, Durability_Map=None, Initial_Effect=1, **kwargs):
         super(WaningEffectMapCount, self).__init__(**kwargs)
         self.Durability_Map = Durability_Map
         self.Initial_Effect = Initial_Effect
@@ -2115,10 +2115,10 @@ class WaningEffectMapCount(BaseCampaign):
 
 
 class WaningEffectMapLinear(BaseCampaign):
-    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Expire_At_Durability_Map_End': {'default': 0, 'description': 'Set to 1 to let the intervention expire when the end of the map is reached.', 'type': 'bool'}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'Reference_Timer': {'default': 0, 'description': 'Timestamp at which linear-map should be anchored.', 'max': 2147480000.0, 'min': 0, 'type': 'integer'}, 'class': 'WaningEffectMapLinear'}
+    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Expire_At_Durability_Map_End': {'default': 0, 'description': 'Set to 1 to let the intervention expire when the end of the map is reached.', 'type': 'bool'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'Reference_Timer': {'default': 0, 'description': 'Timestamp at which linear-map should be anchored.', 'max': 2147480000.0, 'min': 0, 'type': 'integer'}, 'class': 'WaningEffectMapLinear'}
     _validator = ClassValidator(_definition, 'WaningEffectMapLinear')
 
-    def __init__(self, Durability_Map=None, Expire_At_Durability_Map_End=False, Initial_Effect=0, Reference_Timer=0, **kwargs):
+    def __init__(self, Durability_Map=None, Expire_At_Durability_Map_End=False, Initial_Effect=1, Reference_Timer=0, **kwargs):
         super(WaningEffectMapLinear, self).__init__(**kwargs)
         self.Durability_Map = Durability_Map
         self.Expire_At_Durability_Map_End = Expire_At_Durability_Map_End
@@ -2128,10 +2128,10 @@ class WaningEffectMapLinear(BaseCampaign):
 
 
 class WaningEffectMapLinearAge(BaseCampaign):
-    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectMapLinearAge'}
+    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectMapLinearAge'}
     _validator = ClassValidator(_definition, 'WaningEffectMapLinearAge')
 
-    def __init__(self, Durability_Map=None, Initial_Effect=0, **kwargs):
+    def __init__(self, Durability_Map=None, Initial_Effect=1, **kwargs):
         super(WaningEffectMapLinearAge, self).__init__(**kwargs)
         self.Durability_Map = Durability_Map
         self.Initial_Effect = Initial_Effect
@@ -2139,10 +2139,10 @@ class WaningEffectMapLinearAge(BaseCampaign):
 
 
 class WaningEffectMapLinearSeasonal(BaseCampaign):
-    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectMapLinearSeasonal'}
+    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectMapLinearSeasonal'}
     _validator = ClassValidator(_definition, 'WaningEffectMapLinearSeasonal')
 
-    def __init__(self, Durability_Map=None, Initial_Effect=0, **kwargs):
+    def __init__(self, Durability_Map=None, Initial_Effect=1, **kwargs):
         super(WaningEffectMapLinearSeasonal, self).__init__(**kwargs)
         self.Durability_Map = Durability_Map
         self.Initial_Effect = Initial_Effect
@@ -2150,10 +2150,10 @@ class WaningEffectMapLinearSeasonal(BaseCampaign):
 
 
 class WaningEffectMapPiecewise(BaseCampaign):
-    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Expire_At_Durability_Map_End': {'default': 0, 'description': 'Set to 1 to let the intervention expire when the end of the map is reached.', 'type': 'bool'}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'Reference_Timer': {'default': 0, 'description': 'Timestamp at which linear-map should be anchored.', 'max': 2147480000.0, 'min': 0, 'type': 'integer'}, 'class': 'WaningEffectMapPiecewise'}
+    _definition = {'Durability_Map': {'description': 'The time, in days, since the intervention was distributed and a multiplier for the Initial_Effect.', 'Times': {'type': 'list', 'item_type': {'description': 'An array of years.', 'max': 999999, 'min': 0, 'type': 'float'}, 'default': []}, 'Values': {'type': 'list', 'item_type': {'description': 'An array of values to match the defined Times.', 'max': 3.40282e+38, 'min': 0, 'type': 'float'}, 'default': []}}, 'Expire_At_Durability_Map_End': {'default': 0, 'description': 'Set to 1 to let the intervention expire when the end of the map is reached.', 'type': 'bool'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'Reference_Timer': {'default': 0, 'description': 'Timestamp at which linear-map should be anchored.', 'max': 2147480000.0, 'min': 0, 'type': 'integer'}, 'class': 'WaningEffectMapPiecewise'}
     _validator = ClassValidator(_definition, 'WaningEffectMapPiecewise')
 
-    def __init__(self, Durability_Map=None, Expire_At_Durability_Map_End=False, Initial_Effect=0, Reference_Timer=0, **kwargs):
+    def __init__(self, Durability_Map=None, Expire_At_Durability_Map_End=False, Initial_Effect=1, Reference_Timer=0, **kwargs):
         super(WaningEffectMapPiecewise, self).__init__(**kwargs)
         self.Durability_Map = Durability_Map
         self.Expire_At_Durability_Map_End = Expire_At_Durability_Map_End
@@ -2163,10 +2163,10 @@ class WaningEffectMapPiecewise(BaseCampaign):
 
 
 class WaningEffectRandomBox(BaseCampaign):
-    _definition = {'Expected_Discard_Time': {'default': 100, 'description': 'The mean time, in days, of an exponential distribution of the duration of the effect of an intervention (such as a vaccine or bed net).', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 0, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectRandomBox'}
+    _definition = {'Expected_Discard_Time': {'default': 100, 'description': 'The mean time, in days, of an exponential distribution of the duration of the effect of an intervention (such as a vaccine or bed net).', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectRandomBox'}
     _validator = ClassValidator(_definition, 'WaningEffectRandomBox')
 
-    def __init__(self, Expected_Discard_Time=100, Initial_Effect=0, **kwargs):
+    def __init__(self, Expected_Discard_Time=100, Initial_Effect=1, **kwargs):
         super(WaningEffectRandomBox, self).__init__(**kwargs)
         self.Expected_Discard_Time = Expected_Discard_Time
         self.Initial_Effect = Initial_Effect
