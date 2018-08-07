@@ -2,7 +2,7 @@ import math
 
 from simtools.Utilities.CacheEnabled import CacheEnabled
 from simtools.Utilities.Encoding import GeneralEncoder
-from simtools.Utilities.General import init_logging, get_tools_revision, animation
+from simtools.Utilities.General import init_logging, get_tools_revision, animation, CommandlineGenerator
 
 logger = init_logging('ExperimentManager')
 
@@ -39,7 +39,7 @@ class BaseExperimentManager(CacheEnabled):
         self.experiment = experiment
         self.exp_builder = None
         self.config_builder = config_builder
-        self.commandline = None
+        self.commandline = CommandlineGenerator()
         self.experiment_tags = {}
         self.asset_service = None
         self.assets = None
@@ -70,12 +70,12 @@ class BaseExperimentManager(CacheEnabled):
         self.experiment = DataStore.create_experiment(
             exp_id=experiment_id,
             suite_id=suite_id,
-            exe_name=self.assets.exe_name,
+            exe_name=self.assets.exe_name if self.assets else "",
             sim_root=SetupParser.get('sim_root'),
             exp_name=experiment_name,
             location=self.location,
             tags=self.experiment_tags,
-            sim_type=self.config_builder.get_param('Simulation_Type'),
+            sim_type=self.config_builder.get_param('Simulation_Type') if self.config_builder else "",
             dtk_tools_revision=get_tools_revision(),
             selected_block=SetupParser.selected_block,
             setup_overlay_file=SetupParser.overlay_path,

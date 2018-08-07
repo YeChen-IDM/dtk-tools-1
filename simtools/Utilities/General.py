@@ -225,10 +225,10 @@ class CommandlineGenerator:
     A class to construct command line strings from executable, options, and params
     """
 
-    def __init__(self, exe_path, options, params):
+    def __init__(self, exe_path=None, options=None, params=None):
         self._exe_path = exe_path
-        self._options = options
-        self._params = [str(p) for p in params]
+        self._options = options or {}
+        self._params = [str(p) for p in params] if params else []
 
     @property
     def Executable(self):

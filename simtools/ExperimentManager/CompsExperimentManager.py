@@ -75,9 +75,9 @@ class CompsExperimentManager(BaseExperimentManager):
             node_group_name=SetupParser.get('node_group'),
             maximum_number_of_retries=int(SetupParser.get('num_retries')),
             priority=Priority[SetupParser.get('priority')],
-            min_cores=self.config_builder.get_param('Num_Cores', 1),
-            max_cores=self.config_builder.get_param('Num_Cores', 1),
-            exclusive=self.config_builder.get_param('Exclusive', False)
+            min_cores=self.config_builder.get_param('Num_Cores', 1) if self.config_builder else 1,
+            max_cores=self.config_builder.get_param('Num_Cores', 1) if self.config_builder else 1,
+            exclusive=self.config_builder.get_param('Exclusive', False) if self.config_builder else False
         )
 
         e = Experiment(name=experiment_name,

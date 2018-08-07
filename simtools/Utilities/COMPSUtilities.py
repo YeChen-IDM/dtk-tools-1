@@ -90,7 +90,7 @@ def stage_file(from_path, to_directory):
 
     if not os.path.exists(stage_path):
         logger.info('Copying %s to %s (translated in: %s)' % (
-        os.path.basename(from_path), to_directory, to_directory_translated))
+            os.path.basename(from_path), to_directory, to_directory_translated))
         shutil.copy(from_path, stage_path)
         logger.info('Copying complete.')
 
@@ -126,11 +126,13 @@ def get_asset_collection_by_id(collection_id, query_criteria=None):
     except (RuntimeError, ValueError):
         return None
 
+
 def get_asset_collection_id_for_simulation_id(sim_id):
     query_criteria = QueryCriteria().select_children('configuration')
     simulation = Simulation.get(id=sim_id, query_criteria=query_criteria)
     collection_id = simulation.configuration.asset_collection_id
     return collection_id
+
 
 def pretty_display_assets_from_collection(assets):
     if not assets:
@@ -142,6 +144,7 @@ def pretty_display_assets_from_collection(assets):
         relative_path = asset.relative_path + os.sep if asset.relative_path else ""
         str += "- {}{}\n".format(relative_path, asset.file_name)
     return str
+
 
 def get_asset_files_for_simulation_id(sim_id, paths, output_directory=None, flatten=False, remove_prefix=None):
     """
@@ -228,7 +231,6 @@ def download_asset_collection(collection, output_folder):
 
     # Get the files
     if len(collection.assets) > 0:
-
         # Download the collection as zip
         zip_path = os.path.join(output_folder, 'temp.zip')
         with open(zip_path, 'wb') as outfile:
@@ -247,13 +249,16 @@ def get_experiment_ids_for_user(user):
     exps = Experiment.get(query_criteria=QueryCriteria().select(['id']).where(['owner={}'.format(user)]))
     return [str(exp.id) for exp in exps]
 
+
 @retry_function
 def get_experiment_by_id(exp_id, query_criteria=None):
     return Experiment.get(exp_id, query_criteria=query_criteria)
 
+
 @retry_function
 def get_simulation_by_id(sim_id, query_criteria=None):
     return Simulation.get(id=sim_id, query_criteria=query_criteria)
+
 
 def get_all_experiments_for_user(user):
     # COMPS limits the retrieval to 1000 so to make sure we get all experiments for a given user, we need to be clever
@@ -261,13 +266,15 @@ def get_all_experiments_for_user(user):
     interval = 365
     results = {}
     end_date = start_date = datetime.today()
-    limit_date = datetime.strptime("2014-03-31", '%Y-%m-%d') # Oldest simulation in COMPS
+    limit_date = datetime.strptime("2014-03-31", '%Y-%m-%d')  # Oldest simulation in COMPS
 
     while start_date > limit_date:
         start_date = end_date - timedelta(days=interval)
         batch = Experiment.get(query_criteria=QueryCriteria().where(["owner={}".format(user),
-                                                                     "date_created<={}".format(end_date.strftime('%Y-%m-%d')),
-                                                                     "date_created>={}".format(start_date.strftime('%Y-%m-%d'))]))
+                                                                     "date_created<={}".format(
+                                                                         end_date.strftime('%Y-%m-%d')),
+                                                                     "date_created>={}".format(
+                                                                         start_date.strftime('%Y-%m-%d'))]))
         if len(batch) == 1000:
             # We hit a limit, reduce the interval and run again
             interval = interval / 2
@@ -285,9 +292,46 @@ def get_all_experiments_for_user(user):
 
     return results.values()
 
+
+def get_simulations_from_big_experiments(experiment_id):
+    e = get_experiment_by_id(experiment_id)
+    start_date = end_date = e.date_created
+    import pytz
+    limit_date = datetime.today().replace(tzinfo=pytz.utc)
+    interval = 60
+    stop_flag = False
+    results = {}
+    while start_date < limit_date:
+        start_date = end_date + timedelta(minutes=interval)
+        try:
+            batch = Simulation.get(query_criteria=QueryCriteria()
+                                   .select(['id', 'state', 'date_created']).select_children('tags')
+                                   .where(["experiment_id={}".format(experiment_id),
+                                           "date_created>={}".format(end_date.strftime('%Y-%m-%d %T')),
+                                           "date_created<={}".format(start_date.strftime('%Y-%m-%d %T'))])
+                                   )
+        except:
+            interval /= 2
+            continue
+
+        if not batch:
+            if stop_flag:
+                break
+            else:
+                interval = 120
+                stop_flag = True
+        else:
+            stop_flag = False
+            for s in batch:
+                results[s.id] = s
+        end_date = start_date
+    return results.values()
+
+
 def get_experiments_per_user_and_date(user, limit_date):
     limit_date_str = limit_date.strftime("%Y-%m-%d")
     return Experiment.get(query_criteria=QueryCriteria().where('owner=%s,DateCreated>=%s' % (user, limit_date_str)))
+
 
 @retry_function
 def get_experiments_by_name(name, user=None):
