@@ -16,8 +16,8 @@ class ModFn(object):
 
     def __call__(self, cb):
         md = self.func(cb, *self.args, **self.kwargs)
-        if not md:
-            md = {'.'.join([self.fname, k]): v for (k, v) in self.kwargs.items()}
+        #if not md:
+        #    md = {'.'.join([self.fname, k]): v for (k, v) in self.kwargs.items()}
 
         # Make sure we cast numpy types into normal system types
         for k, v in md.items():
