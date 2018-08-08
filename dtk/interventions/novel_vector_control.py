@@ -3,11 +3,10 @@ from dtk.utils.Campaign.CampaignClass import *
 
 
 def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=[], duration=180, duration_std_dev=14,
-             repetitions=1, interval=365,
              nodeIDs=[], node_property_restrictions=[]):
 
     cfg_species = [x for x in cb.get_param('Vector_Species_Names') if cb.get_param('Vector_Species_Params')[x]['Vector_Sugar_Feeding_Frequency'] != 'VECTOR_SUGAR_FEEDING_NONE']
-    atsb_master = WaningEffectBoxExponential(Initial_Effect=0.15*coverage,
+    atsb_master = WaningEffectBoxExponential(Initial_Effect=0.0337*coverage,
                                              Box_Duration=180,
                                              Decay_Time_Constant=30)
     dummy_kill_cfg = WaningEffectConstant(Initial_Effect=0)
@@ -54,8 +53,6 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=[], duration=180, duration_std
         Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(Intervention_Config=atsb_config),
         Intervention_Name="Attractive Toxic Sugar Bait",
         Demographic_Coverage=1,
-        Number_Repetitions=repetitions,
-        Timesteps_Between_Repetitions=interval,
         Node_Property_Restrictions=node_property_restrictions,
         Nodeset_Config=node_cfg
     )
