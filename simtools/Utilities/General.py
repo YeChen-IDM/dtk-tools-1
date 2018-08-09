@@ -311,7 +311,7 @@ def is_running(pid, name_part):
     running = process.is_running()
     zombie = process.status() == "zombie" if LocalOS.name != LocalOS.WINDOWS else False
     process_name = process.name()
-    valid_name = name_part in process_name
+    valid_name = name_part.lower() in process_name.lower()
 
     logger.debug("is_running: pid %s running? %s valid_name (%s)? %s. name: %s" %
                  (pid, running, name_part, valid_name, process_name))
