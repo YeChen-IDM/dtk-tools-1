@@ -77,9 +77,9 @@
   "astor": null,
   "astunparse": null,
   "catalyst": {
-    "version": "1.0.4",
+    "version": "1.0.5",
     "test": ">=",
-    "wheel": "catalyst_report-1.0.4-py3-none-any.whl"
+    "wheel": "catalyst_report-1.0.5-py3-none-any.whl"
   },
   "openpyxl": {
     "version": "2.5.3",
