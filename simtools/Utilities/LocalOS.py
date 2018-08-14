@@ -1,7 +1,7 @@
-import os
 import platform
 import getpass
 from simtools.Utilities import Distro
+from distutils import spawn
 
 
 def get_linux_distribution():
@@ -15,25 +15,6 @@ def get_linux_distribution():
         return 'Debian'
     elif 'fedora' in name:
         return 'Fedora'
-
-
-def command_exist(program):
-    """
-    Finds if a program exists in the path on the system
-    :param program: The program we want to find
-    :return: True if the program exists, False if not
-    """
-    def is_exe(fpath):
-        """
-        Tests if the file exists and is an executable
-        """
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-    # For each directory in the path, check if the program exists there
-    for path in os.environ["PATH"].split(os.pathsep):
-        exe_file = os.path.join(path, program)
-        if is_exe(exe_file):
-            return True
 
 
 class LocalOS:
@@ -74,14 +55,8 @@ class LocalOS:
 
     @classmethod
     def get_pip_command(cls):
-        # If we are on windows, use .exe at the end of the command
-        if cls.name == cls.WINDOWS:
-            commands = ["{}.exe".format(c) for c in cls.PIP_COMMANDS]
-        else:
-            commands = cls.PIP_COMMANDS
-
-        for pip in commands:
-            if command_exist(pip):
+        for pip in cls.PIP_COMMANDS:
+            if spawn.find_executable(pip):
                 return pip
 
         # If we get to this point, no pip was found -> exception

@@ -62,15 +62,15 @@ class CampaignEncoder(json.JSONEncoder):
             # If the value is a boolean
             if isinstance(val, bool):
                 converted_value = self.convert_bool(val)
-                if campaign_root or (self.Use_Defaults and converted_value != default_value):
+                if campaign_root or not (self.Use_Defaults and converted_value == default_value):
                     result[key] = converted_value
 
             elif isinstance(val, Enum):
-                if campaign_root or (self.Use_Defaults and val.name != default_value):
+                if campaign_root or not (self.Use_Defaults and val.name == default_value):
                     result[key] = val
 
             else:
-                if campaign_root or (self.Use_Defaults and val != default_value):
+                if campaign_root or not (self.Use_Defaults and val == default_value):
                     result[key] = val
 
         # for Campaign class we defined, don't output class
