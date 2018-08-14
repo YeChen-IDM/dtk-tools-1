@@ -425,3 +425,23 @@ def copy_and_reset_StringIO(sio):
     new_sio = copy.deepcopy(sio)
     new_sio.seek(0) # just in case the original had been read some
     return new_sio
+
+
+def batch(iterator, n=1):
+    """
+    Yield n elements from the given iterator at a time
+    :param iterator:
+    :param n:
+    :return:
+    """
+    while True:
+        res = []
+        try:
+            for i in range(n):
+                res.append(next(iterator))
+        except StopIteration:
+            pass
+        finally:
+            if not res:
+                raise StopIteration()
+            yield res

@@ -43,11 +43,10 @@ class CompsExperimentManager(BaseExperimentManager):
         if self.experiment:
             self.comps_experiment = COMPSCache.experiment(self.experiment.exp_id)
 
-    def get_simulation_creator(self, function_set, max_sims_per_batch):
+    def get_simulation_creator(self, work_queue):
         return COMPSSimulationCreator(config_builder=self.config_builder,
                                       initial_tags=self.exp_builder.tags,
-                                      function_set=function_set,
-                                      max_sims_per_batch=max_sims_per_batch,
+                                      work_queue=work_queue,
                                       experiment=self.experiment,
                                       cache=self.cache,
                                       save_semaphore=self.save_semaphore,

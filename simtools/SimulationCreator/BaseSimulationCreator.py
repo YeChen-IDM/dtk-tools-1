@@ -1,5 +1,6 @@
 import copy
 import pickle
+import time
 from abc import abstractmethod, ABCMeta
 from multiprocessing import Process
 
@@ -13,13 +14,12 @@ class BaseSimulationCreator(Process):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, config_builder, initial_tags,  function_set, max_sims_per_batch, experiment, cache):
+    def __init__(self, config_builder, initial_tags,  work_queue, experiment, cache):
         super(BaseSimulationCreator, self).__init__()
         self.config_builder = config_builder
         self.experiment = experiment
         self.initial_tags = initial_tags
-        self.function_set = function_set
-        self.max_sims_per_batch = max_sims_per_batch
+        self.work_queue = work_queue
         self.cache = cache
         self.created_simulations = []
         self.setup_parser_singleton = SetupParser.singleton
@@ -37,36 +37,34 @@ class BaseSimulationCreator(Process):
     def process(self):
         self.pre_creation()
 
-        while self.function_set:
-            mod_fn_list = self.function_set.pop()
-            cb = pickle.loads(pickle.dumps(self.config_builder, protocol=pickle.HIGHEST_PROTOCOL))
+        for batch in iter(self.work_queue.get, None):
+            for mod_fn_list in batch:
+                cb = pickle.loads(pickle.dumps(self.config_builder, protocol=pickle.HIGHEST_PROTOCOL))
 
-            # modify next simulation according to experiment builder
-            # also retrieve the returned metadata
-            tags = self.initial_tags.copy() if self.initial_tags else {}
-            for func in mod_fn_list:
-                md = func(cb)
-                tags.update(md)
+                # modify next simulation according to experiment builder
+                # also retrieve the returned metadata
+                tags = self.initial_tags.copy() if self.initial_tags else {}
+                for func in mod_fn_list:
+                    md = func(cb)
+                    tags.update(md)
 
-            # Prepare the assets assets
-            cb.assets.prepare(cb)
+                # Prepare the assets assets
+                cb.assets.prepare(cb)
 
-            # Create the simulation
-            s = self.create_simulation(cb)
+                # Create the simulation
+                s = self.create_simulation(cb)
 
-            # Append the environment to the tag and add the default experiment tags if any
-            self.set_tags_to_simulation(s, tags, cb)
+                # Append the environment to the tag and add the default experiment tags if any
+                self.set_tags_to_simulation(s, tags, cb)
 
-            # Add the files
-            self.add_files_to_simulation(s, cb)
+                # Add the files
+                self.add_files_to_simulation(s, cb)
 
-            # Add to the created simulations array
-            self.created_simulations.append(s)
+                # Add to the created simulations array
+                self.created_simulations.append(s)
 
-            if len(self.created_simulations) % self.max_sims_per_batch == 0 or not self.function_set:
-                self.process_batch()
-                self.post_creation()
-                self.created_simulations = []
+            self.process_batch()
+            self.post_creation()
 
     def process_batch(self):
         self.save_batch()
@@ -74,6 +72,8 @@ class BaseSimulationCreator(Process):
         # Now that the save is done, we have the ids ready -> create the simulations
         for sim in self.created_simulations:
             self.cache.append(DataStore.create_simulation(id=str(sim.id), tags=sim.tags, experiment_id=self.experiment.exp_id))
+
+        self.created_simulations = []
 
     @abstractmethod
     def create_simulation(self, cb):
