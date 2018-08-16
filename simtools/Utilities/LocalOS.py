@@ -42,7 +42,7 @@ class LocalOS:
             'username': getpass.getuser()
         }
     }
-    PIP_COMMANDS = ['pip3.7', 'pip3.6', 'pip3', 'pip']
+    PIP_COMMANDS = ['pip', 'pip3.7', 'pip3.6', 'pip3']
 
     _os = platform.system().lower()
     if not _os in OPERATING_SYSTEMS.keys():
