@@ -2,28 +2,6 @@ from simtools.DataAccess.BatchDataStore import BatchDataStore
 from simtools.DataAccess.ExperimentDataStore import ExperimentDataStore
 from simtools.DataAccess.SettingsDataStore import SettingsDataStore
 from simtools.DataAccess.SimulationDataStore import SimulationDataStore
-from simtools.Utilities.General import init_logging
-
-logger = init_logging('DataAccess')
-
-def batch(iterable, n=1):
-    """
-    Batch an iterable passed as argument into lists of n elements.
-
-    Examples:
-        batch([1,2,2,3,4,5,6],2) returns [[1,2],[2,3],[4,5],[6]]
-
-    Args:
-        iterable: The iterable to split
-        n: split in lists of n elements
-
-    Returns: List of lists of n elements
-    """
-    logger.debug('batch function - %s in %s elements' % (iterable, n))
-
-    l = len(iterable)
-    for ndx in range(0, l, n):
-        yield iterable[ndx:min(ndx + n, l)]
 
 
 class DataStore(SimulationDataStore, ExperimentDataStore, SettingsDataStore, BatchDataStore):

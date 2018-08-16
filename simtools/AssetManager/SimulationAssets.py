@@ -219,6 +219,7 @@ class SimulationAssets(object):
         file_list = None
         if collection_type == self.EXE:
             exe_path = self.exe_path
+            if not exe_path: return None
             file_list = FileList(root=os.path.dirname(exe_path),
                                  files_in_root=[os.path.basename(exe_path)],
                                  ignore_missing=config_builder.ignore_missing)

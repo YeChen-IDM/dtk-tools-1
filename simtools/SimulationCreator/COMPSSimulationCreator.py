@@ -15,7 +15,6 @@ class COMPSSimulationCreator(BaseSimulationCreator):
         self.save_semaphore = save_semaphore
         self.comps_experiment = comps_experiment
 
-
     def create_simulation(self, cb):
         name = cb.get_param('Config_Name') or self.experiment.exp_name
         return Simulation(name=name, experiment_id=self.experiment.exp_id,

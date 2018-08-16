@@ -55,13 +55,15 @@ class ExperimentDataStore:
 
     @classmethod
     def get_most_recent_experiment(cls, id_or_name=None):
-        logger.debug("Get most recent experiment")
-        id_or_name = '' if not id_or_name else id_or_name
         with session_scope() as session:
-            experiment = session.query(Experiment) \
-                .filter(or_(Experiment.exp_id.like('%%%s%%' % id_or_name), Experiment.exp_name.like('%%%s%%' % id_or_name))) \
-                .options(joinedload('simulations').joinedload('experiment')) \
-                .order_by(Experiment.date_created.desc()).first()
+            # Retrieve the ID of the most recent experiment first
+            query = session.query(Experiment)
+            if id_or_name:
+                query.filter(or_(Experiment.exp_id.like('%%%s%%' % id_or_name), Experiment.exp_name.like('%%%s%%' % id_or_name)))
+            e = query.order_by(Experiment.date_created.desc()).first()
+
+            eid = e.exp_id
+            experiment = cls.get_experiment(eid, session)
 
             session.expunge_all()
         return experiment

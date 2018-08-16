@@ -5,11 +5,12 @@ from simtools.SimConfigBuilder import SimConfigBuilder
 
 class PythonConfigBuilder(SimConfigBuilder):
 
-    def __init__(self, python_file):
+    def __init__(self, python_file, python_comand="python"):
         super(PythonConfigBuilder, self).__init__()
         self.python_file = python_file
         self.python_file_contents = open(python_file).read()
         self.python_file_basename = os.path.basename(self.python_file)
+        self.python_command = python_comand
 
     def get_commandline(self):
         """
@@ -19,7 +20,7 @@ class PythonConfigBuilder(SimConfigBuilder):
 
         """
         from simtools.Utilities.General import CommandlineGenerator
-        return CommandlineGenerator("python {}".format(self.python_file_basename),{},[])
+        return CommandlineGenerator("{} {}".format(self.python_command, self.python_file_basename), {}, [])
 
     def file_writer(self, write_fn):
         """

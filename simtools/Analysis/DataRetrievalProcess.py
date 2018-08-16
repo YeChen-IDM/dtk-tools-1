@@ -64,8 +64,16 @@ def retrieve_data(simulation, analyzers, cache):
     for analyzer in filtered_analysis:
         # If the analyzer needs the parsed data, parse
         if analyzer.parse:
-            data = {filename:SimulationOutputParser.parse(filename, content)
-                    for filename, content in byte_arrays.items()}
+            try:
+                data = {filename:SimulationOutputParser.parse(filename, content)
+                        for filename, content in byte_arrays.items()}
+            except:
+                tb = traceback.format_exc()
+                cache.set(EXCEPTION_KEY, "An exception has been raised during the data parsing.\n"
+                                         "Simulation: {} \n"
+                                         "Analyzer: {}\n"
+                                         "\n{}".format(simulation, analyzer, tb))
+                return
         else:
             # If the analyzer doesnt wish to parse, give the raw data
             data = byte_arrays

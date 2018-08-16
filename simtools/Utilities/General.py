@@ -445,3 +445,19 @@ def batch(iterator, n=1):
             if not res:
                 raise StopIteration()
             yield res
+
+
+def batch_list(iterable, n=1):
+    """
+    Batch an iterable passed as argument into lists of n elements.
+
+    Examples:
+        batch([1,2,2,3,4,5,6],2) returns [[1,2],[2,3],[4,5],[6]]
+
+    Args:
+        iterable: The iterable to split
+        n: split in lists of n elements
+
+    Returns: List of lists of n elements
+    """
+    return batch(iter(iterable), n)
