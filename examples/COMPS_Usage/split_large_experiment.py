@@ -19,8 +19,6 @@ if __name__ == "__main__":
 
     # Retrieve simulations
     sims = get_simulations_from_big_experiments(e.id)
-    print(sims)
-    exit()
     print("{} simulations retrieved".format(len(sims)))
 
     # Calculate how many experiments we need
