@@ -59,8 +59,11 @@ class ExperimentDataStore:
             # Retrieve the ID of the most recent experiment first
             query = session.query(Experiment)
             if id_or_name:
-                query.filter(or_(Experiment.exp_id.like('%%%s%%' % id_or_name), Experiment.exp_name.like('%%%s%%' % id_or_name)))
+                query = query.filter(or_(Experiment.exp_id.like('%%%s%%' % id_or_name), Experiment.exp_name.like('%%%s%%' % id_or_name)))
             e = query.order_by(Experiment.date_created.desc()).first()
+
+            if not e:
+                return None
 
             eid = e.exp_id
             experiment = cls.get_experiment(eid, session)
