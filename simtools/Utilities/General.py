@@ -311,7 +311,7 @@ def is_running(pid, name_part):
     running = process.is_running()
     zombie = process.status() == "zombie" if LocalOS.name != LocalOS.WINDOWS else False
     process_name = process.name()
-    valid_name = name_part in process_name
+    valid_name = name_part.lower() in process_name.lower()
 
     logger.debug("is_running: pid %s running? %s valid_name (%s)? %s. name: %s" %
                  (pid, running, name_part, valid_name, process_name))
@@ -425,3 +425,39 @@ def copy_and_reset_StringIO(sio):
     new_sio = copy.deepcopy(sio)
     new_sio.seek(0) # just in case the original had been read some
     return new_sio
+
+
+def batch(iterator, n=1):
+    """
+    Yield n elements from the given iterator at a time
+    :param iterator:
+    :param n:
+    :return:
+    """
+    while True:
+        res = []
+        try:
+            for i in range(n):
+                res.append(next(iterator))
+        except StopIteration:
+            pass
+        finally:
+            if not res:
+                raise StopIteration()
+            yield res
+
+
+def batch_list(iterable, n=1):
+    """
+    Batch an iterable passed as argument into lists of n elements.
+
+    Examples:
+        batch([1,2,2,3,4,5,6],2) returns [[1,2],[2,3],[4,5],[6]]
+
+    Args:
+        iterable: The iterable to split
+        n: split in lists of n elements
+
+    Returns: List of lists of n elements
+    """
+    return batch(iter(iterable), n)

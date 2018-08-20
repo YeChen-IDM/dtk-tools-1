@@ -43,10 +43,7 @@ def change_biting_risk(cb, start_day=0,
     useful.
     """
 
-    risk_config = BitingRisk(
-        Risk_Distribution_Type=BitingRisk_Risk_Distribution_Type_Enum.FIXED_DURATION,
-        Constant=1
-    )
+    risk_config = BitingRisk(**risk_config)
 
     risk_event = CampaignEvent(Start_Day=start_day,
                                Nodeset_Config=NodeSetAll(),

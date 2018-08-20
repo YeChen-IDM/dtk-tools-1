@@ -127,7 +127,6 @@ class LocalExperimentManager(BaseExperimentManager):
         from simtools.DataAccess.DataStore import DataStore
         DataStore.delete_experiment(self.experiment)
 
-
     def cancel_experiment(self):
         super(LocalExperimentManager, self).cancel_experiment()
         sim_list = [sim for sim in self.experiment.simulations if sim.status in [SimulationState.CommissionRequested, SimulationState.Running]]
@@ -145,10 +144,9 @@ class LocalExperimentManager(BaseExperimentManager):
             except Exception as e:
                 print(e)
 
-    def get_simulation_creator(self, function_set, max_sims_per_batch):
+    def get_simulation_creator(self, work_queue):
         return LocalSimulationCreator(config_builder=self.config_builder,
                                       initial_tags=self.exp_builder.tags,
-                                      function_set=function_set,
-                                      max_sims_per_batch=max_sims_per_batch,
+                                      work_queue=work_queue,
                                       experiment=self.experiment,
                                       cache=self.cache)

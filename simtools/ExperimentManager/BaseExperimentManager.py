@@ -1,8 +1,9 @@
-import math
+from multiprocessing import Queue
+from threading import Thread
 
 from simtools.Utilities.CacheEnabled import CacheEnabled
 from simtools.Utilities.Encoding import GeneralEncoder
-from simtools.Utilities.General import init_logging, get_tools_revision, animation, CommandlineGenerator
+from simtools.Utilities.General import init_logging, get_tools_revision, animation, CommandlineGenerator, batch
 
 logger = init_logging('ExperimentManager')
 
@@ -17,7 +18,7 @@ from collections import Counter
 
 import fasteners
 
-from simtools.DataAccess.DataStore import DataStore, chunks
+from simtools.DataAccess.DataStore import DataStore
 from simtools.ModBuilder import SingleSimulationBuilder
 from simtools.Monitor import SimulationMonitor
 from simtools.SetupParser import SetupParser
@@ -29,6 +30,7 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 from COMPS.Data.Simulation import SimulationState
 import sys
 
+simulations_expected = 0
 
 class BaseExperimentManager(CacheEnabled):
     __metaclass__ = ABCMeta
@@ -62,7 +64,7 @@ class BaseExperimentManager(CacheEnabled):
         pass
 
     @abstractmethod
-    def get_simulation_creator(self, function_set, max_sims_per_batch):
+    def get_simulation_creator(self, work_queue):
         pass
 
     @abstractmethod
@@ -193,6 +195,8 @@ class BaseExperimentManager(CacheEnabled):
         """
         Create an experiment with simulations modified according to the specified experiment builder.
         """
+        global simulations_expected
+        simulations_expected = 0
         self.exp_builder = exp_builder or SingleSimulationBuilder()
         self.cache.clear()
 
@@ -208,49 +212,56 @@ class BaseExperimentManager(CacheEnabled):
 
         # Separate the experiment builder generator into batches
         sim_per_batch = int(SetupParser.get('sims_per_thread', default=50))
-        max_creator_processes = multiprocessing.cpu_count() - 1
-        mods = list(self.exp_builder.mod_generator)
-        total_sims = len(mods)
+        mods = self.exp_builder.mod_generator
+        max_creator_processes = min(multiprocessing.cpu_count() - 1, int(SetupParser.get('max_threads', default=multiprocessing.cpu_count() - 1)))
+        creator_processes = []
+        work_queue = Queue(max_creator_processes*5)
+        simulations_created = 0
 
-        # Create the simulation processes
-        creator_processes = [self.get_simulation_creator(function_set=fn_batch, max_sims_per_batch=sim_per_batch)
-                             for fn_batch in chunks(mods, max(sim_per_batch, math.ceil(total_sims/max_creator_processes)))]
+        def fill_queue(mods, sim_per_batch, max_creator_processes, work_queue):
+            global simulations_expected
+            # Add the work to be done
+            for wbatch in batch(mods, sim_per_batch):
+                work_queue.put(wbatch)
+                simulations_expected += len(wbatch)
+            # Poison
+            for _ in range(max_creator_processes):
+                work_queue.put(None)
+
+        t = Thread(target=fill_queue, args=(mods, sim_per_batch, max_creator_processes, work_queue))
+        t.start()
+
+        for _ in range(max_creator_processes):
+            creator_process = self.get_simulation_creator(work_queue=work_queue)
+            creator_process.daemon = True
+            creator_process.start()
+            creator_processes.append(creator_process)
 
         # Display some info
         if verbose:
             logger.info("Creating the simulations")
-            logger.info(" | Creator processes: %s (max: %s)" % (len(creator_processes), max_creator_processes))
-            logger.info(" | Simulations per batch: %s" % sim_per_batch)
-            logger.info(" | Simulations Count: %s" % total_sims)
-            sys.stdout.write(" | Created simulations: 0/{}".format(total_sims))
+            logger.info(" | Creator processes: {} ".format(max_creator_processes))
+            logger.info(" | Simulations per batch: {}".format(sim_per_batch))
+
+        # Status display
+        while simulations_created == 0 or simulations_created != simulations_expected or t.isAlive():
+            sys.stdout.write("\r {} Created simulations: {}/{}".format(next(animation), simulations_created, simulations_expected))
             sys.stdout.flush()
 
-        # Start all the processes
-        for c in creator_processes:
-            c.start()
+            # Refresh the number of sims created
+            simulations_created = len(self.cache)
 
-        # While they are running, display the status
-        while True:
-            created_sims = len(self.cache)
-            sys.stdout.write("\r {} Created simulations: {}/{}".format(next(animation), created_sims, total_sims))
-            sys.stdout.flush()
-            if created_sims == total_sims or all(not c.is_alive() for c in creator_processes):
-                break
             time.sleep(0.3)
 
-        for c in creator_processes:
-            c.join()
+        for p in creator_processes:
+            p.join()
 
-        # We exited make sure we had no issues
-        print("\r | Created simulations: {}/{}".format(len(self.cache), total_sims))
+        sys.stdout.write("\r | Created simulations: {}/{}\n".format(simulations_created, simulations_expected))
         sys.stdout.flush()
-        if created_sims != total_sims:
-            logger.error("Commission seems to have failed. Only {} simulations were created but {} were expected...\n"
-                         "Exiting...".format(created_sims, total_sims))
-            exit()
 
-        # Insert all those newly created simulations to the DB
+        # Insert simulations in the cache
         DataStore.bulk_insert_simulations(self.cache)
+        self.cache.clear()
 
         # Refresh the experiment
         self.refresh_experiment()
@@ -258,16 +269,16 @@ class BaseExperimentManager(CacheEnabled):
         # Display sims
         if verbose:
             sims_to_display = 2
-            display = -sims_to_display if total_sims > sims_to_display else -total_sims
+            display = -sims_to_display if simulations_created > sims_to_display else -simulations_created
             logger.info(" ")
-            logger.info("Simulation(s) created:\n"
-                        "----------------------")
+            logger.info("Simulation{} created:\n"
+                        "----------------------".format("s" if simulations_created>1 else ""))
             for sim in self.experiment.simulations[display:]:
                 logger.info("- Simulation {}".format(sim.id))
                 logger.info(json.dumps(sim.tags, indent=2, cls=GeneralEncoder, sort_keys=True))
                 logger.info(" ")
 
-            if total_sims > sims_to_display: logger.info("... and %s more" % (total_sims + display))
+            if simulations_created > sims_to_display: logger.info("... and %s more" % (simulations_created + display))
 
     def refresh_experiment(self):
         self.check_overseer()

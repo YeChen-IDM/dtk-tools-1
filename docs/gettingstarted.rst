@@ -88,23 +88,15 @@ Download and install pyCOMPS::
 
 MAC OSX installation
 ````````````````````
-Tested with macOS Sierra (Version 10.12)
+Tested with MacOS High Sierra
 
 Make sure you have the Xcode Command Line Tools installed::
 
     xcode-select --install
 
-By default, MAC will install Python 2.7.10 for system use and users may not have certain permissions to upgrade some packages. We will leave the system Python unchanged and install our own Python instead::
+Install Python 3.6 x64 from the `Official Python Website <http://python.org/>`_.
 
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-Refer to http://brew.sh/index.html
-
-Install Python with the command::
-
-    brew install python3
-
-Install virtualenv::
+Install the virtualenv package allowing to create virtual environments::
 
     pip3 install virtualenv
 
@@ -123,20 +115,16 @@ Make sure you are in the virtual environment by checking if the prompt displays 
 Download and install pyCOMPS::
 
     curl -O https://institutefordiseasemodeling.github.io/PythonDependencies/pyCOMPS-2.1-py2.py3-none-any.whl
-    pip3 install pyCOMPS-2.1-py2.py3-none-any.whl
+    pip3 install pyCOMPS-2.2-py2.py3-none-any.whl
+
+Download and install catalyst::
+
+    curl -O https://institutefordiseasemodeling.github.io/PythonDependencies/catalyst_report-1.0.3-py3-none-any.whl
+    pip3 install catalyst_report-1.0.3-py3-none-any.whl
 
 Navigate inside the `dtk-tools` folder and install dtk-tools::
 
     python setup.py
-
-.. note::
-    If you are encountering issues with TK on OSX (for example not being able to plot, or some matplotlib related issues), try:
-
-    .. code-block:: bash
-
-        brew install homebrew/dupes/tcl-tk
-        brew uninstall python3
-        brew install python3 --with-brewed-tk
 
 Testing your installation
 -------------------------

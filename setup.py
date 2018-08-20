@@ -163,7 +163,7 @@ def install_linux_pre_requisites():
                             "libfreetype6-dev",
                             "liblapack-dev",
                             "python-scipy",
-                            "python3-tk"         
+                            "python3-tk"
                             ],
            "install_command": "apt-get"
        }

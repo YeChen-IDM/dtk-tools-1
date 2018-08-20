@@ -36,7 +36,6 @@ def translate_COMPS_path(path):
     :param setup: The setup to find user and environment
     :return: The absolute path
     """
-    from COMPS import Client
     # Create the regexp
     regexp = re.search('.*(\$COMPS_PATH\((\w+)\)).*', path)
 
