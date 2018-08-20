@@ -195,6 +195,8 @@ class BaseExperimentManager(CacheEnabled):
         """
         Create an experiment with simulations modified according to the specified experiment builder.
         """
+        global simulations_expected
+        simulations_expected = 0
         self.exp_builder = exp_builder or SingleSimulationBuilder()
         self.cache.clear()
 
