@@ -75,7 +75,6 @@
   "networkx": null,
   "patsy": null,
   "astor": null,
-  "astunparse": null,
   "catalyst": {
     "version": "1.0.5",
     "test": ">=",

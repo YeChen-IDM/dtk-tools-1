@@ -1,6 +1,4 @@
 import json
-import sys
-from dtk.utils.Campaign.CampaignClass import *
 from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
 
 
@@ -28,13 +26,8 @@ class CampaignDecoder(json.JSONDecoder):
 
             args = {}
             for key, value in d.items():
-                k = "{}_{}_Enum".format(class_name, key)
                 is_bool = self.is_bool_type(key, value, _class)
-
-                if k in globals():
-                    _enum = globals()["{}_{}_Enum".format(class_name, key)]
-                    args[key] = _enum[value]
-                elif is_bool:
+                if is_bool:
                     args[key] = True if value else False
                 else:
                     args[key] = value
