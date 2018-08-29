@@ -112,7 +112,7 @@ class CalibManager(object):
             self.current_iteration = self.create_iteration_state(i)
             self.current_iteration.run()
             self.post_iteration()
-            self.finalize_calibration()
+        self.finalize_calibration()
 
         # Print the calibration finish time
         current_time = datetime.now()
