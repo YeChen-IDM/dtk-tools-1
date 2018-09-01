@@ -3,7 +3,7 @@ from dtk.utils.Campaign.CampaignEnum import *
 
 
 seirs_campaign = CampaignEvent(
-    Use_Defaults=True,
+    Use_Defaults=1,
     Events=[
         CampaignEvent(
             Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
