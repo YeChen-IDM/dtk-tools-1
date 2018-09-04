@@ -204,4 +204,4 @@ class AnalyzeManager(CacheEnabled):
         for a in self.analyzers:
             a.destroy()
 
-        self.cache.close()
+        self.destroy_cache()

@@ -1,5 +1,4 @@
 import tempfile
-import time
 
 from diskcache import FanoutCache, Cache, Deque, DEFAULT_SETTINGS
 
@@ -32,4 +31,12 @@ class CacheEnabled:
 
         return self.cache
 
+    def destroy_cache(self):
+        self.cache.clear()
+        if self.queue:
+            # For the particular queue, we manually call the close on the internal cache
+            self.cache._cache.close()
+        else:
+            # For all other cases, just call the normal close
+            self.cache.close()
 

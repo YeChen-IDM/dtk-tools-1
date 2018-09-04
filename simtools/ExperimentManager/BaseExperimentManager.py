@@ -261,6 +261,7 @@ class BaseExperimentManager(CacheEnabled):
 
         # Insert simulations in the cache
         DataStore.bulk_insert_simulations(self.cache)
+        self.destroy_cache()
 
         # Refresh the experiment
         self.refresh_experiment()
