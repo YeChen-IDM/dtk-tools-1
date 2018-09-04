@@ -59,8 +59,7 @@ class AnalyzeManager(CacheEnabled):
             analyzer_list = analyzers if isinstance(analyzers, collections.Iterable) else [analyzers]
             for a in analyzer_list: self.add_analyzer(a)
 
-        # Initialize the cache
-        self.cache = self.initialize_cache(shards=self.max_threads)
+        self.cache = None
 
     def filter_simulations(self, simulations):
         if self.force_analyze:
@@ -117,9 +116,6 @@ class AnalyzeManager(CacheEnabled):
             exit()
 
     def analyze(self):
-        # Clear the cache
-        self.cache.clear()
-
         # Start the timer
         start_time = time.time()
 
@@ -127,6 +123,9 @@ class AnalyzeManager(CacheEnabled):
         if not all((self.analyzers, self.simulations)):
             print("No analyzers or experiments selected, exiting...")
             return
+
+        # Clear the cache
+        self.cache = self.initialize_cache(shards=self.max_threads)
 
         # If any of the analyzer needs the dir map, create it
         if any(a.need_dir_map for a in self.analyzers if hasattr(a, 'need_dir_map')):
@@ -204,3 +203,5 @@ class AnalyzeManager(CacheEnabled):
 
         for a in self.analyzers:
             a.destroy()
+
+        self.cache.close()

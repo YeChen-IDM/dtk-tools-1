@@ -45,7 +45,7 @@ class BaseExperimentManager(CacheEnabled):
         self.experiment_tags = {}
         self.asset_service = None
         self.assets = None
-        self.cache = self.initialize_cache(queue=True)
+        self.cache = None
 
     @abstractmethod
     def commission_simulations(self):
@@ -198,7 +198,7 @@ class BaseExperimentManager(CacheEnabled):
         global simulations_expected
         simulations_expected = 0
         self.exp_builder = exp_builder or SingleSimulationBuilder()
-        self.cache.clear()
+        self.cache = self.initialize_cache(queue=True)
 
         # Create the experiment if not present already
         if not self.experiment or self.experiment.exp_name != exp_name:
@@ -261,7 +261,6 @@ class BaseExperimentManager(CacheEnabled):
 
         # Insert simulations in the cache
         DataStore.bulk_insert_simulations(self.cache)
-        self.cache.clear()
 
         # Refresh the experiment
         self.refresh_experiment()

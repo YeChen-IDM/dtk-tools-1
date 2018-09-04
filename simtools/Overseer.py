@@ -4,7 +4,8 @@ import sys
 # Add the tools to the path
 from multiprocessing import Manager
 
-sys.path.append(os.path.abspath('..'))
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.abspath(os.path.join(dir_path,'..')))
 import threading
 import time
 import traceback
