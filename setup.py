@@ -4,6 +4,7 @@ import operator
 import os
 import re
 import shutil
+import subprocess
 import sys
 from collections import OrderedDict
 from copy import deepcopy
@@ -14,7 +15,6 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pkg_resources
-import subprocess
 
 from simtools.Utilities.General import timestamp_filename
 from simtools.Utilities.LocalOS import LocalOS
@@ -62,6 +62,7 @@ def download_wheel(wheel):
     except HTTPError:
         # We could not directly download the wheel, either it is not there or it is in chunks
         # First try if it is in chunks
+        part = 0
         for part in range(100):
             try:
                 resp = urlopen(Request("{}.{:09d}".format(url, part)))
