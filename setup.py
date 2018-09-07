@@ -358,18 +358,6 @@ def handle_init():
         example_config.write(open(simtools, 'wb'))
 
 
-def upgrade_pip():
-    """
-    Upgrade pip before install other packages
-    """
-    import subprocess
-
-    if LocalOS.name in [LocalOS.MAC]:
-        subprocess.call("pip install -U pip", shell=True)
-    elif LocalOS.name == LocalOS.WINDOWS:
-        subprocess.call("python -m pip install --upgrade pip", shell=True)
-
-
 def verify_matplotlibrc():
     """
     on MAC: make sure file matplotlibrc has content
@@ -439,9 +427,6 @@ def backup_db():
 
 
 def main():
-    # Upgrade pip before install other packages
-    upgrade_pip()
-
     # Get OS-specific requirements
     reqs = get_requirements_by_os()
 
