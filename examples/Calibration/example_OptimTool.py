@@ -71,12 +71,12 @@ params = [
         'Dynamic': True,
         'MapTo': 'Falciparum_PfEMP1_Variants',
         'Guess': 1500,
-        'Min': 1, # 900 [0]
+        'Min': 1,  # 900 [0]
         'Max': 5000 # 1700 [1e5]
     },
     {
         'Name': 'Min Days Between Clinical Incidents',
-        'Dynamic': False, # <-- NOTE: this parameter is frozen at Guess
+        'Dynamic': False,  # <-- NOTE: this parameter is frozen at Guess
         'MapTo': 'Min_Days_Between_Clinical_Incidents',
         'Guess': 25,
         'Min': 1,
@@ -85,7 +85,7 @@ params = [
 ]
 
 
-def constrain_sample( sample ):
+def constrain_sample(sample):
     """
     This function is called on every samples and allow the user to edit them before they are passed
     to the map_sample_to_model_input function.
@@ -103,7 +103,7 @@ def constrain_sample( sample ):
     """
     # Convert Falciparum MSP Variants to nearest integer
     if 'Min Days Between Clinical Incidents' in sample:
-        sample['Min Days Between Clinical Incidents'] = int( round(sample['Min Days Between Clinical Incidents']) )
+        sample['Min Days Between Clinical Incidents'] = int(round(sample['Min Days Between Clinical Incidents']))
 
     return sample
 
@@ -134,12 +134,12 @@ def map_sample_to_model_input(cb, sample):
             if p['Name'] not in sample:
                 print('Warning: %s not in sample, perhaps resuming previous iteration' % p['Name'])
                 continue
-            value = sample.pop( p['Name'] )
+            value = sample.pop(p['Name'])
             tags.update(cb.set_param(p['Name'], value))
 
     for name,value in sample.items():
         print('UNUSED PARAMETER:'+name)
-    assert( len(sample) == 0 ) # All params used
+    assert(len(sample) == 0)  # All params used
 
     # For testing only, the duration should be handled by the site !! Please remove before running in prod!
     tags.update(cb.set_param("Simulation_Duration", 365 + 1))
@@ -151,6 +151,14 @@ def map_sample_to_model_input(cb, sample):
 volume_fraction = 0.01   # desired fraction of N-sphere area to unit cube area for numerical derivative (automatic radius scaling with N)
 num_params = len([p for p in params if p['Dynamic']])
 
+if num_params == 0:
+    warning_note = \
+        """
+        /!\\ WARNING /!\\ the OptimTool requires at least one of params with Dynamic set to True. Exiting...                  
+        """
+    print(warning_note)
+    exit()
+
 r = math.exp(1/float(num_params)*(math.log(volume_fraction) - gammaln(num_params/2.+1) + num_params/2.*math.log(math.pi)))
 # it used to be r=(volume_fraction/V_n)^(1/n), which can be greater than 1 for large n(num_params > 18)
 # now r = (volume_fraction * V_n)^(1/n)
@@ -158,10 +166,10 @@ r = math.exp(1/float(num_params)*(math.log(volume_fraction) - gammaln(num_params
 
 optimtool = OptimTool(params,
     constrain_sample,   # <-- WILL NOT BE SAVED IN ITERATION STATE
-    mu_r = r,           # <-- radius for numerical derivatve.  CAREFUL not to go too small with integer parameters
-    sigma_r = r/10.,    # <-- stdev of radius
-    center_repeats = 2, # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
-    samples_per_iteration = 6  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
+    mu_r=r,             # <-- radius for numerical derivatve.  CAREFUL not to go too small with integer parameters
+    sigma_r=r/10.,      # <-- stdev of radius
+    center_repeats=2,   # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
+    samples_per_iteration=6  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
 )
 
 calib_manager = CalibManager(name='ExampleOptimization',    # <-- Please customize this name
@@ -175,7 +183,7 @@ calib_manager = CalibManager(name='ExampleOptimization',    # <-- Please customi
 
 
 run_calib_args = {
-    "calib_manager":calib_manager
+    "calib_manager": calib_manager
 }
 
 if __name__ == "__main__":

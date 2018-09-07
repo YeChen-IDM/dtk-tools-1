@@ -163,13 +163,12 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                  triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1):
 
     irs_config = copy.deepcopy(node_irs_config)
-    irs_config['Killing_Config']['class'] = waning_effect_type
     irs_config.Killing_Config.Initial_Effect = initial_killing
     irs_config.Killing_Config.Decay_Time_Constant = box_duration
 
     if waning_effect_type == 'WaningEffectBox':
         irs_config.Killing_Config.Box_Duration = box_duration
-        del irs_config['Killing_Config']['Decay_Time_Constant']
+        del irs_config.Killing_Config.Decay_Time_Constant
 
     if not nodeIDs:
         nodeset_config = NodeSetAll()
@@ -177,7 +176,7 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
         nodeset_config = NodeSetNodeList(Node_List=nodeIDs)
 
     if cost:
-        node_irs_config['Cost_To_Consumer'] = cost
+        node_irs_config.Cost_To_Consumer = cost
 
     node_sprayed_event = BroadcastEvent(Broadcast_Event="Node_Sprayed")
 
@@ -186,7 +185,7 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
         Nodeset_Config=nodeset_config,
         Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
             Node_Property_Restrictions=node_property_restrictions,
-            Intervention_List=MultiInterventionDistributor(
+            Intervention_Config=MultiInterventionDistributor(
                 Intervention_List=[irs_config, node_sprayed_event]
             )
         ),
@@ -196,9 +195,9 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
     if trigger_condition_list:
         if triggered_campaign_delay:
             trigger_condition_list = [str(triggered_campaign_delay_event(config_builder, start, nodeIDs,
-                                                                         triggered_campaign_delay,
-                                                                         trigger_condition_list,
-                                                                         listening_duration))]
+                                                                         triggered_campaign_delay=triggered_campaign_delay,
+                                                                         trigger_condition_list=trigger_condition_list,
+                                                                         listening_duration=listening_duration))]
 
         IRS_event.Event_Coordinator_Config.Intervention_Config = NodeLevelHealthTriggeredIV(
             Blackout_On_First_Occurrence=True,
@@ -234,10 +233,10 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                 IRS_cfg.Event_Coordinator_Config.Intervention_Config.Node_Property_Restrictions = node_property_restrictions
         else:
             IRS_cfg.Event_Coordinator_Config.Intervention_Config.Intervention_List.append(recent_irs)
-            if not node_property_restrictions :
+            if not node_property_restrictions:
                 IRS_cfg.Event_Coordinator_Config.Node_Property_Restrictions = [{'SprayStatus': 'None'}]
             else:
-                for n, np in enumerate(node_property_restrictions) :
+                for n, np in enumerate(node_property_restrictions):
                     node_property_restrictions[n]['SprayStatus'] = 'None'
                 IRS_cfg.Event_Coordinator_Config.Node_Property_Restrictions = node_property_restrictions
 

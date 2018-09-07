@@ -48,8 +48,20 @@ class OptimTool(NextPointAlgorithm):
         self.n_dimensions = 0
         self.data = pd.DataFrame()
 
+        self.verify_param()
+
     def cleanup(self):
         pass
+
+    def verify_param(self):
+        # Checking Dynamic
+        if len([p for p in self.params if p['Dynamic']]) == 0:
+            warning_note = \
+                """
+                /!\\ WARNING /!\\ the OptimTool requires at least one of params with Dynamic set to True. Exiting...                  
+                """
+            print(warning_note)
+            exit()
 
     def resolve_args(self, iteration):
         # Have args from user and from set_state.
@@ -58,8 +70,7 @@ class OptimTool(NextPointAlgorithm):
         # TODO: be more sensitive with params, user could have added or removed variables, need to adjust
         # TODO: Check min <= center <= max for params
         # TODO: could clean this up with a helper function
-        self.params = self.args[
-            'params'] if 'params' in self.args else self.params  # Guess may move, but should be ignored
+        self.params = self.args['params'] if 'params' in self.args else self.params  # Guess may move, but should be ignored
         self.mu_r = self.args['mu_r'] if 'mu_r' in self.args else self.mu_r
         self.sigma_r = self.args['sigma_r'] if 'sigma_r' in self.args else self.sigma_r
         self.center_repeats = self.args['center_repeats'] if 'center_repeats' in self.args else self.center_repeats
