@@ -73,10 +73,10 @@ def download_wheel(wheel):
         if not chunks and part == 0:
             raise Exception("The wheel file {} could not be found at {}...".format(wheel, url))
 
-        # We have our chunks, write to disk
-        if os.path.exists(wheel_path): os.remove(wheel_path)
-        with open(wheel_path, "wb") as fp:
-            fp.write(b''.join(chunks))
+    # We have our chunks, write to disk
+    if os.path.exists(wheel_path): os.remove(wheel_path)
+    with open(wheel_path, "wb") as fp:
+        fp.write(b''.join(chunks))
 
     return wheel_path
 
