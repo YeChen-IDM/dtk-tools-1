@@ -571,14 +571,8 @@ def generate_classes(args, unknownArgs):
     print("\nEXE Path: ", args.exe)
     print("Output Location: ", args.output)
 
-    # make sure file is Eradication.exe
-    file_name = os.path.basename(args.exe)
-    if file_name.lower() != "eradication.exe":
-        print("File '{}' needs to be Eradication.exe!".format(args.exe))
-        return
-
     # starts to generate schema and then generate CampaignClass.py and CampaignEnum.py
-    CampaignManager.generate_campaign_classes(args.exe, args.output, args.debug)
+    CampaignManager.generate_campaign_classes(args.exe, os.path.abspath(args.output), args.debug)
     print('\nCampaign Classes successfully generated from Eradication EXE!')
 
 
