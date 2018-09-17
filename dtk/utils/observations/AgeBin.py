@@ -10,6 +10,7 @@ class AgeBin:
     # e.g. [15, 49) -> [(15)(, )(49))  delimiter must contain no numeric characters or '.'
     SPLIT_REGEX = re.compile('^\[(?P<start>[0-9.]+)(?P<delimiter>[^0-9.]+)(?P<end>[0-9.]+)\)$')
     DEFAULT_DELIMITER = ':'
+    ALL = 'all'
 
     def __init__(self, start, end, delimiter=None):
         try:

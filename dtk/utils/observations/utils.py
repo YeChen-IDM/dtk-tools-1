@@ -5,7 +5,9 @@ import re
 import tempfile
 import dtk.utils.io.excel as excel
 
+from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.PopulationObs import PopulationObs
+
 
 class UnsupportedFileFormat(Exception): pass
 class MissingRequiredWorksheet(Exception): pass
@@ -17,7 +19,8 @@ class InvalidAnalyzerWeight(Exception): pass
 
 EMPTY = [None, '', '--select--']  # not sure if this could be something else
 OBS_SHEET_REGEX = re.compile('^Obs-.+$')
-
+CUSTOM_AGE_BINS = 'Custom'
+ALL_MATCHING_AGE_BINS = 'All matching'
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
@@ -96,32 +99,49 @@ def _parse_analyzers(wb, wb_path):
     analyzer_sheetname = 'Analyzers'
     ws = get_sheet_from_workbook(wb, sheet_name=analyzer_sheetname, wb_path=wb_path)
 
-    analyzer_names = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['analyzer_names'])
-    # analyzer_names = [ n for n in analyzer_names if n not in EMPTY]
-    analyzer_weights = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['analyzer_weights'])
-    # analyzer_weights = [ w for w in analyzer_weights if w not in EMPTY]
+    channels = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['channels'])
+    distributions = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['distributions'])
+    provincialities = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['provincialities'])
+    age_bins = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['age_bins'])
+    weights = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['weights'])
+    custom_age_bins = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['custom_age_bins'])
 
-    if len(analyzer_names) != len(analyzer_weights):
-        raise Exception('Named range inconsistency on sheet: %s workbook: %s' % (analyzer_sheetname, wb_path))
+    # sheet sanity check
+    for data_list in [channels, distributions, provincialities, age_bins, weights, custom_age_bins]:
+        if len(data_list) != len(channels):
+            raise Exception('Named range inconsistency on sheet: %s workbook: %s' % (analyzer_sheetname, wb_path))
 
-    analyzer_tuples = list()
-    for i in range(len(analyzer_names)):
-        analyzer_tuple = [analyzer_names[i], analyzer_weights[i]]
-        n_empty = len([item for item in analyzer_tuple if item in EMPTY])
+    analyzer_dicts = list()
+    for i in range(len(channels)):
+        # items to be used as kwargs for instantiating analyzer objects
+        analyzer_dict = {
+            'channel': channels[i],
+            'distribution': distributions[i],
+            'provinciality': provincialities[i],
+            'weight': weights[i]
+        }
+        if age_bins[i] == CUSTOM_AGE_BINS:
+            analyzer_dict['age_bins'] = custom_age_bins[i]
+        elif age_bins[i] == ALL_MATCHING_AGE_BINS:
+            analyzer_dict['age_bins'] = AgeBin.ALL
+        else:
+            analyzer_dict['age_bins'] = None # missing
+
+        n_empty = len([item for item in analyzer_dict.values() if item in EMPTY])
         if n_empty == 0:
-            # valid analyzer specification
+            # probably a valid analyzer specification
             # now verify that the weight is a number
-            if not isinstance(analyzer_weights[i], numbers.Number):
-                raise InvalidAnalyzerWeight('Analyzer weight is not a number, analyzer: %s' % analyzer_names[i])
-            analyzer_tuples.append(analyzer_tuple)
-        elif n_empty < len(analyzer_tuple):
+            if not isinstance(analyzer_dict['weight'], numbers.Number):
+                raise InvalidAnalyzerWeight('Analyzer weight is not a number, analyzer: %s' % analyzer_dict)
+            analyzer_dicts.append(analyzer_dict)
+        elif n_empty < len(analyzer_dict.values()):
+            print(analyzer_dict.values())
             raise IncompleteAnalyzerSpecification('Incomplete analyzer specification on row %d '
                                                   'of sheet: %s, workbook: %s' % (i, analyzer_sheetname, wb_path))
         else:
             # valid, no analyzer specified on this row
             pass
-    analyzer_dict = dict(analyzer_tuples)
-    return analyzer_dict
+    return analyzer_dicts
 
 
 def _parse_reference_data(wb, wb_path):
