@@ -37,17 +37,11 @@ def validate_inputs(exe_path, output_path):
     print("\nEXE Path: ", exe_path)
     print("Output Location: ", output_path)
 
-    # make sure file is Eradication.exe
-    file_name = os.path.basename(exe_path)
-    if file_name.lower() != "eradication.exe":
-        print("File '{}' needs to be Eradication.exe!".format(exe_path))
-        return False
-
     return True
 
 
 if __name__ == "__main__":
     valid = validate_inputs(exe_path, output_path)
     if valid:
-        CampaignManager.generate_campaign_classes(exe_path, output_path, debug)
+        CampaignManager.generate_campaign_classes(exe_path, os.path.abspath(output_path), debug)
         print('\nCampaign Classes successfully generated from Eradication EXE!')
