@@ -6,7 +6,6 @@ from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.PopulationObs import PopulationObs
 import dtk.utils.observations.utils as ingest_utils
 
-# ck4, write any needed new Analyzer sheet tests
 
 class TestCalibrationIngest(unittest.TestCase):
     def setUp(self):
@@ -50,7 +49,12 @@ class TestCalibrationIngest(unittest.TestCase):
 
 
     def test_fail_if_analyzers_have_missing_values(self):
-        filenames = ['missing_analyzer_values1.xlsm', 'missing_analyzer_values2.xlsm']
+        filenames = ['missing_analyzer_values_age_bins.xlsm',
+                     'missing_analyzer_values_channel.xlsm',
+                     'missing_analyzer_values_custom_age_bins.xlsm',
+                     'missing_analyzer_values_distribution.xlsm',
+                     'missing_analyzer_values_weight.xlsm'
+                     ]
         for filename in filenames:
             filename = os.path.join(self.data_directory, filename)
             self.assertRaises(ingest_utils.IncompleteAnalyzerSpecification,
