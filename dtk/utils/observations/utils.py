@@ -16,11 +16,17 @@ class IncompleteAnalyzerSpecification(Exception): pass
 class IncompleteDataSpecification(Exception): pass
 class ParameterOutOfRange(Exception): pass
 class InvalidAnalyzerWeight(Exception): pass
+class AnalyzerSheetException(Exception): pass
 
 EMPTY = [None, '', '--select--']  # not sure if this could be something else
 OBS_SHEET_REGEX = re.compile('^Obs-.+$')
+
 CUSTOM_AGE_BINS = 'Custom'
 ALL_MATCHING_AGE_BINS = 'All matching'
+
+PROVINCIAL = 'Provincial'
+NON_PROVINCIAL = 'Non-provincial'
+
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
@@ -109,7 +115,7 @@ def _parse_analyzers(wb, wb_path):
     # sheet sanity check
     for data_list in [channels, distributions, provincialities, age_bins, weights, custom_age_bins]:
         if len(data_list) != len(channels):
-            raise Exception('Named range inconsistency on sheet: %s workbook: %s' % (analyzer_sheetname, wb_path))
+            raise AnalyzerSheetException('Named range inconsistency on sheet: %s workbook: %s' % (analyzer_sheetname, wb_path))
 
     analyzer_dicts = list()
     for i in range(len(channels)):

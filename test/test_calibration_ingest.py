@@ -2,9 +2,11 @@ import os
 import pandas as pd
 import unittest
 
+from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.PopulationObs import PopulationObs
 import dtk.utils.observations.utils as ingest_utils
 
+# ck4, write any needed new Analyzer sheet tests
 
 class TestCalibrationIngest(unittest.TestCase):
     def setUp(self):
@@ -84,12 +86,32 @@ class TestCalibrationIngest(unittest.TestCase):
         params, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
 
         # check analyzers
-        expected = {
-            'ProvincialPrevalenceAnalyzer': 0.5,
-            'NationalPrevalenceAnalyzer': 0.25
-        }
-        self.assertTrue(isinstance(analyzers, dict))
-        self.assertEqual(len(analyzers.keys()), len(expected.keys()))
+        expected = [
+            {
+                'channel': 'Prevalence',
+                'distribution': 'Gaussian',
+                'provinciality': 'Provincial',
+                'weight': 0.5,
+                'age_bins': AgeBin.ALL
+            },
+            {
+                'channel': 'Prevalence',
+                'distribution': 'Gaussian',
+                'provinciality': 'Non-provincial',
+                'weight': 0.25,
+                'age_bins': '[15:50);[50:100)'
+            },
+            {
+                'channel': 'Prevalence',
+                'distribution': 'Gaussian',
+                'provinciality': 'Non-provincial',
+                'weight': 0.25,
+                'age_bins': AgeBin.ALL
+            }
+            ]
+
+        self.assertTrue(isinstance(analyzers, list))
+        self.assertEqual(len(analyzers), len(expected))
         self.assertEqual(analyzers, expected)
 
         # check params
@@ -125,7 +147,7 @@ class TestCalibrationIngest(unittest.TestCase):
         self.assertEqual(sorted(reference.stratifiers), sorted(expected_stratifiers))
 
         # non-stratifier columns in the dataframe
-        expected_channels = ['NationalPrevalence', 'ProvincialPrevalence'] #, 'confidence_interval']
+        expected_channels = ['Prevalence'] #, 'confidence_interval']
         self.assertEqual(sorted(reference.channels), sorted(expected_channels))
 
         n_expected_rows = 4
@@ -133,10 +155,10 @@ class TestCalibrationIngest(unittest.TestCase):
 
         # data check
         data = [
-            {'Year': 2005, 'Gender': 'Male', 'AgeBin': '[0:99)', 'NationalPrevalence': 0.25}, #, 'confidence_interval': 0.05},
-            {'Year': 2005, 'Gender': 'Female', 'AgeBin': '[0:99)', 'NationalPrevalence': 0.2}, #, 'confidence_interval': 0.04},
-            {'Year': 2010, 'Gender': 'Male', 'AgeBin': '[5:15)', 'Province': 'Washington', 'ProvincialPrevalence': 0.3}, #, 'confidence_interval': 0.07},
-            {'Year': 2010, 'Gender': 'Female', 'AgeBin': '[15:25)', 'Province': 'Oregon', 'ProvincialPrevalence': 0.33}, #, 'confidence_interval': 0.08},
+            {'Year': 2005, 'Gender': 'Male', 'AgeBin': '[0:99)', 'Province': 'Washington', 'Prevalence': 0.25}, #, 'confidence_interval': 0.05},
+            {'Year': 2005, 'Gender': 'Female', 'AgeBin': '[0:99)', 'Province': 'Washington', 'Prevalence': 0.2}, #, 'confidence_interval': 0.04},
+            {'Year': 2010, 'Gender': 'Male', 'AgeBin': '[5:15)', 'Province': 'Washington', 'Prevalence': 0.3}, #, 'confidence_interval': 0.07},
+            {'Year': 2010, 'Gender': 'Female', 'AgeBin': '[15:25)', 'Province': 'Oregon', 'Prevalence': 0.33}, #, 'confidence_interval': 0.08},
         ]
         df = pd.DataFrame(data)
         expected_reference = PopulationObs(dataframe=df, stratifiers=expected_stratifiers)
