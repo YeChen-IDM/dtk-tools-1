@@ -142,6 +142,8 @@ class BaseShelveAnalyzer(BaseAnalyzer):
         :param key: the key where the data should be stored
         :param data: the data to store at key
         """
+        if not self.shelve:
+            raise Exception('The shelf is uninitialized and must be initialized before writing key: %s' % key)
         self.mutex.acquire()
         self.shelve[key] = value
         self.shelve.sync()

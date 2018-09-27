@@ -669,6 +669,28 @@ def get_package(args, unknownArgs):
     return release_dir
 
 
+def parse_custom_sweep(string):
+    import re
+    base_value_regex = re.compile('\[(?P<value>-?[0-9.]+)\]')
+
+    parts = [p.strip() for p in string.split(',')]
+    base_value = None
+    sweep_values = []
+    for part in parts:
+        match = base_value_regex.match(part)
+        if base_value and match:
+            raise Exception('Only one base value can be specified in [].')
+        else:
+            if match:
+                base_value = value = float(match['value'])
+            else:
+                value = float(part)
+            sweep_values.append(value)
+    if not base_value:
+        raise Exception('No base value detected. It must be enclosed in [].')
+    return base_value, sweep_values
+
+
 def catalyst(args, unknownArgs):
     """
     Catalyst run-and-analyze process as ported from the test team.
@@ -685,6 +707,19 @@ def catalyst(args, unknownArgs):
     from catalyst_report.fidelity_report_experiment_definition import FidelityReportExperimentDefinition
     import catalyst_report.utils as catalyst_utils
     from simtools.Analysis.AnalyzeManager import AnalyzeManager
+
+    # -m or -M, not both
+    if not ((args.sweep_method is None) ^ (args.sweep_method_custom is None)):
+        raise Exception('Must specify exactly one of -m or -M .')
+
+    # interpret -M if provided, set args.sweep_method to 'custom', store base value and value list
+    if args.sweep_method_custom:
+        args.sweep_method = 'custom'
+        sweep_base_value, sweep_values = parse_custom_sweep(args.sweep_method_custom)
+        args.custom_overrides = {'sweep_base_value': sweep_base_value, 'sweep_values': sweep_values}
+        print('Setting custom sweep: %s' % args.custom_overrides)
+    else:
+        args.custom_overrides = None
 
     # we're going to do a dtk run, then a set-piece analysis. But first we need to do some overrides
     # to get the run part to do the desired parameter sweep.
@@ -752,7 +787,8 @@ def catalyst(args, unknownArgs):
         exit()
 
     # redefine the experiment name so it doesn't conflict with the likely follow-up non-catalyst experiment
-    mod.run_sim_args['exp_name'] = 'Catalyst-' + mod.run_sim_args['exp_name']
+    exp_name_suffix = mod.run_sim_args['exp_name'] + '-' + args.sweep_type
+    mod.run_sim_args['exp_name'] = 'Catalyst-' + exp_name_suffix
 
     # define the sweep to perform
     sweep_dict = {
@@ -770,6 +806,16 @@ def catalyst(args, unknownArgs):
         mod.run_sim_args['config_builder'].disable('Spatial_Output')
         mod.run_sim_args['config_builder'].params['Spatial_Output_Channels'] = []
 
+    # additional initialization overrides
+    for k,v in defn['init'].items():
+        mod.run_sim_args['config_builder'].params[k] = v
+
+    # do not run a report that already exists.
+    output_report_dir = 'catalyst_report-%s' % exp_name_suffix
+    if os.path.exists(output_report_dir):
+        print('Skipping generation of report, already exists: %s' % output_report_dir)
+        exit()
+
     # now run if no preexisting experiment id was provided
     if not args.experiment_id:
         # we must always block so that we can run the analysis at the end; run and analyze!
@@ -786,7 +832,7 @@ def catalyst(args, unknownArgs):
     # Add the TimeSeriesAnalyzer to the manager and do analysis
     # ck4, is there a better way to specify the first 4 arguments? The DTKCase from Test-land might be nicer.
     # After all, the names COULD be different
-    analyzer = FidelityReportAnalyzer('catalyst_report',
+    analyzer = FidelityReportAnalyzer(output_report_dir,
                                       'config.json',
                                       mod.run_sim_args['config_builder'].get_param('Demographics_Filenames')[0],
                                       experiment_definition=defn,
