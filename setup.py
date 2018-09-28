@@ -4,19 +4,19 @@ import operator
 import os
 import re
 import shutil
+import subprocess
 import sys
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime
 from distutils.version import LooseVersion
 from enum import Enum
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pkg_resources
-import subprocess
 
 from simtools.Utilities.General import timestamp_filename
-from simtools.Utilities.GitHub.MultiPartFile import GitHubFile
 from simtools.Utilities.LocalOS import LocalOS
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -30,10 +30,6 @@ force_new_db = False
 
 # This lets us guarantee a consistent time to be used for timestamped backup files
 this_time = datetime.utcnow()
-
-# to fake out urlparse, setting netloc == 'GITHUB'
-GITHUB = 'GITHUB'
-GITHUB_URL_PREFIX = 'http://%s' % GITHUB
 
 # Get the installed packages on the system
 installed_packages = {package.project_name: package.version for package in pkg_resources.working_set}
@@ -54,29 +50,41 @@ class PackageStatus(Enum):
     WRONGVERSION = 2
 
 
-class DownloadMethod(Enum):
-    GITHUB = 'GITHUB'
-    DIRECT = 'DIRECT'
+def download_wheel(wheel):
+    # Prepare the urls
+    url = "https://institutefordiseasemodeling.github.io/PythonDependencies/{}".format(wheel)
+    wheel_path = os.path.join(install_directory, wheel)
+    chunks = []
+
+    try:
+        resp = urlopen(Request(url))
+        chunks.append(resp.read())
+    except HTTPError:
+        # We could not directly download the wheel, either it is not there or it is in chunks
+        # First try if it is in chunks
+        part = 0
+        for part in range(100):
+            try:
+                resp = urlopen(Request("{}.{:09d}".format(url, part)))
+            except HTTPError:
+                break
+            chunks.append(resp.read())
+        # If we are still part 0, and no chunks, the wheel was not found
+        if not chunks and part == 0:
+            raise Exception("The wheel file {} could not be found at {}...".format(wheel, url))
+
+    # We have our chunks, write to disk
+    if os.path.exists(wheel_path): os.remove(wheel_path)
+    with open(wheel_path, "wb") as fp:
+        fp.write(b''.join(chunks))
+
+    return wheel_path
 
 
-def download_wheel(wheel, method=DownloadMethod.GITHUB):
-    if method == DownloadMethod.GITHUB:
-        dependency = GitHubFile(wheel)
-        dependency.destination_directory = install_directory
-        dependency.pull()
-    elif method == DownloadMethod.DIRECT:
-        req = Request(wheel)
-        resp = urlopen(req)
-        data = resp.read()
-        with open(os.path.join(install_directory, os.path.basename(wheel)), "wb") as code:
-            code.write(data)
-    return os.path.join(install_directory, os.path.basename(wheel))
-
-
-def install_package(package, version=None, wheel=None, upgrade=False, method=DownloadMethod.GITHUB):
+def install_package(package, version=None, wheel=None, upgrade=False):
     # A wheel is present => easy just install it
     if wheel:
-        install_str = download_wheel(wheel, method)
+        install_str = download_wheel(wheel)
     else:
         # No wheel, we need to construct the string for pip
         install_str = package
@@ -214,7 +222,6 @@ def install_packages(reqs):
         version = val.get('version', None)
         test = val.get('test', '>=')
         wheel = val.get('wheel', None)
-        method = DownloadMethod(val.get('method')) if 'method' in val else DownloadMethod.GITHUB
         result = test_package(name, version, test)
 
         # Valid package -> just display info
@@ -224,7 +231,7 @@ def install_packages(reqs):
         # Missing -> install
         elif result == PackageStatus.MISSING:
             print("Package {} is missing. Installing...".format(name))
-            install_package(name, version, wheel, method=method)
+            install_package(name, version, wheel)
 
         # Wrong version -> Prompt user
         elif result == PackageStatus.WRONGVERSION:
@@ -240,7 +247,7 @@ def install_packages(reqs):
             while user_input not in ('Y', 'N', 'A', 'L'):
                 user_input = input('Would you like to install the recommended version over your system version? [Y]es/[N]o/Yes to [A]ll/No to a[L]l : ').upper()
             if user_input == 'Y' or user_input == 'A':
-                install_package(name, version, wheel, upgrade=True, method=method)
+                install_package(name, version, wheel, upgrade=True)
             else:
                 print("Keeping system package {} (v. {})".format(name, current_v))
 
@@ -351,18 +358,6 @@ def handle_init():
         example_config.write(open(simtools, 'wb'))
 
 
-def upgrade_pip():
-    """
-    Upgrade pip before install other packages
-    """
-    import subprocess
-
-    if LocalOS.name in [LocalOS.MAC]:
-        subprocess.call("pip install -U pip", shell=True)
-    elif LocalOS.name == LocalOS.WINDOWS:
-        subprocess.call("python -m pip install --upgrade pip", shell=True)
-
-
 def verify_matplotlibrc():
     """
     on MAC: make sure file matplotlibrc has content
@@ -432,9 +427,6 @@ def backup_db():
 
 
 def main():
-    # Upgrade pip before install other packages
-    upgrade_pip()
-
     # Get OS-specific requirements
     reqs = get_requirements_by_os()
 

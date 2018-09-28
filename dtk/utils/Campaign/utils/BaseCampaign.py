@@ -1,8 +1,6 @@
 import json
 from enum import Enum
-from enum import auto
 from dtk.utils.Campaign.utils.CampaignEncoder import CampaignEncoder
-from dtk.utils.Campaign.utils.CampaignManager import CampaignManager
 from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
 
 
@@ -43,12 +41,9 @@ class BaseCampaign:
                 super().__setattr__(key, True if value else False)
         elif value_type in ('enum', 'Enum'):
             if isinstance(value, str):
-                # dynamically create enum
-                enum_name = "{}_{}_Enum".format(self.__class__.__name__, key)
-                enum_src = CampaignManager.build_enum_definition(enum_name, valid['enum'])
-                exec(enum_src, globals())
-                d_enum = globals()[enum_name]
-                super().__setattr__(key, d_enum[value])
+                super().__setattr__(key, value)
+            elif isinstance(value, Enum):
+                super().__setattr__(key, value.name)
             else:
                 super().__setattr__(key, value)
         else:

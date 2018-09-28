@@ -26,14 +26,16 @@ def populate_catalyst_arguments(subparsers, func):
     import catalyst_report
     import os
 
-    parser_catalyst = subparsers.add_parser('catalyst', help='Run a timestep or population-scaling sweep to evaluate '
-                                                        'model performance.')
+    parser_catalyst = subparsers.add_parser('catalyst', help='Run a timestep, population-scaling, or population-sampling'
+                                                             ' sweep to evaluate model performance.')
     parser_catalyst = in_common_run_and_catalyst_arguments(parser_catalyst)
     parser_catalyst.add_argument('-s', '--sweep_type', dest='sweep_type',
-                                 choices=['timestep', 'popsampling'], default='popsampling',
+                                 choices=['timestep', 'popscaling', 'popsampling'], default='popsampling',
                                  help='The type of performance sweep to run and report on (Default: popsampling).')
     parser_catalyst.add_argument('-m', '--sweep_method', dest='sweep_method', type=str, default=None,
-                                 help='The sweeping method to use (Default: depends on sweep_type).')
+                                 help='The sweeping method to use (Default: depends on sweep_type). Alternate of -M.')
+    parser_catalyst.add_argument('-M', dest='sweep_method_custom', type=str, default=None,
+                                 help='Custom sweep values, base value in []. Alternate of -m. E.g. \"[1.0],0.5,0.25\"')
     parser_catalyst.add_argument('-r', '--report', dest='report_type', type=str, default=None,
                                  help='The type of report to generate '
                                       '(Default: determined by Simulation_Type in config.json).')
@@ -53,7 +55,7 @@ def populate_catalyst_arguments(subparsers, func):
 
     parser_catalyst.add_argument('--sweep_definitions', default=None, type=str,
                                  help='A JSON file that defines the available sweeps for use (Default: built-in JSON '
-                                      'at %s' % os.path.join(catalyst_report.__path__[0], '{pop_sampling.json, time_steps.json} )'))
+                                      'at %s' % os.path.join(catalyst_report.__path__[0], '{time_steps.json, pop_scaling.json, pop_sampling.json} )'))
     parser_catalyst.add_argument('--report_definitions', default=None, type=str,
                                  help='A JSON file that defines the available report types '
                                       '(Default: %s)' % os.path.join(catalyst_report.__path__[0], 'reports.json'))

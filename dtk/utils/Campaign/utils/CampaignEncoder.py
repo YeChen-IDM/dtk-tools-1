@@ -23,10 +23,6 @@ class CampaignEncoder(json.JSONEncoder):
           - RawCampaignObject
         """
 
-        # handle enum case
-        if isinstance(o, Enum):
-            return o.name
-
         # handle Number case
         if isinstance(o, np.int32) or isinstance(o, np.int64):
             return int(o)

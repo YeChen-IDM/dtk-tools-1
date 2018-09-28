@@ -24,7 +24,6 @@ class ClassValidator:
             return details
 
     def validate(self, key, value):
-        # print(self.cls_name, ' :: ', key, ' ~~ ', value)
         if key in self.definition:
             valid = self.definition[key]
 
@@ -84,7 +83,7 @@ class ClassValidator:
                             "'{}' value ({}) is not a member of enum. Please check the class member details: "
                             "\n\n{} ".format(key, value, self.output_definition(json_script)))
                 else:
-                    raise Exception("'{}' value ({}) is not an enum. Please check the class member details: "
+                    raise Exception("'{}' value ({}) is not a member of enum. Please check the class member details: "
                                 "\n\n{} ".format(key, value, self.output_definition(json_script)))
             elif value.__class__.__name__ != enum_name:
                 raise Exception("'{}' value ({}) is not same enum type as defined. Please check the class member details: "

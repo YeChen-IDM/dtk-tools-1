@@ -174,7 +174,7 @@ class CombineInsetChartTests(unittest.TestCase):
                                            channel_list=test_channels)
         with self.assertRaises(KeyError) as context:
             k_t.test_channel(bad_channel_name)
-        self.assertTrue(bad_channel_name in context.exception)
+        self.assertTrue(bad_channel_name in str(context.exception))
 
     def test_args_AllFolderCustomOutput(self):
         custom_filename = "funny_insetchart.json"

@@ -8,6 +8,7 @@ class RawCampaignObject(object):
 
     def __init__(self, json_object={}):
         self.json_object = self.load_json_object(json_object)
+        self.Use_Defaults = json_object["Use_Defaults"] == "1" if "Use_Defaults" in json_object else True
 
     @staticmethod
     def load_json_object(json_object):

@@ -75,8 +75,7 @@
   "networkx": null,
   "patsy": null,
   "astor": null,
-  "astunparse": null,
-  "catalyst": {
+  "catalyst-report": {
     "version": "1.0.5",
     "test": ">=",
     "wheel": "catalyst_report-1.0.5-py3-none-any.whl"

@@ -45,8 +45,8 @@ class CalendarEventCoordinator(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
 
 
@@ -62,7 +62,7 @@ class CommunityHealthWorkerEventCoordinator(BaseCampaign):
         self.Demographic_Coverage = Demographic_Coverage
         self.Duration = Duration
         self.Initial_Amount = Initial_Amount
-        self.Initial_Amount_Distribution_Type = Initial_Amount_Distribution_Type
+        self.Initial_Amount_Distribution_Type = Initial_Amount_Distribution_Type.name if isinstance(Initial_Amount_Distribution_Type, Enum) else Initial_Amount_Distribution_Type
         self.Initial_Amount_Max = Initial_Amount_Max
         self.Initial_Amount_Mean = Initial_Amount_Mean
         self.Initial_Amount_Min = Initial_Amount_Min
@@ -75,8 +75,8 @@ class CommunityHealthWorkerEventCoordinator(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Trigger_Condition_List = Trigger_Condition_List
         self.Waiting_Period = Waiting_Period
@@ -97,8 +97,8 @@ class CoverageByNodeEventCoordinator(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Timesteps_Between_Repetitions = Timesteps_Between_Repetitions
 
@@ -118,9 +118,9 @@ class GroupInterventionDistributionEventCoordinator(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Disease_State = Target_Disease_State
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Disease_State = Target_Disease_State.name if isinstance(Target_Disease_State, Enum) else Target_Disease_State
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Timesteps_Between_Repetitions = Timesteps_Between_Repetitions
 
@@ -139,8 +139,8 @@ class GroupInterventionDistributionEventCoordinatorHIV(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Time_Offset = Time_Offset
         self.Timesteps_Between_Repetitions = Timesteps_Between_Repetitions
@@ -206,8 +206,8 @@ class ReferenceTrackingEventCoordinator(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Time_Value_Map = Time_Value_Map
         self.Update_Period = Update_Period
@@ -227,9 +227,9 @@ class ReferenceTrackingEventCoordinatorHIV(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Disease_State = Target_Disease_State
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Disease_State = Target_Disease_State.name if isinstance(Target_Disease_State, Enum) else Target_Disease_State
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Time_Value_Map = Time_Value_Map
         self.Update_Period = Update_Period
@@ -250,8 +250,8 @@ class StandardInterventionDistributionEventCoordinator(BaseCampaign):
         self.Property_Restrictions_Within_Node = Property_Restrictions_Within_Node
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Timesteps_Between_Repetitions = Timesteps_Between_Repetitions
 
@@ -303,7 +303,7 @@ class ActiveDiagnostic(BaseCampaign):
         self.Days_To_Diagnosis = Days_To_Diagnosis
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Positive_Diagnosis_Config = Positive_Diagnosis_Config
@@ -324,7 +324,7 @@ class AdherentDrug(BaseCampaign):
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Dosing_Type = Dosing_Type
+        self.Dosing_Type = Dosing_Type.name if isinstance(Dosing_Type, Enum) else Dosing_Type
         self.Drug_Type = Drug_Type
         self.Intervention_Name = Intervention_Name
         self.Max_Dose_Consideration_Duration = Max_Dose_Consideration_Duration
@@ -370,9 +370,9 @@ class AntiTBDrug(BaseCampaign):
         self.Dose_Interval = Dose_Interval
         self.Drug_CMax = Drug_CMax
         self.Drug_PKPD_C50 = Drug_PKPD_C50
-        self.Drug_Type = Drug_Type
+        self.Drug_Type = Drug_Type.name if isinstance(Drug_Type, Enum) else Drug_Type
         self.Drug_Vd = Drug_Vd
-        self.Durability_Profile = Durability_Profile
+        self.Durability_Profile = Durability_Profile.name if isinstance(Durability_Profile, Enum) else Durability_Profile
         self.Fraction_Defaulters = Fraction_Defaulters
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
@@ -399,7 +399,7 @@ class AntimalarialDrug(BaseCampaign):
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Dosing_Type = Dosing_Type
+        self.Dosing_Type = Dosing_Type.name if isinstance(Dosing_Type, Enum) else Dosing_Type
         self.Drug_Type = Drug_Type
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
@@ -441,7 +441,7 @@ class BCGVaccine(BaseCampaign):
         self.Sim_Types = Sim_Types
         self.Vaccine_Take = Vaccine_Take
         self.Vaccine_Take_Age_Decay_Rate = Vaccine_Take_Age_Decay_Rate
-        self.Vaccine_Type = Vaccine_Type
+        self.Vaccine_Type = Vaccine_Type.name if isinstance(Vaccine_Type, Enum) else Vaccine_Type
         self.Waning_Config = Waning_Config
         self.iv_type = iv_type
 
@@ -461,7 +461,7 @@ class BitingRisk(BaseCampaign):
         self.Gaussian_Std_Dev = Gaussian_Std_Dev
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
-        self.Risk_Distribution_Type = Risk_Distribution_Type
+        self.Risk_Distribution_Type = Risk_Distribution_Type.name if isinstance(Risk_Distribution_Type, Enum) else Risk_Distribution_Type
         self.Sim_Types = Sim_Types
         self.Uniform_Max = Uniform_Max
         self.Uniform_Min = Uniform_Min
@@ -498,7 +498,7 @@ class BroadcastEventToOtherNodes(BaseCampaign):
         self.Intervention_Name = Intervention_Name
         self.Max_Distance_To_Other_Nodes_Km = Max_Distance_To_Other_Nodes_Km
         self.New_Property_Value = New_Property_Value
-        self.Node_Selection_Type = Node_Selection_Type
+        self.Node_Selection_Type = Node_Selection_Type.name if isinstance(Node_Selection_Type, Enum) else Node_Selection_Type
         self.Sim_Types = Sim_Types
         self.iv_type = iv_type
 
@@ -542,7 +542,7 @@ class ControlledVaccine(BaseCampaign):
         self.New_Property_Value = New_Property_Value
         self.Sim_Types = Sim_Types
         self.Vaccine_Take = Vaccine_Take
-        self.Vaccine_Type = Vaccine_Type
+        self.Vaccine_Type = Vaccine_Type.name if isinstance(Vaccine_Type, Enum) else Vaccine_Type
         self.Waning_Config = Waning_Config
         self.iv_type = iv_type
 
@@ -556,7 +556,7 @@ class DelayedIntervention(BaseCampaign):
         super(DelayedIntervention, self).__init__(**kwargs)
         self.Actual_IndividualIntervention_Configs = Actual_IndividualIntervention_Configs
         self.Coverage = Coverage
-        self.Delay_Distribution = Delay_Distribution
+        self.Delay_Distribution = Delay_Distribution.name if isinstance(Delay_Distribution, Enum) else Delay_Distribution
         self.Delay_Period = Delay_Period
         self.Delay_Period_Max = Delay_Period_Max
         self.Delay_Period_Mean = Delay_Period_Mean
@@ -587,7 +587,7 @@ class DiagnosticTreatNeg(BaseCampaign):
         self.Defaulters_Event = Defaulters_Event
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.Negative_Diagnosis_Config = Negative_Diagnosis_Config
         self.Negative_Diagnosis_Event = Negative_Diagnosis_Event
@@ -669,7 +669,7 @@ class HIVDelayedIntervention(BaseCampaign):
         self.Broadcast_Event = Broadcast_Event
         self.Broadcast_On_Expiration_Event = Broadcast_On_Expiration_Event
         self.Coverage = Coverage
-        self.Delay_Distribution = Delay_Distribution
+        self.Delay_Distribution = Delay_Distribution.name if isinstance(Delay_Distribution, Enum) else Delay_Distribution
         self.Delay_Period = Delay_Period
         self.Delay_Period_Max = Delay_Period_Max
         self.Delay_Period_Mean = Delay_Period_Mean
@@ -720,7 +720,7 @@ class HIVMuxer(BaseCampaign):
         self.Broadcast_Event = Broadcast_Event
         self.Broadcast_On_Expiration_Event = Broadcast_On_Expiration_Event
         self.Coverage = Coverage
-        self.Delay_Distribution = Delay_Distribution
+        self.Delay_Distribution = Delay_Distribution.name if isinstance(Delay_Distribution, Enum) else Delay_Distribution
         self.Delay_Period = Delay_Period
         self.Delay_Period_Max = Delay_Period_Max
         self.Delay_Period_Mean = Delay_Period_Mean
@@ -893,7 +893,7 @@ class HealthSeekingBehaviorUpdateable(BaseCampaign):
         self.Actual_IndividualIntervention_Event = Actual_IndividualIntervention_Event
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Sim_Types = Sim_Types
@@ -1027,7 +1027,7 @@ class MDRDiagnostic(BaseCampaign):
         self.Defaulters_Event = Defaulters_Event
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.Negative_Diagnosis_Config = Negative_Diagnosis_Config
         self.Negative_Diagnosis_Event = Negative_Diagnosis_Event
@@ -1052,10 +1052,10 @@ class MalariaDiagnostic(BaseCampaign):
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Days_To_Diagnosis = Days_To_Diagnosis
         self.Detection_Threshold = Detection_Threshold
-        self.Diagnostic_Type = Diagnostic_Type
+        self.Diagnostic_Type = Diagnostic_Type.name if isinstance(Diagnostic_Type, Enum) else Diagnostic_Type
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Positive_Diagnosis_Config = Positive_Diagnosis_Config
@@ -1092,7 +1092,7 @@ class MigrateIndividuals(BaseCampaign):
         super(MigrateIndividuals, self).__init__(**kwargs)
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Duration_At_Node_Distribution_Type = Duration_At_Node_Distribution_Type
+        self.Duration_At_Node_Distribution_Type = Duration_At_Node_Distribution_Type.name if isinstance(Duration_At_Node_Distribution_Type, Enum) else Duration_At_Node_Distribution_Type
         self.Duration_At_Node_Exponential_Period = Duration_At_Node_Exponential_Period
         self.Duration_At_Node_Fixed = Duration_At_Node_Fixed
         self.Duration_At_Node_Gausian_Mean = Duration_At_Node_Gausian_Mean
@@ -1100,7 +1100,7 @@ class MigrateIndividuals(BaseCampaign):
         self.Duration_At_Node_Poisson_Mean = Duration_At_Node_Poisson_Mean
         self.Duration_At_Node_Uniform_Max = Duration_At_Node_Uniform_Max
         self.Duration_At_Node_Uniform_Min = Duration_At_Node_Uniform_Min
-        self.Duration_Before_Leaving_Distribution_Type = Duration_Before_Leaving_Distribution_Type
+        self.Duration_Before_Leaving_Distribution_Type = Duration_Before_Leaving_Distribution_Type.name if isinstance(Duration_Before_Leaving_Distribution_Type, Enum) else Duration_Before_Leaving_Distribution_Type
         self.Duration_Before_Leaving_Exponential_Period = Duration_Before_Leaving_Exponential_Period
         self.Duration_Before_Leaving_Fixed = Duration_Before_Leaving_Fixed
         self.Duration_Before_Leaving_Gausian_Mean = Duration_Before_Leaving_Gausian_Mean
@@ -1267,7 +1267,7 @@ class RTSSVaccine(BaseCampaign):
 
     def __init__(self, Antibody_Type=RTSSVaccine_Antibody_Type_Enum.CSP, Antibody_Variant=0, Boosted_Antibody_Concentration=1, Cost_To_Consumer=3.75, Disqualifying_Properties=[], Dont_Allow_Duplicates=False, Intervention_Name='RTSSVaccine', New_Property_Value=None, Sim_Types=['MALARIA_SIM'], iv_type='IndividualTargeted', **kwargs):
         super(RTSSVaccine, self).__init__(**kwargs)
-        self.Antibody_Type = Antibody_Type
+        self.Antibody_Type = Antibody_Type.name if isinstance(Antibody_Type, Enum) else Antibody_Type
         self.Antibody_Variant = Antibody_Variant
         self.Boosted_Antibody_Concentration = Boosted_Antibody_Concentration
         self.Cost_To_Consumer = Cost_To_Consumer
@@ -1295,7 +1295,7 @@ class STIBarrier(BaseCampaign):
         self.MidYear = MidYear
         self.New_Property_Value = New_Property_Value
         self.Rate = Rate
-        self.Relationship_Type = Relationship_Type
+        self.Relationship_Type = Relationship_Type.name if isinstance(Relationship_Type, Enum) else Relationship_Type
         self.Sim_Types = Sim_Types
         self.iv_type = iv_type
 
@@ -1313,7 +1313,7 @@ class STIIsPostDebut(BaseCampaign):
         self.Days_To_Diagnosis = Days_To_Diagnosis
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.Negative_Diagnosis_Event = Negative_Diagnosis_Event
         self.New_Property_Value = New_Property_Value
@@ -1379,7 +1379,7 @@ class SimpleBoosterVaccine(BaseCampaign):
         self.Prime_Effect = Prime_Effect
         self.Sim_Types = Sim_Types
         self.Vaccine_Take = Vaccine_Take
-        self.Vaccine_Type = Vaccine_Type
+        self.Vaccine_Type = Vaccine_Type.name if isinstance(Vaccine_Type, Enum) else Vaccine_Type
         self.Waning_Config = Waning_Config
         self.iv_type = iv_type
 
@@ -1397,7 +1397,7 @@ class SimpleDiagnostic(BaseCampaign):
         self.Days_To_Diagnosis = Days_To_Diagnosis
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Positive_Diagnosis_Config = Positive_Diagnosis_Config
@@ -1418,7 +1418,7 @@ class SimpleHealthSeekingBehavior(BaseCampaign):
         self.Actual_IndividualIntervention_Event = Actual_IndividualIntervention_Event
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Sim_Types = Sim_Types
@@ -1477,7 +1477,7 @@ class SimpleVaccine(BaseCampaign):
         self.New_Property_Value = New_Property_Value
         self.Sim_Types = Sim_Types
         self.Vaccine_Take = Vaccine_Take
-        self.Vaccine_Type = Vaccine_Type
+        self.Vaccine_Type = Vaccine_Type.name if isinstance(Vaccine_Type, Enum) else Vaccine_Type
         self.Waning_Config = Waning_Config
         self.iv_type = iv_type
 
@@ -1495,7 +1495,7 @@ class SmearDiagnostic(BaseCampaign):
         self.Days_To_Diagnosis = Days_To_Diagnosis
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Positive_Diagnosis_Config = Positive_Diagnosis_Config
@@ -1536,7 +1536,7 @@ class StiCoInfectionDiagnostic(BaseCampaign):
         self.Days_To_Diagnosis = Days_To_Diagnosis
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Event_Or_Config = Event_Or_Config
+        self.Event_Or_Config = Event_Or_Config.name if isinstance(Event_Or_Config, Enum) else Event_Or_Config
         self.Intervention_Name = Intervention_Name
         self.New_Property_Value = New_Property_Value
         self.Positive_Diagnosis_Config = Positive_Diagnosis_Config
@@ -1561,7 +1561,7 @@ class TBHIVConfigurableTBdrug(BaseCampaign):
         self.Drug_CMax = Drug_CMax
         self.Drug_PKPD_C50 = Drug_PKPD_C50
         self.Drug_Vd = Drug_Vd
-        self.Durability_Profile = Durability_Profile
+        self.Durability_Profile = Durability_Profile.name if isinstance(Durability_Profile, Enum) else Durability_Profile
         self.Fraction_Defaulters = Fraction_Defaulters
         self.Intervention_Name = Intervention_Name
         self.Latency_Multiplier = Latency_Multiplier
@@ -1586,7 +1586,7 @@ class UsageDependentBednet(BaseCampaign):
         self.Discard_Event = Discard_Event
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
-        self.Expiration_Distribution_Type = Expiration_Distribution_Type
+        self.Expiration_Distribution_Type = Expiration_Distribution_Type.name if isinstance(Expiration_Distribution_Type, Enum) else Expiration_Distribution_Type
         self.Expiration_Percentage_Period_1 = Expiration_Percentage_Period_1
         self.Expiration_Period = Expiration_Period
         self.Expiration_Period_1 = Expiration_Period_1
@@ -1628,7 +1628,7 @@ class ArtificialDiet(BaseCampaign):
 
     def __init__(self, Artificial_Diet_Target=ArtificialDiet_Artificial_Diet_Target_Enum.AD_WithinVillage, Attraction_Config=None, Cost_To_Consumer=10, Disqualifying_Properties=[], Intervention_Name='ArtificialDiet', New_Property_Value=None, Sim_Types=['VECTOR_SIM', 'MALARIA_SIM', 'DENGUE_SIM'], iv_type='NodeTargeted', **kwargs):
         super(ArtificialDiet, self).__init__(**kwargs)
-        self.Artificial_Diet_Target = Artificial_Diet_Target
+        self.Artificial_Diet_Target = Artificial_Diet_Target.name if isinstance(Artificial_Diet_Target, Enum) else Artificial_Diet_Target
         self.Attraction_Config = Attraction_Config
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Disqualifying_Properties = Disqualifying_Properties
@@ -1656,8 +1656,8 @@ class BirthTriggeredIV(BaseCampaign):
         self.Sim_Types = Sim_Types
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.iv_type = iv_type
 
@@ -1687,7 +1687,7 @@ class InputEIR(BaseCampaign):
 
     def __init__(self, Age_Dependence=InputEIR_Age_Dependence_Enum.OFF, Disqualifying_Properties=[], Intervention_Name='InputEIR', Monthly_EIR=[], New_Property_Value=None, Sim_Types=['MALARIA_SIM'], iv_type='NodeTargeted', **kwargs):
         super(InputEIR, self).__init__(**kwargs)
-        self.Age_Dependence = Age_Dependence
+        self.Age_Dependence = Age_Dependence.name if isinstance(Age_Dependence, Enum) else Age_Dependence
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Intervention_Name = Intervention_Name
         self.Monthly_EIR = Monthly_EIR
@@ -1722,7 +1722,7 @@ class Larvicides(BaseCampaign):
         self.Blocking_Config = Blocking_Config
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Disqualifying_Properties = Disqualifying_Properties
-        self.Habitat_Target = Habitat_Target
+        self.Habitat_Target = Habitat_Target.name if isinstance(Habitat_Target, Enum) else Habitat_Target
         self.Intervention_Name = Intervention_Name
         self.Killing_Config = Killing_Config
         self.New_Property_Value = New_Property_Value
@@ -1737,7 +1737,7 @@ class MalariaChallenge(BaseCampaign):
 
     def __init__(self, Challenge_Type=MalariaChallenge_Challenge_Type_Enum.InfectiousBites, Coverage=1, Disqualifying_Properties=[], Infectious_Bite_Count=1, Intervention_Name='MalariaChallenge', New_Property_Value=None, Sim_Types=['MALARIA_SIM'], Sporozoite_Count=1, iv_type='NodeTargeted', **kwargs):
         super(MalariaChallenge, self).__init__(**kwargs)
-        self.Challenge_Type = Challenge_Type
+        self.Challenge_Type = Challenge_Type.name if isinstance(Challenge_Type, Enum) else Challenge_Type
         self.Coverage = Coverage
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Infectious_Bite_Count = Infectious_Bite_Count
@@ -1756,7 +1756,7 @@ class MigrateFamily(BaseCampaign):
     def __init__(self, Disqualifying_Properties=[], Duration_At_Node_Distribution_Type=MigrateFamily_Duration_At_Node_Distribution_Type_Enum.NOT_INITIALIZED, Duration_At_Node_Exponential_Period=6, Duration_At_Node_Fixed=6, Duration_At_Node_Gausian_Mean=6, Duration_At_Node_Gausian_StdDev=1, Duration_At_Node_Poisson_Mean=6, Duration_At_Node_Uniform_Max=1, Duration_At_Node_Uniform_Min=0, Duration_Before_Leaving_Distribution_Type=MigrateFamily_Duration_Before_Leaving_Distribution_Type_Enum.NOT_INITIALIZED, Duration_Before_Leaving_Exponential_Period=6, Duration_Before_Leaving_Fixed=6, Duration_Before_Leaving_Gausian_Mean=6, Duration_Before_Leaving_Gausian_StdDev=1, Duration_Before_Leaving_Poisson_Mean=6, Duration_Before_Leaving_Uniform_Max=1, Duration_Before_Leaving_Uniform_Min=0, Intervention_Name='MigrateFamily', Is_Moving=False, New_Property_Value=None, NodeID_To_Migrate_To=0, Sim_Types=['*'], iv_type='NodeTargeted', **kwargs):
         super(MigrateFamily, self).__init__(**kwargs)
         self.Disqualifying_Properties = Disqualifying_Properties
-        self.Duration_At_Node_Distribution_Type = Duration_At_Node_Distribution_Type
+        self.Duration_At_Node_Distribution_Type = Duration_At_Node_Distribution_Type.name if isinstance(Duration_At_Node_Distribution_Type, Enum) else Duration_At_Node_Distribution_Type
         self.Duration_At_Node_Exponential_Period = Duration_At_Node_Exponential_Period
         self.Duration_At_Node_Fixed = Duration_At_Node_Fixed
         self.Duration_At_Node_Gausian_Mean = Duration_At_Node_Gausian_Mean
@@ -1764,7 +1764,7 @@ class MigrateFamily(BaseCampaign):
         self.Duration_At_Node_Poisson_Mean = Duration_At_Node_Poisson_Mean
         self.Duration_At_Node_Uniform_Max = Duration_At_Node_Uniform_Max
         self.Duration_At_Node_Uniform_Min = Duration_At_Node_Uniform_Min
-        self.Duration_Before_Leaving_Distribution_Type = Duration_Before_Leaving_Distribution_Type
+        self.Duration_Before_Leaving_Distribution_Type = Duration_Before_Leaving_Distribution_Type.name if isinstance(Duration_Before_Leaving_Distribution_Type, Enum) else Duration_Before_Leaving_Distribution_Type
         self.Duration_Before_Leaving_Exponential_Period = Duration_Before_Leaving_Exponential_Period
         self.Duration_Before_Leaving_Fixed = Duration_Before_Leaving_Fixed
         self.Duration_Before_Leaving_Gausian_Mean = Duration_Before_Leaving_Gausian_Mean
@@ -1792,12 +1792,12 @@ class MosquitoRelease(BaseCampaign):
         self.Intervention_Name = Intervention_Name
         self.Mated_Genetics = Mated_Genetics
         self.New_Property_Value = New_Property_Value
-        self.Released_Gender = Released_Gender
+        self.Released_Gender = Released_Gender.name if isinstance(Released_Gender, Enum) else Released_Gender
         self.Released_Genetics = Released_Genetics
         self.Released_Number = Released_Number
         self.Released_Species = Released_Species
-        self.Released_Sterility = Released_Sterility
-        self.Released_Wolbachia = Released_Wolbachia
+        self.Released_Sterility = Released_Sterility.name if isinstance(Released_Sterility, Enum) else Released_Sterility
+        self.Released_Wolbachia = Released_Wolbachia.name if isinstance(Released_Wolbachia, Enum) else Released_Wolbachia
         self.Sim_Types = Sim_Types
         self.iv_type = iv_type
 
@@ -1841,8 +1841,8 @@ class NodeLevelHealthTriggeredIV(BaseCampaign):
         self.Sim_Types = Sim_Types
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Trigger_Condition_List = Trigger_Condition_List
         self.iv_type = iv_type
@@ -1861,7 +1861,7 @@ class NodeLevelHealthTriggeredIVScaleUpSwitch(BaseCampaign):
         self.Blackout_On_First_Occurrence = Blackout_On_First_Occurrence
         self.Blackout_Period = Blackout_Period
         self.Demographic_Coverage = Demographic_Coverage
-        self.Demographic_Coverage_Time_Profile = Demographic_Coverage_Time_Profile
+        self.Demographic_Coverage_Time_Profile = Demographic_Coverage_Time_Profile.name if isinstance(Demographic_Coverage_Time_Profile, Enum) else Demographic_Coverage_Time_Profile
         self.Disqualifying_Properties = Disqualifying_Properties
         self.Distribute_On_Return_Home = Distribute_On_Return_Home
         self.Duration = Duration
@@ -1876,8 +1876,8 @@ class NodeLevelHealthTriggeredIVScaleUpSwitch(BaseCampaign):
         self.Sim_Types = Sim_Types
         self.Target_Age_Max = Target_Age_Max
         self.Target_Age_Min = Target_Age_Min
-        self.Target_Demographic = Target_Demographic
-        self.Target_Gender = Target_Gender
+        self.Target_Demographic = Target_Demographic.name if isinstance(Target_Demographic, Enum) else Target_Demographic
+        self.Target_Gender = Target_Gender.name if isinstance(Target_Gender, Enum) else Target_Gender
         self.Target_Residents_Only = Target_Residents_Only
         self.Trigger_Condition_List = Trigger_Condition_List
         self.iv_type = iv_type
@@ -1942,7 +1942,7 @@ class OvipositionTrap(BaseCampaign):
         super(OvipositionTrap, self).__init__(**kwargs)
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Disqualifying_Properties = Disqualifying_Properties
-        self.Habitat_Target = Habitat_Target
+        self.Habitat_Target = Habitat_Target.name if isinstance(Habitat_Target, Enum) else Habitat_Target
         self.Intervention_Name = Intervention_Name
         self.Killing_Config = Killing_Config
         self.New_Property_Value = New_Property_Value
@@ -1974,13 +1974,13 @@ class SpaceSpraying(BaseCampaign):
         super(SpaceSpraying, self).__init__(**kwargs)
         self.Cost_To_Consumer = Cost_To_Consumer
         self.Disqualifying_Properties = Disqualifying_Properties
-        self.Habitat_Target = Habitat_Target
+        self.Habitat_Target = Habitat_Target.name if isinstance(Habitat_Target, Enum) else Habitat_Target
         self.Intervention_Name = Intervention_Name
         self.Killing_Config = Killing_Config
         self.New_Property_Value = New_Property_Value
         self.Reduction_Config = Reduction_Config
         self.Sim_Types = Sim_Types
-        self.Spray_Kill_Target = Spray_Kill_Target
+        self.Spray_Kill_Target = Spray_Kill_Target.name if isinstance(Spray_Kill_Target, Enum) else Spray_Kill_Target
         self.iv_type = iv_type
 
 
@@ -2042,7 +2042,7 @@ class NodeSetPolygon(BaseCampaign):
 
     def __init__(self, Polygon_Format=NodeSetPolygon_Polygon_Format_Enum.SHAPE, Vertices='UNINITIALIZED STRING', **kwargs):
         super(NodeSetPolygon, self).__init__(**kwargs)
-        self.Polygon_Format = Polygon_Format
+        self.Polygon_Format = Polygon_Format.name if isinstance(Polygon_Format, Enum) else Polygon_Format
         self.Vertices = Vertices
 
 

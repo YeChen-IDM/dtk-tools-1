@@ -227,7 +227,8 @@ class DTKConfigBuilder(SimConfigBuilder):
                           'before the TBHIV_SIM simulation types can be used.'
                 raise ImportError(message)
             config["parameters"].update(tbhiv_params.params)
-            campaign = tbhiv_initial_seeding.tbhiv_campaign
+            campaign = empty_campaign
+            campaign.Campaign_Name = 'TBHIV Campaign'
 
         else:
             raise Exception("Don't recognize sim_type argument = %s" % sim_type)

@@ -213,8 +213,8 @@ class CramerRaoResampler(BaseResampler):
                     scatterPlot = axes[x, y].scatter(samples[y], samples[x], **kwargs)
                     row_idx = np.array([y, x])
                     col_idx = np.array([y, x])
-                    plot_cov_ellipse(Covariance[row_idx[:, None], col_idx], center[[y, x]], ax=axes[x, y],
-                                     nstd=2, alpha=0.3, color='red')
+                    plot_cov_ellipse(Covariance[row_idx[:, None], col_idx], center[[y, x]], nstd=2, ax=axes[x, y],
+                                     alpha=0.3, color='red')
                     if not (range_min is None):
                         axes[x, y].set_xlim(range_min[y], range_max[y])
                     if not (range_max is None):

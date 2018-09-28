@@ -1,14 +1,15 @@
 import os
 import json
 from enum import Enum
+
+from ast import *
 import importlib
 import inspect
 import subprocess
 import shutil
 
 import astor
-import astunparse
-from ast import *
+from dtk.utils.Campaign.utils import Astunparse as astunparse
 
 from dtk.utils.Campaign.utils.ClassParser import ClassParser
 from dtk.utils.Campaign.utils.SchemaParser import SchemaParser
@@ -141,6 +142,7 @@ class CampaignManager(object):
     def build_enum_definition(cls, enum_name, args_list):
         enum_ast = cls.build_enum_ast(enum_name, args_list)
         enum_definition = astor.to_source(enum_ast)
+        # enum_definition = astunparse.unparse(enum_ast)    # extra empty line
 
         return enum_definition
 
@@ -390,10 +392,49 @@ class CampaignManager(object):
         # take bool into consideration
         adjust_default_for_bool()
 
+        # build arguments
         for s in args_list:
             _args.append(arg(arg=s, annotation=None))
 
-            if s != 'self':
+        # build assign
+        if args_list[0] == 'self':
+            args_list = args_list[1:]   # remove self
+
+        for s, v in zip(args_list, defaults_list):
+
+            if isinstance(v, Enum):
+                a = Assign(
+                      targets=[Attribute(
+                        value=Name(
+                          id='self',
+                          ctx=Load()),
+                        attr=s,
+                        ctx=Store())],
+                      value=IfExp(
+                        test=Call(
+                          func=Name(
+                            id='isinstance',
+                            ctx=Load()),
+                          args=[
+                            Name(
+                              id=s,
+                              ctx=Load()),
+                            Name(
+                              id='Enum',
+                              ctx=Load())],
+                          keywords=[]),
+                        body=Attribute(
+                          value=Name(
+                            id=s,
+                            ctx=Load()),
+                          attr='name',
+                          ctx=Load()),
+                        orelse=Name(
+                          id=s,
+                          ctx=Load())
+                      )
+                )
+            else:
                 a = Assign(
                     targets=[Attribute(
                       value=Name(
@@ -405,7 +446,7 @@ class CampaignManager(object):
                       id=s,
                       ctx=Load())
                 )
-                _assigns.append(a)
+            _assigns.append(a)
 
         for v in defaults_list:
             _defaults.append(transform(v))

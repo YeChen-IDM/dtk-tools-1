@@ -161,7 +161,7 @@ optimtool = OptimTool(params,
     samples_per_iteration = 10  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
 )
 
-calib_manager = CalibManager(name='ExampleOptimization_cramer_test3',    # <-- Please customize this name
+calib_manager = CalibManager(name='ExampleOptimization_cramer_test2',    # <-- Please customize this name
                              config_builder=cb,
                              map_sample_to_model_input_fn=map_sample_to_model_input,
                              sites=sites,
