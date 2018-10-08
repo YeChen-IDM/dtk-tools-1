@@ -50,7 +50,7 @@ class SimulationAssets(object):
 
     @property
     def exe_name(self):
-        return os.path.basename(self.exe_path)
+        return os.path.basename(self.exe_path) if self.exe_path else ""
 
     @property
     def exe_path(self):
