@@ -5,7 +5,7 @@ from simtools.Utilities.LocalOS import LocalOS
 
 
 class FileList:
-    def __init__(self, root=None, files_in_root=None, recursive=False, ignore_missing=False, relative_path=None):
+    def __init__(self, root=None, files_in_root=None, recursive=False, ignore_missing=False, relative_path=None, max_depth=3):
         """
         Represents a set of files that are specified RELATIVE to root.
         e.g. /a/b/c.json could be : root: '/a' files_in_root: ['b/c.json']
@@ -14,6 +14,7 @@ class FileList:
         """
         self.files = []
         self.ignore_missing = ignore_missing
+        self.max_depth = max_depth
 
         # Make sure we have correct separator
         # os.path.normpath(f) would be best but is not working the same way on UNIX systems
@@ -71,14 +72,11 @@ class FileList:
                 self.add_file(file_path, relative_path=f_relative_path)
 
         else:
-            # Limit the max_depth just in case
-            max_depth = 3
-
             # Walk through the path
             for root, subdirs, files in os.walk(path):
                 # Little safety to not go too deep
                 depth = root[len(path) + len(os.path.sep):].count(os.path.sep)
-                if depth > max_depth: continue
+                if depth > self.max_depth: continue
 
                 # Add the files in the current dir
                 for f in files:
