@@ -29,6 +29,7 @@ PROVINCIAL = 'Provincial'
 NON_PROVINCIAL = 'Non-provincial'
 AGGREGATED_NODE = 0  # a reserved node number for non-provincial analysis
 AGGREGATED_PROVINCE = 'All'
+DO_POP_SCALING = 'Scaling'
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
@@ -45,6 +46,9 @@ def parse_ingest_data_from_xlsm(filename):
         raise UnsupportedFileFormat('Provided ingest file not a .xlsm file.')
     wb = openpyxl.load_workbook(filename)
 
+    # parse observational metadata, including whether to pop scale sim channels
+    obs_metadata = _parse_obs_metadata(wb, wb_path=filename)
+
     # parse params info into a list of dicts
     params = _parse_parameters(wb, wb_path=filename)
 
@@ -57,7 +61,30 @@ def parse_ingest_data_from_xlsm(filename):
     # parse obs data into a temporary directory of files and then load it
     reference = _parse_reference_data(wb, wb_path=filename)
 
+    # add pop scaling data to each analyzer specification
+    for analyzer in analyzers:
+        analyzer['scale_population'] = obs_metadata['scale_population'][analyzer['channel']]
+
     return params, site_info, reference, analyzers
+
+
+# ck4, add tests
+def _parse_obs_metadata(wb, wb_path):
+    defined_names = excel.DefinedName.load_from_workbook(wb)
+    site_sheetname = 'Observations metadata'
+    ws = get_sheet_from_workbook(wb, sheet_name=site_sheetname, wb_path=wb_path)
+
+    obs_metadata = {}
+
+    channels = excel.read_list(ws=ws, range=defined_names[site_sheetname]['obs_data_channels'])
+    pop_scaling = excel.read_list(ws=ws, range=defined_names[site_sheetname]['channel_pop_scaling'])
+
+    scaling_tuples = list(zip(channels, pop_scaling))
+    for scaling_tuple in scaling_tuples:
+        if (scaling_tuple[0] in EMPTY) ^ (scaling_tuple[1] in EMPTY):
+            raise SiteNodeMappingException('Channel names and pop. scaling selections must map 1-1.')
+    obs_metadata['scale_population'] = {t[0]: t[1] == DO_POP_SCALING for t in scaling_tuples if t[0] not in EMPTY}
+    return obs_metadata
 
 
 # ck4, add tests
