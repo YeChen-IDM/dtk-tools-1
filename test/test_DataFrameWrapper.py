@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import unittest
 
-from dtk.utils.observations.Channel import Channel
 from dtk.utils.observations.DataFrameWrapper import DataFrameWrapper
 
 
@@ -72,16 +71,6 @@ class TestDataFrameWrapper(unittest.TestCase):
         expected_stratifiers = self.stratifiers
         dfw = DataFrameWrapper(dataframe=self.dataframe, stratifiers=expected_stratifiers)
         self.assertEqual(sorted(dfw.stratifiers), sorted(expected_stratifiers))
-
-    def test_df_initialization_with_decorated_stratifiers(self):
-        cols = list(self.dataframe.columns)
-        original_cols = deepcopy(cols)
-        cols[0] = str(Channel.construct_channel_string(name=cols[0], decorator='s'))
-        self.dataframe.columns = cols
-
-        dfw = DataFrameWrapper(dataframe=self.dataframe)
-        expected_stratifiers = original_cols[0:1]
-        self.assertEqual(list(dfw.stratifiers), expected_stratifiers)
 
     def test_df_initialization_with_provided_stratifiers_not_in_df(self):
         expected_stratifiers = ['Year', 'AgeBin', 'Gender', 'Provence'] # misspelled Province

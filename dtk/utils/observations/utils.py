@@ -17,6 +17,7 @@ class IncompleteDataSpecification(Exception): pass
 class ParameterOutOfRange(Exception): pass
 class InvalidAnalyzerWeight(Exception): pass
 class AnalyzerSheetException(Exception): pass
+class SiteNodeMappingException(Exception): pass
 
 EMPTY = [None, '', '--select--']  # not sure if this could be something else
 OBS_SHEET_REGEX = re.compile('^Obs-.+$')
@@ -49,10 +50,40 @@ def parse_ingest_data_from_xlsm(filename):
     # parse analyzer info
     analyzers = _parse_analyzers(wb, wb_path=filename)
 
+    # parse site info, primarily for pop scaling
+    site_info = _parse_site_info(wb, wb_path=filename)
+
     # parse obs data into a temporary directory of files and then load it
     reference = _parse_reference_data(wb, wb_path=filename)
 
-    return params, reference, analyzers
+    return params, site_info, reference, analyzers
+
+
+# ck4, add tests
+def _parse_site_info(wb, wb_path):
+    defined_names = excel.DefinedName.load_from_workbook(wb)
+    site_sheetname = 'Site'
+    ws = get_sheet_from_workbook(wb, sheet_name=site_sheetname, wb_path=wb_path)
+
+    site_data = {}
+
+    site_data['site_name'] = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_name'])[0]
+    site_data['census_population'] = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_population'])[0]
+    site_data['census_year'] = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_year'])[0]
+    age_bin_str = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_age_bin'])[0]
+    site_data['census_age_bin'] = AgeBin.from_string(str=age_bin_str)
+
+    node_numbers = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_numbers'])
+    if 0 in node_numbers: # ck4, remove magic number?
+        raise SiteNodeMappingException('Invalid node number 0. Must be integers >= 1 .')
+    node_names = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_names'])
+    mapping_tuples = list(zip(node_numbers, node_names))
+    for mapping_tuple in mapping_tuples:
+        if (mapping_tuple[0] in EMPTY) ^ (mapping_tuple[1] in EMPTY):
+            raise SiteNodeMappingException('Node numbers and names must be specified in pairs.')
+    site_data['node_map'] = {t[0]: t[1] for t in mapping_tuples if t[0] not in EMPTY}
+
+    return site_data
 
 
 def _parse_parameters(wb, wb_path):

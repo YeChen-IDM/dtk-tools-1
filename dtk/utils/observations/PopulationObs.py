@@ -1,5 +1,6 @@
 import pandas as pd
 
+from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.DataFrameWrapper import DataFrameWrapper
 
 
@@ -22,13 +23,16 @@ class PopulationObs(DataFrameWrapper):
 
     def fix_age_bins(self):
         """
-        A method that converts the ':' separated AgeBin format: [X:Y) to the ', ' format: [X, Y) for
+        A method that converts the ', ' separated AgeBin format: [X, Y) to the new ':' format: [X:Y) for
         back-compatibility.
         :return: nothing
         """
         required_data = ['AgeBin']
         self.verify_required_items(needed=required_data)
-        self._dataframe['AgeBin'] = [age_bin.replace(':', ', ') for age_bin in self._dataframe['AgeBin']]
+        # self._dataframe['AgeBin'] = [age_bin.replace(', ', AgeBin.DEFAULT_DELIMITER)
+        #                              for age_bin in self._dataframe['AgeBin']]
+        new_bins = [age_bin.replace(', ', AgeBin.DEFAULT_DELIMITER) for age_bin in self._dataframe['AgeBin']]
+        self._dataframe.assign(**{'AgeBin': new_bins})
 
     def get_age_bins(self):
         required_data = ['AgeBin']
@@ -52,11 +56,11 @@ class PopulationObs(DataFrameWrapper):
         return list(self._dataframe['Year'].unique())
 
     @classmethod
-    def construct_beta_channel(cls, channel, type):
-        return '%s--Beta-%s' % (channel, type)
+    def construct_beta_channel(cls, channel, provinciality, type):
+        return '%s-%s--Beta-%s' % (channel, provinciality, type)
 
 
-    def add_beta_parameters(self, channel):
+    def add_beta_parameters(self, channel, provinciality):
         """
         Compute and add alpha, beta parameters for a beta distribution to the current self._dataframe object.
             Distribution is computed for the provided channel (data field), using 'count'. Result is put into new
@@ -67,9 +71,15 @@ class PopulationObs(DataFrameWrapper):
         """
         required_data = ['Count', channel]
         self.verify_required_items(needed=required_data)
-        alpha_channel = self.construct_beta_channel(channel=channel, type='alpha')
-        beta_channel = self.construct_beta_channel(channel=channel, type='beta')
+        alpha_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type='alpha')
+        beta_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type='beta')
         new_channels = [alpha_channel, beta_channel]
+
+        # ck4, keep? Useful for a 'omg what is going on!' type of check
+        for ch in new_channels:
+            if ch in self._dataframe.columns:
+                raise Exception('Channel %s already exists in dataframe.' % ch)
+
         if alpha_channel not in self.channels and beta_channel not in self.channels:
             alpha = 1 + self._dataframe[channel] * self._dataframe['Count']
             beta = 1 + (1 - self._dataframe[channel]) * self._dataframe['Count']
@@ -78,7 +88,7 @@ class PopulationObs(DataFrameWrapper):
         return new_channels
 
 
-    def add_beta_percentile_values(self, channel, p):
+    def add_beta_percentile_values(self, channel, provinciality, p):
         """
         Computes the inverse beta distribution of 'value' at the specified probability threshold.
         :param channel: the channel/column with beta distribution parameters to compute percentiles with.
@@ -87,8 +97,8 @@ class PopulationObs(DataFrameWrapper):
         """
         from scipy.stats import beta
 
-        alpha_channel = self.construct_beta_channel(channel=channel, type='alpha')
-        beta_channel = self.construct_beta_channel(channel=channel, type='beta')
+        alpha_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type='alpha')
+        beta_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type='beta')
         required_items = [alpha_channel, beta_channel]
         try:
             self.verify_required_items(needed=required_items)
@@ -96,7 +106,7 @@ class PopulationObs(DataFrameWrapper):
             self.add_beta_parameters(channel=channel)
 
         values = beta.ppf(p, self._dataframe[alpha_channel], self._dataframe[beta_channel])
-        p_channel = self.construct_beta_channel(channel=channel, type=p)
+        p_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type=p)
         values_df = pd.DataFrame({p_channel: values})
         self._dataframe = self._dataframe.join(values_df)
         new_channels = [p_channel]
