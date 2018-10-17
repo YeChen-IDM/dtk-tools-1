@@ -12,7 +12,7 @@ class BaseDistribution(object, metaclass=ABCMeta):
         self.additional_channels = []
 
     # dummy stub that can be overridden if needed
-    def prepare(self, dfw, channel, provinciality):
+    def prepare(self, dfw, channel, provinciality, age_bins):
         return dfw
 
     @abstractmethod

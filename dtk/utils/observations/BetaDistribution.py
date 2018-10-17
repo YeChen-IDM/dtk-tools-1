@@ -7,9 +7,10 @@ from dtk.utils.observations.BaseDistribution import BaseDistribution
 
 class BetaDistribution(BaseDistribution):
 
-    def prepare(self, dfw, channel, provinciality):
+    def prepare(self, dfw, channel, provinciality, age_bins):
         self.alpha_channel, self.beta_channel = dfw.add_beta_parameters(channel=channel,
-                                                                        provinciality=provinciality)
+                                                                        provinciality=provinciality,
+                                                                        age_bins=age_bins)
         dfw = dfw.filter(keep_only=[channel, self.alpha_channel, self.beta_channel])
         for ch in [self.alpha_channel, self.beta_channel]:
             self.additional_channels.append(ch)

@@ -49,18 +49,18 @@ class PopulationObs(DataFrameWrapper):
         self.verify_required_items(needed=required_data)
         return list(self._dataframe['Gender'].unique())
 
-
     def get_years(self):
         required_data = ['Year']
         self.verify_required_items(needed=required_data)
         return list(self._dataframe['Year'].unique())
 
     @classmethod
-    def construct_beta_channel(cls, channel, provinciality, type):
-        return '%s-%s--Beta-%s' % (channel, provinciality, type)
+    def construct_beta_channel(cls, channel, provinciality, age_bins, type):
+        age_bins = age_bins if isinstance(age_bins, list) else [age_bins]
+        age_bin_str = '_'.join([str(age_bin) for age_bin in age_bins])
+        return '%s-%s-%s--Beta-%s' % (channel, provinciality, age_bin_str, type)
 
-
-    def add_beta_parameters(self, channel, provinciality):
+    def add_beta_parameters(self, channel, provinciality, age_bins):
         """
         Compute and add alpha, beta parameters for a beta distribution to the current self._dataframe object.
             Distribution is computed for the provided channel (data field), using 'count'. Result is put into new
@@ -71,11 +71,14 @@ class PopulationObs(DataFrameWrapper):
         """
         required_data = ['Count', channel]
         self.verify_required_items(needed=required_data)
-        alpha_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type='alpha')
-        beta_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type='beta')
+
+        alpha_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, age_bins=age_bins,
+                                                    type='alpha')
+        beta_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, age_bins=age_bins,
+                                                   type='beta')
         new_channels = [alpha_channel, beta_channel]
 
-        # ck4, keep? Useful for a 'omg what is going on!' type of check
+        # Useful for an 'omg what is going on!' type of check
         for ch in new_channels:
             if ch in self._dataframe.columns:
                 raise Exception('Channel %s already exists in dataframe.' % ch)
@@ -87,8 +90,7 @@ class PopulationObs(DataFrameWrapper):
             self.derived_items += new_channels
         return new_channels
 
-
-    def add_beta_percentile_values(self, channel, provinciality, p):
+    def add_beta_percentile_values(self, channel, provinciality, age_bins, p):
         """
         Computes the inverse beta distribution of 'value' at the specified probability threshold.
         :param channel: the channel/column with beta distribution parameters to compute percentiles with.
@@ -103,7 +105,7 @@ class PopulationObs(DataFrameWrapper):
         try:
             self.verify_required_items(needed=required_items)
         except self.MissingRequiredData:
-            self.add_beta_parameters(channel=channel)
+            self.add_beta_parameters(channel=channel, provinciality=provinciality, age_bins=age_bins)
 
         values = beta.ppf(p, self._dataframe[alpha_channel], self._dataframe[beta_channel])
         p_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, type=p)
