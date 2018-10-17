@@ -27,7 +27,8 @@ ALL_MATCHING_AGE_BINS = 'All matching'
 
 PROVINCIAL = 'Provincial'
 NON_PROVINCIAL = 'Non-provincial'
-
+AGGREGATED_NODE = 0  # a reserved node number for non-provincial analysis
+AGGREGATED_PROVINCE = 'All'
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
@@ -74,8 +75,10 @@ def _parse_site_info(wb, wb_path):
     site_data['census_age_bin'] = AgeBin.from_string(str=age_bin_str)
 
     node_numbers = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_numbers'])
-    if 0 in node_numbers: # ck4, remove magic number?
-        raise SiteNodeMappingException('Invalid node number 0. Must be integers >= 1 .')
+    invalid_node_numbers = [num for num in node_numbers if (num == AGGREGATED_NODE) or (num != int(num))]
+    if len(invalid_node_numbers) > 0:
+        raise SiteNodeMappingException('Invalid node number(s) %s. Must be integers >= 1 .' % invalid_node_numbers)
+
     node_names = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_names'])
     mapping_tuples = list(zip(node_numbers, node_names))
     for mapping_tuple in mapping_tuples:
