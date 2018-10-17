@@ -59,7 +59,7 @@ class PopulationObs(DataFrameWrapper):
         if not self.adjusted_years:
             required_data = ['Year']
             self.verify_required_items(needed=required_data)
-            self._dataframe.assign(**{'Year': self._dataframe['Year']+0.5})
+            self._dataframe = self._dataframe.assign(**{'Year': self._dataframe['Year']+0.5})
             self.adjusted_years = True
 
     @classmethod
