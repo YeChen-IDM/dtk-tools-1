@@ -11,6 +11,7 @@ class PopulationObs(DataFrameWrapper):
 
         # calculations using the data should update this list after joining on self._dataframe
         self.derived_items = []
+        self.adjusted_years = False
 
     def get_years(self):
         additional_required_stratifier = ['Year']
@@ -53,6 +54,13 @@ class PopulationObs(DataFrameWrapper):
         required_data = ['Year']
         self.verify_required_items(needed=required_data)
         return list(self._dataframe['Year'].unique())
+
+    def adjust_years(self):
+        if not self.adjusted_years:
+            required_data = ['Year']
+            self.verify_required_items(needed=required_data)
+            self._dataframe.assign(**{'Year': self._dataframe['Year']+0.5})
+            self.adjusted_years = True
 
     @classmethod
     def construct_beta_channel(cls, channel, provinciality, age_bins, type):

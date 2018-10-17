@@ -102,7 +102,7 @@ def _parse_site_info(wb, wb_path):
     site_data['census_age_bin'] = AgeBin.from_string(str=age_bin_str)
 
     node_numbers = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_numbers'])
-    invalid_node_numbers = [num for num in node_numbers if (num == AGGREGATED_NODE) or (num != int(num))]
+    invalid_node_numbers = [num for num in node_numbers if (num not in EMPTY) and ((num == AGGREGATED_NODE) or (num != int(num)))]
     if len(invalid_node_numbers) > 0:
         raise SiteNodeMappingException('Invalid node number(s) %s. Must be integers >= 1 .' % invalid_node_numbers)
 
