@@ -32,6 +32,7 @@ AGGREGATED_PROVINCE = 'All'
 DO_POP_SCALING = 'Scaling'
 WEIGHT_CHANNEL = 'weight'
 DEFAULT_WEIGHT = 1.0
+COUNT_CHANNEL = 'effective_count'
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
