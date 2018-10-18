@@ -30,6 +30,8 @@ NON_PROVINCIAL = 'Non-provincial'
 AGGREGATED_NODE = 0  # a reserved node number for non-provincial analysis
 AGGREGATED_PROVINCE = 'All'
 DO_POP_SCALING = 'Scaling'
+WEIGHT_CHANNEL = 'weight'
+DEFAULT_WEIGHT = 1.0
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
@@ -232,10 +234,24 @@ def _parse_reference_data(wb, wb_path):
             csv_data = excel.read_block(ws=ws, range=defined_names[sheet_name]['csv'])
 
             # only keep data rows with no empty values, error on rows that are partially empty (incomplete)
+            # EXCEPTION: 'weight' column MAY be blank. In such a case, fill with weight = DEFAULT_WEIGHT
+            header_row = csv_data[0]
+            try:  # just in case; shouldn't happen
+                weight_index = header_row.index(WEIGHT_CHANNEL)
+            except ValueError:
+                raise IncompleteDataSpecification('%s column must be part of each obs sheet. '
+                                                  'Missing from sheet: %s workbook: %s' %
+                                                  WEIGHT_CHANNEL, sheet_name, wb_path)
             data_rows = list()
             # for row in csv_data:
             for i in range(len(csv_data)):
                 row = csv_data[i]
+
+                # fill in weight with default value if not present, but only fill if the line isn't intentionally blank
+                n_empty = len([item for item in row if item in EMPTY])
+                if n_empty == 1:
+                    row[weight_index] = DEFAULT_WEIGHT if row[weight_index] in EMPTY else row[weight_index]
+
                 n_empty = len([item for item in row if item in EMPTY])
                 if n_empty == 0:
                     # valid data specification
