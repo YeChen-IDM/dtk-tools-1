@@ -25,7 +25,7 @@ def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start
                 Monthly_EIR=monthlyEIRs
             )
         ),
-        Nodeset_Config=NodeSetAll()
+        Nodeset_Config=nodes
     )
 
     if ind_property_restrictions:
