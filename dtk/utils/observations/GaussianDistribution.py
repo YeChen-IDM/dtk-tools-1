@@ -7,8 +7,10 @@ from dtk.utils.observations.PopulationObs import PopulationObs
 
 class GaussianDistribution(BaseDistribution):
 
+    UNCERTAINTY_CHANNEL = 'two_sigma'
+
     def prepare(self, dfw, channel, provinciality, age_bins):
-        dfw = dfw.filter(keep_only=[channel, PopulationObs.WEIGHT_CHANNEL])
+        dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, PopulationObs.WEIGHT_CHANNEL])
         return dfw
 
     def compare(self, df, reference_channel, data_channel):
@@ -20,12 +22,15 @@ class GaussianDistribution(BaseDistribution):
         raw_data = df[reference_channel]
         sim_data = df[data_channel]
 
-        # set the reference data uncertainty and verify that each replicate has the same reference value
-        raw_data_mean = raw_data.mean()
-        if raw_data_mean == list(raw_data)[0]:
-            two_sigma = raw_data_mean / 5
-        else:
-            raise Exception('Could not determine what the raw data uncertainty is since reference data varies between replicates.')
+        two_sigma = df[self.UNCERTAINTY_CHANNEL]
+
+        # ck4, set the default value in the ingest parser
+        # # set the reference data uncertainty and verify that each replicate has the same reference value
+        # raw_data_mean = raw_data.mean()
+        # if raw_data_mean == list(raw_data)[0]:
+        #     two_sigma = raw_data_mean / 5
+        # else:
+        #     raise Exception('Could not determine what the raw data uncertainty is since reference data varies between replicates.')
 
         raw_data_variance = np.divide(two_sigma, 2)**2
 
