@@ -3,6 +3,7 @@ from scipy.special import gammaln
 from scipy.stats import beta
 
 from dtk.utils.observations.BaseDistribution import BaseDistribution
+from dtk.utils.observations.PopulationObs import PopulationObs
 
 
 class BetaDistribution(BaseDistribution):
@@ -11,7 +12,7 @@ class BetaDistribution(BaseDistribution):
         self.alpha_channel, self.beta_channel = dfw.add_beta_parameters(channel=channel,
                                                                         provinciality=provinciality,
                                                                         age_bins=age_bins)
-        dfw = dfw.filter(keep_only=[channel, self.alpha_channel, self.beta_channel])
+        dfw = dfw.filter(keep_only=[channel, self.alpha_channel, self.beta_channel, PopulationObs.WEIGHT_CHANNEL])
         for ch in [self.alpha_channel, self.beta_channel]:
             self.additional_channels.append(ch)
         return dfw

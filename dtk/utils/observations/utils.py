@@ -24,15 +24,9 @@ OBS_SHEET_REGEX = re.compile('^Obs-.+$')
 
 CUSTOM_AGE_BINS = 'Custom'
 ALL_MATCHING_AGE_BINS = 'All matching'
-
-PROVINCIAL = 'Provincial'
-NON_PROVINCIAL = 'Non-provincial'
-AGGREGATED_NODE = 0  # a reserved node number for non-provincial analysis
-AGGREGATED_PROVINCE = 'All'
-DO_POP_SCALING = 'Scaling'
-WEIGHT_CHANNEL = 'weight'
 DEFAULT_WEIGHT = 1.0
-COUNT_CHANNEL = 'effective_count'
+DO_POP_SCALING = 'Scaling'
+
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
     try:
@@ -105,7 +99,7 @@ def _parse_site_info(wb, wb_path):
     site_data['census_age_bin'] = AgeBin.from_string(str=age_bin_str)
 
     node_numbers = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_numbers'])
-    invalid_node_numbers = [num for num in node_numbers if (num not in EMPTY) and ((num == AGGREGATED_NODE) or (num != int(num)))]
+    invalid_node_numbers = [num for num in node_numbers if (num not in EMPTY) and ((num == PopulationObs.AGGREGATED_NODE) or (num != int(num)))]
     if len(invalid_node_numbers) > 0:
         raise SiteNodeMappingException('Invalid node number(s) %s. Must be integers >= 1 .' % invalid_node_numbers)
 
@@ -237,12 +231,12 @@ def _parse_reference_data(wb, wb_path):
             # only keep data rows with no empty values, error on rows that are partially empty (incomplete)
             # EXCEPTION: 'weight' column MAY be blank. In such a case, fill with weight = DEFAULT_WEIGHT
             header_row = csv_data[0]
-            try:  # just in case; shouldn't happen
-                weight_index = header_row.index(WEIGHT_CHANNEL)
+            try:  # just in ca1se; shouldn't happen
+                weight_index = header_row.index(PopulationObs.WEIGHT_CHANNEL)
             except ValueError:
                 raise IncompleteDataSpecification('%s column must be part of each obs sheet. '
                                                   'Missing from sheet: %s workbook: %s' %
-                                                  WEIGHT_CHANNEL, sheet_name, wb_path)
+                                                  (PopulationObs.WEIGHT_CHANNEL, sheet_name, wb_path))
             data_rows = list()
             # for row in csv_data:
             for i in range(len(csv_data)):

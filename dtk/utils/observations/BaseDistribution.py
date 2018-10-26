@@ -11,9 +11,9 @@ class BaseDistribution(object, metaclass=ABCMeta):
     def __init__(self):
         self.additional_channels = []
 
-    # dummy stub that can be overridden if needed
+    @abstractmethod
     def prepare(self, dfw, channel, provinciality, age_bins):
-        return dfw
+        pass
 
     @abstractmethod
     def compare(self, df, reference_channel, data_channel):

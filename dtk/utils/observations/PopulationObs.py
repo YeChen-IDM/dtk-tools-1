@@ -2,9 +2,15 @@ import pandas as pd
 
 from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.DataFrameWrapper import DataFrameWrapper
-from dtk.utils.observations.utils import COUNT_CHANNEL
 
 class PopulationObs(DataFrameWrapper):
+
+    PROVINCIAL = 'Provincial'
+    NON_PROVINCIAL = 'Non-provincial'
+    AGGREGATED_NODE = 0  # a reserved node number for non-provincial analysis
+    AGGREGATED_PROVINCE = 'All'
+    WEIGHT_CHANNEL = 'weight'
+    COUNT_CHANNEL = 'effective_count'
 
     def __init__(self, filename=None, dataframe=None, stratifiers=None):
         super().__init__(filename=filename, dataframe=dataframe, stratifiers=stratifiers)
@@ -77,7 +83,7 @@ class PopulationObs(DataFrameWrapper):
         :param channel: The data channel/column to compute the beta distribution for.
         :return: a list of the channel-associated alpha and beta parameter channel names.
         """
-        required_data = [COUNT_CHANNEL, channel]
+        required_data = [self.COUNT_CHANNEL, channel]
         self.verify_required_items(needed=required_data)
 
         alpha_channel = self.construct_beta_channel(channel=channel, provinciality=provinciality, age_bins=age_bins,
@@ -92,8 +98,8 @@ class PopulationObs(DataFrameWrapper):
                 raise Exception('Channel %s already exists in dataframe.' % ch)
 
         if alpha_channel not in self.channels and beta_channel not in self.channels:
-            alpha = 1 + self._dataframe[channel] * self._dataframe[COUNT_CHANNEL]
-            beta = 1 + (1 - self._dataframe[channel]) * self._dataframe[COUNT_CHANNEL]
+            alpha = 1 + self._dataframe[channel] * self._dataframe[self.COUNT_CHANNEL]
+            beta = 1 + (1 - self._dataframe[channel]) * self._dataframe[self.COUNT_CHANNEL]
             self._dataframe = self._dataframe.join(pd.DataFrame({alpha_channel: alpha, beta_channel: beta}))
             self.derived_items += new_channels
         return new_channels

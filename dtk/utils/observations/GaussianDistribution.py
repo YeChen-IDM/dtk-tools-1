@@ -2,9 +2,14 @@ import math
 import numpy as np
 
 from dtk.utils.observations.BaseDistribution import BaseDistribution
+from dtk.utils.observations.PopulationObs import PopulationObs
 
 
 class GaussianDistribution(BaseDistribution):
+
+    def prepare(self, dfw, channel, provinciality, age_bins):
+        dfw = dfw.filter(keep_only=[channel, PopulationObs.WEIGHT_CHANNEL])
+        return dfw
 
     def compare(self, df, reference_channel, data_channel):
         # Note: Might be called extra times by pandas on apply for purposes of "optimization"
