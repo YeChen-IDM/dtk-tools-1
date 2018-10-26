@@ -68,7 +68,7 @@ class CompsExperimentManager(BaseExperimentManager):
         subdirectory = experiment_name[0:self.MAX_SUBDIRECTORY_LENGTH] + '_' + timestamp()
         config = Configuration(
             environment_name=SetupParser.get('environment'),
-            simulation_input_args=self.commandline.Options,
+            simulation_input_args=self.commandline.Options+" "+self.commandline.Params,
             working_directory_root=os.path.join(SetupParser.get('sim_root'), subdirectory),
             executable_path=self.commandline.Executable,
             node_group_name=SetupParser.get('node_group'),

@@ -56,7 +56,7 @@ def retrieve_data(simulation, analyzers, cache):
                                  "Simulation: {} \n"
                                  "Analyzers: {}\n"
                                  "Files: {}\n"
-                                 "\n{}".format(simulation, ", ".join(analyzers), ", ".join(filenames), tb))
+                                 "\n{}".format(simulation, ", ".join([a.uid for a in analyzers]), ", ".join(filenames), tb))
         return
 
     # Selected data will be a dict with analyzer.uid => data
