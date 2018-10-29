@@ -11,6 +11,7 @@ class GaussianDistribution(BaseDistribution):
 
     def prepare(self, dfw, channel, provinciality, age_bins):
         dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, PopulationObs.WEIGHT_CHANNEL])
+        self.additional_channels.append(self.UNCERTAINTY_CHANNEL)
         return dfw
 
     def compare(self, df, reference_channel, data_channel):
@@ -23,6 +24,9 @@ class GaussianDistribution(BaseDistribution):
         sim_data = df[data_channel]
 
         two_sigma = df[self.UNCERTAINTY_CHANNEL]
+        if len(two_sigma.unique()) != 1:
+            raise Exception('Could not determine what the raw data uncertainty is since reference data varies between replicates.')
+        two_sigma = list(two_sigma)[0]
 
         # ck4, set the default value in the ingest parser
         # # set the reference data uncertainty and verify that each replicate has the same reference value
