@@ -28,13 +28,7 @@ class GaussianDistribution(BaseDistribution):
             raise Exception('Could not determine what the raw data uncertainty is since reference data varies between replicates.')
         two_sigma = list(two_sigma)[0]
 
-        # ck4, set the default value in the ingest parser
-        # # set the reference data uncertainty and verify that each replicate has the same reference value
-        # raw_data_mean = raw_data.mean()
-        # if raw_data_mean == list(raw_data)[0]:
-        #     two_sigma = raw_data_mean / 5
-        # else:
-        #     raise Exception('Could not determine what the raw data uncertainty is since reference data varies between replicates.')
+        # ck4, set the default value for uncertainty in the ingest parser
 
         raw_data_variance = np.divide(two_sigma, 2)**2
 
