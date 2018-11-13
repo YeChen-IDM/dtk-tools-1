@@ -67,6 +67,7 @@ class TestCalibrationIngest(unittest.TestCase):
             self.assertRaises(ingest_utils.InvalidAnalyzerWeight,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
+
     # reference data parsing
 
 
@@ -84,6 +85,7 @@ class TestCalibrationIngest(unittest.TestCase):
         self.assertRaises(ingest_utils.UnsupportedFileFormat,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
+    # ck4, update this test with the latest ingest form
     def test_a_properly_filled_xlsm_sheet(self):
         filename = os.path.join(self.data_directory, 'properly_filled.xlsm')
         params, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
