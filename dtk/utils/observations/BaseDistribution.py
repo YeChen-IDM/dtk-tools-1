@@ -14,7 +14,7 @@ class BaseDistribution(object, metaclass=ABCMeta):
         self.additional_channels = []
 
     @abstractmethod
-    def prepare(self, dfw, channel, provinciality, age_bins):
+    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel):
         pass
 
     @abstractmethod

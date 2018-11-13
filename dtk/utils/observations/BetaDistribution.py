@@ -3,16 +3,28 @@ from scipy.special import gammaln
 from scipy.stats import beta
 
 from dtk.utils.observations.BaseDistribution import BaseDistribution
-from dtk.utils.observations.PopulationObs import PopulationObs
 
 
 class BetaDistribution(BaseDistribution):
+    class InvalidEffectiveCount(Exception): pass
 
-    def prepare(self, dfw, channel, provinciality, age_bins):
+    COUNT_CHANNEL = 'effective_count'
+
+    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel):
+        # First verify that the data row counts are set properly (all > 0)
+        try:
+            counts = dfw._dataframe[self.COUNT_CHANNEL]
+            n_invalid_counts = counts.where(counts <= 0).count()
+        except KeyError:
+            n_invalid_counts = len(dfw._dataframe.index)
+        if n_invalid_counts > 0:
+            raise self.InvalidEffectiveCount('All %s values must be present and positive (>0) for beta distributions.' %
+                                             self.COUNT_CHANNEL)
+
         self.alpha_channel, self.beta_channel = dfw.add_beta_parameters(channel=channel,
                                                                         provinciality=provinciality,
                                                                         age_bins=age_bins)
-        dfw = dfw.filter(keep_only=[channel, self.alpha_channel, self.beta_channel, PopulationObs.WEIGHT_CHANNEL])
+        dfw = dfw.filter(keep_only=[channel, self.alpha_channel, self.beta_channel, weight_channel])
         for ch in [self.alpha_channel, self.beta_channel]:
             self.additional_channels.append(ch)
         return dfw

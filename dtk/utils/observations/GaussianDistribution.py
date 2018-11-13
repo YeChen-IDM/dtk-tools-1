@@ -2,15 +2,25 @@ import math
 import numpy as np
 
 from dtk.utils.observations.BaseDistribution import BaseDistribution
-from dtk.utils.observations.PopulationObs import PopulationObs
 
 
 class GaussianDistribution(BaseDistribution):
+    class InvalidUncertaintyException(Exception): pass
 
     UNCERTAINTY_CHANNEL = 'two_sigma'
 
-    def prepare(self, dfw, channel, provinciality, age_bins):
-        dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, PopulationObs.WEIGHT_CHANNEL])
+    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel):
+        # First verify that the data row uncertainties are set properly (all > 0)
+        try:
+            uncertainties = dfw._dataframe[self.UNCERTAINTY_CHANNEL]
+            n_invalid_uncertainties = uncertainties.where(uncertainties <= 0).count()
+        except KeyError:
+            n_invalid_uncertainties = len(dfw._dataframe.index)
+        if n_invalid_uncertainties > 0:
+            raise self.InvalidUncertaintyException('All %s values must be present and positive (>0) for gaussian distributions.' %
+                                                   self.UNCERTAINTY_CHANNEL)
+
+        dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, weight_channel])
         self.additional_channels.append(self.UNCERTAINTY_CHANNEL)
         return dfw
 
