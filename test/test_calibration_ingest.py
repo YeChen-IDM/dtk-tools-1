@@ -84,7 +84,6 @@ class TestCalibrationIngest(unittest.TestCase):
         self.assertRaises(ingest_utils.UnsupportedFileFormat,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
-
     def test_a_properly_filled_xlsm_sheet(self):
         filename = os.path.join(self.data_directory, 'properly_filled.xlsm')
         params, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
@@ -169,13 +168,36 @@ class TestCalibrationIngest(unittest.TestCase):
         reference, expected_reference = self.ensure_same_column_order(reference, expected_reference)
         self.assertTrue(reference.equals(expected_reference))
 
-
     def ensure_same_column_order(self, dfw1, dfw2):
         self.assertEqual(sorted(dfw1._dataframe.columns), sorted(dfw2._dataframe.columns))
         reordered_columns = sorted(dfw1._dataframe.columns)
         dfw1._dataframe = dfw1._dataframe[reordered_columns]
         dfw2._dataframe = dfw2._dataframe[reordered_columns]
         return dfw1, dfw2
+
+
+    # observational data - weight value parsing - HIV issue 62
+
+
+    def test_fail_if_obs_data_missing_weight_column(self):
+        filename = os.path.join(self.data_directory, 'obs_data_missing_weight_column.xlsm')
+        self.assertRaises(ingest_utils.IncompleteDataSpecification,
+                          ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+
+    def test_obs_data_specified_and_default_weights_are_correctly_parsed(self):
+        filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
+        params, site_info, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+
+        # now check reference data for correctness of obs weights
+        expected = {
+            'Prevalence': [1, 1, 2.2],
+            'Incidence': [0.2, 1, 3]
+        }
+        for channel, expected_vals in expected.items():
+            # considering data from sheets individually
+            ref = reference.filter(keep_only=[channel, PopulationObs.WEIGHT_CHANNEL])
+            actual = ref._dataframe[PopulationObs.WEIGHT_CHANNEL]
+            self.assertTrue((expected_vals == actual).all())
 
 
 if __name__ == '__main__':
