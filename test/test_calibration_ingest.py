@@ -197,7 +197,39 @@ class TestCalibrationIngest(unittest.TestCase):
             # considering data from sheets individually
             ref = reference.filter(keep_only=[channel, PopulationObs.WEIGHT_CHANNEL])
             actual = ref._dataframe[PopulationObs.WEIGHT_CHANNEL]
-            self.assertTrue((expected_vals == actual).all())
+            self.assertTrue((actual == expected_vals).all())
+
+
+    # site info parsing - HIV issue 63
+
+
+    def test_site_info_invalid_node_number(self):
+        filename = os.path.join(self.data_directory, 'site_info_invalid_node_number.xlsm')
+        self.assertRaises(ingest_utils.SiteNodeMappingException,
+                          ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+
+    def test_site_info_missing_node_number(self):
+        filename = os.path.join(self.data_directory, 'site_info_missing_node_number.xlsm')
+        self.assertRaises(ingest_utils.SiteNodeMappingException,
+                          ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+
+    def test_site_info_missing_node_name(self):
+        filename = os.path.join(self.data_directory, 'site_info_missing_node_name.xlsm')
+        self.assertRaises(ingest_utils.SiteNodeMappingException,
+                          ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+
+    def test_site_info_valid_data_parsed(self):
+        filename = os.path.join(self.data_directory, 'site_info_valid_data.xlsm')
+        params, site_info, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+
+        expected = {
+            'site_name': 'Chile',
+            'census_year': 2017,
+            'census_population': 17574003,
+            'census_age_bin': AgeBin(start=0, end=100)
+        }
+        for k, expected_value in expected.items():
+            self.assertEqual(site_info[k], expected_value)
 
 
 if __name__ == '__main__':

@@ -84,7 +84,6 @@ def _parse_obs_metadata(wb, wb_path):
     return obs_metadata
 
 
-# ck4, add tests
 def _parse_site_info(wb, wb_path):
     defined_names = excel.DefinedName.load_from_workbook(wb)
     site_sheetname = 'Site'
