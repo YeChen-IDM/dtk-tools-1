@@ -10,17 +10,11 @@ import dtk.utils.observations.utils as ingest_utils
 class TestCalibrationIngest(unittest.TestCase):
     def setUp(self):
         self.data_directory = os.path.join(os.path.dirname(__file__), 'input', 'Excel', 'ingest')
-        # self.test_excel_file = os.path.join(self.data_directory, 'test.xlsm')
-        # self.wb = openpyxl.load_workbook(self.test_excel_file)
-        # self.defined_names = excel.DefinedName.load_from_workbook(self.wb)
-
 
     def tearDown(self):
         pass
 
-
     # parameter parsing
-
 
     def test_fail_if_parameters_have_missing_values(self):
         filenames = ['missing_parameter_values_dynamic.xlsm', 'missing_parameter_values_name.xlsm']
@@ -36,7 +30,6 @@ class TestCalibrationIngest(unittest.TestCase):
             self.assertRaises(ingest_utils.ParameterOutOfRange,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
-
     def test_fail_if_parameter_has_non_numeric_value(self):
         filenames = ['parameter_has_non_numeric_value.xlsm']
         for filename in filenames:
@@ -44,9 +37,7 @@ class TestCalibrationIngest(unittest.TestCase):
             self.assertRaises(ingest_utils.ParameterOutOfRange,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
-
     # analyzer parsing
-
 
     def test_fail_if_analyzers_have_missing_values(self):
         filenames = ['missing_analyzer_values_age_bins.xlsm',
@@ -67,18 +58,14 @@ class TestCalibrationIngest(unittest.TestCase):
             self.assertRaises(ingest_utils.InvalidAnalyzerWeight,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
-
     # reference data parsing
-
 
     def test_fail_if_reference_data_has_missing_values(self):
         filename = os.path.join(self.data_directory, 'missing_reference_values.xlsm')
         self.assertRaises(ingest_utils.IncompleteDataSpecification,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
 
-
     # other
-
 
     def test_fail_if_not_parsing_an_xlsm_file(self):
         filename = os.path.join(self.data_directory, 'not_a_xlsm_file.csv')
@@ -202,9 +189,7 @@ class TestCalibrationIngest(unittest.TestCase):
         dfw2._dataframe = dfw2._dataframe[reordered_columns]
         return dfw1, dfw2
 
-
     # observational data - weight value parsing - HIV issue 62
-
 
     def test_fail_if_obs_data_missing_weight_column(self):
         filename = os.path.join(self.data_directory, 'obs_data_missing_weight_column.xlsm')
@@ -226,9 +211,7 @@ class TestCalibrationIngest(unittest.TestCase):
             actual = ref._dataframe[PopulationObs.WEIGHT_CHANNEL]
             self.assertTrue((actual == expected_vals).all())
 
-
     # site info parsing - HIV issue 63
-
 
     def test_site_info_invalid_node_number(self):
         filename = os.path.join(self.data_directory, 'site_info_invalid_node_number.xlsm')
