@@ -21,10 +21,11 @@ class BetaDistribution(BaseDistribution):
             raise self.InvalidEffectiveCount('All %s values must be present and positive (>0) for beta distributions.' %
                                              self.COUNT_CHANNEL)
 
+        # filter before adding beta params to make sure to not alter the input dfw parameter object
+        dfw = dfw.filter(keep_only=[channel, self.COUNT_CHANNEL, weight_channel])
         self.alpha_channel, self.beta_channel = dfw.add_beta_parameters(channel=channel,
                                                                         provinciality=provinciality,
                                                                         age_bins=age_bins)
-        dfw = dfw.filter(keep_only=[channel, self.alpha_channel, self.beta_channel, weight_channel])
         for ch in [self.alpha_channel, self.beta_channel]:
             self.additional_channels.append(ch)
         return dfw
