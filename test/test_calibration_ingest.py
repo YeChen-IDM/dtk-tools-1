@@ -87,31 +87,52 @@ class TestCalibrationIngest(unittest.TestCase):
 
     # ck4, update this test with the latest ingest form
     def test_a_properly_filled_xlsm_sheet(self):
+        from dtk.utils.observations.BetaDistribution import BetaDistribution
+
         filename = os.path.join(self.data_directory, 'properly_filled.xlsm')
-        params, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+        params, site_info, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+
+        # check site info
+        expected = {
+            'site_name': 'Chile',
+            'census_population': 17574003,
+            'census_year': 2017,
+            'census_age_bin': AgeBin(start=0, end=100),
+            'node_map': {
+                1: 'Atacama',
+                2: 'Antofagasta',
+                3: 'Coquimbo'
+            }
+        }
+
+        self.assertTrue(isinstance(site_info, dict))
+        self.assertEqual(site_info, expected)
 
         # check analyzers
         expected = [
             {
                 'channel': 'Prevalence',
-                'distribution': 'Gaussian',
+                'distribution': 'Beta',
                 'provinciality': 'Provincial',
                 'weight': 0.5,
-                'age_bins': AgeBin.ALL
+                'age_bins': AgeBin.ALL,
+                'scale_population': False
             },
             {
                 'channel': 'Prevalence',
-                'distribution': 'Gaussian',
+                'distribution': 'Beta',
                 'provinciality': 'Non-provincial',
                 'weight': 0.25,
-                'age_bins': '[15:50);[50:100)'
+                'age_bins': '[15:50);[50:100)',
+                'scale_population': False
             },
             {
                 'channel': 'Prevalence',
-                'distribution': 'Gaussian',
+                'distribution': 'Beta',
                 'provinciality': 'Non-provincial',
                 'weight': 0.25,
-                'age_bins': AgeBin.ALL
+                'age_bins': AgeBin.ALL,
+                'scale_population': False
             }
             ]
 
@@ -152,7 +173,7 @@ class TestCalibrationIngest(unittest.TestCase):
         self.assertEqual(sorted(reference.stratifiers), sorted(expected_stratifiers))
 
         # non-stratifier columns in the dataframe
-        expected_channels = ['Prevalence'] #, 'confidence_interval']
+        expected_channels = [PopulationObs.WEIGHT_CHANNEL, BetaDistribution.COUNT_CHANNEL, 'Prevalence']
         self.assertEqual(sorted(reference.channels), sorted(expected_channels))
 
         n_expected_rows = 4
@@ -160,10 +181,14 @@ class TestCalibrationIngest(unittest.TestCase):
 
         # data check
         data = [
-            {'Year': 2005, 'Gender': 'Male', 'AgeBin': '[0:99)', 'Province': 'Washington', 'Prevalence': 0.25}, #, 'confidence_interval': 0.05},
-            {'Year': 2005, 'Gender': 'Female', 'AgeBin': '[0:99)', 'Province': 'Washington', 'Prevalence': 0.2}, #, 'confidence_interval': 0.04},
-            {'Year': 2010, 'Gender': 'Male', 'AgeBin': '[5:15)', 'Province': 'Washington', 'Prevalence': 0.3}, #, 'confidence_interval': 0.07},
-            {'Year': 2010, 'Gender': 'Female', 'AgeBin': '[15:25)', 'Province': 'Oregon', 'Prevalence': 0.33}, #, 'confidence_interval': 0.08},
+            {'Year': 2005, 'Gender': 'Male', 'AgeBin': '[0:99)', 'Province': 'Washington', 'Prevalence': 0.25,
+             PopulationObs.WEIGHT_CHANNEL: 2, BetaDistribution.COUNT_CHANNEL: 1},
+            {'Year': 2005, 'Gender': 'Female', 'AgeBin': '[0:99)', 'Province': 'Washington', 'Prevalence': 0.2,
+             PopulationObs.WEIGHT_CHANNEL: 4.4, BetaDistribution.COUNT_CHANNEL: 3},
+            {'Year': 2010, 'Gender': 'Male', 'AgeBin': '[5:15)', 'Province': 'Washington', 'Prevalence': 0.3,
+             PopulationObs.WEIGHT_CHANNEL: 1, BetaDistribution.COUNT_CHANNEL: 6},
+            {'Year': 2010, 'Gender': 'Female', 'AgeBin': '[15:25)', 'Province': 'Oregon', 'Prevalence': 0.33,
+             PopulationObs.WEIGHT_CHANNEL: 1, BetaDistribution.COUNT_CHANNEL: 7},
         ]
         df = pd.DataFrame(data)
         expected_reference = PopulationObs(dataframe=df, stratifiers=expected_stratifiers)
