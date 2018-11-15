@@ -24,7 +24,7 @@ class TestDistributions(unittest.TestCase):
         data = [{'some_value': 1, PopulationObs.WEIGHT_CHANNEL: 1}, {'some_value': 2, PopulationObs.WEIGHT_CHANNEL: 1}]
         dfw = PopulationObs(dataframe=pd.DataFrame(data))
         distribution = BetaDistribution()
-        self.assertRaises(BetaDistribution.InvalidEffectiveCount, distribution.prepare,
+        self.assertRaises(BetaDistribution.InvalidEffectiveCountException, distribution.prepare,
                           dfw=dfw, channel='some_value', provinciality=PopulationObs.PROVINCIAL, age_bins=[],
                           weight_channel=PopulationObs.WEIGHT_CHANNEL)
 
@@ -33,7 +33,7 @@ class TestDistributions(unittest.TestCase):
                            {'some_value': 4.1, BetaDistribution.COUNT_CHANNEL: 50.1, PopulationObs.WEIGHT_CHANNEL: 3}])
         dfw = PopulationObs(dataframe=df)
         distribution = BetaDistribution()
-        self.assertRaises(BetaDistribution.InvalidEffectiveCount, distribution.prepare,
+        self.assertRaises(BetaDistribution.InvalidEffectiveCountException, distribution.prepare,
                           dfw=dfw, channel='some_value', provinciality=PopulationObs.PROVINCIAL, age_bins=[],
                           weight_channel=PopulationObs.WEIGHT_CHANNEL)
 
@@ -44,6 +44,17 @@ class TestDistributions(unittest.TestCase):
         distribution = BetaDistribution()
         distribution.prepare(dfw=dfw, channel='some_value', provinciality=PopulationObs.PROVINCIAL, age_bins=[],
                              weight_channel=PopulationObs.WEIGHT_CHANNEL)
+
+    def test_fail_if_Count_channel_used(self):
+        # count channel is present and all valid
+        df = pd.DataFrame([{'some_value': 6.2, 'Count': 1, PopulationObs.WEIGHT_CHANNEL: 1},
+                           {'some_value': 7.3, 'Count': 50.1, PopulationObs.WEIGHT_CHANNEL: 2}])
+        dfw = PopulationObs(dataframe=df)
+        distribution = BetaDistribution()
+        self.assertRaises(BetaDistribution.InvalidCountChannelException,
+                          distribution.prepare,
+                          dfw=dfw, channel='some_value', provinciality=PopulationObs.PROVINCIAL, age_bins=[],
+                          weight_channel=PopulationObs.WEIGHT_CHANNEL)
 
     #
     # GaussianDistribution tests

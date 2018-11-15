@@ -6,11 +6,18 @@ from dtk.utils.observations.BaseDistribution import BaseDistribution
 
 
 class BetaDistribution(BaseDistribution):
-    class InvalidEffectiveCount(Exception): pass
+    class InvalidEffectiveCountException(Exception): pass
+    class InvalidCountChannelException(Exception): pass
 
     COUNT_CHANNEL = 'effective_count'
 
     def prepare(self, dfw, channel, provinciality, age_bins, weight_channel):
+        # help people correct their old habits; 'Count' has been replaced with 'effective_count'
+        if 'Count' in (dfw.stratifiers + dfw.channels):
+            raise self.InvalidCountChannelException('Count is no longer used as a channel. '
+                                             'Add %s to the additional columns list in your ingest form instead.' %
+                                             self.COUNT_CHANNEL)
+
         # First verify that the data row counts are set properly (all > 0)
         try:
             counts = dfw._dataframe[self.COUNT_CHANNEL]
@@ -18,8 +25,8 @@ class BetaDistribution(BaseDistribution):
         except KeyError:
             n_invalid_counts = len(dfw._dataframe.index)
         if n_invalid_counts > 0:
-            raise self.InvalidEffectiveCount('All %s values must be present and positive (>0) for beta distributions.' %
-                                             self.COUNT_CHANNEL)
+            raise self.InvalidEffectiveCountException('All %s values must be present and positive (>0) for beta distributions.' %
+                                                      self.COUNT_CHANNEL)
 
         # filter before adding beta params to make sure to not alter the input dfw parameter object
         dfw = dfw.filter(keep_only=[channel, self.COUNT_CHANNEL, weight_channel])
