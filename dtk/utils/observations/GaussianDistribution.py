@@ -9,7 +9,8 @@ class GaussianDistribution(BaseDistribution):
 
     UNCERTAINTY_CHANNEL = 'two_sigma'
 
-    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel):
+    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel, additional_keep=None):
+        additional_keep = additional_keep or []
         # First verify that the data row uncertainties are set properly (all > 0)
         try:
             uncertainties = dfw._dataframe[self.UNCERTAINTY_CHANNEL]
@@ -20,7 +21,7 @@ class GaussianDistribution(BaseDistribution):
             raise self.InvalidUncertaintyException('All %s values must be present and positive (>0) for gaussian distributions.' %
                                                    self.UNCERTAINTY_CHANNEL)
 
-        dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, weight_channel])
+        dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, weight_channel]+additional_keep)
         self.additional_channels.append(self.UNCERTAINTY_CHANNEL)
         return dfw
 

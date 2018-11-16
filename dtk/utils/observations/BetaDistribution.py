@@ -11,7 +11,9 @@ class BetaDistribution(BaseDistribution):
 
     COUNT_CHANNEL = 'effective_count'
 
-    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel):
+    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel, additional_keep=None):
+        additional_keep = additional_keep or []
+
         # help people correct their old habits; 'Count' has been replaced with 'effective_count'
         if 'Count' in (dfw.stratifiers + dfw.channels):
             raise self.InvalidCountChannelException('Count is no longer used as a channel. '
@@ -29,7 +31,7 @@ class BetaDistribution(BaseDistribution):
                                                       self.COUNT_CHANNEL)
 
         # filter before adding beta params to make sure to not alter the input dfw parameter object
-        dfw = dfw.filter(keep_only=[channel, self.COUNT_CHANNEL, weight_channel])
+        dfw = dfw.filter(keep_only=[channel, self.COUNT_CHANNEL, weight_channel]+additional_keep)
         self.alpha_channel, self.beta_channel = dfw.add_beta_parameters(channel=channel,
                                                                         provinciality=provinciality,
                                                                         age_bins=age_bins)
