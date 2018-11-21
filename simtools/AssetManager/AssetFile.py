@@ -16,7 +16,7 @@ class AssetFile:
         self.file_name = os.path.normpath(file_name)
 
         self.absolute_path = absolute_path or os.path.join(os.getcwd(), self.relative_path, file_name)
-        self.is_local = False
+        # self.content = None
 
     @property
     def md5(self):

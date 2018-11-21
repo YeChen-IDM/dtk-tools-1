@@ -34,6 +34,11 @@ class FileList:
         from simtools.Utilities.COMPSUtilities import translate_COMPS_path
         path = translate_COMPS_path(path)
 
+        # If already present -> bypass
+        for f in self.files:
+            if f.absolute_path == path:
+                return
+
         if os.path.isdir(path):
             raise ValueError("%s is a directory. add_file is expecting a file!" % path)
 
