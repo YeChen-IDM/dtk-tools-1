@@ -1,13 +1,16 @@
+import json
+
 from models.generic.GenericConfigBuilder import GenericConfigBuilder
 from simtools.AssetManager.FileList import FileList
 
 
 class PyModConfigBuilder(GenericConfigBuilder):
 
-    def __init__(self, python_file, input_files=None, additional_assets=None):
+    def __init__(self, python_file, input_files=None, additional_assets=None, config_name="config.json"):
         super().__init__(command="run.bat")
 
         self.input_files = input_files or FileList()
+        self.config_name = config_name
         self.assets.experiment_files = additional_assets or FileList()
         self.python_file_basename, self.python_file_contents = self.open_file(python_file)
 
@@ -22,4 +25,11 @@ class PyModConfigBuilder(GenericConfigBuilder):
             if input_file.file_name.lower() in ("comps_log.log", "simtools.ini", "stdout.txt", "stderr.txt"): continue
             write_fn(input_file.file_name, open(input_file.absolute_path).read())
 
+        # Write the config file
+        write_fn(self.config_name, json.dumps(self.config))
+
         write_fn("run.bat", "C:\\Python36\\python.exe -E {}".format(self.python_file_basename))
+
+    def set_param(self, param, value):
+        self.config[param] = value
+        return {param: value}

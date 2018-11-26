@@ -31,8 +31,8 @@ class Node:
             self.density = self.default_density
 
     def __repr__(self):
-        return '%s: (%0.3f,%0.2f), pop=%s, per km^2=%d' % (
-        self.name, self.lat, self.lon, "{:,}".format(self.pop), self.density)
+        return f"{self.name} - ({self.lat},{self.lon})"
+
 
     def to_dict(self):
         d = {'Latitude': float(self.lat),
@@ -43,6 +43,7 @@ class Node:
 
         d.update(self.extra_attributes)
         return d
+
 
     def to_tuple(self):
         return self.lat, self.lon, self.pop

@@ -7,7 +7,6 @@ Currently, all files read via .from_directory() are merged into ONE dataframe.
 import os
 import pandas as pd
 
-from dtk.utils.observations.Channel import Channel
 from dtk.utils.observations.Condition import Condition
 from simtools.Utilities.General import caller_name
 
@@ -21,6 +20,7 @@ class DataFrameWrapper:
     CSV = 'csv'
 
     def __init__(self, filename=None, dataframe=None, stratifiers=None):
+        stratifiers = stratifiers or []
         if not ((filename is None) ^ (dataframe is None)):
             raise ValueError('filename or dataframe must be provided')
         if dataframe is not None:
@@ -34,26 +34,13 @@ class DataFrameWrapper:
                 raise self.UnsupportedFileType('Unsupported file type for reading: %s' % file_type)
         self._dataframe.reset_index(drop=True, inplace=True)
 
-        if not stratifiers:
-            # determine stratifying channels and remove stratifying decoration from channel names
-            stratifiers = []
-            self.data_channels = []
-            columns = list(self._dataframe.columns)
-            for i in range(0, len(columns)):
-                channel = Channel(columns[i])
-                if channel.is_stratifier:
-                    stratifiers.append(channel.name)
-                    columns[i] = channel.name
-                else:
-                    self.data_channels.append(channel.name)
-            self._dataframe.columns = columns
-        else:
-            # use provided stratifier list
-            if not isinstance(stratifiers, list):
-                stratifiers = [stratifiers]
-            missing_stratifiers = [s for s in stratifiers if s not in self._dataframe.columns]
-            if len(missing_stratifiers) > 0:
-                raise self.MissingRequiredData('Specified stratifier(s): %s not in dataframe.' % missing_stratifiers)
+        # use provided stratifier list
+        if not isinstance(stratifiers, list):
+            stratifiers = [stratifiers]
+        missing_stratifiers = [s for s in stratifiers if s not in self._dataframe.columns]
+        if len(missing_stratifiers) > 0:
+            raise self.MissingRequiredData('Specified stratifier(s): %s not in dataframe.' % missing_stratifiers)
+
         self.stratifiers = sorted(set(stratifiers))
         self.data_channels = sorted(set(self._dataframe.columns) - set(self.stratifiers))
 
@@ -67,7 +54,8 @@ class DataFrameWrapper:
 
     def filter(self, conditions=None, keep_only=None):
         """
-        Selects rows from the internal dataframe that satisfy all provided conditions
+        Selects rows from the internal dataframe that satisfy all provided conditions. The stratifiers
+        of the result will exclude current-object stratifiers that contain NaN in the resulting rows.
         :param conditions: an iterator (e.g. list) of tuples/triplets specifying (in order) stratifier, operator, value.
                 e.g. ['min_age', operator.ge, 25] (to select rows where 'min_age' is >= 25)
         :param keep_only: If not None, then is a list of data channels to keep (in addition to stratifiers)
@@ -90,7 +78,13 @@ class DataFrameWrapper:
             kept_non_stratifiers = list(set(kept_channels) - set(self.stratifiers))
             self.verify_required_items(needed=kept_channels)
             filtered_df = filtered_df[kept_channels].dropna(subset=kept_non_stratifiers)
-        return type(self)(dataframe=filtered_df, stratifiers=self.stratifiers)
+
+        # detect and drop any NaN-containing (extraneous) columns/stratifiers now that NaN containing
+        # rows have been removed
+        filtered_df = filtered_df.dropna(axis='columns')
+        stratifiers = list(set(filtered_df.columns) - set(kept_non_stratifiers))
+
+        return type(self)(dataframe=filtered_df, stratifiers=stratifiers)
 
     def merge(self, other_dfw, index, keep_only=None):
         """

@@ -5,7 +5,9 @@ import re
 import tempfile
 import dtk.utils.io.excel as excel
 
+from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.PopulationObs import PopulationObs
+
 
 class UnsupportedFileFormat(Exception): pass
 class MissingRequiredWorksheet(Exception): pass
@@ -14,9 +16,16 @@ class IncompleteAnalyzerSpecification(Exception): pass
 class IncompleteDataSpecification(Exception): pass
 class ParameterOutOfRange(Exception): pass
 class InvalidAnalyzerWeight(Exception): pass
+class AnalyzerSheetException(Exception): pass
+class SiteNodeMappingException(Exception): pass
 
 EMPTY = [None, '', '--select--']  # not sure if this could be something else
 OBS_SHEET_REGEX = re.compile('^Obs-.+$')
+
+CUSTOM_AGE_BINS = 'Custom'
+ALL_MATCHING_AGE_BINS = 'All matching'
+DEFAULT_WEIGHT = 1.0
+DO_POP_SCALING = 'Scaling'
 
 
 def get_sheet_from_workbook(wb, sheet_name, wb_path):
@@ -34,16 +43,73 @@ def parse_ingest_data_from_xlsm(filename):
         raise UnsupportedFileFormat('Provided ingest file not a .xlsm file.')
     wb = openpyxl.load_workbook(filename)
 
+    # parse observational metadata, including whether to pop scale sim channels
+    obs_metadata = _parse_obs_metadata(wb, wb_path=filename)
+
     # parse params info into a list of dicts
     params = _parse_parameters(wb, wb_path=filename)
 
     # parse analyzer info
     analyzers = _parse_analyzers(wb, wb_path=filename)
 
+    # parse site info, primarily for pop scaling
+    site_info = _parse_site_info(wb, wb_path=filename)
+
     # parse obs data into a temporary directory of files and then load it
     reference = _parse_reference_data(wb, wb_path=filename)
 
-    return params, reference, analyzers
+    # add pop scaling data to each analyzer specification
+    for analyzer in analyzers:
+        analyzer['scale_population'] = obs_metadata['scale_population'][analyzer['channel']]
+
+    return params, site_info, reference, analyzers
+
+
+# ck4, add tests
+def _parse_obs_metadata(wb, wb_path):
+    defined_names = excel.DefinedName.load_from_workbook(wb)
+    site_sheetname = 'Observations metadata'
+    ws = get_sheet_from_workbook(wb, sheet_name=site_sheetname, wb_path=wb_path)
+
+    obs_metadata = {}
+
+    channels = excel.read_list(ws=ws, range=defined_names[site_sheetname]['obs_data_channels'])
+    pop_scaling = excel.read_list(ws=ws, range=defined_names[site_sheetname]['channel_pop_scaling'])
+
+    scaling_tuples = list(zip(channels, pop_scaling))
+    for scaling_tuple in scaling_tuples:
+        if (scaling_tuple[0] in EMPTY) ^ (scaling_tuple[1] in EMPTY):
+            raise SiteNodeMappingException('Channel names and pop. scaling selections must map 1-1.')
+    obs_metadata['scale_population'] = {t[0]: t[1] == DO_POP_SCALING for t in scaling_tuples if t[0] not in EMPTY}
+    return obs_metadata
+
+
+def _parse_site_info(wb, wb_path):
+    defined_names = excel.DefinedName.load_from_workbook(wb)
+    site_sheetname = 'Site'
+    ws = get_sheet_from_workbook(wb, sheet_name=site_sheetname, wb_path=wb_path)
+
+    site_data = {}
+
+    site_data['site_name'] = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_name'])[0]
+    site_data['census_population'] = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_population'])[0]
+    site_data['census_year'] = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_year'])[0]
+    age_bin_str = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_age_bin'])[0]
+    site_data['census_age_bin'] = AgeBin.from_string(str=age_bin_str)
+
+    node_numbers = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_numbers'])
+    invalid_node_numbers = [num for num in node_numbers if (num not in EMPTY) and ((num == PopulationObs.AGGREGATED_NODE) or (num != int(num)))]
+    if len(invalid_node_numbers) > 0:
+        raise SiteNodeMappingException('Invalid node number(s) %s. Must be integers >= 1 .' % invalid_node_numbers)
+
+    node_names = excel.read_list(ws=ws, range=defined_names[site_sheetname]['site_node_names'])
+    mapping_tuples = list(zip(node_numbers, node_names))
+    for mapping_tuple in mapping_tuples:
+        if (mapping_tuple[0] in EMPTY) ^ (mapping_tuple[1] in EMPTY):
+            raise SiteNodeMappingException('Node numbers and names must be specified in pairs.')
+    site_data['node_map'] = {t[0]: t[1] for t in mapping_tuples if t[0] not in EMPTY}
+
+    return site_data
 
 
 def _parse_parameters(wb, wb_path):
@@ -96,32 +162,49 @@ def _parse_analyzers(wb, wb_path):
     analyzer_sheetname = 'Analyzers'
     ws = get_sheet_from_workbook(wb, sheet_name=analyzer_sheetname, wb_path=wb_path)
 
-    analyzer_names = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['analyzer_names'])
-    # analyzer_names = [ n for n in analyzer_names if n not in EMPTY]
-    analyzer_weights = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['analyzer_weights'])
-    # analyzer_weights = [ w for w in analyzer_weights if w not in EMPTY]
+    channels = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['channels'])
+    distributions = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['distributions'])
+    provincialities = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['provincialities'])
+    age_bins = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['age_bins'])
+    weights = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['weights'])
+    custom_age_bins = excel.read_list(ws=ws, range=defined_names[analyzer_sheetname]['custom_age_bins'])
 
-    if len(analyzer_names) != len(analyzer_weights):
-        raise Exception('Named range inconsistency on sheet: %s workbook: %s' % (analyzer_sheetname, wb_path))
+    # sheet sanity check
+    for data_list in [channels, distributions, provincialities, age_bins, weights, custom_age_bins]:
+        if len(data_list) != len(channels):
+            raise AnalyzerSheetException('Named range inconsistency on sheet: %s workbook: %s' % (analyzer_sheetname, wb_path))
 
-    analyzer_tuples = list()
-    for i in range(len(analyzer_names)):
-        analyzer_tuple = [analyzer_names[i], analyzer_weights[i]]
-        n_empty = len([item for item in analyzer_tuple if item in EMPTY])
+    analyzer_dicts = list()
+    for i in range(len(channels)):
+        # items to be used as kwargs for instantiating analyzer objects
+        analyzer_dict = {
+            'channel': channels[i],
+            'distribution': distributions[i],
+            'provinciality': provincialities[i],
+            'weight': weights[i]
+        }
+        if age_bins[i] == CUSTOM_AGE_BINS:
+            analyzer_dict['age_bins'] = custom_age_bins[i].split(',')
+        elif age_bins[i] == ALL_MATCHING_AGE_BINS:
+            analyzer_dict['age_bins'] = AgeBin.ALL
+        else:
+            analyzer_dict['age_bins'] = None # missing
+
+        n_empty = len([item for item in analyzer_dict.values() if item in EMPTY])
         if n_empty == 0:
-            # valid analyzer specification
+            # probably a valid analyzer specification
             # now verify that the weight is a number
-            if not isinstance(analyzer_weights[i], numbers.Number):
-                raise InvalidAnalyzerWeight('Analyzer weight is not a number, analyzer: %s' % analyzer_names[i])
-            analyzer_tuples.append(analyzer_tuple)
-        elif n_empty < len(analyzer_tuple):
+            if not isinstance(analyzer_dict['weight'], numbers.Number):
+                raise InvalidAnalyzerWeight('Analyzer weight is not a number, analyzer: %s' % analyzer_dict)
+            analyzer_dicts.append(analyzer_dict)
+        elif n_empty < len(analyzer_dict.values()):
+            print(analyzer_dict.values())
             raise IncompleteAnalyzerSpecification('Incomplete analyzer specification on row %d '
                                                   'of sheet: %s, workbook: %s' % (i, analyzer_sheetname, wb_path))
         else:
             # valid, no analyzer specified on this row
             pass
-    analyzer_dict = dict(analyzer_tuples)
-    return analyzer_dict
+    return analyzer_dicts
 
 
 def _parse_reference_data(wb, wb_path):
@@ -145,10 +228,24 @@ def _parse_reference_data(wb, wb_path):
             csv_data = excel.read_block(ws=ws, range=defined_names[sheet_name]['csv'])
 
             # only keep data rows with no empty values, error on rows that are partially empty (incomplete)
+            # EXCEPTION: 'weight' column MAY be blank. In such a case, fill with weight = DEFAULT_WEIGHT
+            header_row = csv_data[0]
+            try:  # just in ca1se; shouldn't happen
+                weight_index = header_row.index(PopulationObs.WEIGHT_CHANNEL)
+            except ValueError:
+                raise IncompleteDataSpecification('%s column must be part of each obs sheet. '
+                                                  'Missing from sheet: %s workbook: %s' %
+                                                  (PopulationObs.WEIGHT_CHANNEL, sheet_name, wb_path))
             data_rows = list()
             # for row in csv_data:
             for i in range(len(csv_data)):
                 row = csv_data[i]
+
+                # fill in weight with default value if not present, but only fill if the line isn't intentionally blank
+                n_empty = len([item for item in row if item in EMPTY])
+                if n_empty == 1:
+                    row[weight_index] = DEFAULT_WEIGHT if row[weight_index] in EMPTY else row[weight_index]
+
                 n_empty = len([item for item in row if item in EMPTY])
                 if n_empty == 0:
                     # valid data specification

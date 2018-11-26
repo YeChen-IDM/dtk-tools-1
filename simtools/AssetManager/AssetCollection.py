@@ -133,6 +133,7 @@ class AssetCollection(object):
             if not missing or af.md5_checksum not in missing:
                 collection.add_asset(af)
             else:
+                af._md5_checksum = None
                 collection.add_asset(af, file_path=af.absolute_path)
 
         # Calculate MD5 of the collection

@@ -80,3 +80,6 @@ class BaseAnalyzer(object, metaclass=ABCMeta):
         """
         # TODO: normalize the analyzer pattern with the BaseComparisonAnalyzer.plot_comparison
         pass
+
+    def __repr__(self):
+        return self.uid
