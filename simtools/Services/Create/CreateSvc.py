@@ -1,7 +1,7 @@
 import json
 
 from COMPS.Data import WorkItem, WorkItemFile
-from COMPS.Data.WorkItem import WorkerOrPluginKey
+from COMPS.Data.WorkItem import WorkerOrPluginKey, RelationType
 
 from simtools.Utilities.COMPSUtilities import COMPS_login
 
@@ -23,6 +23,7 @@ class CreateSvc:
             files = kwargs['files']
             wo_kwargs = kwargs['wo_kwargs']
             command = kwargs['command']
+            related_experiments = kwargs.get('related_experiments', None)
 
             # Create a WorkItem
             wi = WorkItem(item_name, WorkerOrPluginKey(item_type, plugin_key), comps_env)
@@ -50,5 +51,10 @@ class CreateSvc:
             # Save the work-item to the server
             wi.save()
             wi.refresh()
+
+            # Sets the related experiments
+            if related_experiments:
+                for exp_id in related_experiments:
+                    wi.add_related_experiment(exp_id, RelationType.DependsOn)
 
             return str(wi.id)

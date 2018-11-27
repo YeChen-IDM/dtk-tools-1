@@ -34,5 +34,6 @@ class SSMTAnalysis:
         command += " {}".format(",".join(f"{inspect.getmodulename(inspect.getfile(s.__class__))}.{s.__class__.__name__}"
                                          for s in self.analyzers))
 
-        wim = WorkItemManager(item_name=self.analysis_name, command=command, user_files=self.additional_files)
+        wim = WorkItemManager(item_name=self.analysis_name, command=command, user_files=self.additional_files,
+                              related_experiments=self.experiment_ids)
         wim.execute()

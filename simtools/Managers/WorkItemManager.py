@@ -15,7 +15,7 @@ class WorkItemManager:
 
     def __init__(self, item_name="DockerWorker WorkItem", item_type="DockerWorker",
                  docker_image="ubuntu1804python3dtk", provider="COMPS", type="WI", plugin_key="1.0.0.0_RELEASE",
-                 command=None, user_files=FileList(), tags=None, wo_kwargs=None):
+                 command=None, user_files=FileList(), tags=None, wo_kwargs=None, related_experiments=None):
 
         self.item_name = item_name
         self.item_id = None
@@ -30,6 +30,7 @@ class WorkItemManager:
         self.wo_kwargs = wo_kwargs or {}
         self.command = command
         self.type = type
+        self.related_experiments = related_experiments
 
     def execute(self, check_status=True):
 
@@ -46,12 +47,13 @@ class WorkItemManager:
         # Create a WorkItem
         provider_info = {"endpoint": self.comps_host, "environment": self.comps_env}
         kwargs = {"item_name": self.item_name, "item_type": self.item_type, "docker_image": self.docker_image,
-                  "plugin_key": self.plugin_key, "comps_env": self.comps_env, "tags": self.tags,
-                  "files": self.files, "wo_kwargs": self.wo_kwargs, "command": self.command}
+                  "plugin_key": self.plugin_key, "comps_env": self.comps_env, "tags": self.tags, "files": self.files,
+                  "wo_kwargs": self.wo_kwargs, "command": self.command, "related_experiments": self.related_experiments}
         self.item_id = CreateSvc.create(self.provider, provider_info, self.type, **kwargs)
 
         # Refresh local object db
-        ObjectInfoSvc.create_item(type=self.type, provider=self.provider, provider_info=provider_info, item_id=str(self.item_id))
+        ObjectInfoSvc.create_item(type=self.type, provider=self.provider, provider_info=provider_info,
+                                  item_id=str(self.item_id))
 
     def run(self):
         RunSvc.run(self.item_id)
