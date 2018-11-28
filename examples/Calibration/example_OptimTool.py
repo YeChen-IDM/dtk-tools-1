@@ -143,7 +143,6 @@ def map_sample_to_model_input(cb, sample):
 
     # For testing only, the duration should be handled by the site !! Please remove before running in prod!
     tags.update(cb.set_param("Simulation_Duration", 365 + 1))
-    tags.update(cb.set_param('Run_Number', 0))
 
     return tags
 
