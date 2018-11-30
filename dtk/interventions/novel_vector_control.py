@@ -103,7 +103,7 @@ def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initi
                 "class": "BirthTriggeredIV",
                 "Duration": coverage_by_age.get('duration', -1), # default to forever if  duration not specified
                 "Demographic_Coverage": coverage_by_age["coverage"],
-                "Actual_IndividualIntervention_Config": itn_bednet_w_event #itn_bednet
+                "Actual_IndividualIntervention_Config": repellent
             }
 
             repellent_event["Event_Coordinator_Config"]["Intervention_Config"] = birth_triggered_intervention
