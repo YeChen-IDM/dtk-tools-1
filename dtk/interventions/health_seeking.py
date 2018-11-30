@@ -13,7 +13,6 @@ expire_recent_drugs = PropertyValueChanger(
 
 def add_health_seeking(config_builder,
                        start_day=0,
-                       # Note: potential for overlapping drug treatments in the same individual
                        targets=[{'trigger': 'NewClinicalCase', 'coverage': 0.8, 'agemin': 15, 'agemax': 70, 'seek': 0.4,
                                  'rate': 0.3},
                                 {'trigger': 'NewSevereCase', 'coverage': 0.8, 'seek': 0.6, 'rate': 0.5}],
@@ -32,24 +31,27 @@ def add_health_seeking(config_builder,
     """
     Add a `SimpleHealthSeekingBehavior <https://institutefordiseasemodeling.github.io/EMOD/general/parameter-campaign.html#simplehealthseekingbehavior>`_ .
 
-    :param config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` containing the campaign configuration
-    :param start_day: Day we want to start the intervention
-    :param targets: The different targets held in a list of dictionaries (see default for example)
-    :param drug: The drug to administer
-    :param dosing: The dosing for the drugs
-    :param nodes: nodes to target.
-    # All nodes: {"class": "NodeSetAll"}.
-    # Subset of nodes: {"class": "NodeSetNodeList", "Node_List": list_of_nodeIDs}
-    :param node_property_restrictions: used with NodePropertyRestrictions.
-    Format: list of dicts: [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
-    :param drug_ineligibility_duration: if this param is > 0, use IndividualProperties to prevent people from receiving
-    drugs too frequently. Demographics file will need to define the IP DrugStatus with possible values None and
-    RecentDrug. Individuals who receive drugs for treatment will have their DrugStatus changed to RecentDrug for
-    drug_ineligibility_duration days. Individuals who already have status RecentDrug will not receive drugs for
-    treatment.
-    :param duration: how long the intervention lasts
-    :param repetitions: Number repetitions
-    :param tsteps_btwn_repetitions: Timesteps between the repetitions
+    Args:
+
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` containing the campaign configuration
+        start_day (int): The day to start the intervention.
+        targets (list of dicts): The different targets of the intervention (see default for an example).
+        drug (list of str): The drug to administer.
+        dosing (str): The dosing for the drugs.
+        nodes: The nodes to target. For all nodes: ``{"class": "NodeSetAll"}``.
+           For a subset of nodes: ``{"class": "NodeSetNodeList", "Node_List": list_of_nodeIDs}``.
+        node_property_restrictions (list of dicts): The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+        drug_ineligibility_duration: If this parameter is > 0, use IndividualProperties to prevent people from receiving
+            drugs too frequently. The demographics file will need to define the IP DrugStatus with possible values None and
+            RecentDrug. Individuals who receive drugs for treatment will have their DrugStatus changed to RecentDrug for
+            drug_ineligibility_duration days. Individuals who already have status RecentDrug will not receive drugs for
+            treatment.
+        duration (int): The duration of the intervention. 
+        repetitions (int): The number of repetitions.
+        tsteps_btwn_repetitions (int): The number of timesteps between the repetitions.
+
+    .. note:: There is the potential for overlapping treatments in the same individual. 
+
     :return:
     """
 

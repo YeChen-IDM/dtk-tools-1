@@ -7,40 +7,59 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
     """
     Reduce available larval habitat in a node-specific way.
 
-    :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` object
-    :param df: dataframe containing habitat scale factors.
-    Example 1: scale TEMPORARY_RAINFALL by 3-fold for all nodes, all species.
-    df = pd.DataFrame( { 'TEMPORARY_RAINFALL': [3],
-                     })
-    Example 2: scale TEMPORARY_RAINFALL by 3-fold for all nodes, arabiensis only.
-    df = pd.DataFrame( { 'TEMPORARY_RAINFALL.arabiensis': [3],
-                     })
-    Example 3: scale differently by node ID.
-    df = pd.DataFrame( { 'NodeID' : [0, 1, 2, 3, 4],
-                         'CONSTANT': [1, 0, 1, 1, 1],
-                         'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
+    Args:
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` object.
+        df: The dataframe containing habitat scale factors.
+        start_day (int): The date of scaling habitats for all scaling actions specified in df.
+            Only applied if no Start_Day column in df.
+        repetitions (int): The number of repetitions.
+        tsteps_btwn_repetitions (int): The number of timesteps between repetitions.
+        node_property_restrictions (list of dicts): The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+
+    :Examples: 
+
+    Scale TEMPORARY_RAINFALL by 3-fold for all nodes, all species::
+
+        df = pd.DataFrame({ 'TEMPORARY_RAINFALL': [3],
                          })
-    Example 4: scale differently by both node ID and species.
-    df = pd.DataFrame( { 'NodeID' : [0, 1, 2, 3, 4],
-                     'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
-                     'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
-                     'CONSTANT.funestus': [1, 0, 1, 1, 1]
-                     })
-    Example 5: scale some habitats by species and others same for all species.
-    df = pd.DataFrame( { 'NodeID' : [0, 1, 2, 3, 4],
-                         'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
-                         'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
-                         'CONSTANT.funestus': [1, 0, 1, 1, 1],
-                         'LINEAR_SPLINE': [1, 1, 0, 1, 0]
+
+    Scale TEMPORARY_RAINFALL by 3-fold for all nodes, arabiensis only::
+
+        df = pd.DataFrame({ 'TEMPORARY_RAINFALL.arabiensis': [3],
                          })
-    Example 6: scale nodes at different dates.
-    df = pd.DataFrame( { 'NodeID' : [0, 1, 2, 3, 4],
-                         'CONSTANT': [1, 0, 1, 1, 1],
-                         'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
-                         'Start_Day': [0, 30, 60, 65, 65],
+
+    Scale differently by node ID::
+
+        df = pd.DataFrame({ 'NodeID' : [0, 1, 2, 3, 4],
+                            'CONSTANT': [1, 0, 1, 1, 1],
+                            'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
+                             })
+
+    Scale differently by both node ID and species::
+
+        df = pd.DataFrame({ 'NodeID' : [0, 1, 2, 3, 4],
+                            'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
+                            'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
+                            'CONSTANT.funestus': [1, 0, 1, 1, 1]
                          })
-    :param start_day: date of scaling habitats for all scaling actions specified in df.
-    Only applied if no Start_Day column in df.
+    
+    Scale some habitats by species and others same for all species::
+
+        df = pd.DataFrame({  'NodeID' : [0, 1, 2, 3, 4],
+                             'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
+                             'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
+                             'CONSTANT.funestus': [1, 0, 1, 1, 1],
+                             'LINEAR_SPLINE': [1, 1, 0, 1, 0]
+                             })
+
+    Scale nodes at different dates::
+
+        df = pd.DataFrame({  'NodeID' : [0, 1, 2, 3, 4],
+                             'CONSTANT': [1, 0, 1, 1, 1],
+                             'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
+                             'Start_Day': [0, 30, 60, 65, 65],
+                             })
+    
     :return: Nothing
     """
 
