@@ -34,13 +34,13 @@ def change_biting_risk(cb, start_day=0,
             Parameter Exponential_Mean
       coverage: The demographic coverage of the distribution.
       repetitions: The number of repetitions.
-      tsteps_btwn_repetitions (int): The number of timesteps between repetitions.
-      target_group (dict): The group to target. To restrict by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting everyone.
-      trigger (string): For triggered changes, the trigger for changing risk. Can be "Birth" or any other trigger string.
+      tsteps_btwn_repetitions: The number of timesteps between repetitions.
+      target_group: The group to target. To restrict by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting everyone.
+      trigger: For triggered changes, the trigger for changing risk. Can be "Birth" or any other trigger string.
       triggered_biting_risk_duration: For triggered changes, the duration after start_day over which triggered risk-changing will happen. Default is forever.
-      nodeIDs (list of ints): The list of node IDs; if empty, defaults to all nodes.
-      ind_property_restrictions (list of dicts): The individual property values to target; used with Property_Restrictions_Within_Node. For example, ``[{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]``
-      node_property_restrictions (list of dicts): The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+      nodeIDs: The list of node IDs; if empty, defaults to all nodes.
+      ind_property_restrictions: The individual property values to target; used with Property_Restrictions_Within_Node. For example, ``[{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]``
+      node_property_restrictions: The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
 
     .. note:: NewPropertyValue and DisqualifyingProperties have not been implemented with this intervention, though they could be useful.
     """

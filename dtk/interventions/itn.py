@@ -17,23 +17,27 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=None, nodeI
             ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=1):
     """
      Add an ITN intervention to the config_builder passed.
-    :param config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the ITN event
-    :param start: The start day of the bednet distribution
-    :param coverage_by_ages: a list of dictionaries defining the coverage per age group
-        [{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]
-        birthtriggered(in coverage_by_age) and triggered_condition_list are mututally exclusive. "birth" option will be ingnored if you're
-        using trigger_condition_list
-    :param waning: a dictionary defining the durability of the nets. if empty the default decay profile will be used.
-    For example, update usage duration to 180 days as waning={'Usage_Config' : {"Expected_Discard_Time": 180}}
-    :param cost: Set the ``Cost_To_Consumer`` parameter
-    :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-    :param node_property_restrictions: restricts itn based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes, "LovelyWeather":"No}]
-    :param ind_property_restrictions: Restricts itn based on list of individual properties in format [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]
-    :param triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
-    Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
-    :param trigger_condition_list: when not empty,  the start day is the day to start listening for the trigger conditions listed, distributing the spraying
-        when the trigger is heard. This does not distribute the BirthTriggered intervention.
-    :param listening_duration: how long the distributed event will listen for the trigger for, default is 1, which is indefinitely
+    
+    Args:
+
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the ITN event
+        start: The start day of the bednet distribution
+        coverage_by_ages: a list of dictionaries defining the coverage per age group
+            [{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]
+            birthtriggered(in coverage_by_age) and triggered_condition_list are mututally exclusive. "birth" option will be ingnored if you're
+            using trigger_condition_list
+        waning: a dictionary defining the durability of the nets. if empty the default decay profile will be used.
+            For example, update usage duration to 180 days as waning={'Usage_Config' : {"Expected_Discard_Time": 180}}
+        cost: Set the ``Cost_To_Consumer`` parameter
+        nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
+        node_property_restrictions: restricts itn based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes, "LovelyWeather":"No}]
+        ind_property_restrictions: Restricts itn based on list of individual properties in format [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]
+        triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
+            Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
+        trigger_condition_list: when not empty,  the start day is the day to start listening for the trigger conditions listed, distributing the spraying
+            when the trigger is heard. This does not distribute the BirthTriggered intervention.
+        listening_duration: how long the distributed event will listen for the trigger for, default is 1, which is indefinitely
+    
     :return: Nothing
     """
 

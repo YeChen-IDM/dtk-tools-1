@@ -10,11 +10,11 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
     Args:
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` object.
         df: The dataframe containing habitat scale factors.
-        start_day (int): The date of scaling habitats for all scaling actions specified in df.
+        start_day: The date of scaling habitats for all scaling actions specified in df.
             Only applied if no Start_Day column in df.
-        repetitions (int): The number of repetitions.
-        tsteps_btwn_repetitions (int): The number of timesteps between repetitions.
-        node_property_restrictions (list of dicts): The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+        repetitions: The number of repetitions.
+        tsteps_btwn_repetitions: The number of timesteps between repetitions.
+        node_property_restrictions: The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
 
     :Examples: 
 
