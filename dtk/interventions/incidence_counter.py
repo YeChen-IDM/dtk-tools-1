@@ -19,25 +19,27 @@ def add_incidence_counter(cb,
     """
     Add an intervention to
 
-    :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
-    intervention.
-    :param start_day: date upon which to change biting risk
-    :param repetitions: Number of repetitions
-    :param tsteps_btwn_repetitions: days between repetitions
-    :param count_duration: how long to monitor for
-    :param count_triggers: which events increment the monitor's count
-    :param threshold_type: 'COUNT' for raw counts or 'PERCENTAGE' to normalize by population
-    :param thresholds: thresholds at which to engage a response
-    :param triggered_events: event name to broadcast upon surpassing thresholds. Needs one per threshold.
-    :param coverage: Demographic coverage of the monitoring. Affects probability a count_trigger will be counted but is
-    ignored for calculating denominator for PERCENTAGE.
-    :param target_group: to restrict monitoring by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting
-    everyone.
-    :param nodeIDs: list of node IDs to monitor; if empty, defaults to all nodes
-    :param ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
-    [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
-    :param node_property_restrictions: used with NodePropertyRestrictions.
-    Format: list of dicts: [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
+    Args:
+
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
+            intervention.
+        start_day: date upon which to change biting risk
+        repetitions: Number of repetitions
+        tsteps_btwn_repetitions: days between repetitions
+        count_duration: how long to monitor for
+        count_triggers: which events increment the monitor's count
+        threshold_type: 'COUNT' for raw counts or 'PERCENTAGE' to normalize by population
+        thresholds: thresholds at which to engage a response
+        triggered_events: event name to broadcast upon surpassing thresholds. Needs one per threshold.
+        coverage: Demographic coverage of the monitoring. Affects probability a count_trigger will be counted but is
+            ignored for calculating denominator for PERCENTAGE.
+        target_group: to restrict monitoring by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting
+            everyone.
+        nodeIDs: list of node IDs to monitor; if empty, defaults to all nodes
+        ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
+            [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
+        node_property_restrictions: used with NodePropertyRestrictions.
+            Format: list of dicts: [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
 
     """
 

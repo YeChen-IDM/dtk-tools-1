@@ -11,11 +11,13 @@ def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, disca
 
     """
     Add an ITN intervention to the config_builder passed.
-    "as_birth" and "triggered_condition_list" are nutually exlusive with "as_birth" trumping the trigger
+    "as_birth" and "triggered_condition_list" are mutually exclusive with "as_birth" trumping the trigger
     You will need to add the following custom events:
-        "Bednet_Discarded",
-        "Bednet_Got_New_One",
-        "Bednet_Using"
+        
+        * "Bednet_Discarded",
+        * "Bednet_Got_New_One",
+        * "Bednet_Using"
+
     :param config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the ITN event
     :param start: The start day of the bed net distribution
     :param coverage_all: Fraction of the population receiving bed nets in a given distribution event
@@ -27,11 +29,13 @@ def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, disca
     :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
     :param as_birth: If true, event is specified as a birth-triggered intervention.
     :param duration: If run as a birth-triggered event or a trigger_condition_list, specifies the duration for the distribution to continue. Default
-    is to continue until the end of the simulation.
+        is to continue until the end of the simulation.
     :param trigger_condition_list: sets up a NodeLevelHealthTriggeredIV that listens for the defined trigger string event before giving out the intervention,
-    "as_birth" and "trigger_condition_list" options are mutually exclusive, if "as_birth" is true, trigger_condition_list will be ignored.
+        "as_birth" and "trigger_condition_list" options are mutually exclusive, if "as_birth" is true, trigger_condition_list will be ignored.
     :param ind_property_restrictions: Restricts irs based on list of individual properties in format [{"BitingRisk":"High"}, {"IsCool":"Yes}]
-    :param node_property_restrictions: restricts irs based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes}]    :return: Nothing
+    :param node_property_restrictions: restricts irs based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes}]    
+
+    :return: Nothing
     """
 
     # Assign net protective properties #

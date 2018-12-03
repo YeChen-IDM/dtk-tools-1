@@ -1,13 +1,15 @@
-""" OLD
-# IRS parameters
-irs_housingmod = {"class": "IRSHousingModification",
-                  "Blocking_Rate": 0.0,  # i.e. repellency
-                  "Killing_Rate": 0.7,
-                  "Durability_Time_Profile": "DECAYDURABILITY",
-                  "Primary_Decay_Time_Constant": 365,  # killing
-                  "Secondary_Decay_Time_Constant": 365,  # blocking
-                  "Cost_To_Consumer": 8.0
-                  }
+""" 
+Old IRS parameters::
+
+        irs_housingmod = {"class": "IRSHousingModification",
+                          "Blocking_Rate": 0.0,  # i.e. repellency
+                          "Killing_Rate": 0.7,
+                          "Durability_Time_Profile": "DECAYDURABILITY",
+                          "Primary_Decay_Time_Constant": 365,  # killing
+                          "Secondary_Decay_Time_Constant": 365,  # blocking
+                          "Cost_To_Consumer": 8.0
+                         }
+
 """
 
 
@@ -50,22 +52,26 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
     Add an IRS intervention to the config_builder passed.
     Please note that using trigger_condition_list does not work for birth-triggered ("birth" in coverage_by_ages).
     when using trigger_condition_list, the "birth" option will be ignored.
-    :param config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the IRS event
-    :param start: The start day of the spraying
-    :param coverage_by_ages: a list of dictionaries defining the coverage per age group or birth-triggered intervention
-    [{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]
-    :param cost: Set the ``Cost_To_Consumer`` parameter
-    :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-    :param initial_killing: sets Initial Effect within the killing config
-    :param duration: sets the Decal_Time_Constant within the killing config
-    :param waning: a dictionary defining the durability of the nets. if empty the default ``DECAYDURABILITY`` with 1 year primary and 1 year secondary will be used.
-    :param ind_property_restrictions: Restricts irs based on list of individual properties in format [{"BitingRisk":"High"}, {"IsCool":"Yes}]
-    :param node_property_restrictions: restricts irs based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes}]
-    :param triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
-    Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
-    :param trigger_condition_list: when not empty,  the start day is the day to start listening for the trigger conditions listed, distributing the spraying
-        when the trigger is heard. This does not distribute the BirthTriggered intervention.
-    :param listening_duration: how long the distributed event will listen for the trigger for, default is -1, which is indefinitely
+    
+    Args:
+
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the IRS event
+        start: The start day of the spraying
+        coverage_by_ages: a list of dictionaries defining the coverage per age group or birth-triggered intervention
+            [{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]
+        cost: Set the ``Cost_To_Consumer`` parameter
+        nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
+        initial_killing: sets Initial Effect within the killing config
+        duration: sets the Decal_Time_Constant within the killing config
+        waning: a dictionary defining the durability of the nets. if empty the default ``DECAYDURABILITY`` with 1 year primary and 1 year secondary will be used.
+        ind_property_restrictions: Restricts irs based on list of individual properties in format [{"BitingRisk":"High"}, {"IsCool":"Yes}]
+        node_property_restrictions: restricts irs based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes}]
+        triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
+        Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
+        trigger_condition_list: when not empty, the start day is the day to start listening for the trigger conditions listed, distributing the spraying
+            when the trigger is heard. This does not distribute the BirthTriggered intervention.
+        listening_duration: how long the distributed event will listen for the trigger for, default is -1, which is indefinitely
+
     :return: Nothing
     """
 
