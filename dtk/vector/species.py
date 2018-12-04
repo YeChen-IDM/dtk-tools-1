@@ -15,12 +15,14 @@ param_block = {
     "Immature_Duration": 2,
 
     "Adult_Life_Expectancy": 20,
+    "Male_Life_Expectancy": 10,
     "Days_Between_Feeds": 3,
-    "Anthropophily": 0.85,  # species- and site-specific feeding parameters
+    "Anthropophily": 0.95,  # species- and site-specific feeding parameters
     "Indoor_Feeding_Fraction": 0.5,
     "Egg_Batch_Size": 100,
-
-    "Vector_Sugar_Feeding_Frequency": "VECTOR_SUGAR_FEEDING_NONE",
+    "Drivers": [],
+    "Genes": [],
+    "Gene_To_Trait_Modifiers": [],
 
     "Acquire_Modifier": 0.2,  # VECTOR_SIM uses a factor here for human-to-mosquito infectiousness, while MALARIA_SIM explicitly models gametocytes
     "Infected_Arrhenius_1": 117000000000,
@@ -34,10 +36,6 @@ param_block = {
 
 # An. arabiensis
 arabiensis_param_block = param_block.copy()
-mod_arabiensis_params = {
-    "Anthropophily": 0.65,
-}
-arabiensis_param_block.update(mod_arabiensis_params)
 
 # An. funestus
 funestus_param_block = param_block.copy()
@@ -46,7 +44,6 @@ mod_funestus_params = {
         "WATER_VEGETATION": 2e7
     },
     "Indoor_Feeding_Fraction": 0.95,
-    "Anthropophily": 0.65,
 }
 funestus_param_block.update(mod_funestus_params)
 
@@ -64,7 +61,6 @@ mod_farauti_params = {
     "Larval_Habitat_Types": {
         "BRACKISH_SWAMP": 10000000000
     },
-    # WARNING: Adult_Life_Expectancy unadjusted for Prashanth's 2018 corrections
     "Adult_Life_Expectancy": 5.9,
     "Days_Between_Feeds": 2,
     "Anthropophily": 0.97,
@@ -97,7 +93,7 @@ mod_maculatus_params = {
         "WATER_VEGETATION": 1e6,
         "CONSTANT": 1e6
     },
-    # "Adult_Life_Expectancy": 7,
+    "Adult_Life_Expectancy": 7,
     "Days_Between_Feeds": 3,
     "Anthropophily": 0.19,
     "Indoor_Feeding_Fraction": 0.01,
@@ -127,15 +123,12 @@ mod_minimus_params = {
         "WATER_VEGETATION": 1e7, # update habitat type?
         "CONSTANT": 1e6
     },
-    # "Adult_Life_Expectancy": 7,
-    # "Anthropophily": 0.85,
-    # "Acquire_Modifier": 0.2,
-    "Adult_Life_Expectancy": 25,
-    "Anthropophily": 0.5,
-    "Acquire_Modifier": 0.8,
+    "Adult_Life_Expectancy": 7,
     "Days_Between_Feeds": 3,
-    "Indoor_Feeding_Fraction": 0.6,
+    "Anthropophily": 0.85,
+    "Indoor_Feeding_Fraction": 0.73,
     "Egg_Batch_Size": 70,
+    "Acquire_Modifier": 0.2,
     "Transmission_Rate": 0.8
 }
 minimus_param_block.update(mod_minimus_params)
@@ -153,11 +146,9 @@ mod_dirus_params = {
         "TEMPORARY_RAINFALL": 1e7,
         "CONSTANT": 1e6
     },
-    # "Adult_Life_Expectancy": 14,
-    "Adult_Life_Expectancy": 30,
+    "Adult_Life_Expectancy": 14,
     "Days_Between_Feeds": 3,
-    "Anthropophily": 0.5,
-    # "Anthropophily": 0.96,
+    "Anthropophily": 0.96,
     "Indoor_Feeding_Fraction": 0.01,
     "Egg_Batch_Size": 70,
     "Acquire_Modifier": 0.2,
@@ -191,7 +182,6 @@ mod_albimanus_params = {
         "TEMPORARY_RAINFALL": 1e7,
         "CONSTANT": 1e6
     },
-    # WARNING: Adult_Life_Expectancy unadjusted for Prashanth's 2018 corrections
     "Adult_Life_Expectancy": 5, # daily survival rate somewhere between 0.7 and 0.9
     "Days_Between_Feeds": 3, # observed 2.6 to 5.2
     "Anthropophily": 0.5,
@@ -206,7 +196,6 @@ albimanus_param_block.update(mod_albimanus_params)
 # Dengue
 aegypti_param_block = {
     "Acquire_Modifier": 1,
-    # WARNING: Adult_Life_Expectancy unadjusted for Prashanth's 2018 corrections
     "Adult_Life_Expectancy": 14,
     "Anthropophily": 0.95,
     "Aquatic_Arrhenius_1": 9752291.727,
@@ -301,7 +290,7 @@ def update_species_param(cb, species, parameter, value, overwrite=True):
         if len(value) > 1:
             warnings.warn("value is a dict of length>1, returning only the first value.")
 
-        return {'.'.join([species, list(value.keys())[0]]): list(value.values())[0]}
+        return {'.'.join([species, value.keys()[0]]): value.values()[0]}
     else:
         cb.config['parameters']['Vector_Species_Params'][species][parameter] = value
         return {'.'.join([species, parameter]): value}
@@ -332,4 +321,99 @@ def set_larval_habitat(cb, habitats):
 
     for species, habitat in habitats.items():
         set_species_param(cb, species, 'Larval_Habitat_Types', habitat)
+
+
+def set_species_genes(cb, genes):
+    """
+    Set vector species and gene parameters of config argument and return
+    Example:
+    genes = {"arabiensis": [
+                        {
+                            "Alleles": {
+                                        "a0": 0.6,
+                                        "a1": 0.4,
+                                        "a2": 0.0,
+                                    },
+                            "Mutations": {
+                                        "a1:a2" : 0.01,
+                                        "a0:a1" : 0.05
+                                    }
+                        },
+                        {
+                            "Alleles": {
+                                        "b0": 0.6,
+                                        "b1": 0.4
+                                    },
+                            "Mutations": {}
+                        }
+                        ]
+    """
+
+    for species, gene in genes.items():
+        set_species_param(cb, species, 'Genes', gene)
+
+
+def set_species_trait_modifiers(cb, traits):
+    """
+        Set vector species and gene parameters of config argument and return
+        Example:
+        traits = {"arabiensis": [{
+                                    "Allele_Combinations": [
+                                                            ["X","X"],
+                                                            ["a0","a1"]
+                                                        ],
+                                    "Trait_Modifiers": {
+                                                            "FECUNDITY": 3,
+                                                            "INFECTED_BY_HUMAN": 0.5
+                                                        }
+                                },
+                                {
+                                    "Allele_Combinations": [
+                                                            ["X", "X"],
+                                                            ["a1", "a1"]
+                                                        ],
+                                    "Trait_Modifiers": {
+                                                            "FECUNDITY": 6,
+                                                            "INFECTED_BY_HUMAN": 0.0
+                                                        }
+                                }
+                               ]
+        """
+
+    for species, trait in traits.items():
+        set_species_param(cb, species, 'Gene_To_Trait_Modifiers', trait)
+
+
+def set_species_drivers(cb, drivers):
+    """
+        Set vector species and gene parameters of config argument and return
+        Example:
+        drivers = {"arabiensis": [
+                                {
+                                    "Alleles_Driven": [
+                                        {
+                                            "Allele_To_Copy": "a1",
+                                            "Allele_To_Replace": "a0",
+                                            "Copy_To_Likelihood": {
+                                                "a0": 0.1,
+                                                "a1": 0.9
+                                            }
+                                        },
+                                        {
+                                            "Allele_To_Copy": "b1",
+                                            "Allele_To_Replace": "b0",
+                                            "Copy_To_Likelihood": {
+                                                "b0": 0.1,
+                                                "b1": 0.9
+                                            }
+                                        }
+                                    ],
+                                    "Driver_Type": "INTEGRAL_AUTONOMOUS",
+                                    "Driving_Allele": "a1"
+                                },
+                               ]
+        """
+
+    for species, driver in drivers.items():
+        set_species_param(cb, species, 'Drivers', driver)
 
