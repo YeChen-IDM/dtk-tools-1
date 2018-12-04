@@ -17,30 +17,32 @@ def change_biting_risk(cb, start_day=0,
     """
     Add an intervention to change individual biting risk as defined by the parameters to the config builder.
 
-    :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
-    intervention.
-    :param start_day: date upon which to change biting risk
-    :param risk_config: risk distribution type and distribution parameters defining the distribution from which biting
-    risk will be drawn. Currently, Risk_Distribution_Type is allowed
-        FIXED_DURATION (parameter Constant)
-        UNIFORM_DURATION (parameters Uniform_Min, Uniform_Max)
-        GAUSSIAN_DURATION (parameters Gaussian_Mean, Gaussian_Std_Dev)
-        EXPONENTIAL_DURATION (parameter Exponential_Mean)
-    :param coverage: Demographic coverage of the distribution
-    :param repetitions: Number of repetitions
-    :param tsteps_btwn_repetitions: days between repetitions
-    :param target_group: to restrict by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting everyone.
-    :param trigger: for triggered changes, trigger for changing risk. Can be "Birth" or any other trigger string.
-    :param triggered_bitign_risk_duration: for triggered changes, duration after start_day over which triggered risk-changing will happen;
-    default is forever
-    :param nodeIDs: list of node IDs; if empty, defaults to all nodes
-    :param ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
-    [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
-    :param node_property_restrictions: used with NodePropertyRestrictions.
-    Format: list of dicts: [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
+    Args:
 
-    I haven't implemented NewPropertyValue or DisqualifyingProperties with this intervention, though they could be
-    useful.
+      cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing intervention.
+      start_day: The date on which to change biting risk.
+      risk_config: The risk distribution type and distribution parameters defining the distribution from which biting
+        risk will be drawn. Currently, Risk_Distribution_Type is allowed.
+        
+          FIXED_DURATION
+            Parameter: Constant
+          UNIFORM_DURATION
+            Parameters Uniform_Min, Uniform_Max
+          GAUSSIAN_DURATION
+            Parameters Gaussian_Mean, Gaussian_Std_Dev
+          EXPONENTIAL_DURATION
+            Parameter Exponential_Mean
+      coverage: The demographic coverage of the distribution.
+      repetitions: The number of repetitions.
+      tsteps_btwn_repetitions: The number of timesteps between repetitions.
+      target_group: The group to target. To restrict by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting everyone.
+      trigger: For triggered changes, the trigger for changing risk. Can be "Birth" or any other trigger string.
+      triggered_biting_risk_duration: For triggered changes, the duration after start_day over which triggered risk-changing will happen. Default is forever.
+      nodeIDs: The list of node IDs; if empty, defaults to all nodes.
+      ind_property_restrictions: The individual property values to target; used with Property_Restrictions_Within_Node. For example, ``[{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]``
+      node_property_restrictions: The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+
+    .. note:: NewPropertyValue and DisqualifyingProperties have not been implemented with this intervention, though they could be useful.
     """
 
     risk_config = BitingRisk(**risk_config)

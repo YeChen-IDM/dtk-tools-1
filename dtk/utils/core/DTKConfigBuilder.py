@@ -15,6 +15,7 @@ import dtk.generic.sir_vaccinations_b as sir_vaccinations_b_params
 import dtk.generic.sir_vaccinations_c as sir_vaccinations_c_params
 import dtk.generic.sirs as sirs_params
 import dtk.generic.sis as sis_params
+import dtk.generic.min_config as generic_min_params
 import dtk.vector.params as vector_params
 from dtk.interventions.empty_campaign import empty_campaign
 from dtk.interventions.seir_initial_seeding import seir_campaign
@@ -213,10 +214,15 @@ class DTKConfigBuilder(SimConfigBuilder):
             campaign = sis_campaign
             sim_type = "GENERIC_SIM"
 
+        elif sim_type == "GENERIC_SIM_MIN":
+            config = {"parameters": generic_min_params.params}
+            campaign = None
+            sim_type = "GENERIC_SIM"
+
         elif sim_type == "DENGUE_SIM":
             config["parameters"].update(vector_params.params)
             config["parameters"].update(dengue_params.params)
-            # campaign = dengue_campaign
+            campaign = empty_campaign
 
         elif sim_type == "TBHIV_SIM":
             try:
@@ -456,7 +462,9 @@ class DTKConfigBuilder(SimConfigBuilder):
         """
         Returns the custom events listed in the campaign along with user-defined ones in the Listed_Events (config.json)
         """
-        campaign_str = self.campaign.to_json(self.campaign.Use_Defaults, False)
+        campaign_str = ""
+        if self.config['parameters']['Enable_Interventions']:
+            campaign_str = self.campaign.to_json(self.campaign.Use_Defaults, False)
 
         # Retrieve all the events in the campaign file
         events_from_campaign = re.findall(r"['\"](?:Broadcast_Event|Event_Trigger|Event_To_Broadcast|Blackout_Event_Trigger|Took_Dose_Event|Discard_Event|Received_Event|Using_Event|Positive_Diagnosis_Event|Negative_Diagnosis_Event)['\"]:\s['\"](.*?)['\"]", campaign_str, re.DOTALL)
@@ -520,8 +528,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         else:
             dump = lambda content: json.dumps(content, sort_keys=True, cls=NumpyEncoder).strip('"')
 
-        write_fn(self.config['parameters']['Campaign_Filename'],
-                 self.campaign.to_json(self.campaign.Use_Defaults, self.human_readability))
+        write_fn(self.config['parameters']['Campaign_Filename'], self.campaign.to_json(self.campaign.Use_Defaults, self.human_readability))
 
         if self.custom_reports:
             self.set_param('Custom_Reports_Filename', 'custom_reports.json')

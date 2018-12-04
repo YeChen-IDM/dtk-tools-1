@@ -1,10 +1,10 @@
 import time
 from COMPS.Data.WorkItem import WorkItemState
 from simtools.AssetManager.FileList import FileList
-from simtools.Services.Create.CreateSvc import CreateSvc
+from simtools.Services.CREATE.CreateSvc import CreateSvc
 from simtools.Services.ObejctCatelog.ObjectInfoSvc import ObjectInfoSvc
-from simtools.Services.Run.RunSvc import RunSvc
-from simtools.Services.Status.StatusSvc import StatusSvc
+from simtools.Services.RUN.RunSvc import RunSvc
+from simtools.Services.STATUS.StatusSvc import StatusSvc
 from simtools.SetupParser import SetupParser
 from simtools.Utilities.COMPSUtilities import COMPS_login
 
