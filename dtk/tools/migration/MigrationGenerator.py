@@ -84,26 +84,27 @@ class MigrationGenerator(object):
 
         '''
         output an adjacency list here given as  a dictionary with format;
-        adj. list could be directed
-        {
-            node_label1: {
-                            #key         # weight
-                            node_label2: 0.5,
-                            node_label4: 0.4,
-                            node_label3: 0.4,
-                            node_label5: 1,
-                            ... 
-                          },
+        adj. list could be directed::
+        
+            {
+                node_label1: {
+                                #key         # weight
+                                node_label2: 0.5,
+                                node_label4: 0.4,
+                                node_label3: 0.4,
+                                node_label5: 1,
+                                ... 
+                              },
 
-            node_label2: {
-                            #key         # weight
-                            node_label1: 0.4,
-                            node_label3: 0.4,
-                            node_label10: 1,
-                            ... 
-                          },
-            ...
-        }
+                node_label2: {
+                                #key         # weight
+                                node_label1: 0.4,
+                                node_label3: 0.4,
+                                node_label10: 1,
+                                ... 
+                              },
+                ...
+            }
         '''
 
         # if migration file path is not provided, the migration adjacency list remains None;

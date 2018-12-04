@@ -19,27 +19,26 @@ class SmallWorldGridGraphGenerator(object):
 	def __init__(self, adjacency_list, node_properties):
 
 		'''
-		adjacency_list of the form
+		adjacency_list of the form::
 		
-		{
-            node_id1: {
-                            #key         # weight
-                            node_id2: 0.5,
-                            node_id4: 0.4,
-                            node_id3: 0.4,
-                            node_id5: 1,
-                            ... 
-                          },
-                          
-            node_id2: {
-                            #key         # weight
-                            node_id2: 0.4,
-                            node_id3: 0.4,
-                            node_id10: 1,
-                            ... 
-                          },
-            ...
-        }
+			{
+	            node_id1: {
+	                            #key         # weight
+	                            node_id2: 0.5,
+	                            node_id4: 0.4,
+	                            node_id3: 0.4,
+	                            node_id5: 1,
+	                            ... 
+	                          },            
+	            node_id2: {
+	                            #key         # weight
+	                            node_id2: 0.4,
+	                            node_id3: 0.4,
+	                            node_id10: 1,
+	                            ... 
+	                          },
+	            ...
+	        }
 		
 		'''
 		self.adjacency_list = adjacency_list
@@ -47,13 +46,13 @@ class SmallWorldGridGraphGenerator(object):
 		
 		
 		'''
-		node properties of the form
+		node properties of the form::
 		
-		{
-			node_id1: [lon, lat, pop, node_label1, ...], # optional properties after node_label;
-			node_id2: [lon, lat, pop, node_label2, ...], # optional properties after node_label;
-			...
-		}
+			{
+				node_id1: [lon, lat, pop, node_label1, ...], # optional properties after node_label;
+				node_id2: [lon, lat, pop, node_label2, ...], # optional properties after node_label;
+				...
+			}
 		
 		for all nodes in the adjacency list;
 		

@@ -13,11 +13,11 @@ class InvalidResolution(BaseException):
 class DemographicsGenerator:
     """
     Generates demographics file based on population input file.
-    The population input file is csv with structure
+    The population input file is csv with structure::
 
-    node_label*, lat, lon, pop*
+        node_label*, lat, lon, pop*
 
-    *-ed columns are optional
+        *-ed columns are optional
     """
 
     # mapping of requested arcsecond resolution -> demographic metadata arcsecond resolution.
@@ -34,10 +34,12 @@ class DemographicsGenerator:
                  update_demographics=None, default_pop=1000):
         """
         Initialize the SpatialManager
+
         :param cb: config builder reference, updated after the demographics file is generated.
         :param demographics_type: could be 'static', 'growing' or a different type; currently only static is implemented in generate_nodes(self)
         :param res_in_arsec: sim grid resolution
         :param update_demographics: provide the user with a chance to update the demographics file before it's written via a user-defined function; (e.g. scale larval habitats based on initial population per node in the demographics file) see generate_demographics(self)
+        
         :return:
         """
         self.nodes = nodes
@@ -100,7 +102,9 @@ class DemographicsGenerator:
         """
         The cannonical way to set arcsecond/degree resolutions on a DemographicsGenerator object. Verifies everything
         is set properly.
+
         :param res_in_arcsec: The requested resolution. e.g. 30, 250, 'custom'
+        
         :return: No return value.
         """
         self.validate_res_in_arcsec(res_in_arcsec)

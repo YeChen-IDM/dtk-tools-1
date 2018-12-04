@@ -19,41 +19,40 @@ class GeoGraphGenerator(object):
 		
 		
 		'''
-		adjacency_list of the form
-		
-		{
-            node_id1: {
-                            #key         # weight
-                            node_id2: 0.5,
-                            node_id4: 0.4,
-                            node_id3: 0.4,
-                            node_id5: 1,
-                            ... 
-                          },
-                          
-            node_id2: {
-                            #key         # weight
-                            node_id2: 0.4,
-                            node_id3: 0.4,
-                            node_id10: 1,
-                            ... 
-                          },
-            ...
-        }
-		
+		adjacency_list of the form::
+
+            {
+                node_id1: {
+                                #key	  #weight
+                                node_id2: 0.5,
+                                node_id4: 0.4,
+                                node_id3: 0.4,
+                                node_id5: 1,
+                                ... 
+                              },                          
+                node_id2: {
+                                #key      #weight
+                                node_id2: 0.4,
+                                node_id3: 0.4,
+                                node_id10: 1,
+                                ... 
+                              },
+                ...
+            }
+
 		'''
 		self.adjacency_list = adjacency_list
 		
 		
 		
 		'''
-		node properties of the form
+		node properties of the form::
 		
-		{
-			node_id1: [lon, lat, pop, node_label1],
-			node_id2: [lon, lat, pop, node_label2],
-			...
-		}
+			{
+				node_id1: [lon, lat, pop, node_label1],
+				node_id2: [lon, lat, pop, node_label2],
+				...
+			}
 		
 		for all nodes in the adjacency list;
 		

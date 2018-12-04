@@ -58,7 +58,7 @@ class BaseShelveAnalyzer(BaseAnalyzer):
         """
         Call filter on simulations you would like to analyze or retrieve from shelve
 
-        :param shelve_file: the path to the shelve file, typically a *.db file.
+        :param shelve_file: the path to the shelve file, typically a ``*.db`` file.
         :param sim_metadata: the metadata passed to the filter function.
         """
 
