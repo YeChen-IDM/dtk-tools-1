@@ -7,10 +7,12 @@ from simtools.Managers.WorkItemManager import WorkItemManager
 
 class SSMTAnalysis:
 
-    def __init__(self, experiment_ids, analyzers, analysis_name, additional_files=None, asset_collection_id=None, asset_files=FileList()):
+    def __init__(self, experiment_ids, analyzers, analysis_name, tags=None,
+                 additional_files=None, asset_collection_id=None, asset_files=FileList()):
         self.experiment_ids = experiment_ids
         self.analyzers = analyzers
         self.analysis_name = analysis_name
+        self.tags = tags
         self.additional_files = additional_files or FileList()
         self.asset_collection_id = asset_collection_id
         self.asset_files = asset_files
@@ -51,9 +53,9 @@ class SSMTAnalysis:
                                          for s in self.analyzers))
 
         # Create WorkItemManager
-        wim = WorkItemManager(item_name=self.analysis_name, command=command, user_files=self.additional_files,
-                              asset_collection_id=self.asset_collection_id, asset_files=self.asset_files,
-                              related_experiments=self.experiment_ids)
+        wim = WorkItemManager(item_name=self.analysis_name, command=command, tags=self.tags,
+                              user_files=self.additional_files, asset_collection_id=self.asset_collection_id,
+                              asset_files=self.asset_files, related_experiments=self.experiment_ids)
 
         wim.execute()
 
