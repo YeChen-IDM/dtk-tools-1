@@ -4,7 +4,6 @@ from abc import ABCMeta
 from calibtool.CalibSite import CalibSite
 from calibtool.study_sites.site_setup_functions import \
     config_setup_fn, vector_stats_report_fn
-from calibtool.analyzers.ChannelBySeasonCohortAnalyzer import ChannelBySeasonCohortAnalyzer
 
 
 logger = logging.getLogger(__name__)
@@ -36,5 +35,5 @@ class EntomologyCalibSite(CalibSite):
             raise Exception("%s does not support %s reference_type, only %s.",
                             self.__class__.__name__, reference_type, site_ref_type)
 
-    def get_analyzers(self):
-        return [ChannelBySeasonCohortAnalyzer(site=self, seasons=self.metadata['months'])]
+    # def get_analyzers(self):
+    #     return [ChannelBySeasonCohortAnalyzer(site=self, seasons=self.metadata['months'])]

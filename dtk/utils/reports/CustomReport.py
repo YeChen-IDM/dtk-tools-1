@@ -55,6 +55,36 @@ class BaseVectorStatsReport(BaseReport):
         return d
 
 
+class BaseVectorGeneticsReport(BaseReport):
+
+    dlls = {'ReportVectorGenetics': 'libvectorgenetics.dll'}
+
+    def __init__(self,
+                 species='',
+                 gender='VECTOR_FEMALE',
+                 include_vector_state_columns=0,
+                 allele_combinations_for_stratification = [],
+                 stratify_by_genome_contains_allele = 0,
+                 type=""):
+
+        BaseReport.__init__(self, type)
+        self.species = species
+        self.gender = gender
+        self.include_vector_state_columns = include_vector_state_columns
+        self.allele_combinations_for_stratification = allele_combinations_for_stratification
+        self.stratify_by_genome_contains_allele = stratify_by_genome_contains_allele
+
+    def to_dict(self):
+        d = super(BaseVectorGeneticsReport, self).to_dict()
+        d.update({"Species": self.species,
+                  "Gender": self.gender,
+                  "Include_Vector_State_Columns": self.include_vector_state_columns,
+                  "Stratify_By_Genome_Contains_Allele": self.stratify_by_genome_contains_allele,
+                  "Allele_Combinations_For_Stratification": self.allele_combinations_for_stratification
+                  })
+        return d
+
+
 class BaseDemographicsReport(BaseReport):
 
     dlls = {'ReportNodeDemographics': 'libReportNodeDemographics.dll'}
