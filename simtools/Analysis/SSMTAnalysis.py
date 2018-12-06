@@ -1,6 +1,7 @@
 import os
 import inspect
 import pickle
+import tempfile
 from simtools.AssetManager.FileList import FileList
 from simtools.Managers.WorkItemManager import WorkItemManager
 
@@ -29,12 +30,14 @@ class SSMTAnalysis:
 
         # Build analyzer args pickle files
         analyzer_args = {}
-        temp_file = "analyzer_args.pkl"
         for a in self.analyzers:
             sig = inspect.signature(a.__class__)
             args = {k: getattr(a, k) for k in sig.parameters.keys()}
             analyzer_args[f"{inspect.getmodulename(inspect.getfile(a.__class__))}.{a.__class__.__name__}"] = args
 
+        # save pickle file as a temp file
+        temp_dir = tempfile.mkdtemp()
+        temp_file = os.path.join(temp_dir, "analyzer_args.pkl")
         pickle.dump(analyzer_args, open(temp_file, 'wb'))
 
         # Add analyzer args pickle as additional file
