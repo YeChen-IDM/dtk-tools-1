@@ -1,7 +1,5 @@
 import time
-
 from COMPS.Data.WorkItem import WorkItemState
-
 from simtools.AssetManager.FileList import FileList
 from simtools.Services.Create.CreateSvc import CreateSvc
 from simtools.Services.ObejctCatelog.ObjectInfoSvc import ObjectInfoSvc
@@ -15,7 +13,8 @@ class WorkItemManager:
 
     def __init__(self, item_name="DockerWorker WorkItem", item_type="DockerWorker",
                  docker_image="ubuntu1804python3dtk", provider="COMPS", type="WI", plugin_key="1.0.0.0_RELEASE",
-                 command=None, user_files=FileList(), tags=None, wo_kwargs=None):
+                 command=None, asset_collection_id=None, asset_files=FileList(), user_files=FileList(),
+                 related_experiments=None, tags=None, wo_kwargs=None):
 
         self.item_name = item_name
         self.item_id = None
@@ -26,10 +25,13 @@ class WorkItemManager:
         self.item_type = item_type
         self.plugin_key = plugin_key
         self.docker_image = docker_image
-        self.files = user_files
+        self.asset_collection_id = asset_collection_id
+        self.asset_files = asset_files
+        self.user_files = user_files
         self.wo_kwargs = wo_kwargs or {}
         self.command = command
         self.type = type
+        self.related_experiments = related_experiments
 
     def execute(self, check_status=True):
 
@@ -47,11 +49,14 @@ class WorkItemManager:
         provider_info = {"endpoint": self.comps_host, "environment": self.comps_env}
         kwargs = {"item_name": self.item_name, "item_type": self.item_type, "docker_image": self.docker_image,
                   "plugin_key": self.plugin_key, "comps_env": self.comps_env, "tags": self.tags,
-                  "files": self.files, "wo_kwargs": self.wo_kwargs, "command": self.command}
+                  "asset_files": self.asset_files, "asset_collection_id": self.asset_collection_id,
+                  "user_files": self.user_files, "wo_kwargs": self.wo_kwargs, "command": self.command,
+                  "related_experiments": self.related_experiments}
         self.item_id = CreateSvc.create(self.provider, provider_info, self.type, **kwargs)
 
         # Refresh local object db
-        ObjectInfoSvc.create_item(type=self.type, provider=self.provider, provider_info=provider_info, item_id=str(self.item_id))
+        ObjectInfoSvc.create_item(type=self.type, provider=self.provider, provider_info=provider_info,
+                                  item_id=str(self.item_id))
 
     def run(self):
         RunSvc.run(self.item_id)
@@ -72,13 +77,13 @@ class WorkItemManager:
             print('WorkItem created in {}.'.format(self.provider))
 
     def add_file(self, af):
-        self.files.add_asset_file(af)
+        self.user_files.add_asset_file(af)
 
     def add_wo_arg(self, name, value):
         self.wo_kwargs[name] = value
 
     def clear_user_files(self):
-        self.files = FileList()
+        self.user_files = FileList()
 
     def clear_wo_args(self):
         self.wo_kwargs = {}

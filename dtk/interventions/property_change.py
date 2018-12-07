@@ -106,7 +106,7 @@ def change_individual_property_at_age(cb, target_property_name, target_property_
 def change_individual_property(cb, target_property_name, target_property_value, target='Everyone', start_day=0,
                                coverage=1, daily_prob=1, max_duration=0, revert=0, nodeIDs=[],
                                node_property_restrictions=[], ind_property_restrictions=[], triggered_campaign_delay=0,
-                               trigger_condition_list=[], listening_duration=-1
+                               trigger_condition_list=[], listening_duration=-1, blackout_flag=True
                                ):
 
     node_cfg = NodeSetAll()
@@ -128,26 +128,42 @@ def change_individual_property(cb, target_property_name, target_property_value, 
                                                                      triggered_campaign_delay=triggered_campaign_delay,
                                                                      trigger_condition_list=trigger_condition_list,
                                                                      listening_duration=listening_duration)]
-
-        changer_event = CampaignEvent(
-            Start_Day=start_day,
-            Nodeset_Config=node_cfg,
-            Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
-                Intervention_Config=NodeLevelHealthTriggeredIV(
-                    Blackout_Event_Trigger="Ind_Property_Blackout",
-                    # we don't care about this, just need something to be here so the blackout works at all
-                    Blackout_Period=1,
-                    # so we only distribute the node event(s) once
-                    Blackout_On_First_Occurrence=True,
-                    Target_Residents_Only=False,
-                    Duration=listening_duration,
-                    Trigger_Condition_List=trigger_condition_list,
-                    # Target_Residents_Only=1,          # [ZDU]: duplicated
-                    Demographic_Coverage=coverage,
-                    Actual_IndividualIntervention_Config=property_value_changer
+        if blackout_flag:
+            changer_event = CampaignEvent(
+                Start_Day=start_day,
+                Nodeset_Config=node_cfg,
+                Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                    Intervention_Config=NodeLevelHealthTriggeredIV(
+                        Blackout_Event_Trigger="Ind_Property_Blackout",
+                        # we don't care about this, just need something to be here so the blackout works at all
+                        Blackout_Period=1,
+                        # so we only distribute the node event(s) once
+                        Blackout_On_First_Occurrence=True,
+                        Target_Residents_Only=False,
+                        Duration=listening_duration,
+                        Trigger_Condition_List=trigger_condition_list,
+                        # Target_Residents_Only=1,          # [ZDU]: duplicated
+                        Demographic_Coverage=coverage,
+                        Actual_IndividualIntervention_Config=property_value_changer
+                    )
                 )
             )
-        )
+        else:
+            changer_event = CampaignEvent(
+                Start_Day=start_day,
+                Nodeset_Config=node_cfg,
+                Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                    Intervention_Config=NodeLevelHealthTriggeredIV(
+                        Target_Residents_Only=False,
+                        Duration=listening_duration,
+                        Trigger_Condition_List=trigger_condition_list,
+                        # Target_Residents_Only=1,          # [ZDU]: duplicated
+                        Demographic_Coverage=coverage,
+                        Actual_IndividualIntervention_Config=property_value_changer
+                    )
+                )
+            )
+
 
         if isinstance(target, dict) and all([k in target for k in ['agemin', 'agemax']]):
              changer_event.Event_Coordinator_Config.Intervention_Config.Target_Demographic = StandardInterventionDistributionEventCoordinator_Target_Demographic_Enum.ExplicitAgeRanges

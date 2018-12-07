@@ -4,7 +4,8 @@ from simtools.ModBuilder import SingleSimulationBuilder
 from simtools.SetupParser import SetupParser
 
 experiment_name = "Generic Default simluation test for tools"
-generic_defaults = ['GENERIC_SIM_SIR',
+generic_defaults = ['GENERIC_SIM_MIN',
+                    'GENERIC_SIM_SIR',
                     'GENERIC_SIM_SEIR',
                     'GENERIC_SIM_SIRS',
                     'GENERIC_SIM_SEIRS',
@@ -16,7 +17,7 @@ generic_defaults = ['GENERIC_SIM_SIR',
 
 if __name__ == '__main__':
     # Initialize the SetupParser to use HPC
-    SetupParser.init(selected_block='HPC')
+    SetupParser.init('HPC')
 
     # Create an experiment manager
     exp_mgr = ExperimentManagerFactory.init()
@@ -30,10 +31,8 @@ if __name__ == '__main__':
         # This step is optional usually but it allows us to set tags on the simulation
         builder = SingleSimulationBuilder()
         builder.tags.update({"Simulation_Type": sim_example})
-
-        exp_mgr.run_simulations(config_builder=cb,
-                                exp_builder=builder,
-                                exp_name=experiment_name)
+        
+        exp_mgr.run_simulations(exp_name=experiment_name, config_builder=cb, exp_builder=builder)
 
     # Wait for the experiment to finish
     exp_mgr.wait_for_finished()
