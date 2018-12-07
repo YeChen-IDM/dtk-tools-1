@@ -38,10 +38,12 @@ class MigrationGenerator(object):
         self.link_rates_model = link_rates_model
         self.link_rates = None
 
+
     def generate_link_rates(self):
         """
         Calls the link rates model generates. After generation, we ensure all our ids are in INT form as some of the
         generators return the dictionaries with float labels.
+        
         Returns:
             None
         """
@@ -73,13 +75,14 @@ class MigrationGenerator(object):
 
     def generate_migration(self, save_link_rates_as_txt: bool = False, demographics_file_path: str = None):
         """
-        Generation migration binary. If
+        Generation migration binary. 
+        
         Args:
-
             save_link_rates_as_txt: If true, a human-readable text version of the link rates will be saved as either
              migration_file_name + '.txt' or migration_file_name with .bin replaced with .txt
             demographics_file_path: If passed, the demographics filed will be compiled and used to generator
             the migration file header
+            
         Returns:
             None
         """

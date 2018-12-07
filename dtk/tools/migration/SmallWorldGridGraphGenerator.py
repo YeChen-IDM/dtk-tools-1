@@ -22,16 +22,16 @@ class SmallWorldGridGraphGenerator(GraphGenerator):
         Notes: we let the user specify their own local neighborhood per node instead of using related networkx graph
          implementations
         - the networkx implementation of small-world graphs assume ring topology; but instead we're interested in a grid
-         in realistic scenarios
+          in realistic scenarios
         - the networkx implementation of 2d grid graphs assumes no diagonal edges, whereas we'd like to have the
-        ability to get neighbors from a (sub)set of the full neighborhood (of 8 nodes aside from boundary, corner or
-         missing nodes)
+          ability to get neighbors from a (sub)set of the full neighborhood (of 8 nodes aside from boundary, corner or
+          missing nodes)
         - since the user has likely already generated their lat/lon grid, we transfer the burden of neighborhood
-        generation to them for now
+          generation to them for now
         - we assume that the grid small-world network's non-local/long-range edges are wired for optimal decentralized
-         efficiency, which coincides with most of the real-world small-world network examples
+          efficiency, which coincides with most of the real-world small-world network examples
         - that is, the probability p((u,v)) of a an edge from node u to v is given by p(u,v) ~ d(u,v)^-2, where d(u,v)
-         is the topological shortest path length (i.e. hop length) between u and v *on the grid*
+          is the topological shortest path length (i.e. hop length) between u and v *on the grid*
         """
 
         G = nx.Graph()
@@ -81,7 +81,9 @@ class SmallWorldGridGraphGenerator(GraphGenerator):
     def get_shortest_paths(self):
         """
         get shortest paths based on link weights
+        
         Returns:
 
         """
         return nx.shortest_path_length(self.graph, weight='weight')
+

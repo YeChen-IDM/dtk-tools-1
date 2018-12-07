@@ -21,15 +21,16 @@ class SpatialManager:
     existence of their parameter sets
 
     - the obvious way is to expose these parameters as SpatialManager constructor arguments;
-    that would be the constructor with the most arguments in the world and we might bump into the 256 arguments of c/python in which case we still could transition to kwargs and args...
+      that would be the constructor with the most arguments in the world and we might bump into the 256 arguments of c/python in which case we still could transition to kwargs and args...
 
-    - another way could be a set of mutator methods, each corresponding to generator class; e.g. something along the lines of a method
-    setClimateGeneratorParams(**kwargs):
-        for key in attributes: # attributes is a list of climate parameters exposed to the user
-            if key in kwargs:
-                setattr(climate_generator_instance, key, kwargs[key])
+    - another way could be a set of mutator methods, each corresponding to generator class; e.g. something along the lines of a method::
 
-    This approach may require generators instantiation in the contructor of SpatialManager.
+        setClimateGeneratorParams(**kwargs)``:
+            for key in attributes: # attributes is a list of climate parameters exposed to the user
+                if key in kwargs:
+                    setattr(climate_generator_instance, key, kwargs[key])
+
+      This approach may require generators instantiation in the contructor of SpatialManager.
     """
 
     def __init__(self, location, cb, geography, name, working_dir, input_dir,

@@ -77,6 +77,7 @@ class GeoGraphGenerator(GraphGenerator):
     def get_haversine_distance(lon1, lat1, lon2, lat2) -> float:
         """
         Calculate the great circle distance between two points on the earth (specified in decimal degrees)
+        
         Args:
             lon1: Longitude for point 1
             lat1: Latitude for point 1
@@ -98,5 +99,4 @@ class GeoGraphGenerator(GraphGenerator):
 
         # 6367 km is the radius of the Earth
         km = 6367 * c
-
         return km
