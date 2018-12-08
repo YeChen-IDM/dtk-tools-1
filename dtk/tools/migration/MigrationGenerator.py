@@ -37,6 +37,7 @@ class MigrationGenerator(object):
         self.link_rates_model = link_rates_model
         self.link_rates = None
 
+
     def generate_link_rates(self):
         """
         Calls the link rates model generates. After generation, we ensure all our ids are in INT form as some of the
