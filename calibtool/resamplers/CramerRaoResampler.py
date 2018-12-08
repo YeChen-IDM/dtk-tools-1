@@ -15,8 +15,9 @@ from calibtool.algorithms.FisherInfMatrix import FisherInfMatrix, trunc_gauss
 class CramerRaoResampler(BaseResampler):
     def __init__(self, **kwargs):
         """
-        :param n_resampling_points: The number of resampled points to generate
-        :param kwargs: These are arguments passed directly to the underlying resampling routine.
+        Args:
+            n_resampling_points: The number of resampled points to generate
+            kwargs: These are arguments passed directly to the underlying resampling routine.
         """
         super().__init__()
         # self.n_resampling_points = n_resampling_points # the number of points to resample/generate
@@ -26,14 +27,17 @@ class CramerRaoResampler(BaseResampler):
     def resample(self, calibrated_points, selection_values, initial_calibration_points):
         """
         Takes in a list of 1+ Point objects and returns method-specific resampled points as a list of Point objects
-        The resultant Point objects should be copies of the input Points BUT with Value overridden on each, e.g.:
+        The resultant Point objects should be copies of the input Points BUT with Value overridden on each, e.g.::
 
-        new_point = Point.copy(one_of_the_input_calibrated_points)
-        for param in new_point.list_params():
-          new_point.set_param_value(param, value=SOME_NEW_VALUE)
+            new_point = Point.copy(one_of_the_input_calibrated_points)
+            for param in new_point.list_params():
+              new_point.set_param_value(param, value=SOME_NEW_VALUE)
 
-        :param calibrated_points: input points for this resampling method
-        :return: a list of resampled Point objects
+        Args:
+            calibrated_points: input points for this resampling method
+        
+        Returns: 
+            A list of resampled Point objects
         """
 
         # selection_values: a DataFrame with columns relevant to selection of calibrated_points
@@ -148,8 +152,8 @@ class CramerRaoResampler(BaseResampler):
             matrix (`cov`). Additional keyword arguments are passed on to the
             ellipse patch artist.
 
-            Parameters
-            ----------
+            Args:
+            
                 cov : The 2x2 covariance matrix to base the ellipse on
                 pos : The location of the center of the ellipse. Expects a 2-element
                     sequence of [x0, y0].
@@ -157,10 +161,10 @@ class CramerRaoResampler(BaseResampler):
                     Defaults to 2 standard deviations.
                 ax : The axis that the ellipse will be plotted on. Defaults to the
                     current axis.
+                
                 Additional keyword arguments are pass on to the ellipse patch.
 
-            Returns
-            -------
+            Returns:
                 A matplotlib ellipse artist
             """
 

@@ -115,10 +115,11 @@ class MultiVariatePrior(object):
     Different dimensions are drawn independently
     from the univariate distributions.
 
-    : param sample_functions : list of scipy.stats frozen functions
-    : param params : list of parameter names associated with functions (optional)
-    : param ranges : list of SampleRange objects associated with functions (optional)
-    : param name : name of MultiVariatePrior object (optional)
+    Args:
+        sample_functions : list of scipy.stats frozen functions
+        params : list of parameter names associated with functions (optional)
+        ranges : list of SampleRange objects associated with functions (optional)
+        name : name of MultiVariatePrior object (optional)
     """
 
     def __init__(self, functions, params=[], ranges=[], name=None):
@@ -154,15 +155,17 @@ class MultiVariatePrior(object):
         """
         Builds multi-variate wrapper from keyword arguments of parameter names to SampleRange (min, max, type)
 
-        :param param_sample_ranges: keyword arguments of parameter names to SampleRange tuple
-        :return: MultiVariatePrior instance
+        Args:
+            param_sample_ranges: keyword arguments of parameter names to SampleRange tuple
+        Returns: 
+            MultiVariatePrior instance
 
-        An example usage:
+        An example usage::
 
-        > prior = MultiVariatePrior.by_range(
-              MSP1_Merozoite_Kill_Fraction=('linear', 0.4, 0.7),
-              Max_Individual_Infections=('linear_int', 3, 8),
-              Base_Gametocyte_Production_Rate=('log', 0.001, 0.5))
+            > prior = MultiVariatePrior.by_range(
+                  MSP1_Merozoite_Kill_Fraction=('linear', 0.4, 0.7),
+                  Max_Individual_Infections=('linear_int', 3, 8),
+                  Base_Gametocyte_Production_Rate=('log', 0.001, 0.5))
         """
 
         ranges = [SampleRange(*sample_range_tuple) for sample_range_tuple in param_sample_ranges.values()]
@@ -174,15 +177,17 @@ class MultiVariatePrior(object):
         """
         Builds multi-variate wrapper from keyword arguments of parameter names to univariate frozen functions
 
-        :param param_sample_functions: keyword arguments of parameter names to univariate object supporting pdf and rvs interfaces
-        :return: MultiVariatePrior instance
+        Args:
+            param_sample_functions: keyword arguments of parameter names to univariate object supporting pdf and rvs interfaces
+        Returns: 
+            MultiVariatePrior instance
 
-        An example usage:
+        An example usage::
 
-        > from scipy.stats import uniform
-        > prior = MultiVariatePrior.by_param(
-              MSP1_Merozoite_Kill_Fraction=uniform(loc=0.4, scale=0.3),  # from 0.4 to 0.7
-              Nonspecific_Antigenicity_Factor=uniform(loc=0.1, scale=0.8))  # from 0.1 to 0.9
+            > from scipy.stats import uniform
+            > prior = MultiVariatePrior.by_param(
+                  MSP1_Merozoite_Kill_Fraction=uniform(loc=0.4, scale=0.3),  # from 0.4 to 0.7
+                  Nonspecific_Antigenicity_Factor=uniform(loc=0.1, scale=0.8))  # from 0.1 to 0.9
         """
 
         return cls(functions=param_sample_functions.values(), params=param_sample_functions.keys())
@@ -190,7 +195,9 @@ class MultiVariatePrior(object):
     def pdf(self, X):
         """
         Returns product of individual component function PDFs at each input point.
-        : param X : array of points, where each point is an array of correct dimension.
+        
+        Args:
+            X: array of points, where each point is an array of correct dimension.
         """
 
         if isinstance(X, list):
@@ -220,7 +227,9 @@ class MultiVariatePrior(object):
     def rvs(self, size=1):
         """
         Returns an array of random points, where each point is sampled randomly in its component dimensions.
-        : param size : the number of random points to sample.
+        
+        Args:
+            size : the number of random points to sample.
         """
 
         values = np.array([[f.rvs() for f in self.functions] for _ in range(size)]).squeeze()

@@ -82,8 +82,9 @@ class ResampleManager:
     def get_calibrated_points(self):
         """
         Retrieve information about the most recent (final completed) iteration's calibrated point,
-        merging from the final IterationState.json and CalibManager.json .
-        :return:
+        merging from the final IterationState.json and CalibManager.json.
+        
+        Returns:
         """
         n_points = 1 # ck4, hardcoded for now for HIV purposes, need to determine how to get this from the CalibManager
 

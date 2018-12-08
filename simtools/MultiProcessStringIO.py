@@ -52,8 +52,10 @@ class MultiProcessStringIO(StringIO):
         """
         This is the method that calls the specified superclass method. It ensures the given pid's read index is used
         and properly updated.
+
         :param method: The superclass method to call
         :param kwargs: args for the superclass method
+
         :return: whatever the specified method returns
         """
         if not 'pid' in kwargs:
@@ -69,6 +71,7 @@ class MultiProcessStringIO(StringIO):
         """
         Create a read index for the specified (or current) process. Will not alter the read index if pid is already
         registered.
+
         :return: the pid of the registered process
         """
         pid = os.getpid()
@@ -82,7 +85,9 @@ class MultiProcessStringIO(StringIO):
     def unregister(self):
         """
         Remove this process's read index.
+
         :param pid: a process id (int)
+        
         :return: the pid that was unregistered, None if pid was not registered
         """
         pid = os.getpid()
@@ -142,6 +147,8 @@ class MultiProcessStringIO(StringIO):
         return result
 
     def seek(self, pos, mode=0):
+        """
+        """
         pid = os.getpid()
         with self._lock:
             if pid not in self._registered_processes:

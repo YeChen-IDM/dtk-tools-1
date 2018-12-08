@@ -204,7 +204,7 @@ class CalibManager(object):
         """
         Cache information about the CalibManager that is needed to resume after an interruption.
         N.B. This is not currently the complete state, some of which relies on nested and frozen functions.
-             As such, the 'resume' logic relies on the existence of the original configuration script.
+        As such, the 'resume' logic relies on the existence of the original configuration script.
         """
         state = {'name': self.name,
                  'location': self.location,
