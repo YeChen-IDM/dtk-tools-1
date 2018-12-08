@@ -13,7 +13,7 @@ itn_bednet = SimpleBednet(Bednet_Type='ITN',
 receiving_itn_event = BroadcastEvent(Broadcast_Event='Received_ITN')
 
 
-def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=None, nodeIDs=[], node_property_restrictions=[],
+def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=[], node_property_restrictions=[],
             ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=1):
     """
      Add an ITN intervention to the config_builder passed.

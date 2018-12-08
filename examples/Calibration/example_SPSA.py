@@ -109,7 +109,7 @@ def map_sample_to_model_input(cb, sample):
     assert (len(sample) == 0)  # All params used
 
     # Run for 10 years with a random random number seed
-    tags.update(cb.set_param('Simulation_Duration', 3650+1))  # 10*365
+    tags.update(cb.set_param('Simulation_Duration', 365+1))  # 10*365
     tags.update(cb.set_param('Run_Number', random.randint(0, 1e6)))
 
     return tags

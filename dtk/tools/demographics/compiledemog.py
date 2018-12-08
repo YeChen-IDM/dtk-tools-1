@@ -1,4 +1,8 @@
-import sys, os, json, collections, re, msvcrt
+import collections
+import json
+import os
+import re
+import sys
 
 stringdict = collections.OrderedDict([])
 nextstring = 'aa'
@@ -21,13 +25,13 @@ def CheckFiles(infilename, outfilename, forceoverwrite=False):
             print('Destination file already exists!  Overwrite the existing file? (y/n) ' )
             sys.stdout.flush()
 
-            answer = msvcrt.getche()
+            answer = input()
             print('')
-            if answer != b'y' :
+            if answer.lower() != 'y':
                 return False
 
         try:
-            os.remove(outfilename);
+            os.remove(outfilename)
         except:
             print('Error while trying to delete file: %s' % sys.exc_info()[1])
             return False

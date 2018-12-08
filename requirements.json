@@ -87,5 +87,9 @@
   "sklearn": {
     "version": "0.0",
     "test": ">="
+  },
+  "geopy": {
+    "version": "1.18.0",
+    "test": ">="
   }
 }

@@ -1,0 +1,30 @@
+{
+    "Metadata": {
+        "DateCreated": "Mon Dec 02 13:40:55 2018", 
+        "Tool": "notepad++", 
+        "Author": "yechen", 
+        "IdReference": "Gridded world grump2.5arcmin", 
+        "NodeCount": 1
+    }, 
+	"Defaults":{
+	            "IndividualProperties": [
+                {
+                    "Property": "DrugStatus",
+                    "Values": [
+                        "None",
+                        "RecentDrug"
+                    ],
+                    "Initial_Distribution": [ 0.3, 0.7]
+                    },
+				{
+                    "Property": "Risk",
+                    "Values": [
+                        "High",
+                        "Low"
+                    ],
+                    "Initial_Distribution": [ 0.3, 0.7]
+                    }
+                
+            ]
+	}
+}
