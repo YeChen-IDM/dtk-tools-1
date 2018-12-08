@@ -7,17 +7,17 @@ class GenericIterativeNextPoint(NextPointAlgorithm):
     """
     Represents a Generic Next Point allowing thew Calibtool to function as a more generic iterative process.
     Here a dictionary needs to be passed as the state. 
-    For example:
-    ```
+    For example::
+    
        initial_state = [{
         'Run_Number': rn
         } for rn in range(2)]
         
-    ```
+    
     
     Then the results of the analyzers are stored in the self.data associating iteration with results.
-    Both the initial state and the results are stored there allowing to easily refer to it.
-    ```
+    Both the initial state and the results are stored there allowing to easily refer to it::
+    
         self.data = [
                         {
                         'Run_Number': 1
@@ -26,7 +26,7 @@ class GenericIterativeNextPoint(NextPointAlgorithm):
                         },
                         ...
                     ]
-    ```      
+          
     
     Note that the results needs to be contained in a Dictionary. 
     If you want to leverage pandas.DataFrame instead, you should use OptimTool. 

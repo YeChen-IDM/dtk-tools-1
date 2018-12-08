@@ -166,7 +166,7 @@ def id():
     If you have a need to get distros for reliable IDs added into this set,
     or if you find that the :func:`distro.id` function returns a different
     distro ID for one of the listed distros, please create an issue in the
-    `distro issue tracker`_.
+    distro issue tracker.
 
     **Lookup hierarchy and transformations:**
 
@@ -188,7 +188,7 @@ def id():
     * blanks (which should not be there anyway) are translated to underscores,
 
     * a normalization of the ID is performed, based upon
-      `normalization tables`_. The purpose of this normalization is to ensure
+      normalization tables. The purpose of this normalization is to ensure
       that the ID is as reliable as possible, even across incompatible changes
       in the OS distributions. A common reason for an incompatible change is
       the addition of an os-release file, or the addition of the lsb_release
@@ -427,7 +427,7 @@ def os_release_info():
     Return a dictionary containing key-value pairs for the information items
     from the os-release file data source of the current OS distribution.
 
-    See `os-release file`_ for details about these information items.
+    See os-release file for details about these information items.
     """
     return _distro.os_release_info()
 
@@ -437,7 +437,7 @@ def lsb_release_info():
     Return a dictionary containing key-value pairs for the information items
     from the lsb_release command data source of the current OS distribution.
 
-    See `lsb_release command output`_ for details about these information
+    See lsb-release command output for details about these information
     items.
     """
     return _distro.lsb_release_info()
@@ -448,7 +448,7 @@ def distro_release_info():
     Return a dictionary containing key-value pairs for the information items
     from the distro release file data source of the current OS distribution.
 
-    See `distro release file`_ for details about these information items.
+    See distro release file for details about these information items.
     """
     return _distro.distro_release_info()
 
@@ -475,7 +475,7 @@ def os_release_attr(attribute):
     * (string): Value of the information item, if the item exists.
       The empty string, if the item does not exist.
 
-    See `os-release file`_ for details about these information items.
+    See os-release file for details about these information items.
     """
     return _distro.os_release_attr(attribute)
 
@@ -494,7 +494,7 @@ def lsb_release_attr(attribute):
     * (string): Value of the information item, if the item exists.
       The empty string, if the item does not exist.
 
-    See `lsb_release command output`_ for details about these information
+    See lsb-release command output for details about these information
     items.
     """
     return _distro.lsb_release_attr(attribute)
@@ -514,7 +514,7 @@ def distro_release_attr(attribute):
     * (string): Value of the information item, if the item exists.
       The empty string, if the item does not exist.
 
-    See `distro release file`_ for details about these information items.
+    See distro release file for details about these information items.
     """
     return _distro.distro_release_attr(attribute)
 
@@ -557,7 +557,7 @@ class LinuxDistribution(object):
 
     This package creates a private module-global instance of this class with
     default initialization arguments, that is used by the
-    `consolidated accessor functions`_ and `single source accessor functions`_.
+    consolidated accessor functions and single source accessor functions.
     By using default initialization arguments, that module-global instance
     returns data about the current OS distribution (i.e. the distro this
     package runs on).
@@ -583,25 +583,25 @@ class LinuxDistribution(object):
         Parameters:
 
         * ``include_lsb`` (bool): Controls whether the
-          `lsb_release command output`_ is included as a data source.
+          lsb-release command output is included as a data source.
 
           If the lsb_release command is not available in the program execution
           path, the data source for the lsb_release command will be empty.
 
         * ``os_release_file`` (string): The path name of the
-          `os-release file`_ that is to be used as a data source.
+          os-release file that is to be used as a data source.
 
           An empty string (the default) will cause the default path name to
-          be used (see `os-release file`_ for details).
+          be used (see os-release file for details).
 
           If the specified or defaulted os-release file does not exist, the
           data source for the os-release file will be empty.
 
         * ``distro_release_file`` (string): The path name of the
-          `distro release file`_ that is to be used as a data source.
+          distro release file that is to be used as a data source.
 
           An empty string (the default) will cause a default search algorithm
-          to be used (see `distro release file`_ for details).
+          to be used (see distro release file for details).
 
           If the specified distro release file does not exist, or if no default
           distro release file can be found, the data source for the distro
@@ -615,11 +615,11 @@ class LinuxDistribution(object):
         Public instance attributes:
 
         * ``os_release_file`` (string): The path name of the
-          `os-release file`_ that is actually used as a data source. The
+          os-release file that is actually used as a data source. The
           empty string if no distro release file is used as a data source.
 
         * ``distro_release_file`` (string): The path name of the
-          `distro release file`_ that is actually used as a data source. The
+          distro release file that is actually used as a data source. The
           empty string if no distro release file is used as a data source.
 
         * ``include_lsb`` (bool): The result of the ``include_lsb`` parameter.

@@ -187,19 +187,21 @@ class IMIS(NextPointAlgorithm):
     def update_iteration(self, iteration):
         """
         Initial Stage (iteration: k = 0)
-            (a) Sample N inputs \theta_1, \theta_2, ... , \theta_N from the prior distribution p(\theta).
 
-            (b) For each \theta_i, calculate the likelihood L_i, and form the importance weights:
-                    w^(0)_i = L_i / sum(L_j).
+            (a) Sample N inputs :math:`\\theta_1, \\theta_2, ... , \\theta_N` from the prior distribution :math:`p(\\theta)`.
+
+            (b) For each :math:`\\theta_i`, calculate the likelihood :math:`L_i`, and form the importance weights:
+                :math:`w^{(0)}_i = L_i / sum(L_j)`.
 
         Importance Sampling Stage (iteration: k > 0; samples_per_iteration: B)
+
             (c) Calculate the likelihood of the new inputs and combine the new inputs with the
                 previous ones. Form the importance weights:
-                    w^(k)_i = c * L_i * p(\theta_i) / q^(k)(\theta_i),
-                where c is chosen so that the weights add to 1, q(k) is the mixture sampling distribution:
-                    q^(k) = (N_0/N_k) * p + (B/N_k) * sum(H_s)
-                where H_s is the s-th multivariate normal distribution,
-                and N_k = N_0 + B_k is the total number of inputs up to iteration k.
+                :math:`w^{(k)_i} = c * L_i * p(\\theta_i) / q^{(k)}(\\theta_i)`,
+                where c is chosen so that the weights add to 1, :math:`q^{(k)}` is the mixture sampling distribution:
+                :math:`q^{(k)} = (N_0/N_k) * p + (B/N_k) * sum(H_s)`
+                where :math:`H_s` is the Sth multivariate normal distribution,
+                and :math:`N_k = N_0 + B_k` is the total number of inputs up to iteration k.
         """
 
         super(IMIS, self).update_iteration(iteration)
@@ -232,14 +234,14 @@ class IMIS(NextPointAlgorithm):
         """
         Importance Sampling Stage (iteration: k > 0; samples_per_iteration: B)
 
-            (a) Choose the current maximum weight input as the center \theta^(k). Estimate \Sigma^(k) from
+            (a) Choose the current maximum weight input as the center :math:`\\theta^{(k)}`. Estimate :math:`\\Sigma^{(k)}` from
                 the weighted covariance of the B inputs with the smallest Mahalanobis distances
-                to \theta^(k), where the distances are calculated with respect to the covariance of the
+                to :math:`\\theta^{(k)}`, where the distances are calculated with respect to the covariance of the
                 prior distribution and the weights are taken to be proportional to the average of
-                the importance weights and 1/N_k.
+                the importance weights and :math:`1/N_k`.
 
             (b) Sample 'samples_per_iteration' new inputs from a multivariate Gaussian distribution
-                H_k with covariance matrix \Sigma^(k).
+                :math:`H_k` with covariance matrix :math:`\\Sigma^{(k)}`.
         """
 
         self.update_gaussian_center()
