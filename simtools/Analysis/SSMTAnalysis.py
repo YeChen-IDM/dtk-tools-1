@@ -8,16 +8,16 @@ from simtools.Managers.WorkItemManager import WorkItemManager
 
 class SSMTAnalysis:
 
-    def __init__(self, experiment_ids, analyzers, analysis_name, tags=None,
+    def __init__(self, experiment_ids, analyzers, analyzers_args={}, analysis_name='WorkItem Test', tags=None,
                  additional_files=None, asset_collection_id=None, asset_files=FileList()):
         self.experiment_ids = experiment_ids
         self.analyzers = analyzers
+        self.analyzers_args = analyzers_args
         self.analysis_name = analysis_name
         self.tags = tags
         self.additional_files = additional_files or FileList()
         self.asset_collection_id = asset_collection_id
         self.asset_files = asset_files
-
 
     def analyze(self):
         # Add the analyze_ssmt.py file to the collection
@@ -28,31 +28,30 @@ class SSMTAnalysis:
         if os.path.exists(os.path.join(os.getcwd(), "simtools.ini")):
             self.additional_files.add_file(os.path.join(os.getcwd(), "simtools.ini"))
 
-        # Build analyzer args pickle files
-        analyzer_args = {}
-        for a in self.analyzers:
-            sig = inspect.signature(a.__class__)
-            args = {k: getattr(a, k) for k in sig.parameters.keys()}
-            analyzer_args[f"{inspect.getmodulename(inspect.getfile(a.__class__))}.{a.__class__.__name__}"] = args
+        # build analyzer args dict
+        args_dict = {}
+        a_args = zip(self.analyzers, self.analyzers_args)
+        for a, g in a_args:
+            args_dict[f"{inspect.getmodulename(inspect.getfile(a))}.{a.__name__}"] = g
 
         # save pickle file as a temp file
         temp_dir = tempfile.mkdtemp()
         temp_file = os.path.join(temp_dir, "analyzer_args.pkl")
-        pickle.dump(analyzer_args, open(temp_file, 'wb'))
+        pickle.dump(args_dict, open(temp_file, 'wb'))
 
         # Add analyzer args pickle as additional file
         self.additional_files.add_file(temp_file)
 
         # Add all the analyzers files
         for a in self.analyzers:
-            self.additional_files.add_file(inspect.getfile(a.__class__))
+            self.additional_files.add_file(inspect.getfile(a))
 
         # Create the command
         command = "python analyze_ssmt.py"
         # Add the experiments
         command += " {}".format(",".join(self.experiment_ids))
         # Add the analyzers
-        command += " {}".format(",".join(f"{inspect.getmodulename(inspect.getfile(s.__class__))}.{s.__class__.__name__}"
+        command += " {}".format(",".join(f"{inspect.getmodulename(inspect.getfile(a))}.{a.__name__}"
                                          for s in self.analyzers))
 
         # Create WorkItemManager
