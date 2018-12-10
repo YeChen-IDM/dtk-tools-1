@@ -52,7 +52,9 @@ class LocalExperimentManager(BaseExperimentManager):
     def commission_simulations(self):
         """
          Commissions all simulations that need to (and can be) commissioned.
+
         :param states: a multiprocessing.Queue for simulations to use to update their status.
+        
         :return: The number of simulations commissioned.
         """
         to_commission = self.needs_commissioning()

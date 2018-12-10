@@ -184,10 +184,14 @@ class SchemaDecoder(json.JSONDecoder):
 
     def check_idmType(self, value):
         """
+        Format::
+            
+            {
             "Larval_Habitat_Types": {
               "description": "A measure of ......",
               "type": "idmType:LarvalHabitats"
             }
+            
         :param value:
         :return:
         """

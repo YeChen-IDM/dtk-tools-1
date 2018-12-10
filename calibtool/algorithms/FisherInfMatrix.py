@@ -7,18 +7,18 @@ from scipy.linalg import sqrtm
 
 
 def perturbed_points(center, Xmin, Xmax, M=10, N=5, n=1, resolution_raw=None):
+    # Atiye Alaeddini, 12/11/2017
+    # generate perturbed points around the center
     """
-    Atiye Alaeddini, 12/11/2017
-    generate perturbed points around the center
-
     Having the estimated optimal point (θ*), the next step is generating a set of perturbed
     points (samples). At this step, you can specify the size of perturbation (resolution).
     In case you do not input the perturbation size (resolution_raw=None), the script will
     pick a perturbation using the given range for each parameter (Xmin-Xmax).
-    You need to allocate per-realization (M) and cross-realization (N). Note that M>p^2,
+    You need to allocate per-realization (M) and cross-realization (N). Note that :math:`M>p^2`,
     where p is the number of parameters (size of θ). The number of cross-realization (N)
     should be set depending on the uncertainty of the model at the given final point (θ*).
     To choose N, you can use Chebyshev's inequality.
+
     You can allocate number of replicates of the model (n). The log-likelihood at each point
     obtains from n replicates of the model with different run numbers. Then these n
     replicates are used to compute the likelihood at that point. When we have a model with
@@ -28,19 +28,17 @@ def perturbed_points(center, Xmin, Xmax, M=10, N=5, n=1, resolution_raw=None):
     higher n, whenever a smoothing technique which requires multiple replicates of the model
     for computing the likelihood be added to the Analyzers.
 
-     ------------------------------------------------------------------------
-    INPUTS:
-    center    center point    1xp nparray
-    Xmin    minimum of parameters    1xp nparray
-    Xmax    maximum of parameters    1xp nparray
-    M    number of Hessian estimates    scalar-positive integer
-    N    number of pseudodata vectors    scalar-positive integer
-    n    sample size    scalar-positive integer
-    resolution_raw    minimum perturbation for each parameter    1xp nparray
-     ------------------------------------------------------------------------
-    OUTPUTS:
-    X_perturbed    perturbed points    (4MNn x 4+p) nparray
-     ------------------------------------------------------------------------
+    Args:
+        center: center point    1xp nparray
+        Xmin: minimum of parameters    1xp nparray
+        Xmax: maximum of parameters    1xp nparray
+        M: number of Hessian estimates    scalar-positive integer
+        N: number of pseudodata vectors    scalar-positive integer
+        n: sample size    scalar-positive integer
+        resolution_raw: minimum perturbation for each parameter    1xp nparray
+
+    Returns:
+        X_perturbed: perturbed points    (4MNn x 4+p) nparray
     """
     # dimension of center point
     p = len(center)
@@ -137,21 +135,21 @@ def perturbed_points(center, Xmin, Xmax, M=10, N=5, n=1, resolution_raw=None):
 
 
 def FisherInfMatrix(center_point, df_LL_points, data_columns):
+    
+    #Atiye Alaeddini, 12/15/2017
+
     """
-    Atiye Alaeddini, 12/15/2017
-    compute the Fisher Information matrix using the LL of perturbed points
+    Compute the Fisher Information matrix using the LL of perturbed points
 
     Computation of the Fisher information matrix (covariance matrix)
     This step returns a p×p covariance matrix, called Σ.
 
-     ------------------------------------------------------------------------
-    INPUTS:
-    center    center point    (1 x p) nparray
-    df_LL_points    Log Likelihood of points    DataFrame
-     ------------------------------------------------------------------------
-    OUTPUTS:
-    Fisher    Fisher Information matrix    (p x p) np array
-     ------------------------------------------------------------------------
+    Args:
+        center: center point    (1 x p) nparray
+        df_LL_points: Log Likelihood of points    DataFrame
+
+    Returns:
+        Fisher: Fisher Information matrix    (p x p) np array
     """
 
     rounds = df_LL_points['j(1toN)'].as_matrix() # j
@@ -229,14 +227,12 @@ def sample_cov_ellipse(cov, pos, num_of_pts=10):
     Sample 'num_of_pts' points from the specified covariance
     matrix (`cov`).
 
-    Parameters
-    ----------
+    Args:
         cov : 2-D array_like, The covariance matrix (inverse of fisher matrix). It must be symmetric and positive-semidefinite for proper sampling.
         pos : 1-D array_like, The location of the center of the ellipse, Mean of the multi variate distribution
         num_of_pts : The number of sample points.
 
-    Returns
-    -------
+    Returns:
         ndarray of the drawn samples, of shape (num_of_pts,).
     """
     return np.random.multivariate_normal(pos, cov, num_of_pts)
@@ -270,8 +266,7 @@ def trunc_gauss(mu, sigma, low_bound, high_bound, num_of_pts, batch_size=100):
 #     matrix (`cov`). Additional keyword arguments are passed on to the
 #     ellipse patch artist.
 #
-#     Parameters
-#     ----------
+#     Args:
 #         cov : The 2x2 covariance matrix to base the ellipse on
 #         pos : The location of the center of the ellipse. Expects a 2-element
 #             sequence of [x0, y0].
@@ -279,10 +274,10 @@ def trunc_gauss(mu, sigma, low_bound, high_bound, num_of_pts, batch_size=100):
 #             Defaults to 2 standard deviations.
 #         ax : The axis that the ellipse will be plotted on. Defaults to the
 #             current axis.
-#         Additional keyword arguments are pass on to the ellipse patch.
+
+#     Additional keyword arguments are pass on to the ellipse patch.
 #
-#     Returns
-#     -------
+#     Returns:
 #         A matplotlib ellipse artist
 #     """
 #

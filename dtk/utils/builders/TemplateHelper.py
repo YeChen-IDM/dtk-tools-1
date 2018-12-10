@@ -15,13 +15,18 @@ class TemplateHelper():
         """
         Set the header and table for dynamic (per-simulation) configuration.
         The header has two special keywords: 
+
         * ACTIVE_TEMPLATES:
         * TAGS:
 
-        :param header: Containes the parameter addresses, using the special tags (e.g. __KP).  Here is an example:
+        Args:
+
+        header: Containes the parameter addresses, using the special tags (e.g. __KP).  Here is an example::
+
             header = [  'ACTIVE_TEMPLATES', 'Start_Year__KP_Seeding_Year', 'Society__KP_Bulawayo.INFORMAL.Relationship_Parameters.Coital_Act_Rate', 'TAGS' ]
 
-        :param table: Containes the parameter values.  One simulation will be created for each row, e.g.:
+        table: Containes the parameter values.  One simulation will be created for each row, e.g.::
+
             table = [
                 [ [config1, campaign],               1980, 0.1, {'Tag1':'Value1'}              ],
                 [ [config2, campaign_outbreak_only], 1990, 0.2, {'Tag2':None, 'Tag3':'Value3'} ]

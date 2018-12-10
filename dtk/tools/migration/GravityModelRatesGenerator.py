@@ -1,33 +1,43 @@
 import heapq
 import warnings
+
 import networkx as nx
 
+from dtk.tools.migration.GraphGenerator import GraphGenerator
+from dtk.tools.migration.LinkRatesModelGenerator import GraphGeneratedLinkRatesModelGenerator
 
-class GravityModelRatesGenerator(object):
-    '''
+
+class GravityModelRatesGenerator(GraphGeneratedLinkRatesModelGenerator):
+    """
     generate rates matrix based on source-destination pairs path lengths (path weights) and graph topology input;
-    see MigrationGenerator for path lengths/weights and graph topology generation 
-    '''
+    see MigrationGenerator for path lengths/weights and graph topology generation
+    """
 
-    def __init__(self, path_lengths, graph, coeff=1):
-        self.path_lengths = path_lengths
+    def __init__(self, graph_generator: GraphGenerator, coeff: float = 1e-4):
+        """
+        GravityModelRatesGenerator creates a rates matrix based on the graph provided
 
-        self.graph = graph
-        
-        #print (graph.edges())
-        
+        Args:
+            graph_generator: A GraphGenerator
+            coeff: Gravity Model coefficient for calculating the mig_rate
+        """
+        super().__init__(graph_generator)
+        self.graph_generator = graph_generator
+        if graph_generator is None:
+            raise ValueError("A Graph Generator is required for the GravityModelRatesGenerator")
+
         self.coeff = coeff
-        
-        #print (coeff)
-
         self.link_rates = None # output of gravity model based migration links generation
-        
-        
-    '''
-    gravity model based link rates
-    '''
+        self.path_lengths = None
 
-    def generate_migration_links_rates(self):
+    def generate(self) -> dict:
+        """
+        Generate the link rates(weighted adjacency list) from the provided graph
+        Returns:
+            weighted adjacency list calculated via gravity model
+        """
+        self.graph_generator.generate_graph()
+        self.path_lengths = self.graph_generator.get_shortest_paths()
 
         paths = {}
 
@@ -43,14 +53,11 @@ class GravityModelRatesGenerator(object):
             paths[src] = {}
 
             for dest, dist in v.items():
-                # print (dist)
-                # print (src)
-                # print (dest)
                 if not dist or src == dest:
                     continue
                 if dist < dist_cutoff:
-                    mig_rate = self.coeff * self.graph.population[int(dest)]
-                    mig_volume = self.graph.population[int(src)] * mig_rate
+                    mig_rate = self.coeff * self.graph_generator.graph.population[int(dest)]
+                    mig_volume = self.graph_generator.graph.population[int(src)] * mig_rate
                     paths[src][dest] = mig_rate
                     migs.append(mig_rate)
                 else:
@@ -60,7 +67,7 @@ class GravityModelRatesGenerator(object):
 
             if not d:
                 warnings.warn('No paths from source ' + str(src) + ' found! Check if node is isolated.')
-                print("Node " + str(src) + " is isolate " + str(nx.is_isolate(self.graph, src)))
+                print("Node " + str(src) + " is isolate " + str(nx.is_isolate(self.graph_generator.graph, src)))
                 continue
 
             nl = heapq.nlargest(max_migration_dests, d, key=lambda k: d[k])

@@ -74,6 +74,11 @@ def set_geography(cb, geography, static=False, pop_scale=1):
     :param pop_scale: Used if the demographics is not static and will
     :return: Nothing
     """
+
+    print('\n\n---\n'
+          'set_geography is deprecated. Please link to the relevant climate files in your script directly.'
+          '\n---\n\n')
+
     params = get_converted_paths_for_geography(geography)
     #logging.debug('Geography parameters: %s' % params)
     cb.update_params(params)
@@ -87,27 +92,15 @@ def set_geography(cb, geography, static=False, pop_scale=1):
 
 geographies = {
 
-    "Garki_gridded_net": {"Geography": "Garki/Garki_gridded_net",
-                     "Air_Temperature_Filename": "Garki_gridded_net_temperature.bin",
-                     "Demographics_Filenames": ["GarkiNE_demographics.json"],
-                     # "Demographics_Filenames": ["Garki_gridded_net_demographics.compiled.json"],
-                     "Land_Temperature_Filename": "Garki_gridded_net_temperature.bin",
-                     "Rainfall_Filename": "Garki_gridded_net_rainfall.bin",
-                     "Relative_Humidity_Filename": "Garki_gridded_net_humidity.bin",
-                     "Enable_Climate_Stochasticity": 1,  # every two weeks in raw data series
-                     "Enable_Demographics_Other": 0  # no 'AbovePoverty' etc. in these files
+    # generic
+    "Birth_Cohort": {"Geography": "Calibration",
+                     "Demographics_Filenames": ["birth_cohort_demographics.compiled.json"],
+                     'Base_Population_Scale_Factor': 10,
+                     'Enable_Vital_Dynamics': 0,  # No births/deaths.  Just following a birth cohort.
+                     "Climate_Model": "CLIMATE_CONSTANT"  # no mosquitoes
                      },
 
-    "Magude": {"Geography": "Magude",
-                     "Air_Temperature_Filename": "Magude_temperature.bin",
-                     "Demographics_Filenames": ["Magude_demographics.json"],
-                     "Land_Temperature_Filename": "Magude_temperature.bin",
-                     "Rainfall_Filename": "Magude_rainfall.bin",
-                     "Relative_Humidity_Filename": "Magude_humidity.bin",
-                     "Enable_Climate_Stochasticity": 1,  # every two weeks in raw data series
-                     "Enable_Demographics_Other": 0  # no 'AbovePoverty' etc. in these files
-                     },
-
+    # vector
     "Garki_Single": {"Geography": "Garki_Single",
                      "Air_Temperature_Filename": "Garki_single_temperature.bin",
                      "Demographics_Filenames": ["Garki_single_demographics.compiled.json"],
@@ -118,6 +111,7 @@ geographies = {
                      "Enable_Demographics_Other": 0  # no 'AbovePoverty' etc. in these files
                      },
 
+    # vector
     "Namawala": {"Geography": "Namawala",
                  "Air_Temperature_Filename": "Namawala_single_node_air_temperature_daily.bin",
                  "Demographics_Filenames": ["Namawala_single_node_demographics.json"],
@@ -128,6 +122,32 @@ geographies = {
                  "Enable_Demographics_Other": 0  # no 'AbovePoverty' etc. in these files
                  },
 
+
+    # vector
+    "Solomon_Islands": {"Geography": "Solomon_Islands/Honiara",
+                        "Node_Grid_Size": 0.009,  ##
+                        "Air_Temperature_Filename": "Honiara_temperature_daily10y.bin",
+                        "Demographics_Filenames": ["Honiara_single_node_demographics.compiled.json"],
+                        "Land_Temperature_Filename": "Honiara_temperature_daily10y.bin",
+                        "Rainfall_Filename": "Honiara_rainfall_daily10y.bin",
+                        "Relative_Humidity_Filename": "Honiara_humidity_daily10y.bin",
+                        "Enable_Climate_Stochasticity": 0  # daily in raw data series
+                        },
+
+    # vector
+    "Solomon_Islands_2Node": {"Geography": "Solomon_Islands/Honiara _Haleta",
+                              "Node_Grid_Size": 0.009,  ##
+                              "Air_Temperature_Filename": "Honiara_Haleta_temperature_daily10y.bin",
+                              "Demographics_Filenames": ["Honiara_Haleta_two_node_demographics.compiled.json"],
+                              "Enable_Local_Migration": 1,
+                              "Local_Migration_Filename": "Honiara_Haleta_two_node_local_migration.bin",
+                              "Land_Temperature_Filename": "Honiara_Haleta_temperature_daily10y.bin",
+                              "Rainfall_Filename": "Honiara_Haleta_rainfall_daily10y.bin",
+                              "Relative_Humidity_Filename": "Honiara_Haleta_humidity_daily10y.bin",
+                              "Enable_Climate_Stochasticity": 0  # daily in raw data series
+                              },
+
+    # dengue
     "Puerto_Rico": {"Geography": "Puerto_Rico",
                     "Air_Temperature_Filename": "PuertoRico_single_node_air_temperature_daily.bin",
                     "Demographics_Filenames": ["PuertoRico_single_node_demographics.json"],
@@ -136,87 +156,7 @@ geographies = {
                     "Relative_Humidity_Filename": "PuertoRico_single_node_relative_humidity_daily.bin",
                     },
 
-    "Sinamalima": {"Geography": "Zambia/Sinamalima_1_node",
-                   "Demographics_Filenames": ["sinamalima_30arcsec_demographics_alt_600.json"],
-                   "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                   "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                   "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                   "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                   "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                   },
-
-    "Munyumbwe": {"Geography": "Zambia/Munyumbwe_1_node",
-                  "Demographics_Filenames": ["munyumbwe_30arcsec_demographics_alt_800.json"],
-                  "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                  "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                  "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                  "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                  "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                  },
-
-    "Lukonde": {"Geography": "Zambia/Lukonde_1_node",
-                "Demographics_Filenames": ["lukonde_30arcsec_demographics_alt_1000.json"],
-                "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                },
-
-    "Gwembe": {"Geography": "Zambia/Gwembe_1_node",
-               "Demographics_Filenames": ["gwembe_30arcsec_demographics_alt_1300.json"],
-               "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-               "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-               "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-               "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-               "Enable_Climate_Stochasticity": 0  # daily in raw data series
-               },
-
-    "Sinazongwe": {"Geography": "Zambia/Sinamalima_single_node",
-                   "Air_Temperature_Filename": "Zambia_Sinamalima_2_5arcmin_air_temperature_daily.bin",
-                   "Demographics_Filenames": ["Zambia_Sinamalima_single_node_demographics.compiled.json"],
-                   "Land_Temperature_Filename": "Zambia_Sinamalima_2_5arcmin_land_temperature_daily.bin",
-                   "Rainfall_Filename": "Zambia_Sinamalima_2_5arcmin_rainfall_daily.bin",
-                   "Relative_Humidity_Filename": "Zambia_Sinamalima_2_5arcmin_relative_humidity_daily.bin",
-                   "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                   },
-
-    "Sinamalima_1_node": {"Geography": "Zambia/Sinamalima_1_node",
-                          "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                          "Demographics_Filenames": ["sinamalima_30arcsec_demographics_alt_600.json"],
-                          "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                          "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                          "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                          "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                          },
-
-    "Gwembe_1_node": {"Geography": "Zambia/Gwembe_1_node",
-                      "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                      "Demographics_Filenames": ["gwembe_30arcsec_demographics_alt_1300.json"],
-                      "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                      "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                      "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                      "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                      },
-
-    "Lukonde_1_node": {"Geography": "Zambia/Lukonde_1_node",
-                       "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                       "Demographics_Filenames": ["lukonde_30arcsec_demographics_alt_1000.json"],
-                       "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                       "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                       "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                       "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                       },
-
-    "Munumbwe_1_node": {"Geography": "Zambia/Munumbwe_1_node",
-                        "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                        "Demographics_Filenames": ["munumbwe_30arcsec_demographics_alt_800.json"],
-                        "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-                        "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-                        "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-                        "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                        },
-
+    # malaria
     "Gwembe_Sinazongwe_115_nodes": {
         "Geography": "Zambia/Gwembe_Sinazongwe_115_nodes",
         "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
@@ -231,19 +171,7 @@ geographies = {
         # "Demographics_Filenames": ["Zambia_30arcsec_demographics.json"],
     },
 
-    "GwembeSinazongwePopCluster": {
-        "Geography": "Zambia/GwembeSinazongwePopCluster",
-        "Air_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-        "Land_Temperature_Filename": "Zambia_30arcsec_air_temperature_daily.bin",
-        "Rainfall_Filename": "Zambia_30arcsec_rainfall_daily.bin",
-        "Relative_Humidity_Filename": "Zambia_30arcsec_relative_humidity_daily.bin",
-        "Enable_Climate_Stochasticity": 0,  # daily in raw data series
-        "Enable_Local_Migration": 1,
-        "Local_Migration_Filename": "Zambia_Gwembe_Sinazongwe_121_nodes_local_migration.bin"
-        # "Node_Grid_Size": 0.00833,    ## 30arcsec/3600
-        # "Demographics_Filenames":      ["Zambia_30arcsec_demographics.json"],
-    },
-
+    # malaria
     "Dielmo": {"Geography": "Senegal_Gambia/Dielmo_Ndiop",
                "Air_Temperature_Filename": "Senegal_Dielmo_Ndiop_2_5arcmin_air_temperature_daily.bin",
                "Demographics_Filenames": ["Senegal_Dielmo_single_node_demographics.static.compiled.json"],
@@ -253,6 +181,7 @@ geographies = {
                "Enable_Climate_Stochasticity": 0  # daily in raw data series
                },
 
+    # malaria
     "Ndiop": {"Geography": "Senegal_Gambia/Dielmo_Ndiop",
               "Air_Temperature_Filename": "Senegal_Dielmo_Ndiop_2_5arcmin_air_temperature_daily.bin",
               "Demographics_Filenames": ["Senegal_Ndiop_single_node_demographics.static.compiled.json"],
@@ -262,6 +191,7 @@ geographies = {
               "Enable_Climate_Stochasticity": 0  # daily in raw data series
               },
 
+    # malaria
     "Thies": {"Geography": "Senegal_Gambia/Thies",
               "Air_Temperature_Filename": "Senegal_Thies_2_5arcmin_air_temperature_daily.bin",
               "Demographics_Filenames": ["Senegal_Thies_single_node_demographics.static.compiled.json"],
@@ -270,74 +200,7 @@ geographies = {
               "Relative_Humidity_Filename": "Senegal_Thies_2_5arcmin_relative_humidity_daily.bin",
               "Enable_Climate_Stochasticity": 0  # daily in raw data series
               },
-
-    "Mocuba": {"Geography": "Mozambique_Zambezia",
-               "Air_Temperature_Filename": "Mozambique_Zambezia_2_5arcmin_air_temperature_daily.bin",
-               "Demographics_Filenames": ["Mozambique_Zambezia_Mocuba_single_node_demographics.compiled.json"],
-               "Land_Temperature_Filename": "Mozambique_Zambezia_2_5arcmin_land_temperature_daily.bin",
-               "Rainfall_Filename": "Mozambique_Zambezia_2_5arcmin_rainfall_daily.bin",
-               "Relative_Humidity_Filename": "Mozambique_Zambezia_2_5arcmin_relative_humidity_daily.bin",
-               "Enable_Climate_Stochasticity": 0  # daily in raw data series
-               },
-
-    "West_Kenya": {"Geography": "Kenya_Nyanza",
-                   "Node_Grid_Size": 0.009,  ##
-                   "Air_Temperature_Filename": "Kenya_Nyanza_30arcsec_air_temperature_daily.bin",
-                   "Demographics_Filenames": ["Kenya_Nyanza_2node_demographics.compiled.json"],
-                   "Enable_Local_Migration": 1,
-                   "Local_Migration_Filename": "Kenya_Nyanza_2node_local_migration.bin",
-                   "Land_Temperature_Filename": "Kenya_Nyanza_30arcsec_land_temperature_daily.bin",
-                   "Rainfall_Filename": "Kenya_Nyanza_30arcsec_rainfall_daily.bin",
-                   "Relative_Humidity_Filename": "Kenya_Nyanza_30arcsec_relative_humidity_daily.bin",
-                   "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                   },
-
-    "Solomon_Islands": {"Geography": "Solomon_Islands/Honiara",
-                        "Node_Grid_Size": 0.009,  ##
-                        "Air_Temperature_Filename": "Honiara_temperature_daily10y.bin",
-                        "Demographics_Filenames": ["Honiara_single_node_demographics.compiled.json"],
-                        "Land_Temperature_Filename": "Honiara_temperature_daily10y.bin",
-                        "Rainfall_Filename": "Honiara_rainfall_daily10y.bin",
-                        "Relative_Humidity_Filename": "Honiara_humidity_daily10y.bin",
-                        "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                        },
-
-    "Solomon_Islands_2Node": {"Geography": "Solomon_Islands/Honiara _Haleta",
-                              "Node_Grid_Size": 0.009,  ##
-                              "Air_Temperature_Filename": "Honiara_Haleta_temperature_daily10y.bin",
-                              "Demographics_Filenames": ["Honiara_Haleta_two_node_demographics.compiled.json"],
-                              "Enable_Local_Migration": 1,
-                              "Local_Migration_Filename": "Honiara_Haleta_two_node_local_migration.bin",
-                              "Land_Temperature_Filename": "Honiara_Haleta_temperature_daily10y.bin",
-                              "Rainfall_Filename": "Honiara_Haleta_rainfall_daily10y.bin",
-                              "Relative_Humidity_Filename": "Honiara_Haleta_humidity_daily10y.bin",
-                              "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                              },
-
-    "Nabang": {"Geography": "UCIrvine/Nabang",
-               "Node_Grid_Size": 0.009,  ##
-               "Air_Temperature_Filename": "China_Nabang_2_5arcmin_air_temperature_daily.bin",
-               "Demographics_Filenames": ["Nabang_two_node_demographics.compiled.json"],
-               "Enable_Local_Migration": 1,
-               "Local_Migration_Filename": "Nabang_two_node_local_migration.bin",
-               "Land_Temperature_Filename": "China_Nabang_2_5arcmin_air_temperature_daily.bin",
-               "Rainfall_Filename": "China_Nabang_2_5arcmin_rainfall_daily.bin",
-               "Relative_Humidity_Filename": "China_Nabang_2_5arcmin_relative_humidity_daily.bin",
-               "Enable_Climate_Stochasticity": 0  # daily in raw data series
-               },
-
-    "Tha_Song_Yang": {"Geography": "Tha_Song_Yang",
-                      "Node_Grid_Size": 0.009,  ##
-                      "Air_Temperature_Filename": "Thailand_Tha_Song_Yang_2_5arcmin_air_temperature_daily.bin",
-                      "Demographics_Filenames": ["TSY_two_node_demographics.compiled.json"],
-                      "Enable_Local_Migration": 1,
-                      "Local_Migration_Filename": "TSY_two_node_local_migration.bin",
-                      "Land_Temperature_Filename": "Thailand_Tha_Song_Yang_2_5arcmin_air_temperature_daily.bin",
-                      "Rainfall_Filename": "Thailand_Tha_Song_Yang_2_5arcmin_rainfall_daily.bin",
-                      "Relative_Humidity_Filename": "Thailand_Tha_Song_Yang_2_5arcmin_relative_humidity_daily.bin",
-                      "Enable_Climate_Stochasticity": 0  # daily in raw data series
-                      },
-
+    # malaria
     "Malariatherapy": {"Geography": "Calibration",
                        "Demographics_Filenames": ["Malariatherapy_demographics.compiled.json"],
                        "Base_Population_Scale_Factor": 2,
@@ -345,13 +208,7 @@ geographies = {
                        "Climate_Model": "CLIMATE_CONSTANT"  # no mosquitoes in challenge trial setting
                        },
 
-    "Birth_Cohort": {"Geography": "Calibration",
-                     "Demographics_Filenames": ["birth_cohort_demographics.compiled.json"],
-                     'Base_Population_Scale_Factor': 10,
-                     'Enable_Vital_Dynamics': 0,  # No births/deaths.  Just following a birth cohort.
-                     "Climate_Model": "CLIMATE_CONSTANT"  # no mosquitoes
-                     },
-
+    # malaria
     "Household": {"Geography": "Household",
                   "Listed_Events": ["VaccinateNeighbors", "Blackout", "Distributing_AntimalariaDrug", 'TestedPositive',
                                     'Give_Drugs', 'Spray_IRS', 'Drug_Campaign_Blackout', 'IRS_Blackout', 'Node_Sprayed',

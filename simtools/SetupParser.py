@@ -254,15 +254,18 @@ class SetupParser(metaclass=SetupParserMeta):
         Merges simtools.ini block inheritance chains for a given block, setting its parser values. The 'type'
         key/parameter is INVERSELY inherited from the deepest member of block's inheritance chain.
 
-        e.g. Resolves the type inheritance:
-        [R]      [S]       [T]       [T RESULTS]
-        type = R type = R  type = S  type = R
-        a = 1                        a = 1
-        b = 2    b = 3               b = 3
-                 c = 4     c = 5     c = 5
-        d = 6              d = 7     d = 7
-        e = 8    e = 9     e = 10    e = 10
+        e.g. Resolves the type inheritance::
+
+            [R]      [S]       [T]       [T RESULTS]
+            type = R type = R  type = S  type = R
+            a = 1                        a = 1
+            b = 2    b = 3               b = 3
+                     c = 4     c = 5     c = 5
+            d = 6              d = 7     d = 7
+            e = 8    e = 9     e = 10    e = 10
+
         :param parser: a parser object with blocks to modify/resolve inheritance for
+        
         :return: the provided parser object
         """
         available_sections = parser.sections()

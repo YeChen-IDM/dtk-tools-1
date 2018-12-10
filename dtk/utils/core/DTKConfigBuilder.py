@@ -375,7 +375,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         if isinstance(event, dict):
             warning_note = \
                 """
-                /!\\ WARNING /!\\ the cb.add_event() method will soon only accepts Campaign classes. 
+                /!\\ WARNING /!\\ the cb.add_event() method will soon only accept Campaign classes. 
                 If your class is not yet supported in the schema, you can still use dictionaries 
                 but they need to be wrapped into a RawCampaignObject(). Example: my_dict = {...}  
                 

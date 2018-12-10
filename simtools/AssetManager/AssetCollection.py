@@ -48,15 +48,23 @@ class AssetCollection(object):
         """
         This method handles the validation/update/synchronization of the provided collection_id and/or
         local files.
-        - If only a collection id is defined, it will be used.
-        - If only a load_local is set, files will be uploaded as needed and a collection id
-            will be obtained from COMPS.
-        - If a collection id and load_local have been defined, any files in the local system (typical discovery) that
-            differ from matching files in the collection_id (or are not in collection_id) will be uploaded and
-            an updated collection_id will be obtained from COMPS.
+
+        * If only a collection id is defined, it will be used.
+        * If only a load_local is set, files will be uploaded as needed and a collection id
+          will be obtained from COMPS.
+        * If a collection id and load_local have been defined, any files in the local system (typical discovery) that
+          differ from matching files in the collection_id (or are not in collection_id) will be uploaded and
+          an updated collection_id will be obtained from COMPS.
+
         Sets the instance flag 'prepared', which is required for running simulations with this AssetCollection.
-        :location: 'HPC' or 'LOCAL' (usu. experiment.location)
-        :return: Nothing
+        
+        Args:
+
+            location: 'HPC' or 'LOCAL' (usu. experiment.location)
+        
+        Returns: 
+
+            Nothing
         """
         if self.prepared:
             return

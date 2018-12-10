@@ -25,6 +25,7 @@ class ATSBTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(ATSBTest, self).__init__(*args, **kwargs)
 
+    # region setup and teardown
     def setUp(self):
         print(f"running {self._testMethodName}:")
         pass
@@ -32,8 +33,10 @@ class ATSBTest(unittest.TestCase):
     def tearDown(self):
         print("end of test\n")
         pass
+    # endregion
 
-    def test_atsb_value_error_1(self):
+    # region Bad Cases
+    def test_atsb_no_species_name(self):
         cb = DTKConfigBuilder.from_defaults(sim_type=ParamNames.MALARIA_SIM)
         species_names = cb.params[ParamNames.Vector_Species_Names]
         killing = 0.0337
@@ -46,7 +49,7 @@ class ATSBTest(unittest.TestCase):
         print(f"\t{context.exception}")
         self.assertTrue('Each config in SugarTrap killing config list must contain species name' in str(context.exception))
 
-    def test_atsb_value_error_2(self):
+    def test_atsb_nonsugarfeeding_species(self):
         cb = DTKConfigBuilder.from_defaults(sim_type=ParamNames.MALARIA_SIM)
         species_names = cb.params[ParamNames.Vector_Species_Names]
         killing = 0.0337
@@ -64,7 +67,7 @@ class ATSBTest(unittest.TestCase):
         print(f"\t{context.exception}")
         self.assertTrue('A targeted SugarTrap species is not a sugar-feeding species in config' in str(context.exception))
 
-    def test_atsb_value_error_3(self):
+    def test_atsb_no_kc_list(self):
         cb = DTKConfigBuilder.from_defaults(sim_type=ParamNames.MALARIA_SIM)
         species_names = cb.params[ParamNames.Vector_Species_Names]
 
@@ -75,7 +78,7 @@ class ATSBTest(unittest.TestCase):
         print(f"\t{context.exception}")
         self.assertTrue('Each config in SugarTrap killing config list must contain Killing_Config' in str(context.exception))
 
-    def test_atsb_value_error_4(self):
+    def test_atsb_no_kc_dict(self):
         cb = DTKConfigBuilder.from_defaults(sim_type=ParamNames.MALARIA_SIM)
         species_names = cb.params[ParamNames.Vector_Species_Names]
         sp = species_names[0]
@@ -85,7 +88,9 @@ class ATSBTest(unittest.TestCase):
                                 } )
         print(f"\t{context.exception}")
         self.assertTrue('Each config in SugarTrap killing config list must contain Killing_Config' in str(context.exception))
+    # endregion
 
+    # region Happy cases
     def test_atsb_target_species_list(self):
         cb = DTKConfigBuilder.from_defaults(sim_type=ParamNames.MALARIA_SIM)
         cb.campaign.Events = []
@@ -417,6 +422,7 @@ class ATSBTest(unittest.TestCase):
 
             exp_manager.wait_for_finished(verbose=True)
             self.assertTrue(exp_manager.succeeded(), "SimulationState is not Succeeded.")
+    # endregion
 
     def waning_effect_test(self, killing_configs, instance_name):
         for x in killing_configs:

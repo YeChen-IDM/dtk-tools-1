@@ -15,7 +15,7 @@ class TaggedTemplate(BaseTemplate.BaseTemplate):
 
     The idea here is that if you have a json file with deep nesting or a long array of events, you can plant "tags" within the file to facilitate parameter reference.  Tags are new keys adjacent to existing keys within the document.  The first part of the tagged parameter must exactly match the original parameter you wish to change.  The comes the tag, e.g. __KP.  Any string can follow the tag to uniquely identify it.
 
-        For example, the tagged demographic coverage parameter, Demographic_Coverage__KP_Second_Coverage, in the example below allows you to set the Demographic_Coverage parameter of the second event only.
+    For example, the tagged demographic coverage parameter, Demographic_Coverage__KP_Second_Coverage, in the example below allows you to set the Demographic_Coverage parameter of the second event only::
 
         {
             "Events" : [
@@ -36,7 +36,8 @@ class TaggedTemplate(BaseTemplate.BaseTemplate):
             ]
         }
 
-        You can do some neat things with tags.
+    You can do some neat things with tags.:
+    
         * You can place a tagged parameter, e.g. Demographic_Coverage__KP_Second_Coverage, in several places.  The value will be set everywhere the tagged parameter is found.  For now, the whole tagged parameter must match, so Something_Else__KP_Second_Coverage would not receive the same value on set_param.
         * You can reference relative to the tagged parameters, e.g. Range__KP_First.Min = 3
         * You don't have to use __KP, just set the tag parameter in the constructor.

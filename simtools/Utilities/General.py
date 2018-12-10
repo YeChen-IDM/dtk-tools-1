@@ -119,7 +119,8 @@ def nostdout(stdout = False, stderr=False):
 def retry_function(func, wait=1.5, max_retries=5):
     """
     Decorator allowing to retry the call to a function with some time in between.
-    Usage: 
+    Usage::
+
         @retry_function
         def my_func():
             pass
@@ -131,6 +132,7 @@ def retry_function(func, wait=1.5, max_retries=5):
     :param func: 
     :param time_between_tries: 
     :param max_retries: 
+    
     :return: 
     """
     @functools.wraps(func)
