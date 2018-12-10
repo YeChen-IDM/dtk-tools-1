@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime
 from enum import Enum
-from typing import Union, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
@@ -85,8 +85,7 @@ class DemographicsGenerator:
         self.default_country = country.replace('_', ' ')
         self.year = str(birthrate_year)
         if population_reference_file is None:
-            population_reference_file = os.path.join(os.path.dirname(__file__), 'study_sites',
-                                                     'inputs', 'Birthrate_data',
+            population_reference_file = os.path.join(os.path.dirname(__file__),
                                                      'WB_crude_birthrate_by_year_and_country.csv')
         df = pd.read_csv(population_reference_file, encoding='latin1')
         self.birthrate_df = df
@@ -167,7 +166,6 @@ class DemographicsGenerator:
 
         demo = cls(nodes_list, demographics_type, res_in_arcsec, update_demographics, default_pop)
         demographics = demo.generate_demographics()
-        demographics = cls.add_larval_habitat_multiplier(demographics)
 
         demo_f = open(demographics_filename, 'w+')
         json.dump(demographics, demo_f, indent=4)
@@ -417,16 +415,17 @@ class DemographicsGenerator:
 
         return metadata
 
-    @staticmethod
-    def add_larval_habitat_multiplier(demographics):
-        calib_single_node_pop = 1000.
-        for node_item in demographics['Nodes']:
-            pop_multiplier = float(node_item['NodeAttributes']['InitialPopulation']) / calib_single_node_pop
-
-            # Copy the larval param dict handed to this node
-            node_item['NodeAttributes']['LarvalHabitatMultiplier'] *= pop_multiplier
-
-        return demographics
+    # TODO - Move to malaria
+    # @staticmethod
+    # def add_larval_habitat_multiplier(demographics):
+    #     calib_single_node_pop = 1000.
+    #     for node_item in demographics['Nodes']:
+    #         pop_multiplier = float(node_item['NodeAttributes']['InitialPopulation']) / calib_single_node_pop
+    #
+    #         # Copy the larval param dict handed to this node
+    #         node_item['NodeAttributes']['LarvalHabitatMultiplier'] *= pop_multiplier
+    #
+    #     return demographics
 
     def generate_demographics(self):
         """
