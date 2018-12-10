@@ -1,7 +1,7 @@
 import unittest
 # import health_seeking.py from dtk and malaria to compare their functionality
 # in each unit test, we make sure health_seeking.py from malaria has the same functionality as the one from dtk
-from dtk.interventions.health_seeking import add_health_seeking as add_health_seeking_dtk
+from health_seeking import add_health_seeking as add_health_seeking_dtk
 from malaria.interventions.health_seeking import add_health_seeking as add_health_seeking_malaria
 from simtools.SetupParser import SetupParser
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
