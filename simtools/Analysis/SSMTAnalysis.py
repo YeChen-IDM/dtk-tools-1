@@ -67,19 +67,11 @@ class SSMTAnalysis:
         os.remove(temp_file)
 
     def validate_args(self):
-        # print(len(self.analyzers), ' : ', len(self.analyzers_args))
-        # print(self.analyzers_args)
-        # print(type(self.analyzers_args))
-
         if self.analyzers_args is None:
             self.analyzers_args = [{}] * len(self.analyzers)
             return
 
         self.analyzers_args = [g if g is not None else {} for g in self.analyzers_args]
-
-        # if len(self.analyzers) == len(self.analyzers_args):
-        #     self.analyzers_args = [g if g is not None else {} for g in self.analyzers_args]
-        #     return
 
         if len(self.analyzers_args) < len(self.analyzers):
             self.analyzers_args = self.analyzers_args + [{}] * (len(self.analyzers) - len(self.analyzers_args))
