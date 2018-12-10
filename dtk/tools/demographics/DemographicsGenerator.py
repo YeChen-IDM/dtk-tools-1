@@ -2,6 +2,8 @@ import csv
 import json
 import os
 from datetime import datetime
+from enum import Enum
+from typing import Union, Callable, Optional
 
 import numpy as np
 import pandas as pd
@@ -15,6 +17,13 @@ logger = init_logging('DemographicsGenerator')
 
 class InvalidResolution(BaseException):
     pass
+
+
+class DemographicsType(Enum):
+    STATIC = 'static'
+
+    def __str__(self):
+        return str(self.value)
 
 
 class DemographicsGenerator:
@@ -37,32 +46,34 @@ class DemographicsGenerator:
         CUSTOM_RESOLUTION: 30
     }
 
-    def __init__(self, nodes, demographics_type='static', res_in_arcsec=CUSTOM_RESOLUTION,
-                 update_demographics=None, default_pop=1000, country='Sub-Saharan Africa',
-                 birthrate_year=2016, prevalence_flag=1, prevalence1=0.13, prevalence2=0.15, **kwargs):
+    def __init__(self, nodes, demographics_type: DemographicsType = DemographicsType.STATIC,
+                 res_in_arcsec=CUSTOM_RESOLUTION, update_demographics: Optional[Callable] = None,
+                 default_population: int = 1000,
+                 country='Sub-Saharan Africa', birthrate_year: int = 2016, prevalence_flag: int = 1,
+                 prevalence1: float = 0.13,
+                 prevalence2: float = 0.15, population_reference_file: Optional[str] = None, **kwargs):
         """
         Initialize the SpatialManager
-
-        :param nodes: list of nodes
-        :param demographics_type: could be 'static', 'growing' or a different type; currently only static is
-         implemented in generate_nodes(self)
-        :param res_in_arsec: sim grid resolution
-        :param update_demographics: provide the user with a chance to update the demographics file before it's written
-         via a user-defined function; (e.g. scale larval habitats based on initial population per node in the
-          demographics file) see generate_demographics(self)
-        :param default_pop: default population for all nodes
-        :param country: Choose country from WB list of crude birth rates for birth rate
-        :param birthrate_year: Choose year to which birthrate is set
-        :param prevalence_flag: Determines prevalence distribution parameters. Read EMOD documentation.
-        :param prevalence1: The first value in the distribution, the meaning of which depends upon the value set in
-         PrevalenceDistributionFlag. Read EMOD documentation.
-        :param prevalence2: The second value in the distribution, the meaning of which depends upon the value set in
-         PrevalenceDistributionFlag. Read EMOD documentation.
-        :param kwargs: any keyword arguments to be passed to the update_demographics function
-        :return:
+        Args:
+            nodes: list of nodes
+            demographics_type: could be 'static', 'growing' or a different type; currently only static is
+                implemented in generate_nodes(self)
+            res_in_arcsec: Simulation grid resolution
+            update_demographics: provide the user with a chance to update the demographics file before it's written
+                via a user-defined function; (e.g. scale larval habitats based on initial population per node in the
+                demographics file) see generate_demographics(self)
+            default_population: default population for all nodes
+            country: Choose country from World Population list of crude birth rates for birth rate
+            birthrate_year: Choose year to which birthrate is set
+            prevalence_flag: Determines prevalence distribution parameters. Read EMOD documentation.
+            prevalence1: The first value in the distribution, the meaning of which depends upon the value set in
+                PrevalenceDistributionFlag. Read EMOD documentation.
+            prevalence2: The second value in the distribution, the meaning of which depends upon the value set in
+                PrevalenceDistributionFlag. Read EMOD documentation.
+            population_reference_file: World population reference file. If not specified, we use our default input
+            **kwargs: any keyword arguments to be passed to the update_demographics function
         """
         self.nodes = nodes
-
         self.demographics_type = demographics_type
         self.set_resolution(res_in_arcsec)
         self.update_demographics = update_demographics
@@ -70,47 +81,86 @@ class DemographicsGenerator:
 
         # demographics data dictionary (working DTK demographics file when dumped as json)
         self.demographics = None
-        self.default_pop = default_pop
+        self.default_pop = default_population
         self.default_country = country.replace('_', ' ')
         self.year = str(birthrate_year)
-        df = pd.read_csv(os.path.join(
-            os.path.dirname(__file__),
-            'study_sites', 'inputs', 'Birthrate_data',
-            'WB_crude_birthrate_by_year_and_country.csv'),
-            encoding='latin1')
+        if population_reference_file is None:
+            population_reference_file = os.path.join(os.path.dirname(__file__), 'study_sites',
+                                                     'inputs', 'Birthrate_data',
+                                                     'WB_crude_birthrate_by_year_and_country.csv')
+        df = pd.read_csv(population_reference_file, encoding='latin1')
         self.birthrate_df = df
+
+        # Ensure the country exists
+        if len((df[df['Country Name'] == self.default_country])) == 0:
+            raise ValueError(f"Cannot locate country name as {country} as {self.default_country}. Possible values are"
+                             f"{', '.join(df['Country Name'].unique())}")
+
         self.default_birth_rate = df[df['Country Name'] == self.default_country][self.year].values[0]
         self.mort_scale_factor = 2.74e-06
-        self.prevalenceflag = prevalence_flag
+        self.prevalence_flag = prevalence_flag
         self.prevalence1 = prevalence1
         self.prevalence2 = prevalence2
 
     @staticmethod
-    def arcsec_to_deg(arcsec):
+    def arcsec_to_deg(arcsec: float) -> float:
+        """
+        Arc second to degrees
+        Args:
+            arcsec: arcsecond as float
+
+        Returns:
+            arc second converted to degrees
+        """
         return arcsec / 3600.0
 
     @classmethod
-    def from_grid_file(cls, population_input_file, demographics_filename, demographics_type='static',
+    def from_grid_file(cls, population_input_file: str,
+                       demographics_filename: str,
                        res_in_arcsec=CUSTOM_RESOLUTION,
-                       update_demographics=None, default_pop=1000):
+                       update_demographics=None, default_pop=1000,
+                       latitude_column_name: str = 'lat', longitude_column_name: str = 'lon',
+                       population_column_name: str = 'pop'):
+        """
+        Build demorgraphics from a grid file and a demographics file using
+        world pop data
+
+        Args:
+            population_input_file: CSV population file. Must contain all the columns specified by latitude_column_name,
+                longitude_column_name, and population_column_name
+            demographics_filename: Demographics filename
+            res_in_arcsec:
+            update_demographics:
+            default_pop:
+            latitude_column_name:
+            longitude_column_name:
+            population_column_name:
+
+        Returns:
+
+        """
+        # demographics type- currently only static is supported so hard code it
+        demographics_type: DemographicsType = DemographicsType.STATIC
         nodes_list = list()
         with open(population_input_file, 'r') as pop_csv:
             reader = csv.DictReader(pop_csv)
             for row in reader:
                 # Latitude
-                if not 'lat' in row: raise ValueError('Column lat is required in input population file.')
-                lat = float(row['lat'])
+                if latitude_column_name not in row:
+                    raise ValueError(f'Column {latitude_column_name} is required in input population file.')
+                lat = float(row[latitude_column_name])
 
                 # Longitude
-                if not 'lon' in row: raise ValueError('Column lon is required in input population file.')
-                lon = float(row['lon'])
+                if longitude_column_name not in row:
+                    raise ValueError(f'Column {longitude_column_name} is required in input population file.')
+                lon = float(row[longitude_column_name])
 
                 # Node label
                 res_in_deg = cls.arcsec_to_deg(cls.VALID_RESOLUTIONS[res_in_arcsec])
                 node_label = row['node_label'] if 'node_label' in row else nodeid_from_lat_lon(lat, lon, res_in_deg)
 
                 # Population
-                pop = int(float(row['pop'])) if 'pop' in row else default_pop
+                pop = int(float(row[population_column_name])) if population_column_name in row else default_pop
 
                 # Append the newly created node to the list
                 nodes_list.append(Node(lat, lon, pop, node_label))
@@ -125,15 +175,24 @@ class DemographicsGenerator:
 
     @classmethod
     def validate_res_in_arcsec(cls, res_in_arcsec):
+        """
+        Validate that the resolution is calid
+        Args:
+            res_in_arcsec: Resolution in arsecon. Supprted values can be found in VALID_RESOLUTIONS
+
+        Returns:
+            None.
+        Raise:
+            KeyError: If the resolution is invalid, a key error is raised
+        """
         try:
             cls.VALID_RESOLUTIONS[res_in_arcsec]
         except KeyError:
-            raise InvalidResolution("%s is not a valid arcsecond resolultion. Must be one of: %s" %
-                                    (res_in_arcsec, cls.VALID_RESOLUTIONS.keys()))
+            raise InvalidResolution(f"{res_in_arcsec} is not a valid arcsecond resolution."
+                                    f" Must be one of: {cls.VALID_RESOLUTIONS.keys()}")
 
     @staticmethod
     def equilibrium_age_distribution(birth_rate, mort_scale, mort_value, max_age=100):
-
         """
         from Kurt Frey-- this function generates an initial age distribution already at equilibrium,
         allowing you to run burn-ins for immunity establishment only.
@@ -142,16 +201,18 @@ class DemographicsGenerator:
                                     Age_Initialization_Distribution_Type= "DISTRIBUTION_COMPLEX"
         for this to work. If you have age-dependent birth rates, go talk to Kurt for a modified script.
 
-        :param birth_rate: population birth rate, in units of births/node/day
-        :param mort_scale: demographics["Defaults"]["IndividualAttributes"]["MortalityDistribution"]["ResultScaleFactor"]
-        :param mort_value: annual deaths per 1000, set to mirror birth rates.
-        :param max_age: age past which you want everyone to die. In the current implementation you will get *some* mass
-                    in this bin, but only the amound specified in the equilibrium distribution.
-                   If you have more age-specific mortality rates, you can implement them with only a slight modification to this script.
-        :return: resval (a list of age bins in days from 0 to max_yr),
+        Args:
+            birth_rate: population birth rate, in units of births/node/day
+            mort_scale: demographics["Defaults"]["IndividualAttributes"]["MortalityDistribution"]["ResultScaleFactor"]
+            mort_value: annual deaths per 1000, set to mirror birth rates.
+            max_age: age past which you want everyone to die. In the current implementation you will get *some* mass
+                    in this bin, but only the amound specified in the equilibrium distribution. If you have more
+                    age-specific mortality rates, you can implement them with only a slight modification to this script.
+
+        Returns:
+            resval (a list of age bins in days from 0 to max_yr),
                     and distval (a list of the cumulative proportion of the population in each age bin of resval)
         """
-
         # define daily mortality probability by age group
         age_vec = [365 * 0, 365 * (max_age - 0.001), 365 * max_age]
         mort_vec = [mort_scale * mort_value, mort_scale * mort_value, 1]
@@ -181,10 +242,14 @@ class DemographicsGenerator:
 
     def set_resolution(self, res_in_arcsec):
         """
-        The cannonical way to set arcsecond/degree resolutions on a DemographicsGenerator object. Verifies everything
-        is set properly.
-        :param res_in_arcsec: The requested resolution. e.g. 30, 250, 'custom'
-        :return: No return value.
+        The canonical way to set arcsecond/degree resolutions on a DemographicsGenerator object. Verifies everything
+        is set properly
+
+        Args:
+            res_in_arcsec: The requested resolution. e.g. 30, 250, 'custom'
+
+        Returns: No return value.
+
         """
         self.validate_res_in_arcsec(res_in_arcsec)
         self.custom_resolution = True if res_in_arcsec == self.CUSTOM_RESOLUTION else False
@@ -224,7 +289,7 @@ class DemographicsGenerator:
         individual_attributes = {
             "MortalityDistribution": mod_mortality,
             "RiskDistribution1": 1,
-            "PrevalenceDistributionFlag": self.prevalenceflag,
+            "PrevalenceDistributionFlag": self.prevalence_flag,
             "PrevalenceDistribution1": self.prevalence1,
             "PrevalenceDistribution2": self.prevalence2,
             "RiskDistributionFlag": 0,
@@ -263,7 +328,8 @@ class DemographicsGenerator:
 
         nodes = []
         for i, node in enumerate(self.nodes):
-            # if res_in_degrees is custom assume node_ids are generated for a household-like setup and not based on lat/lon
+            # if res_in_degrees is custom assume node_ids are generated for a household-like setup and not based
+            # on lat/lon
             if node.forced_id:
                 node_id = node.forced_id
             elif self.custom_resolution:
@@ -273,16 +339,14 @@ class DemographicsGenerator:
             node_attributes = node.to_dict()
             individual_attributes = {}
 
-            node_attributes.update({'LarvalHabitatMultiplier': 1.0})
-
-            if self.demographics_type != 'static':
+            if self.demographics_type != DemographicsType.STATIC:
                 print(self.demographics_type)
                 raise ValueError("Demographics type " + str(self.demographics_type) + " is not implemented!")
 
             # if nodes are in different countries, find node-specific mortality rates
             if "Country" in node_attributes.keys():
-                birth_rate = \
-                self.birthrate_df[self.birthrate_df['Country Name'] == node_attributes["Country"]][self.year].values[0]
+                country_condition = self.birthrate_df['Country Name'] == node_attributes["Country"]
+                birth_rate = self.birthrate_df[country_condition][self.year].values[0]
 
                 mod_mortality = {
                     "NumDistributionAxes": 2,
@@ -338,14 +402,14 @@ class DemographicsGenerator:
         generate demographics file metadata
         """
         if self.custom_resolution:
-            referenceID = 'Custom user'
+            reference_id = 'Custom user'
         else:
-            referenceID = "Gridded world grump%darcsec" % self.res_in_arcsec
+            reference_id = "Gridded world grump%darcsec" % self.res_in_arcsec
 
         metadata = {
             "Author": "idm",
             "Tool": "dtk-tools",
-            "IdReference": referenceID,
+            "IdReference": reference_id,
             "DateCreated": str(datetime.now()),
             "NodeCount": len(self.nodes),
             "Resolution": int(self.res_in_arcsec)
@@ -357,7 +421,7 @@ class DemographicsGenerator:
     def add_larval_habitat_multiplier(demographics):
         calib_single_node_pop = 1000.
         for node_item in demographics['Nodes']:
-            pop_multiplier = float(node_item['NodeAttributes']['InitialPopulation']) / (calib_single_node_pop)
+            pop_multiplier = float(node_item['NodeAttributes']['InitialPopulation']) / calib_single_node_pop
 
             # Copy the larval param dict handed to this node
             node_item['NodeAttributes']['LarvalHabitatMultiplier'] *= pop_multiplier
@@ -374,8 +438,9 @@ class DemographicsGenerator:
 
         if self.update_demographics:
             # update demographics before dict is written to file, via a user defined function and arguments
-            # self.update_demographics is a partial object (see python docs functools.partial) and self.update_demographics.func references the user's function
-            # the only requirement for the user defined function is that it needs to take a keyword argument demographics
+            # self.update_demographics is a partial object (see python docs functools.partial) and
+            # self.update_demographics.func references the user's function the only requirement for the user defined
+            # function is that it needs to take a keyword argument demographics
 
             self.update_demographics(demographics=self.demographics, **self.kwargs)
 
