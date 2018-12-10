@@ -67,7 +67,8 @@ class BaseAnalyzer(object, metaclass=ABCMeta):
 
     def plot(self):
         """
-        Plotting using the interactive Matplotlib outside of the plot() functions HAVE TO use the following form:
+        Plotting using the interactive Matplotlib outside of the plot() functions HAVE TO use the following form::
+        
             def plot():
                 import matplotlib.pyplot as plt
                 plt.plot(channel_data)

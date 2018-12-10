@@ -60,15 +60,18 @@ def get_block(block):
 
 def get_all_blocks(local):
     """
-    Returns a dictionary containing the blocks in the local or global file.
-    ```
+    Returns a dictionary containing the blocks in the local or global file::
+    
         {
             'HPC': ["HPC_BLOCK_1", "HPC_BLOCK_2"],
             'LOCAL': ["LOCAL_BLOCK_1"]
         }
-    ```
-    :param local: If true, reads the local ini file, if false reads the global ini file
-    :return: Dictionary of blocks categorized on type
+    
+    Args:
+        local: If true, reads the local ini file, if false reads the global ini file
+    
+    Returns: 
+        Dictionary of blocks categorized on type
     """
     config = ConfigParser()
     config.read(get_file_path(local))

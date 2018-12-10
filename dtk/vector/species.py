@@ -270,9 +270,10 @@ def update_species_param(cb, species, parameter, value, overwrite=True):
     :param species: (string) vector species whose parameter will be updated.
     :param parameter: (string) 'Vector_Species_Param' variable to be updated.
     :param value: (float, dict) New value for 'parameter'.
-    Note that the function only returns the first key-value pair in 'value'.
+        Note that the function only returns the first key-value pair in 'value'.
     :param overwrite: (logical) Relevant only if 'value' is a dict.
-    If True, will replace the entire original parameter with whatever is passed in 'value'. If False, will change only the elements specified in 'value'.
+        If True, will replace the entire original parameter with whatever is passed in 'value'. If False, will change only the elements specified in 'value'.
+    
     :return: a dict whose key traces the config parameters from 'species' onward (including the key of 'value' if 'value' is a dict) and whose value is equal to the updated config value.
     """
 

@@ -210,8 +210,11 @@ def exterminate(args, unknownArgs):
 def link(args, unknownArgs):
     """
     Open browser to the COMPS Experiment/Simulation with ID or name provided
+    
     :param args:
+    
     :param unknownArgs:
+    
     :return:
     """
 
@@ -694,12 +697,15 @@ def parse_custom_sweep(string):
 def catalyst(args, unknownArgs):
     """
     Catalyst run-and-analyze process as ported from the test team.
-    Programmatic-only arguments:
-        args.mode : used by FidelityReportExperimentDefinition, default: 'prod'
-        args.report_label : attached to the experiment name
-        args.debug : True/False, passed into FidelityReportAnalyzer, default: False
-    :param args:
-    :param unknownArgs:
+
+    Args:
+
+        args.mode : (Programmatic only) used by FidelityReportExperimentDefinition, default: 'prod'
+        args.report_label : (Programmatic only) attached to the experiment name
+        args.debug : (Programmatic only) True/False, passed into FidelityReportAnalyzer, default: False
+        args:
+        unknownArgs:
+    
     :return:
     """
     from dtk.utils.builders.sweep import GenericSweepBuilder

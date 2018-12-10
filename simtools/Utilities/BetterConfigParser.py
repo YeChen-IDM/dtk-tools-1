@@ -22,8 +22,10 @@ class BetterConfigParser(ConfigParser):
         """
         Identical to superclass .items, except that keys that are included only due to application of default values
         can be excluded from the list.
+
         :param exclude_default_value_items: If True, exclude options only present due to default value application.
         :param kwargs: args for super()
+        
         :return: a list of items, as per super modified by the above
         """
         exclude_default_value_items = kwargs.pop('exclude_default_value_items', False)

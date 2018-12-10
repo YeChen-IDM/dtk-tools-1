@@ -22,11 +22,12 @@ class SimulationDataStore:
         Takes a batch of simulations and update their status in the DB.
         This function provides performance considerations when updating large number of simulations in the db.
 
-        The batch needs to be formatted as follow:
-        [
-            {'sid':'simid', "status": 'simstatus'},
-            {'sid':'simid', "status": 'simstatus'}
-        ]
+        The batch needs to be formatted as follows::
+        
+            [
+                {'sid':'simid', "status": 'simstatus'},
+                {'sid':'simid', "status": 'simstatus'}
+            ]
 
         Args:
             batch: Batch of simulations to save

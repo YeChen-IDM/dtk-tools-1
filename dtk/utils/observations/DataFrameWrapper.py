@@ -56,10 +56,12 @@ class DataFrameWrapper:
         """
         Selects rows from the internal dataframe that satisfy all provided conditions. The stratifiers
         of the result will exclude current-object stratifiers that contain NaN in the resulting rows.
+
         :param conditions: an iterator (e.g. list) of tuples/triplets specifying (in order) stratifier, operator, value.
                 e.g. ['min_age', operator.ge, 25] (to select rows where 'min_age' is >= 25)
         :param keep_only: If not None, then is a list of data channels to keep (in addition to stratifiers)
                 after filtering. Rows with any NaN values will be dropped after trimming to these channels.
+        
         :return: an object of the same type as the object this method is called on with only selected rows remaining.
         """
         # conditions: e.g. [ ['min_age', operator.ge, 20]  ]
@@ -89,10 +91,12 @@ class DataFrameWrapper:
     def merge(self, other_dfw, index, keep_only=None):
         """
         Attempts to merge two DataFrameWrapper objects into one using the provided index list as a multi-index.
+        
         :param other_dfw: the DataFrameWrapper object to merge with.
         :param index: a list of columns to merge on. All are required in both DataFrameWrapper objects.
         :param keep_only: a list of columns. Triggers removal of result rows where NaN appears in any of these specified
             columns. Result will contain these columns AND those from provided index.
+        
         :return: A newly created, merged object of the exact type of self and the stratifiers equal to the provided
             index.
         """

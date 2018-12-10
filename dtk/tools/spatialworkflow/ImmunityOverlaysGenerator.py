@@ -29,26 +29,25 @@ class ImmunityOverlaysGenerator(object):
         # read nodes parameters
         
         '''
-        a dictionary of node_labels to a set of parameters of the form
-        {
-            node_label1: {
-                            param1: value,
-                            param2: value,
-                            ...
-                         },
-                         
-            node_label2: {
-                            param1: value,
-                            param2: value,
-                            ...
-                         },
-            ...
-            
-            parameter keys should match a subset of the simulation parameters tags as recorded in the immunity burnin experiments meta data json file;
-            parameter keys are the same across nodes (e.g. the parameters of immune initialization burnin); 
-            nodes can then be mapped to immune overlays corresponding to each node's parameters
-        }
-        
+        a dictionary of node_labels to a set of parameters of the form::
+
+            {
+                node_label1: {
+                                param1: value,
+                                param2: value,
+                                ...
+                             },
+                node_label2: {
+                                param1: value,
+                                param2: value,
+                                ...
+                             },
+                ...
+            }
+
+        parameter keys should match a subset of the simulation parameters tags as recorded in the immunity burnin experiments meta data json file;
+        parameter keys are the same across nodes (e.g. the parameters of immune initialization burnin); 
+        nodes can then be mapped to immune overlays corresponding to each node's parameters
         '''
         
         with open(nodes_params_file_path,'r') as np_f:
@@ -56,12 +55,13 @@ class ImmunityOverlaysGenerator(object):
             
 
         '''
-        to contain a dictionary of nodes grouped by simulation parameters of the form
-        {
-            'value0_value0_value0..._':[{'NodeID':node_id1}, {'NodeID':node_id2}, {'NodeID':node_id3}, ...],
-            'value0_value2_value0..._':[{'NodeID':node_id4}, {'NodeID':node_id5}, {'NodeID':node_id6}, ...],
-            ...
-        } 
+        to contain a dictionary of nodes grouped by simulation parameters of the form::
+        
+            {
+                'value0_value0_value0..._':[{'NodeID':node_id1}, {'NodeID':node_id2}, {'NodeID':node_id3}, ...],
+                'value0_value2_value0..._':[{'NodeID':node_id4}, {'NodeID':node_id5}, {'NodeID':node_id6}, ...],
+                ...
+            } 
         
         see group_nodes_by_params(self)
         '''
@@ -116,13 +116,13 @@ class ImmunityOverlaysGenerator(object):
     def generate_immune_overlays(self):
         
         ''' 
-        generate immune overlays; the json file format pointed to by self.immunity_burnin_meta_file_path is
+        generate immune overlays; the json file format pointed to by self.immunity_burnin_meta_file_path is::
          
-        {
-            exp_id1:path to experiment meta json file created in the folder indicated by sim_root in dtk_setup.cfg   
-            exp_id2: --||--,
-            ...
-        }
+            {
+                exp_id1:path to experiment meta json file created in the folder indicated by sim_root in dtk_setup.cfg   
+                exp_id2: --||--,
+                ...
+            }
         
         '''
         
