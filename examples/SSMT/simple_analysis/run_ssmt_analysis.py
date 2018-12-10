@@ -7,8 +7,9 @@ if __name__ == "__main__":
     SetupParser.default_block = 'HPC'
     SetupParser.init()
 
-    analysis = SSMTAnalysis(experiment_ids=["39953ccf-e899-e811-a2c0-c4346bcb7275"],
+    analysis = SSMTAnalysis(experiment_ids=["d06218be-53d2-e811-80ca-f0921c167866"],
                             analyzers=[PopulationAnalyzer(), AdultVectorsAnalyzer()],
+                            analyzers_args=[{'title': 'iv'}, {'name': 'global good'}],
                             analysis_name="SSMT Analysis 1")
 
     analysis.analyze()
