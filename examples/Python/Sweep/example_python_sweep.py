@@ -3,7 +3,7 @@ from simtools.AssetManager.FileList import FileList
 from models.python.PythonModelManager import PythonModelManager
 
 # give name to the experiment
-exp_name = "ExamplePythonSweep2"
+exp_name = "ExamplePythonSweep"
 
 # user file to run
 user_model = "Assets\\Hello_model.py"
