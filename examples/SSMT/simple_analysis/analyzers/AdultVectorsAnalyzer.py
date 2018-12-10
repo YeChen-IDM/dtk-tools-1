@@ -9,8 +9,9 @@ mpl.use('Agg')
 
 class AdultVectorsAnalyzer(BaseAnalyzer):
 
-    def __init__(self):
+    def __init__(self, name='hi'):
         super().__init__(filenames=["output\\InsetChart.json"])
+        print(name)
 
     def initialize(self):
         if not os.path.exists(os.path.join(self.working_dir, "output")):

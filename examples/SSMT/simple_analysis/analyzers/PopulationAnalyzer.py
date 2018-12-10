@@ -9,8 +9,9 @@ mpl.use('Agg')
 
 class PopulationAnalyzer(BaseAnalyzer):
 
-    def __init__(self):
+    def __init__(self, title='idm'):
         super().__init__(filenames=["output\\InsetChart.json"])
+        print(title)
 
     def initialize(self):
         if not os.path.exists(os.path.join(self.working_dir, "output")):
