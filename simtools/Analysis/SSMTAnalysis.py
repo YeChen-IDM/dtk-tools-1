@@ -8,7 +8,7 @@ from simtools.Managers.WorkItemManager import WorkItemManager
 
 class SSMTAnalysis:
 
-    def __init__(self, experiment_ids, analyzers, analyzers_args={}, analysis_name='WorkItem Test', tags=None,
+    def __init__(self, experiment_ids, analyzers, analyzers_args=None, analysis_name='WorkItem Test', tags=None,
                  additional_files=None, asset_collection_id=None, asset_files=FileList()):
         self.experiment_ids = experiment_ids
         self.analyzers = analyzers
@@ -18,6 +18,8 @@ class SSMTAnalysis:
         self.additional_files = additional_files or FileList()
         self.asset_collection_id = asset_collection_id
         self.asset_files = asset_files
+
+        self.validate_args()
 
     def analyze(self):
         # Add the analyze_ssmt.py file to the collection
@@ -63,3 +65,28 @@ class SSMTAnalysis:
 
         # remove temp file
         os.remove(temp_file)
+
+    def validate_args(self):
+        # print(len(self.analyzers), ' : ', len(self.analyzers_args))
+        # print(self.analyzers_args)
+        # print(type(self.analyzers_args))
+
+        if self.analyzers_args is None:
+            self.analyzers_args = [{}] * len(self.analyzers)
+            return
+
+        self.analyzers_args = [g if g is not None else {} for g in self.analyzers_args]
+
+        # if len(self.analyzers) == len(self.analyzers_args):
+        #     self.analyzers_args = [g if g is not None else {} for g in self.analyzers_args]
+        #     return
+
+        if len(self.analyzers_args) < len(self.analyzers):
+            self.analyzers_args = self.analyzers_args + [{}] * (len(self.analyzers) - len(self.analyzers_args))
+            return
+
+        if len(self.analyzers) < len(self.analyzers_args):
+            print("two list 'analyzers' and 'analyzers_args' must have the same length.")
+            exit()
+
+
