@@ -13,9 +13,9 @@
   },
   "packaging": null,
   "pyCOMPS": {
-    "version": "2.3",
+    "version": "2.3.1",
     "test": "==",
-    "wheel": "pyCOMPS-2.3-py2.py3-none-any.whl"
+    "wheel": "pyCOMPS-2.3.1-py2.py3-none-any.whl"
   },
   "matplotlib": {
     "version": "2.1.2",
