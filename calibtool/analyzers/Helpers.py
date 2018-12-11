@@ -4,7 +4,6 @@ from datetime import date, datetime
 import calendar
 import logging
 from collections import OrderedDict
-from geopy.distance import vincenty
 import numpy.ma as ma
 import json
 
@@ -530,6 +529,7 @@ def garki_multi_year_ento_data(csvfilename, metadata, time_limit):
 
 
 def hhs_to_nodes(csvfilename, hhs_file, metadata):
+    from geopy.distance import vincenty
 
     hh_hf_records = pd.read_csv(csvfilename)
     hh_hf_records = hh_hf_records[hh_hf_records['hf_name'] == metadata['hf']]
