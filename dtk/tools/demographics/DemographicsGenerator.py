@@ -1,13 +1,13 @@
 import csv
 import json
 from datetime import datetime
+from enum import Enum
 from typing import Optional
 
-from dtk.tools.demographics.DemographicsGeneratorModel import DemographicsType
 from dtk.tools.demographics.Node import Node, nodeid_from_lat_lon
 from dtk.tools.demographics.generator.DemographicsGeneratorConcern import DemographicsGeneratorConcern
 from dtk.tools.demographics.generator.DemographicsNodeGeneratorConcern import DemographicsNodeGeneratorConcern, \
-    DefaultWorldBankEquilibriumConcern
+    DefaultIndividualAttributesConcern
 from simtools.Utilities.General import init_logging
 
 logger = init_logging('DemographicsGenerator')
@@ -15,6 +15,13 @@ logger = init_logging('DemographicsGenerator')
 
 class InvalidResolution(BaseException):
     pass
+
+
+class DemographicsType(Enum):
+    STATIC = 'static'
+
+    def __str__(self):
+        return str(self.value)
 
 
 class DemographicsGenerator:
@@ -41,10 +48,8 @@ class DemographicsGenerator:
                  demographics_concern: Optional[DemographicsGeneratorConcern] = None,
                  res_in_arcsec=DEFAULT_RESOLUTION):
         """
-        Initialize the SpatialManager
+        Initialize the Demographics generator
         Args:
-
-
             nodes: list of nodes
             node_concern (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
             we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
@@ -63,7 +68,7 @@ class DemographicsGenerator:
         self.demographics = None
 
         if node_concern is None:
-            self.node_concern = DefaultWorldBankEquilibriumConcern()
+            node_concern = DefaultIndividualAttributesConcern()
 
     @staticmethod
     def arcsec_to_deg(arcsec: float) -> float:
@@ -135,6 +140,8 @@ class DemographicsGenerator:
                 # Append the newly created node to the list
                 nodes_list.append(Node(lat, lon, pop, node_label))
 
+        if node_concern is None:
+            DefaultIndividualAttributesConcern()
         demo = cls(nodes_list, node_concern=node_concern, demographics_concern=demographics_concern,
                    res_in_arcsec=res_in_arcsec)
         demographics = demo.generate_demographics()
@@ -147,9 +154,9 @@ class DemographicsGenerator:
     @classmethod
     def validate_res_in_arcsec(cls, res_in_arcsec):
         """
-        Validate that the resolution is calid
+        Validate that the resolution is valid
         Args:
-            res_in_arcsec: Resolution in arsecon. Supprted values can be found in VALID_RESOLUTIONS
+            res_in_arcsec: Resolution in arsecond. Supported values can be found in VALID_RESOLUTIONS
 
         Returns:
             None.
@@ -223,7 +230,8 @@ class DemographicsGenerator:
             individual_attributes = {}
 
             # Run our model through our Concern Set
-            self.node_concern.update_node(defaults, node, node_attributes, individual_attributes)
+            if self.node_concern:
+                self.node_concern.update_node(defaults, node, node_attributes, individual_attributes)
             nodes.append({'NodeID': node_id,
                           'NodeAttributes': node_attributes,
                           'IndividualAttributes': individual_attributes})
@@ -255,8 +263,10 @@ class DemographicsGenerator:
         return all demographics file components in a single dictionary; a valid DTK demographics file when dumped as json
         """
         defaults = {}
-        self.node_concern.update_defaults(defaults)
-        self.demographics = {'Nodes': self.generate_nodes(defaults),
+        if self.node_concern:
+            self.node_concern.update_defaults(defaults)
+        nodes = self.generate_nodes(defaults)
+        self.demographics = {'Nodes': nodes,
                              'Defaults': defaults,
                              'Metadata': self.generate_metadata()}
 

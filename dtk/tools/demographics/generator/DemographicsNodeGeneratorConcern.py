@@ -83,6 +83,10 @@ class DemographicsNodeGeneratorConcernChain(DemographicsNodeGeneratorConcern):
             raise ValueError("All concerns must be of type DemographicsNodeGeneratorConcern")
         self.concerns: List[DemographicsNodeGeneratorConcern] = list(args)
 
+    @staticmethod
+    def from_list(concerns: List[DemographicsNodeGeneratorConcern]) -> 'DemographicsNodeGeneratorConcernChain':
+        return DemographicsNodeGeneratorConcernChain(*concerns)
+
     def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
         """
         Runs all the concerns in order for node's data
@@ -257,6 +261,19 @@ class DefaultIndividualAttributesConcern(DefaultsDictionaryNodeGeneratorConcern)
         return mortality_distribution_config
 
 
+class SimpleBirthRateConcern(DemographicsNodeGeneratorConcern):
+
+    def __init__(self, population_removal_rate: float = 0.12329):
+        self.population_removal_rate = population_removal_rate
+
+    def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
+        birth_rate = (float(node.pop) / (1000 + 0.0)) * self.population_removal_rate
+        node_attributes.update({'BirthRate': birth_rate})
+
+    def update_defaults(self, defaults: dict) -> dict:
+        pass
+
+
 class EquilibriumAgeDistributionConcern(DemographicsNodeGeneratorConcern):
 
     def __init__(self, mortality_scale=2.74e-06, max_age: float = 100.0,
@@ -357,11 +374,12 @@ class EquilibriumAgeDistributionConcern(DemographicsNodeGeneratorConcern):
 
         """
         # Todo lookup in defaults
-        if "DefaultBirthRate" not in node_attributes:
+        if "BirthRate" not in node_attributes:
             raise ValueError("Cannot find the birth rate for current node")
 
         resval, distval = self.get_node_distribution(node_attributes["BirthRate"],
-                                                     node_attributes["BirthRate"])
+                                                     node_attributes[
+                                                         "CountryBirthRate" if "CountryBirthRate" in node_attributes else "BirthRate"])
 
         age_dist_config = {
             "DistributionValues": [distval.tolist()],
