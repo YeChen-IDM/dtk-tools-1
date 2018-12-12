@@ -128,7 +128,8 @@ class AnalyzeManager(CacheEnabled):
         self.cache = self.initialize_cache(shards=self.max_threads)
 
         # If any of the analyzer needs the dir map, create it
-        if any(a.need_dir_map for a in self.analyzers if hasattr(a, 'need_dir_map')):
+        # Or if we are on SSMT
+        if "COMPS_DATA_MAPPING" in os.environ or any(a.need_dir_map for a in self.analyzers):
             # preload the global dir map
             from simtools.Utilities.SimulationDirectoryMap import SimulationDirectoryMap
             for experiment in self.experiments:
