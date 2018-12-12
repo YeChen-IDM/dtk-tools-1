@@ -39,28 +39,18 @@ class DemographicsGenerator:
 
     def __init__(self, nodes, node_concern: Optional[DemographicsNodeGeneratorConcern] = None,
                  demographics_concern: Optional[DemographicsGeneratorConcern] = None,
-                 res_in_arcsec=DEFAULT_RESOLUTION,
-                 default_population: int = 1000, **kwargs):
+                 res_in_arcsec=DEFAULT_RESOLUTION):
         """
         Initialize the SpatialManager
         Args:
+
+
             nodes: list of nodes
-            demographics_type: could be 'static', 'growing' or a different type; currently only static is
-                implemented in generate_nodes(self)
+            node_concern (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
+            we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
+            demographics_concern (Optional[DemographicsGeneratorConcern]): Any concern generator we need to execute
+            after the Demographics object has been generated, but not saved
             res_in_arcsec: Simulation grid resolution
-            update_demographics: provide the user with a chance to update the demographics file before it's written
-                via a user-defined function; (e.g. scale larval habitats based on initial population per node in the
-                demographics file) see generate_demographics(self)
-            default_population: default population for all nodes
-            country: Choose country from World Population list of crude birth rates for birth rate
-            birthrate_year: Choose year to which birthrate is set
-            prevalence_flag: Determines prevalence distribution parameters. Read EMOD documentation.
-            prevalence1: The first value in the distribution, the meaning of which depends upon the value set in
-                PrevalenceDistributionFlag. Read EMOD documentation.
-            prevalence2: The second value in the distribution, the meaning of which depends upon the value set in
-                PrevalenceDistributionFlag. Read EMOD documentation.
-            population_reference_file: World population reference file. If not specified, we use our default input
-            **kwargs: any keyword arguments to be passed to the update_demographics function
         """
         self.nodes = nodes
         #  currently only static is implemented in generate_nodes(self)
@@ -68,7 +58,6 @@ class DemographicsGenerator:
         self.set_resolution(res_in_arcsec)
         self.node_concern = node_concern
         self.demographics_concern = demographics_concern
-        self.kwargs = kwargs
 
         # demographics data dictionary (working DTK demographics file when dumped as json)
         self.demographics = None
@@ -95,26 +84,27 @@ class DemographicsGenerator:
                        demographics_concern: Optional[DemographicsGeneratorConcern] = None,
                        res_in_arcsec=DEFAULT_RESOLUTION, default_population: int = 1000,
                        latitude_column_name: str = 'lat',
-                       longitude_column_name: str = 'lon', population_column_name: str = 'pop', **kwargs):
+                       longitude_column_name: str = 'lon', population_column_name: str = 'pop'):
         """
-        Build demorgraphics from a grid file and a demographics file using
-        world pop data
+
+        Generates a demographics file from a CSV population
 
         Args:
-            birthrate_year:
-            country:
             population_input_file: CSV population file. Must contain all the columns specified by latitude_column_name,
-                longitude_column_name, and population_column_name
-            demographics_filename: Demographics filename
+                longitude_column_name. The population_column_name is optional. If not found, we fall back to default_population
+            demographics_filename: demographics file to save the demographics file too
+            node_concern (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
+            we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
+            demographics_concern (Optional[DemographicsGeneratorConcern]): Any concern generator we need to execute
+            after the Demographics object has been generated, but not saved
             res_in_arcsec:
-            update_demographics:
-            default_population:
-            latitude_column_name:
-            longitude_column_name:
-            population_column_name:
+            default_population: Default population. Only used if population_column_name does not exist
+            latitude_column_name: Column name to load latitude values from
+            longitude_column_name: Column name to load longitude values from
+            population_column_name: Column name to load population values from
 
         Returns:
-
+            DemographicsGenerator used to generate demogrphics file
         """
         nodes_list = list()
         warn_no_pop = False
@@ -145,15 +135,14 @@ class DemographicsGenerator:
                 # Append the newly created node to the list
                 nodes_list.append(Node(lat, lon, pop, node_label))
 
-        demo = cls(nodes_list,
-                   node_concern=node_concern, demographics_concern=demographics_concern,
-                   res_in_arcsec=res_in_arcsec,
-                   **kwargs)
+        demo = cls(nodes_list, node_concern=node_concern, demographics_concern=demographics_concern,
+                   res_in_arcsec=res_in_arcsec)
         demographics = demo.generate_demographics()
 
         demo_f = open(demographics_filename, 'w+')
         json.dump(demographics, demo_f, indent=4)
         demo_f.close()
+        return demographics
 
     @classmethod
     def validate_res_in_arcsec(cls, res_in_arcsec):
@@ -172,7 +161,6 @@ class DemographicsGenerator:
         except KeyError:
             raise InvalidResolution(f"{res_in_arcsec} is not a valid arcsecond resolution."
                                     f" Must be one of: {cls.VALID_RESOLUTIONS.keys()}")
-
 
     def set_resolution(self, res_in_arcsec):
         """
