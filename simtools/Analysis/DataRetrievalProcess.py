@@ -25,8 +25,24 @@ def retrieve_data(simulation, analyzers, cache):
     # The byte_arrays will associate filename with content
     byte_arrays = {}
 
+    #SSMT ?
+    ssmt_mapping = os.environ["COMPS_DATA_MAPPING"].split(";") if "COMPS_DATA_MAPPING" in os.environ else None
+
     try:
-        if simulation.experiment.location == "HPC":
+        # Retrieval for SSMT
+        if ssmt_mapping:
+            for filename in filenames:
+                # Create the path by replacing the part of the path that is mounted locally
+                path = os.path.join(simulation.get_path(), filename).lower()
+                path = path.replace(ssmt_mapping[1].lower(), ssmt_mapping[0].lower())
+                path = path.replace("\\","/")
+
+                # Open the file
+                with open(path, 'rb') as output_file:
+                    byte_arrays[filename] = output_file.read()
+
+        # Retrieval for normal HPC Asset Management
+        elif simulation.experiment.location == "HPC":
             retries = 5
             while True:
                 try:
@@ -45,6 +61,7 @@ def retrieve_data(simulation, analyzers, cache):
                     if retries == 0:
                         raise e
 
+        # Retrieval for local file
         else:
             for filename in filenames:
                 path = os.path.join(simulation.get_path(), filename)
