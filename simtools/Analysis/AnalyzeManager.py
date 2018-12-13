@@ -1,6 +1,7 @@
 import collections
 import itertools
 import os
+import re
 import sys
 import time
 from multiprocessing.pool import Pool
@@ -97,9 +98,13 @@ class AnalyzeManager(CacheEnabled):
 
     def add_analyzer(self, analyzer):
         # First check if we need to change the UID depending on other analyzers
-        same_name = sum(1 if a.uid == analyzer.uid else 0 for a in self.analyzers)
-        if same_name != 0:
-            analyzer.uid += "_{}".format(same_name)
+        number = 1
+        while any(a.uid == analyzer.uid for a in self.analyzers):
+            # If we already suffixed with a number, remove it
+            analyzer.uid = re.sub("\(\d+\)$", "", analyzer.uid)
+            # Add the suffix
+            analyzer.uid += "({})".format(number)
+            number += 1
 
         # Then call the initialize method
         analyzer.working_dir = analyzer.working_dir or self.working_dir
