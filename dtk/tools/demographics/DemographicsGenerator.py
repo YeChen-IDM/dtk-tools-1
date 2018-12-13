@@ -2,12 +2,12 @@ import csv
 import json
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union, List
 
 from dtk.tools.demographics.Node import Node, nodeid_from_lat_lon
 from dtk.tools.demographics.generator.DemographicsGeneratorConcern import DemographicsGeneratorConcern
 from dtk.tools.demographics.generator.DemographicsNodeGeneratorConcern import DemographicsNodeGeneratorConcern, \
-    DefaultIndividualAttributesConcern
+    DemographicsNodeGeneratorConcernChain
 from simtools.Utilities.General import init_logging
 
 logger = init_logging('DemographicsGenerator')
@@ -44,9 +44,11 @@ class DemographicsGenerator:
         CUSTOM_RESOLUTION: 30
     }
 
-    def __init__(self, nodes, node_concern: Optional[DemographicsNodeGeneratorConcern] = None,
+    def __init__(self, nodes, node_concern: Optional[Union[DemographicsNodeGeneratorConcern,
+                                                           List[DemographicsNodeGeneratorConcern]]] = None,
                  demographics_concern: Optional[DemographicsGeneratorConcern] = None,
-                 res_in_arcsec=DEFAULT_RESOLUTION):
+                 res_in_arcsec=CUSTOM_RESOLUTION,
+                 node_id_from_lat_long=False, ):
         """
         Initialize the Demographics generator
         Args:
@@ -61,14 +63,17 @@ class DemographicsGenerator:
         #  currently only static is implemented in generate_nodes(self)
         self.demographics_type = DemographicsType.STATIC # could be 'static', 'growing' or a different type;
         self.set_resolution(res_in_arcsec)
+        if node_concern and isinstance(node_concern, list):
+            node_concern = DemographicsNodeGeneratorConcernChain(*node_concern)
         self.node_concern = node_concern
         self.demographics_concern = demographics_concern
 
         # demographics data dictionary (working DTK demographics file when dumped as json)
         self.demographics = None
 
-        if node_concern is None:
-            node_concern = DefaultIndividualAttributesConcern()
+        # uses to override default behaviour of using lat long to determine nod id
+        self.node_id_from_lat_long = False
+
 
     @staticmethod
     def arcsec_to_deg(arcsec: float) -> float:
@@ -84,10 +89,15 @@ class DemographicsGenerator:
 
     @classmethod
     def from_grid_file(cls, population_input_file: str,
-                       demographics_filename: str,
-                       node_concern: Optional[DemographicsNodeGeneratorConcern] = None,
+                       demographics_filename: Optional[str] = None,
+                       node_concern: Optional[Union[DemographicsNodeGeneratorConcern,
+                                                    List[DemographicsNodeGeneratorConcern]]] = None,
                        demographics_concern: Optional[DemographicsGeneratorConcern] = None,
-                       res_in_arcsec=DEFAULT_RESOLUTION, default_population: int = 1000,
+                       res_in_arcsec=CUSTOM_RESOLUTION,
+                       node_id_from_lat_long=False,
+                       default_population: int = 1000,
+                       load_other_columns_as_attributes=False,
+                       exclude_columns=[],
                        latitude_column_name: str = 'lat',
                        longitude_column_name: str = 'lon', population_column_name: str = 'pop'):
         """
@@ -97,7 +107,7 @@ class DemographicsGenerator:
         Args:
             population_input_file: CSV population file. Must contain all the columns specified by latitude_column_name,
                 longitude_column_name. The population_column_name is optional. If not found, we fall back to default_population
-            demographics_filename: demographics file to save the demographics file too
+            demographics_filename: demographics file to save the demographics file too. This is optional
             node_concern (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
             we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
             demographics_concern (Optional[DemographicsGeneratorConcern]): Any concern generator we need to execute
@@ -109,7 +119,7 @@ class DemographicsGenerator:
             population_column_name: Column name to load population values from
 
         Returns:
-            DemographicsGenerator used to generate demogrphics file
+            demographics file as a dictionary
         """
         nodes_list = list()
         warn_no_pop = False
@@ -137,18 +147,25 @@ class DemographicsGenerator:
                                 f'population value of {default_population}')
                 pop = int(float(row[population_column_name])) if population_column_name in row else default_population
 
-                # Append the newly created node to the list
-                nodes_list.append(Node(lat, lon, pop, node_label))
+                # for the rest of columns,
+                extra_attrs = {}
+                if load_other_columns_as_attributes:
+                    exclude_columns += [latitude_column_name, longitude_column_name, population_column_name]
+                    for col in row.keys():
+                        if col and col not in exclude_columns:
+                            extra_attrs[col] = row[col]
 
-        if node_concern is None:
-            DefaultIndividualAttributesConcern()
+                # Append the newly created node to the list
+                nodes_list.append(Node(lat, lon, pop, node_label, extra_attributes=extra_attrs))
+
         demo = cls(nodes_list, node_concern=node_concern, demographics_concern=demographics_concern,
-                   res_in_arcsec=res_in_arcsec)
+                   res_in_arcsec=res_in_arcsec, node_id_from_lat_long=node_id_from_lat_long)
         demographics = demo.generate_demographics()
 
-        demo_f = open(demographics_filename, 'w+')
-        json.dump(demographics, demo_f, indent=4)
-        demo_f.close()
+        if demographics_filename:
+            demo_f = open(demographics_filename, 'w+')
+            json.dump(demographics, demo_f, indent=4, sort_keys=True)
+            demo_f.close()
         return demographics
 
     @classmethod
@@ -181,7 +198,7 @@ class DemographicsGenerator:
 
         """
         self.validate_res_in_arcsec(res_in_arcsec)
-        self.custom_resolution = True if res_in_arcsec == self.CUSTOM_RESOLUTION else False
+        self.resolution = res_in_arcsec
         self.res_in_arcsec = self.VALID_RESOLUTIONS[res_in_arcsec]
         self.res_in_degrees = self.arcsec_to_deg(self.res_in_arcsec)
         logger.debug("Setting resolution to %s arcseconds (%s deg.) from selection: %s" %
@@ -222,10 +239,10 @@ class DemographicsGenerator:
             # on lat/lon
             if node.forced_id:
                 node_id = node.forced_id
-            elif self.custom_resolution:
-                node_id = i + 1
-            else:
+            elif self.node_id_from_lat_long:
                 node_id = nodeid_from_lat_lon(float(node.lat), float(node.lon), self.res_in_degrees)
+            else:
+                node_id = i + 1
             node_attributes = node.to_dict()
             individual_attributes = {}
 
@@ -242,7 +259,7 @@ class DemographicsGenerator:
         """
         generate demographics file metadata
         """
-        if self.custom_resolution:
+        if self.resolution == DemographicsGenerator.CUSTOM_RESOLUTION:
             reference_id = 'Custom user'
         else:
             reference_id = "Gridded world grump%darcsec" % self.res_in_arcsec

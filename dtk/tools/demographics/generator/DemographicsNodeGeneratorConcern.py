@@ -121,7 +121,8 @@ class DemographicsNodeGeneratorConcernChain(DemographicsNodeGeneratorConcern):
 class DefaultsDictionaryNodeGeneratorConcern(DemographicsNodeGeneratorConcern):
 
     def __init__(self, individual_attributes: dict, node_attributes: Optional[dict] = None,
-                 update_node: Optional[Callable[[DemographicsNodeGeneratorConcern, dict, Node, dict, dict], None]] = None):
+                 update_node: Optional[
+                     Callable[[DemographicsNodeGeneratorConcern, dict, Node, dict, dict], None]] = None):
         """
         DictionaryDemographicsNodeGeneratorConcern allows us to easily set our defaults for both individual_attributes
         and node_attributes. You can also pass a custom update_node function since the default will just continue
@@ -163,7 +164,7 @@ class DefaultsDictionaryNodeGeneratorConcern(DemographicsNodeGeneratorConcern):
         """
         pass
 
-    def update_defaults(self, defaults: dict):
+    def update_defaults(self, defaults: dict) -> dict:
         """
         Updates the defaults with values the user has supplied for individual_attributes and node_attributes
         Args:
@@ -174,60 +175,36 @@ class DefaultsDictionaryNodeGeneratorConcern(DemographicsNodeGeneratorConcern):
         """
         defaults["IndividualAttributes"] = self.individual_attributes
         defaults["NodeAttributes"] = self.node_attributes
+        return defaults
 
 
-class DefaultIndividualAttributesConcern(DefaultsDictionaryNodeGeneratorConcern):
-    def __init__(self, prevalence_flag=distribution_types["EXPONENTIAL_DISTRIBUTION"], prevalence1=0.13, prevalence2=0.15, mortality_scale_factor=2.74e-06,
-                 population_removal_rate=23.0):
-        """
+class GenericAgeDistributionConcern(DemographicsNodeGeneratorConcern):
+    def __init__(self, distribution_type: distribution_types, dist_1: float, dist_2: int = 0):
+        self.distribution_type = distribution_type
+        self.dist_1 = dist_1
+        self.dist_2 = dist_2
 
-        A most common/catch call default individual and node properties setup.
+    def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
+        pass
 
-        Can easily be subclassed to change just default individual_attributes or even to just modify the
-         MortalityDistribution through get_mortality_distribution_config
+    def update_defaults(self, defaults: dict) -> dict:
+        if 'IndividualAttributes' not in defaults:
+            defaults['IndividualAttributes'] = {}
+        if 'NodeAttributes' not in defaults:
+            defaults['NodeAttributes'] = {}
 
-        Args:
-            prevalence_flag: Set the prevalence_flag for the default config
-            prevalence1:  Set value to be used for PrevalenceDistribution1
-            prevalence2:  Set value to be used for PrevalenceDistribution2
-            mortality_scale_factor:  Set our mortality_scale_factor
-            population_removal_rate:  Set our population removal rate
-
-        See Also:
-            DefaultIndividualAttributesConcern.get_individual_attributes
-        """
-        mod_mortality = self.get_mortality_distribution_config(mortality_scale_factor, population_removal_rate)
-        individual_attributes = self.get_individual_attributes(mod_mortality, prevalence1, prevalence2, prevalence_flag)
-        super().__init__(individual_attributes)
-
-    @staticmethod
-    def get_individual_attributes(mortality_distribution_config: dict, prevalence1: float, prevalence2: float, prevalence_flag: int):
-        """
-        Called to produce the default minimum set of defaults using the specified parameters
-        Args:
-            mortality_distribution_config: MortalityDistribution config
-            prevalence1:  Set value to be used for PrevalenceDistribution1
-            prevalence2:  Set value to be used for PrevalenceDistribution2:
-            prevalence_flag: Set the prevalence_flag
-
-        Returns:
-
-        """
-        return {
-            "MortalityDistribution": mortality_distribution_config,
-            "RiskDistribution1": 1,
-            "PrevalenceDistributionFlag": prevalence_flag,
-            "PrevalenceDistribution1": prevalence1,
-            "PrevalenceDistribution2": prevalence2,
-            "RiskDistributionFlag": 0,
-            "RiskDistribution2": 0,
-            "MigrationHeterogeneityDistribution1": 1,
-            "ImmunityDistributionFlag": 0,
-            "MigrationHeterogeneityDistributionFlag": 0,
-            "ImmunityDistribution1": 1,
-            "MigrationHeterogeneityDistribution2": 0,
-            "ImmunityDistribution2": 0
+        defaults['IndividualAttributes'].update({
+            "AgeDistributionFlag": self.distribution_type,
+            "AgeDistribution1": self.dist_1,
+            "AgeDistribution2": self.dist_2
         }
+        )
+
+
+class GenericMortalityDistributionConcern(DemographicsNodeGeneratorConcern):
+    def __init__(self, population_removal_rate: float = 45, mortality_scale_factor: float = 2.74e-06):
+        self.population_removal_rate = population_removal_rate
+        self.mortality_scale_factor = mortality_scale_factor
 
     @staticmethod
     def get_mortality_distribution_config(mortality_scale_factor, population_removal_rate):
@@ -260,13 +237,129 @@ class DefaultIndividualAttributesConcern(DefaultsDictionaryNodeGeneratorConcern)
         }
         return mortality_distribution_config
 
+    def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
+        pass
 
-class SimpleBirthRateConcern(DemographicsNodeGeneratorConcern):
+    def update_defaults(self, defaults: dict) -> dict:
+        if 'IndividualAttributes' not in defaults:
+            defaults['IndividualAttributes'] = {}
+        if 'NodeAttributes' not in defaults:
+            defaults['NodeAttributes'] = {}
+
+        defaults['IndividualAttributes'].update({
+            "MortalityDistribution": self.get_mortality_distribution_config(self.mortality_scale_factor,
+                                                                            self.population_removal_rate)
+        }
+        )
+
+
+class DefaultsNodeBirthRateConcern(DemographicsNodeGeneratorConcern):
+    def __init__(self, birth_rate: float = 0.12329):
+        self.birth_rate = birth_rate
+
+    def update_defaults(self, defaults: dict) -> dict:
+        if 'NodeAttributes' not in defaults:
+            defaults['NodeAttributes'] = {}
+        defaults['NodeAttributes'].update({'BirthRate': self.birth_rate})
+        pass
+
+    def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
+        pass
+
+
+class StaticPopulationConcern(DemographicsNodeGeneratorConcernChain):
+
+    def __init__(self, birth_rate: float = 0.12329, exponential_age_param: float = 0.000118,
+                 population_removal_rate: float = 45, mortality_scale_factor: float = 2.74e-06):
+        """
+        Creates a static demographics config. At the heart of this config is an EXPONENTIAL_DISTRIBUTION on
+        AgeDistribution1 with a exponential_age_param of 45 + and MortalityDistribution with a population removal rate
+        that will result in a static population. You can optionally change the values of the birth rate,
+        exponential_age_param, or the population_removal_rate
+
+
+        Requires you set Birth_Rate_Dependence to FIXED_BIRTH_RATE in dtk config
+        Args:
+            birth_rate: Birth Rate. Defaults to =0.12329
+            exponential_age_param: Defaults to 0.000118
+            population_removal_rate: Defaults to 45
+        """
+        chain = [
+            GenericAgeDistributionConcern(distribution_types["EXPONENTIAL_DISTRIBUTION"], exponential_age_param),
+            GenericMortalityDistributionConcern(population_removal_rate, mortality_scale_factor),
+            DefaultsNodeBirthRateConcern(birth_rate)
+        ]
+        super().__init__(*chain)
+
+
+class DefaultIndividualAttributesConcern(DefaultsDictionaryNodeGeneratorConcern):
+    def __init__(self, prevalence_flag=distribution_types["EXPONENTIAL_DISTRIBUTION"],
+                 prevalence1=0.13,
+                 prevalence2=0.15,
+                 mortality_scale_factor=2.74e-06,
+                 population_removal_rate=23.0):
+        """
+
+        A most common/catch call default individual and node properties setup.
+
+        Can easily be subclassed to change just default individual_attributes or even to just modify the
+         MortalityDistribution through get_mortality_distribution_config
+
+        Args:
+            prevalence_flag: Set the prevalence_flag for the default config
+            prevalence1:  Set value to be used for PrevalenceDistribution1
+            prevalence2:  Set value to be used for PrevalenceDistribution2
+            mortality_scale_factor:  Set our mortality_scale_factor
+            population_removal_rate:  Set our population removal rate
+
+        See Also:
+            DefaultIndividualAttributesConcern.get_individual_attributes
+        """
+        mod_mortality = GenericMortalityDistributionConcern.get_mortality_distribution_config(mortality_scale_factor,
+                                                                                              population_removal_rate)
+        individual_attributes = self.get_individual_attributes(mod_mortality, prevalence1, prevalence2, prevalence_flag)
+        super().__init__(individual_attributes)
+
+    @staticmethod
+    def get_individual_attributes(mortality_distribution_config: dict, prevalence1: float, prevalence2: float,
+                                  prevalence_flag: int):
+        """
+        Called to produce the default minimum set of defaults using the specified parameters
+        Args:
+            mortality_distribution_config: MortalityDistribution config
+            prevalence1:  Set value to be used for PrevalenceDistribution1
+            prevalence2:  Set value to be used for PrevalenceDistribution2:
+            prevalence_flag: Set the prevalence_flag
+
+        Returns:
+
+        """
+        return {
+            "MortalityDistribution": mortality_distribution_config,
+            "RiskDistribution1": 1,
+            "PrevalenceDistributionFlag": prevalence_flag,
+            "PrevalenceDistribution1": prevalence1,
+            "PrevalenceDistribution2": prevalence2,
+            "RiskDistributionFlag": 0,
+            "RiskDistribution2": 0,
+            "MigrationHeterogeneityDistribution1": 1,
+            "ImmunityDistributionFlag": 0,
+            "MigrationHeterogeneityDistributionFlag": 0,
+            "ImmunityDistribution1": 1,
+            "MigrationHeterogeneityDistribution2": 0,
+            "ImmunityDistribution2": 0
+        }
+
+
+class StaticNodeLevelBirthRateConcern(DemographicsNodeGeneratorConcern):
 
     def __init__(self, population_removal_rate: float = 0.12329):
         self.population_removal_rate = population_removal_rate
 
     def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
+        """
+            Calculates a per node birth rate based on the population and the population removal rate
+        """
         birth_rate = (float(node.pop) / (1000 + 0.0)) * self.population_removal_rate
         node_attributes.update({'BirthRate': birth_rate})
 
@@ -360,6 +453,29 @@ class EquilibriumAgeDistributionConcern(DemographicsNodeGeneratorConcern):
 
         return resval, distval
 
+    @staticmethod
+    def get_mortality_distribution_from_defaults(defaults, birth_rate):
+        """
+        Try to located the default MortalityDistribution config, This is used when we have demographics nodes
+        that span countries. We want to then set any nodes that are not the primary country to
+        have their own MortalityDistribution
+        Args:
+            defaults: default dictionary to be used to find the default MortalityDistribution
+            birth_rate:
+
+        Returns:
+
+        """
+        if any(["IndividualAttributes" not in defaults,
+                "MortalityDistribution" not in defaults["IndividualAttributes"]]):
+            raise ValueError("Could not locate the mortality distribution config from Demographics defaults")
+        config = deepcopy(defaults["IndividualAttributes"]["MortalityDistribution"])
+        config["ResultValues"] = [
+            [birth_rate],
+            [birth_rate]
+        ]
+        return config
+
     def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
         """
 
@@ -377,11 +493,12 @@ class EquilibriumAgeDistributionConcern(DemographicsNodeGeneratorConcern):
         if "BirthRate" not in node_attributes:
             raise ValueError("Cannot find the birth rate for current node")
 
-        resval, distval = self.get_node_distribution(node_attributes["BirthRate"],
-                                                     node_attributes[
-                                                         "CountryBirthRate" if "CountryBirthRate" in node_attributes else "BirthRate"])
+        # if we have country level data for node, get that as the birth rate
+        br = node_attributes["CountryBirthRate"] if "CountryBirthRate" in node_attributes else self.default_birth_rate
+        resval, distval = self.get_node_distribution(node_attributes["BirthRate"], br)
 
         age_dist_config = {
+            ""
             "DistributionValues": [distval.tolist()],
             "ResultScaleFactor": 1,
             "ResultValues":
@@ -389,10 +506,19 @@ class EquilibriumAgeDistributionConcern(DemographicsNodeGeneratorConcern):
                     resval.tolist()
                 ]
         }
+        node_individual_attributes.update(
+            {
+                "MortalityDistribution":
+                    self.get_mortality_distribution_from_defaults(defaults, br)
+            })
         node_individual_attributes.update({"AgeDistribution": age_dist_config})
 
     def update_defaults(self, defaults: dict):
-        mod_mortality = DefaultIndividualAttributesConcern.get_mortality_distribution_config(self.mortality_scale, self.default_birth_rate)
+        if 'IndividualAttributes' not in defaults:
+            defaults['IndividualAttributes'] = {}
+        # send our birth rate as the population removal rate
+        mod_mortality = GenericMortalityDistributionConcern.get_mortality_distribution_config(self.mortality_scale,
+                                                                                              self.default_birth_rate)
         defaults["IndividualAttributes"] = DefaultIndividualAttributesConcern. \
             get_individual_attributes(mod_mortality, self.prevalence1, self.prevalence2, self.prevalence_flag)
 
@@ -400,7 +526,7 @@ class EquilibriumAgeDistributionConcern(DemographicsNodeGeneratorConcern):
 class WorldBankBirthRateNodeConcern(DemographicsNodeGeneratorConcern):
     def __init__(self, country='Sub-Saharan Africa', birthrate_year: int = 2016,
                  update_mortality_distribution: bool = True,
-                 population_reference_file: Optional[str] = None):
+                 population_reference_file: Optional[str] = None, default_mortality_scale_factor: float = 2.74e-06):
         """
         This concern updates the birth rates based on World Bank's birth rate data
 
@@ -431,29 +557,7 @@ class WorldBankBirthRateNodeConcern(DemographicsNodeGeneratorConcern):
             raise ValueError(f"{msg_prefix}. Possible values are{', '.join(df['Country Name'].unique())}")
 
         self.default_birth_rate = df[df['Country Name'] == self.default_country][self.birthrate_year].values[0]
-
-    @staticmethod
-    def get_mortality_distribution_from_defaults(defaults, birth_rate):
-        """
-        Try to located the default MortalityDistribution config, This is used when we have demographics nodes
-        that span countries. We want to then set any nodes that are not the primary country to
-        have their own MortalityDistribution
-        Args:
-            defaults: default dictionary to be used to find the default MortalityDistribution
-            birth_rate:
-
-        Returns:
-
-        """
-        if any(["IndividualAttributes" not in defaults, "MortalityDistribution" in defaults["IndividualAttributes"]]):
-            raise ValueError("Could not locate the mortality distribution config from Demographics defaults")
-        config = deepcopy(defaults["IndividualAttributes"]["MortalityDistribution"])
-        # TODO validate against different MortalityDistribution's
-        config["ResultValues"] = [
-                [birth_rate],
-                [birth_rate]
-            ]
-        return config
+        self.default_mortality_scale_factor = default_mortality_scale_factor
 
     def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
         """
@@ -467,19 +571,17 @@ class WorldBankBirthRateNodeConcern(DemographicsNodeGeneratorConcern):
         Returns:
 
         """
-        if "Country" in node_attributes:
-            country_condition = self.birthrate_df['Country Name'] == node_attributes["Country"]
+        keys = {k.lower(): k for k in node_attributes.keys()}
+        if "country" in keys and node_attributes[keys["country"]]:
+            country_condition = self.birthrate_df['Country Name'] == node_attributes[keys["country"]]
             birth_rate = self.birthrate_df[country_condition][self.birthrate_year].values[0]
-
-            # Set the per country dist
-            node_individual_attributes.update({
-                "MortalityDistribution": self.get_mortality_distribution_from_defaults(defaults, birth_rate)
-            })
         else:
+            node_attributes["Country"] = self.default_country
             birth_rate = self.default_birth_rate
         per_node_birth_rate = (float(node.pop) / 1000) * birth_rate / 365.0
         node_attributes['BirthRate'] = per_node_birth_rate
-        node_attributes['DefaultBirthRate'] = birth_rate
+        # used by other generators to make local node config decisions
+        node_attributes['CountryBirthRate'] = birth_rate
 
     def update_defaults(self, defaults: dict):
         """
@@ -490,13 +592,19 @@ class WorldBankBirthRateNodeConcern(DemographicsNodeGeneratorConcern):
         Returns:
 
         """
+        if 'IndividualAttributes' not in defaults:
+            defaults['IndividualAttributes'] = {}
         ia = defaults['IndividualAttributes']
-        if all([self.update_mortality_distribution] +
-               ["MortalityDistribution" in ia, "ResultValues" in ia["MortalityDistribution"]]):
-            ia["MortalityDistribution"]["ResultValues"] = [
-                [self.default_birth_rate],
-                [self.default_birth_rate]
-            ]
+        if self.update_mortality_distribution:
+            if "MortalityDistribution" not in ia:
+                conf = GenericMortalityDistributionConcern. \
+                    get_mortality_distribution_config(self.default_mortality_scale_factor, self.default_birth_rate)
+                ia["MortalityDistribution"] = conf
+            else:
+                ia["MortalityDistribution"]["ResultValues"] = [
+                    [self.default_birth_rate],
+                    [self.default_birth_rate]
+                ]
 
 
 class DefaultWorldBankEquilibriumConcern(DemographicsNodeGeneratorConcernChain):
