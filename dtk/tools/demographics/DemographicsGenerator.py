@@ -94,10 +94,11 @@ class DemographicsGenerator:
                                                     List[DemographicsNodeGeneratorConcern]]] = None,
                        demographics_concern: Optional[DemographicsGeneratorConcern] = None,
                        res_in_arcsec=CUSTOM_RESOLUTION,
-                       node_id_from_lat_long=False,
+                       node_id_from_lat_long=True,
                        default_population: int = 1000,
                        load_other_columns_as_attributes=False,
-                       exclude_columns=[],
+                       include_columns: Optional[List[str]] = None,
+                       exclude_columns: Optional[List[str]] = None,
                        latitude_column_name: str = 'lat',
                        longitude_column_name: str = 'lon', population_column_name: str = 'pop'):
         """
@@ -112,7 +113,15 @@ class DemographicsGenerator:
             we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
             demographics_concern (Optional[DemographicsGeneratorConcern]): Any concern generator we need to execute
             after the Demographics object has been generated, but not saved
-            res_in_arcsec:
+            res_in_arcsec: Resolution in Arcseconds
+            node_id_from_lat_long: Determine if we should calculate the node id from the lat long. By default this is
+             true unless you also set res_in_arcsec to CUSTOM_RESOLUTION. When not using lat/long for ids, the first
+             fallback it to check the node for a forced id. If that is not found, we assign it an index as id
+            load_other_columns_as_attributes: Load additional columns from a csv file as node attributes
+            include_columns: A list of columns that should be added as node attributes from the csv file. To be used in
+             conjunction with load_other_columns_as_attributes.
+            exclude_columns: A list of columns that should be ignored as attributes when
+                load_other_columns_as_attributes is enabled. This cannot be combined with include_columns
             default_population: Default population. Only used if population_column_name does not exist
             latitude_column_name: Column name to load latitude values from
             longitude_column_name: Column name to load longitude values from
@@ -143,16 +152,21 @@ class DemographicsGenerator:
                 # Population
                 if not warn_no_pop and population_column_name not in row:
                     warn_no_pop = True
-                    logger.warn(f'Could not location population column{population_column_name}. Using the default '
+                    logger.warning(f'Could not location population column{population_column_name}. Using the default '
                                 f'population value of {default_population}')
                 pop = int(float(row[population_column_name])) if population_column_name in row else default_population
 
                 # for the rest of columns,
                 extra_attrs = {}
+                if exclude_columns is None:
+                    exclude_columns = []
+
                 if load_other_columns_as_attributes:
                     exclude_columns += [latitude_column_name, longitude_column_name, population_column_name]
                     for col in row.keys():
-                        if col and col not in exclude_columns:
+                        if col and include_columns and col in include_columns:
+                            extra_attrs[col] = row[col]
+                        elif col and not include_columns and col not in exclude_columns:
                             extra_attrs[col] = row[col]
 
                 # Append the newly created node to the list
