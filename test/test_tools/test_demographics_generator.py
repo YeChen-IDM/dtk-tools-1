@@ -8,7 +8,9 @@ from dtk.tools.demographics.DemographicsGenerator import DemographicsGenerator
 from dtk.tools.demographics.generator.DemographicsGeneratorConcern import demographics_generator_concern
 from dtk.tools.demographics.generator.DemographicsNodeGeneratorConcern import WorldBankBirthRateNodeConcern, \
     DefaultsDictionaryNodeGeneratorConcern, DemographicsNodeGeneratorConcernChain, DefaultIndividualAttributesConcern, \
-    EquilibriumAgeDistributionConcern, SimpleBirthRateConcern
+    EquilibriumAgeDistributionConcern, DefaultWorldBankEquilibriumConcern, \
+    StaticNodeLevelBirthRateConcern
+from input_file_generation.DemographicsGenerator import DemographicsGeneratorMalaria
 from simtools.SetupParser import SetupParser
 
 
@@ -96,6 +98,21 @@ class DemographicsGeneratorTest(unittest.TestCase):
                                                      node_concern=DefaultsDictionaryNodeGeneratorConcern(
                                                          individual_attributes, node_attributes)
                                                      )
+    def test_grab_malaria_out(self):
+        output_dir = os.path.abspath(os.path.dirname(__file__))
+        demo_fp = os.path.join(output_dir, "demographics.json")
+        demo_fp2 = os.path.join(output_dir, "demographics_malaria.json")
+        grid_file = os.path.join(os.path.dirname(__file__), 'test_grid.csv')
+        d = DemographicsGenerator.from_grid_file(population_input_file=grid_file,
+                                                 demographics_filename=demo_fp,
+                                                 load_other_columns_as_attributes=True,
+                                                 include_columns=["Country"],
+                                                 node_id_from_lat_long=False,
+                                                 node_concern=DefaultWorldBankEquilibriumConcern()
+                                                 )
+        DemographicsGeneratorMalaria.from_grid_file(population_input_file=grid_file,
+                                                 demographics_filename=demo_fp2)
+
 
     def test_chain(self):
         with tempfile.TemporaryDirectory() as output_dir:
@@ -109,7 +126,7 @@ class DemographicsGeneratorTest(unittest.TestCase):
             node_concern = DemographicsNodeGeneratorConcernChain.from_list(
                 [
                     DefaultIndividualAttributesConcern(prevalence1=0.19, population_removal_rate=pop_removal_rate),
-                    SimpleBirthRateConcern(pop_removal_rate),
+                    StaticNodeLevelBirthRateConcern(pop_removal_rate),
                     EquilibriumAgeDistributionConcern(default_birth_rate=31.2)
                 ]
 
@@ -219,4 +236,4 @@ class DemographicsGeneratorTest(unittest.TestCase):
                 self.assertTrue({k: v for k, v in prop.__dict__.items() if k not in ignore_keys} == \
                                 {k: v for k, v in demo_provided.nodes[nodeid].__dict__.items() if k not in ignore_keys})
                 # for one without, use default population
-                self.assertEquals(prop.pop, 1000)
+                self.assertEqual(prop.pop, 1000)
