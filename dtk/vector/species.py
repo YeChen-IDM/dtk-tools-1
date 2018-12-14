@@ -240,10 +240,12 @@ vector_params_by_species = {
 def set_params_by_species(params, ss, sim_type="VECTOR_SIM"):
     """
 
-    :param params:
-    :param ss:
-    :param sim_type:
-    :return:
+    Args:
+        params:
+        ss:
+        sim_type:
+    
+    Returns:
     """
     pp = {}
     for s in ss:
@@ -265,16 +267,18 @@ def set_species_param(cb, species, parameter, value):
 
 def update_species_param(cb, species, parameter, value, overwrite=True):
     """ Update a 'Vector_Species_Param' variable in a config file; return a length-one dict with a numeric value.
-
-    :param cb: DTKConfigBuilder object with a 'config' attribute.
-    :param species: (string) vector species whose parameter will be updated.
-    :param parameter: (string) 'Vector_Species_Param' variable to be updated.
-    :param value: (float, dict) New value for 'parameter'.
-        Note that the function only returns the first key-value pair in 'value'.
-    :param overwrite: (logical) Relevant only if 'value' is a dict.
-        If True, will replace the entire original parameter with whatever is passed in 'value'. If False, will change only the elements specified in 'value'.
     
-    :return: a dict whose key traces the config parameters from 'species' onward (including the key of 'value' if 'value' is a dict) and whose value is equal to the updated config value.
+    Args:
+        cb: DTKConfigBuilder object with a 'config' attribute.
+        species: (string) vector species whose parameter will be updated.
+        parameter: (string) 'Vector_Species_Param' variable to be updated.
+        value: (float, dict) New value for 'parameter'.
+            Note that the function only returns the first key-value pair in 'value'.
+        overwrite: (logical) Relevant only if 'value' is a dict.
+            If True, will replace the entire original parameter with whatever is passed in 'value'. If False, will change only the elements specified in 'value'.
+    
+    Returns: 
+        a dict whose key traces the config parameters from 'species' onward (including the key of 'value' if 'value' is a dict) and whose value is equal to the updated config value.
     """
 
     if isinstance(value, dict):
@@ -316,8 +320,10 @@ def scale_all_habitats(cb, scale):
 def set_larval_habitat(cb, habitats):
     """
     Set vector species and habitat parameters of config argument and return
-    Example:
-    habitats = {"arabiensis": {"TEMPORARY_RAINFALL": 1.7e9, "CONSTANT": 1e7}}
+    
+    Example::
+
+        habitats = {"arabiensis": {"TEMPORARY_RAINFALL": 1.7e9, "CONSTANT": 1e7}}
     """
 
     for species, habitat in habitats.items():
@@ -327,27 +333,29 @@ def set_larval_habitat(cb, habitats):
 def set_species_genes(cb, genes):
     """
     Set vector species and gene parameters of config argument and return
-    Example:
-    genes = {"arabiensis": [
-                        {
-                            "Alleles": {
-                                        "a0": 0.6,
-                                        "a1": 0.4,
-                                        "a2": 0.0,
-                                    },
-                            "Mutations": {
-                                        "a1:a2" : 0.01,
-                                        "a0:a1" : 0.05
-                                    }
-                        },
-                        {
-                            "Alleles": {
-                                        "b0": 0.6,
-                                        "b1": 0.4
-                                    },
-                            "Mutations": {}
-                        }
-                        ]
+    
+    Example::
+
+        genes = {"arabiensis": [
+                            {
+                                "Alleles": {
+                                            "a0": 0.6,
+                                            "a1": 0.4,
+                                            "a2": 0.0,
+                                        },
+                                "Mutations": {
+                                            "a1:a2" : 0.01,
+                                            "a0:a1" : 0.05
+                                        }
+                            },
+                            {
+                                "Alleles": {
+                                            "b0": 0.6,
+                                            "b1": 0.4
+                                        },
+                                "Mutations": {}
+                            }
+                            ]
     """
 
     for species, gene in genes.items():
@@ -357,28 +365,30 @@ def set_species_genes(cb, genes):
 def set_species_trait_modifiers(cb, traits):
     """
         Set vector species and gene parameters of config argument and return
-        Example:
-        traits = {"arabiensis": [{
-                                    "Allele_Combinations": [
-                                                            ["X","X"],
-                                                            ["a0","a1"]
-                                                        ],
-                                    "Trait_Modifiers": {
-                                                            "FECUNDITY": 3,
-                                                            "INFECTED_BY_HUMAN": 0.5
-                                                        }
-                                },
-                                {
-                                    "Allele_Combinations": [
-                                                            ["X", "X"],
-                                                            ["a1", "a1"]
-                                                        ],
-                                    "Trait_Modifiers": {
-                                                            "FECUNDITY": 6,
-                                                            "INFECTED_BY_HUMAN": 0.0
-                                                        }
-                                }
-                               ]
+        
+        Example::
+
+            traits = {"arabiensis": [{
+                                        "Allele_Combinations": [
+                                                                ["X","X"],
+                                                                ["a0","a1"]
+                                                            ],
+                                        "Trait_Modifiers": {
+                                                                "FECUNDITY": 3,
+                                                                "INFECTED_BY_HUMAN": 0.5
+                                                            }
+                                    },
+                                    {
+                                        "Allele_Combinations": [
+                                                                ["X", "X"],
+                                                                ["a1", "a1"]
+                                                            ],
+                                        "Trait_Modifiers": {
+                                                                "FECUNDITY": 6,
+                                                                "INFECTED_BY_HUMAN": 0.0
+                                                            }
+                                    }
+                                   ]
         """
 
     for species, trait in traits.items():
@@ -387,32 +397,34 @@ def set_species_trait_modifiers(cb, traits):
 
 def set_species_drivers(cb, drivers):
     """
-        Set vector species and gene parameters of config argument and return
-        Example:
-        drivers = {"arabiensis": [
-                                {
-                                    "Alleles_Driven": [
-                                        {
-                                            "Allele_To_Copy": "a1",
-                                            "Allele_To_Replace": "a0",
-                                            "Copy_To_Likelihood": {
-                                                "a0": 0.1,
-                                                "a1": 0.9
+        Set vector species and gene parameters of config argument and return.
+        
+        Example::
+
+            drivers = {"arabiensis": [
+                                    {
+                                        "Alleles_Driven": [
+                                            {
+                                                "Allele_To_Copy": "a1",
+                                                "Allele_To_Replace": "a0",
+                                                "Copy_To_Likelihood": {
+                                                    "a0": 0.1,
+                                                    "a1": 0.9
+                                                }
+                                            },
+                                            {
+                                                "Allele_To_Copy": "b1",
+                                                "Allele_To_Replace": "b0",
+                                                "Copy_To_Likelihood": {
+                                                    "b0": 0.1,
+                                                    "b1": 0.9
+                                                }
                                             }
-                                        },
-                                        {
-                                            "Allele_To_Copy": "b1",
-                                            "Allele_To_Replace": "b0",
-                                            "Copy_To_Likelihood": {
-                                                "b0": 0.1,
-                                                "b1": 0.9
-                                            }
-                                        }
-                                    ],
-                                    "Driver_Type": "INTEGRAL_AUTONOMOUS",
-                                    "Driving_Allele": "a1"
-                                },
-                               ]
+                                        ],
+                                        "Driver_Type": "INTEGRAL_AUTONOMOUS",
+                                        "Driving_Allele": "a1"
+                                    },
+                                   ]
         """
 
     for species, driver in drivers.items():

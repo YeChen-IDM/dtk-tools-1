@@ -15,12 +15,14 @@ class SmallWorldGridGraphGenerator(GraphGenerator):
     def generate_graph(self) -> nx.Graph():
         """
         Generate a small world networx graph on a 2d grid:
+
         - assume nodes occupy a subset of points on a regular square 2d grid
         - assume adjacency_list is provided specifying the *local* grid connections of nodes; the long range links will
-         be automatically added
+          be automatically added
 
-        Notes: we let the user specify their own local neighborhood per node instead of using related networkx graph
-         implementations
+        .. note:: we let the user specify their own local neighborhood per node instead of using related networkx graph
+           implementations
+
         - the networkx implementation of small-world graphs assume ring topology; but instead we're interested in a grid
           in realistic scenarios
         - the networkx implementation of 2d grid graphs assumes no diagonal edges, whereas we'd like to have the

@@ -53,25 +53,24 @@ class MigrationFile(BaseInputFile):
     @staticmethod
     def flatten_matrix(matrix) -> List[Tuple[int, int, float]]:
         """
-        Flattens a migration matrix into a series of rows in the format of
-
-        '''
-        [
-            src_node_id1, dest_node_id_1, rate
-            src_node_id1, dest_node_id_2, rate
-            .....
-        ]
-        '''
+        Flattens a migration matrix into a series of rows in the format of::
+            
+            [
+                src_node_id1, dest_node_id_1, rate
+                src_node_id1, dest_node_id_2, rate
+                .....
+            ]
+        
         Args:
-            matrix: Matrix to flatten. needs to be in the following format
-            '''
-            {
-               "node_source1": {
-                  "node_destination_1": rate,
-                  "node_destination_2": rate
+            matrix: Matrix to flatten. needs to be in the following format::
+                
+                {
+                   "node_source1": {
+                      "node_destination_1": rate,
+                      "node_destination_2": rate
+                    }
                 }
-            }
-            '''
+                
 
         Returns:
 
@@ -85,9 +84,9 @@ class MigrationFile(BaseInputFile):
     def save_as_txt(self, rates_txt_file_path: str):
         """
         Save the migration file to a human readable format
+
         Args:
             rates_txt_file_path:
-
         Returns:
             None
         """
@@ -102,7 +101,6 @@ class MigrationFile(BaseInputFile):
 
         Args:
             rates_txt_file_path:
-
         Returns:
             None
         """
@@ -211,8 +209,9 @@ class MigrationFile(BaseInputFile):
 
     def nodes_to_id(self):
         """
-        Transform the matrix of {node:{destination:rate}} into {node.id: {dest.id:rate}}
-        :return: 
+        Transform the matrix of ``{node:{destination:rate}}`` into ``{node.id: {dest.id:rate}}``
+        
+        Returns: 
         """
         return {
             node.id if hasattr(node, 'id') else node: {

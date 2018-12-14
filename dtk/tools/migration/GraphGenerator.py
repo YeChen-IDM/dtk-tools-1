@@ -11,6 +11,7 @@ def generate_node_properties(demographics_file_path: str) -> Tuple[dict, dict]:
     """
     Generate a node label to dtk id lookup and a list of dictionary of select node properties
     needed for building graphs.
+
     Args:
         demographics_file_path:
 
@@ -42,15 +43,14 @@ def read_csv_migration_network_file(migration_network_file: TextIO) -> dict:
 
     Args:
         migration_network_file: A File-like object that we will read from. Expect the object to be in the following
-         format
-            '''
+          Format::
+            
             node_label 1,  2,  3,  4,  5
             1     w11 w12  w13 w14 w15
             2     w21       ...
             3     w31       ...
             4     w41       ...
             5     w51       ...
-            '''
 
     Returns:
         Dictionary representing the network adjacency_list
@@ -81,28 +81,28 @@ class GraphGenerator(object):
         Args:
             migration_network_file_path: Path to migration network file.
 
-            The file should be in the following format
-            '''
-            {
-                "node_id1": {
-                                #key         # weight
-                                "node_id2": 0.5,
-                                "node_id4": 0.4,
-                                "node_id3": 0.4,
-                                "node_id5": 1,
-                                ...
-                              },
+            The file should be in the following format::
+            
+                {
+                    "node_id1": {
+                                    #key         # weight
+                                    "node_id2": 0.5,
+                                    "node_id4": 0.4,
+                                    "node_id3": 0.4,
+                                    "node_id5": 1,
+                                    ...
+                                  },
 
-                "node_id2": {
-                                #key         # weight
-                                "node_id2": 0.4,
-                                "node_id3": 0.4,
-                                "node_id10": 1,
-                                ...
-                              },
-                ...
-            }
-            '''
+                    "node_id2": {
+                                    #key         # weight
+                                    "node_id2": 0.4,
+                                    "node_id3": 0.4,
+                                    "node_id10": 1,
+                                    ...
+                                  },
+                    ...
+                }
+                
             demographics_file_path: Path to the demographics file. We use this to extra the node properties and the
             build the node label_2_id array
             node_label_2_id: Optional dictionary that maps node ids to labels. If the demographics_file_path is
@@ -154,9 +154,9 @@ class GraphGenerator(object):
         Converts the input dictionary into a dtk adjacency list by matching node labels to dtk ids
 
         Args:
-            src: Adjacency list by node label An Example input is
-            '''
-                 {
+            src: Adjacency list by node label An example input is::
+            
+                {
                 "node_label1": {
                                 #key         # weight
                                 "node_label2": 0.5,
@@ -175,8 +175,7 @@ class GraphGenerator(object):
                               },
                 ...
                 }
-            '''
-
+            
         Returns:
             Adjacency list by dtk node id
 
@@ -208,7 +207,9 @@ class GraphGenerator(object):
     def get_topology(self) -> nx.Graph():
         """
         Return the previously generated graph object
-        Returns: the previously generated graph. Is the graph has not been generated, this will return None
+
+        Returns: 
+            The previously generated graph. Is the graph has not been generated, this will return None
 
         """
         return self.graph

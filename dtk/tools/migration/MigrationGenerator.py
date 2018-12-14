@@ -9,7 +9,7 @@ from . import visualize_routes
 
 
 class MigrationGenerator(object):
-    """"
+    """
     Generate migration headers and binary files for DTK input;
 
     In a follow up refactor perhaps we should go further and decouple from demographics file;
