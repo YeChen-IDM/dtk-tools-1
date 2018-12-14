@@ -611,7 +611,11 @@ class WorldBankBirthRateNodeConcern(DemographicsNodeGeneratorConcern):
         # used by other generators to make local node config decisions
         if 'MetaData' not in node_attributes:
             node_attributes['Metadata'] = {}
-            node_attributes['Metadata'].update({'CountryBirthRate': birth_rate})
+            node_attributes['Metadata'].update({
+                'CountryBirthRate': birth_rate,
+                'BirthRateSource': 'World Bank',
+                'World Bank Year': self.birthrate_year
+            })
 
     def update_defaults(self, defaults: dict):
         """
