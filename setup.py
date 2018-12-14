@@ -167,10 +167,10 @@ def install_linux_pre_requisites():
            "requirements": ["python3-pip",
                             "python3-setuptools",
                             "build-essential",
-                            "python-dev",
+                            "python3-dev",
                             "libfreetype6-dev",
                             "liblapack-dev",
-                            "python-scipy",
+                            "python3-scipy",
                             "python3-tk"
                             ],
            "install_command": "apt-get"
