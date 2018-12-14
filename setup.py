@@ -291,7 +291,8 @@ def install_packages(reqs):
           entry_points={
               'console_scripts': ['calibtool = calibtool.commands:main', 'dtk = dtk.commands:main']
           },
-          package_data={'': ['simtools/simtools.ini']},
+          package_data={'': ['simtools/simtools.ini',
+                             'dtk/tools/demographics/generator/WB_crude_birthrate_by_year_and_country.csv']},
           zip_safe=False)
 
 
