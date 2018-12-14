@@ -1,3 +1,4 @@
+from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
 
 def add_mosquito_release(cb, start_day, species, number=100, repetitions=-1, tsteps_btwn=365, gender='VECTOR_FEMALE',
                          released_genome=[['X', 'X']], released_wolbachia="VECTOR_WOLBACHIA_FREE",
@@ -31,4 +32,4 @@ def add_mosquito_release(cb, start_day, species, number=100, repetitions=-1, tst
                         "Nodeset_Config": nodes
                         }
 
-    cb.add_event(release_event)
+    cb.add_event(RawCampaignObject(release_event))
