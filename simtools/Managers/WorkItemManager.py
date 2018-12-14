@@ -12,7 +12,7 @@ from simtools.Utilities.COMPSUtilities import COMPS_login
 class WorkItemManager:
 
     def __init__(self, item_name="DockerWorker WorkItem", item_type="DockerWorker",
-                 docker_image="ubuntu1804python3dtk", provider="COMPS", type="WI", plugin_key="1.0.0.0_RELEASE",
+                 docker_image="ubuntu18.04_python3.6_dtk-tools1.0b6", provider="COMPS", type="WI", plugin_key="1.0.0.0_RELEASE",
                  command=None, asset_collection_id=None, asset_files=FileList(), user_files=FileList(),
                  related_experiments=None, tags=None, wo_kwargs=None):
 
