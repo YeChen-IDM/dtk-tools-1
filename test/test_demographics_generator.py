@@ -1,7 +1,8 @@
 import unittest
 
-from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 import dtk.tools.spatialworkflow.DemographicsGenerator as generator
+from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
+
 
 class TestDemographicsGenerator(unittest.TestCase):
     """
@@ -14,7 +15,7 @@ class TestDemographicsGenerator(unittest.TestCase):
     def test_generate_resolution_metadata(self):
         # test successful cases
         resolutions = set([None, generator.DemographicsGenerator.CUSTOM_RESOLUTION] +
-                          generator.DemographicsGenerator.VALID_RESOLUTIONS.keys())
+                          list(generator.DemographicsGenerator.VALID_RESOLUTIONS.keys()))
 
         # generate the expected results for comparison
         expected = {}
