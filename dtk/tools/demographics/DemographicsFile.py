@@ -83,6 +83,11 @@ class DemographicsFile(BaseInputFile):
     def node_ids(self):
         return [node['NodeID'] for node in self.nodes]
 
+    @staticmethod
+    def get_node_ids_from_file(cls, demographics_file):
+        d = DemographicsFile(demographics_file)
+        return sorted(d.node_ids)
+
     @property
     def node_count(self):
         return len(self.nodes)
