@@ -5,24 +5,21 @@ import unittest
 from dtk.generic.demographics import distribution_types
 from dtk.tools.demographics.DemographicsFile import DemographicsFile
 from dtk.tools.demographics.DemographicsGenerator import DemographicsGenerator
-from dtk.tools.demographics.generator.DemographicsGeneratorConcern import demographics_generator_concern
-from dtk.tools.demographics.generator.DemographicsNodeGeneratorConcern import WorldBankBirthRateNodeConcern, \
-    DefaultsDictionaryNodeGeneratorConcern, DemographicsNodeGeneratorConcernChain, DefaultIndividualAttributesConcern, \
-    EquilibriumAgeDistributionConcern, DefaultWorldBankEquilibriumConcern, \
-    StaticNodeLevelBirthRateConcern
-from input_file_generation.DemographicsGenerator import DemographicsGeneratorMalaria
+from dtk.tools.demographics.DemographicsGeneratorConcern import WorldBankBirthRateConcern, \
+    DefaultsDictionaryGeneratorConcern, DemographicsGeneratorConcernChain, DefaultIndividualAttributesConcern, \
+    EquilibriumAgeDistributionConcern, StaticLevelBirthRateConcern, demographics_generator_node_concern
+from dtk.tools.demographics.Node import Node
 from simtools.SetupParser import SetupParser
 
 
-@demographics_generator_concern(larval_habitat_multiplier=1.0, calib_single_node_pop=1000.0)
-def larval_habitat_multiplier(demographics, larval_habitat_multiplier=1.0, calib_single_node_pop: float = 1000.0):
-    for node_item in demographics['Nodes']:
-        pop_multiplier = float(node_item['NodeAttributes']['InitialPopulation']) / calib_single_node_pop
+@demographics_generator_node_concern(larval_habitat_multiplier=1.0, calib_single_node_pop=1000.0)
+def larval_habitat_multiplier(defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict,
+                              larval_habitat_multiplier=1.0, calib_single_node_pop: float = 1000.0):
+    pop_multiplier = node_attributes['InitialPopulation'] / calib_single_node_pop
+    if 'LarvalHabitatMultiplier' not in node_attributes:
+        node_attributes['LarvalHabitatMultiplier'] = larval_habitat_multiplier
 
-        if 'LarvalHabitatMultiplier' not in node_item['NodeAttributes']:
-            node_item['NodeAttributes']['LarvalHabitatMultiplier'] = larval_habitat_multiplier
-        # Copy the larval param dict handed to this node
-        node_item['NodeAttributes']['LarvalHabitatMultiplier'] *= pop_multiplier
+    node_attributes['LarvalHabitatMultiplier'] *= pop_multiplier
 
 
 class DemographicsGeneratorTest(unittest.TestCase):
@@ -95,23 +92,9 @@ class DemographicsGeneratorTest(unittest.TestCase):
 
             d = DemographicsGenerator.from_grid_file(population_input_file=grid_file,
                                                      demographics_filename=demo_fp,
-                                                     node_concern=DefaultsDictionaryNodeGeneratorConcern(
+                                                     concerns=DefaultsDictionaryGeneratorConcern(
                                                          individual_attributes, node_attributes)
                                                      )
-    def test_grab_malaria_out(self):
-        output_dir = os.path.abspath(os.path.dirname(__file__))
-        demo_fp = os.path.join(output_dir, "demographics.json")
-        demo_fp2 = os.path.join(output_dir, "demographics_malaria.json")
-        grid_file = os.path.join(os.path.dirname(__file__), 'test_grid.csv')
-        d = DemographicsGenerator.from_grid_file(population_input_file=grid_file,
-                                                 demographics_filename=demo_fp,
-                                                 load_other_columns_as_attributes=True,
-                                                 include_columns=["Country"],
-                                                 node_id_from_lat_long=False,
-                                                 node_concern=DefaultWorldBankEquilibriumConcern()
-                                                 )
-        DemographicsGeneratorMalaria.from_grid_file(population_input_file=grid_file,
-                                                 demographics_filename=demo_fp2)
 
 
     def test_chain(self):
@@ -123,17 +106,17 @@ class DemographicsGeneratorTest(unittest.TestCase):
             demo_fp = os.path.join(demo_files_dir, "demographics.json")
             grid_file = os.path.join(os.path.dirname(__file__), 'test_grid.csv')
             pop_removal_rate = 31.2
-            node_concern = DemographicsNodeGeneratorConcernChain.from_list(
+            concerns = DemographicsGeneratorConcernChain.from_list(
                 [
                     DefaultIndividualAttributesConcern(prevalence1=0.19, population_removal_rate=pop_removal_rate),
-                    StaticNodeLevelBirthRateConcern(pop_removal_rate),
+                    StaticLevelBirthRateConcern(pop_removal_rate),
                     EquilibriumAgeDistributionConcern(default_birth_rate=31.2)
                 ]
 
             )
             d = DemographicsGenerator.from_grid_file(population_input_file=grid_file,
                                                      demographics_filename=demo_fp,
-                                                     node_concern=node_concern
+                                                     concerns=concerns
                                                      )
 
 
@@ -147,13 +130,13 @@ class DemographicsGeneratorTest(unittest.TestCase):
             grid_file = os.path.join(os.path.dirname(__file__), 'test_grid.csv')
             DemographicsGenerator.from_grid_file(population_input_file=grid_file,
                                                  demographics_filename=demo_fp,
-                                                 demographics_concern=larval_habitat_multiplier
+                                                 concerns=[larval_habitat_multiplier]
                                                  )
             self.assertTrue(os.path.exists(demo_fp))
 
     def test_from_invalid_country(self):
         with self.assertRaises(ValueError) as cm:
-            WorldBankBirthRateNodeConcern(country='Test1')
+            WorldBankBirthRateConcern(country='Test1')
         self.assertIn('Cannot locate country Test1', str(cm.exception))
 
     def test_alt_columns(self):

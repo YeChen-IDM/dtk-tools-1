@@ -4,10 +4,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional, Union, List
 
+import pandas as pd
+
+from dtk.tools.demographics.DemographicsGeneratorConcern import DemographicsGeneratorConcern, \
+    DemographicsGeneratorConcernChain
 from dtk.tools.demographics.Node import Node, nodeid_from_lat_lon
-from dtk.tools.demographics.generator.DemographicsGeneratorConcern import DemographicsGeneratorConcern
-from dtk.tools.demographics.generator.DemographicsNodeGeneratorConcern import DemographicsNodeGeneratorConcern, \
-    DemographicsNodeGeneratorConcernChain
 from simtools.Utilities.General import init_logging
 
 logger = init_logging('DemographicsGenerator')
@@ -44,11 +45,9 @@ class DemographicsGenerator:
         CUSTOM_RESOLUTION: 30
     }
 
-    def __init__(self, nodes, node_concern: Optional[Union[DemographicsNodeGeneratorConcern,
-                                                           List[DemographicsNodeGeneratorConcern]]] = None,
-                 demographics_concern: Optional[DemographicsGeneratorConcern] = None,
-                 res_in_arcsec=CUSTOM_RESOLUTION,
-                 node_id_from_lat_long=False, ):
+    def __init__(self, nodes,
+                 concerns: Optional[Union[DemographicsGeneratorConcern, List[DemographicsGeneratorConcern]]] = None,
+                 res_in_arcsec=CUSTOM_RESOLUTION, node_id_from_lat_long=False):
         """
         Initialize the Demographics generator
         Args:
@@ -62,18 +61,15 @@ class DemographicsGenerator:
         self.nodes = nodes
         #  currently only static is implemented in generate_nodes(self)
         self.demographics_type = DemographicsType.STATIC # could be 'static', 'growing' or a different type;
+        self.node_id_from_lat_long = node_id_from_lat_long
         self.set_resolution(res_in_arcsec)
-        if node_concern and isinstance(node_concern, list):
-            node_concern = DemographicsNodeGeneratorConcernChain(*node_concern)
-        self.node_concern = node_concern
-        self.demographics_concern = demographics_concern
+
+        if concerns and isinstance(concerns, list):
+            concerns = DemographicsGeneratorConcernChain(*concerns)
+        self.concerns = concerns
 
         # demographics data dictionary (working DTK demographics file when dumped as json)
         self.demographics = None
-
-        # uses to override default behaviour of using lat long to determine nod id
-        self.node_id_from_lat_long = False
-
 
     @staticmethod
     def arcsec_to_deg(arcsec: float) -> float:
@@ -90,9 +86,8 @@ class DemographicsGenerator:
     @classmethod
     def from_grid_file(cls, population_input_file: str,
                        demographics_filename: Optional[str] = None,
-                       node_concern: Optional[Union[DemographicsNodeGeneratorConcern,
-                                                    List[DemographicsNodeGeneratorConcern]]] = None,
-                       demographics_concern: Optional[DemographicsGeneratorConcern] = None,
+                       concerns: Optional[Union[DemographicsGeneratorConcern,
+                                                List[DemographicsGeneratorConcern]]] = None,
                        res_in_arcsec=CUSTOM_RESOLUTION,
                        node_id_from_lat_long=True,
                        default_population: int = 1000,
@@ -109,10 +104,8 @@ class DemographicsGenerator:
             population_input_file: CSV population file. Must contain all the columns specified by latitude_column_name,
                 longitude_column_name. The population_column_name is optional. If not found, we fall back to default_population
             demographics_filename: demographics file to save the demographics file too. This is optional
-            node_concern (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
+            concerns (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
             we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
-            demographics_concern (Optional[DemographicsGeneratorConcern]): Any concern generator we need to execute
-            after the Demographics object has been generated, but not saved
             res_in_arcsec: Resolution in Arcseconds
             node_id_from_lat_long: Determine if we should calculate the node id from the lat long. By default this is
              true unless you also set res_in_arcsec to CUSTOM_RESOLUTION. When not using lat/long for ids, the first
@@ -172,8 +165,8 @@ class DemographicsGenerator:
                 # Append the newly created node to the list
                 nodes_list.append(Node(lat, lon, pop, node_label, extra_attributes=extra_attrs))
 
-        demo = cls(nodes_list, node_concern=node_concern, demographics_concern=demographics_concern,
-                   res_in_arcsec=res_in_arcsec, node_id_from_lat_long=node_id_from_lat_long)
+        demo = cls(nodes_list, concerns=concerns, res_in_arcsec=res_in_arcsec,
+                   node_id_from_lat_long=node_id_from_lat_long)
         demographics = demo.generate_demographics()
 
         if demographics_filename:
@@ -261,13 +254,44 @@ class DemographicsGenerator:
             individual_attributes = {}
 
             # Run our model through our Concern Set
-            if self.node_concern:
-                self.node_concern.update_node(defaults, node, node_attributes, individual_attributes)
+            if self.concerns:
+                self.concerns.update_node(defaults, node, node_attributes, individual_attributes)
             nodes.append({'NodeID': node_id,
                           'NodeAttributes': node_attributes,
                           'IndividualAttributes': individual_attributes})
 
         return nodes
+
+    @staticmethod
+    def to_grid_file(grid_file_name, demographics, include_attributes: Optional[List[str]] = None,
+                     node_attributes: Optional[List[str]] = None):
+        """
+        Convert a demographics object(Full object represented as a nested dictionary) to a grid file
+
+
+        Args:
+            grid_file_name: Name of grid file to save
+            demographics: Demographics object
+            include_attributes: Attributes to include in export
+            node_attributes: Optional list of attributes from the NodeAttributes path to include
+        Returns:
+
+        """
+
+        node_attrs = ['Latitude', 'Longitude', 'InitialPopulation']
+        if include_attributes is None:
+            include_attributes = []
+
+        rows = []
+        for node in demographics['Nodes']:
+            row = {k: v for k, v in node.items() if k in include_attributes or k in node_attrs}
+            if node_attributes and 'NodeAttributes' in row:
+                other = {k: v for k, v in row['NodeAttributes'].items() if k in node_attributes}
+                row.update(other)
+            rows.append(row)
+
+        pd.DataFrame(rows).to_csv(grid_file_name)
+
 
     def generate_metadata(self):
         """
@@ -294,13 +318,11 @@ class DemographicsGenerator:
         return all demographics file components in a single dictionary; a valid DTK demographics file when dumped as json
         """
         defaults = {}
-        if self.node_concern:
-            self.node_concern.update_defaults(defaults)
+        if self.concerns:
+            self.concerns.update_defaults(defaults)
         nodes = self.generate_nodes(defaults)
         self.demographics = {'Nodes': nodes,
                              'Defaults': defaults,
                              'Metadata': self.generate_metadata()}
 
-        if self.demographics_concern:
-            self.demographics_concern.update_demographics(self.demographics)
         return self.demographics
