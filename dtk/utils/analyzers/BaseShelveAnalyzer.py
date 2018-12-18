@@ -1,6 +1,8 @@
-from dtk.utils.analyzers.BaseAnalyzer import BaseAnalyzer
-from threading import Lock
 import shelve
+from threading import Lock
+
+from dtk.utils.analyzers.BaseAnalyzer import BaseAnalyzer
+
 
 class BaseShelveAnalyzer(BaseAnalyzer):
     """
@@ -10,8 +12,7 @@ class BaseShelveAnalyzer(BaseAnalyzer):
     # Shelve files are not thread safe, need a common mutex
     mutex = Lock()
 
-
-    def __init__(self, force_apply, force_combine, verbose):
+    def __init__(self, force_apply, force_combine, verbose, shelve_file=None):
         """
         Call this function from your analyzer's __init__ to initialize shelving
 
@@ -32,7 +33,7 @@ class BaseShelveAnalyzer(BaseAnalyzer):
 
         self.shelve = None
 
-        self.shelve_file = None
+        self.shelve_file = shelve_file
 
 
     def shelve_apply(self, sim_id, data):

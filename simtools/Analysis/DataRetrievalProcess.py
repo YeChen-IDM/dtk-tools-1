@@ -10,7 +10,25 @@ from simtools.Utilities.COMPSCache import COMPSCache
 from simtools.Utilities.COMPSUtilities import COMPS_login, get_asset_files_for_simulation_id
 
 
-def retrieve_data(simulation, analyzers, cache):
+def retrieve_data(simulation) -> None:
+    """
+    Simple wrapper to unpack the data coming from the process pool and pass it to the function actually doing the work.
+
+    Args:
+        simulation: The simulation to process
+
+    Returns: Nothing
+
+    """
+    # Retrieve the global variables coming from the pool initialization
+    analyzers = retrieve_data.analyzers
+    cache = retrieve_data.cache
+    path_mapping = retrieve_data.path_mapping
+
+    retrieve_data_for_simulation(simulation, analyzers, cache, path_mapping)
+
+
+def retrieve_data_for_simulation(simulation, analyzers, cache, path_mapping):
     from simtools.Analysis.AnalyzeManager import EXCEPTION_KEY
 
     # Filter first and get the filenames from filtered analysis
@@ -25,17 +43,14 @@ def retrieve_data(simulation, analyzers, cache):
     # The byte_arrays will associate filename with content
     byte_arrays = {}
 
-    #SSMT ?
-    ssmt_mapping = os.environ["COMPS_DATA_MAPPING"].split(";") if "COMPS_DATA_MAPPING" in os.environ else None
-
     try:
         # Retrieval for SSMT
-        if ssmt_mapping:
+        if path_mapping:
             for filename in filenames:
                 # Create the path by replacing the part of the path that is mounted locally
                 path = os.path.join(simulation.get_path(), filename).lower()
-                path = path.replace(ssmt_mapping[1].lower(), ssmt_mapping[0].lower())
-                path = path.replace("\\","/")
+                path = path.replace(path_mapping[1], path_mapping[0])
+                path = path.replace("\\", "/")
 
                 # Open the file
                 with open(path, 'rb') as output_file:
@@ -51,9 +66,11 @@ def retrieve_data(simulation, analyzers, cache):
                     assets = [path for path in filenames if path.lower().startswith("assets")]
                     transient = [path for path in filenames if not path.lower().startswith("assets")]
                     if transient:
-                        byte_arrays.update(dict(zip(transient, COMPS_simulation.retrieve_output_files(paths=transient))))
+                        byte_arrays.update(
+                            dict(zip(transient, COMPS_simulation.retrieve_output_files(paths=transient))))
                     if assets:
-                        byte_arrays.update(get_asset_files_for_simulation_id(simulation.id, paths=assets, remove_prefix='Assets'))
+                        byte_arrays.update(
+                            get_asset_files_for_simulation_id(simulation.id, paths=assets, remove_prefix='Assets'))
                     break
                 except ConnectionResetError as e:
                     retries -= 1
@@ -73,7 +90,8 @@ def retrieve_data(simulation, analyzers, cache):
                                  "Simulation: {} \n"
                                  "Analyzers: {}\n"
                                  "Files: {}\n"
-                                 "\n{}".format(simulation, ", ".join([a.uid for a in analyzers]), ", ".join(filenames), tb))
+                                 "\n{}".format(simulation, ", ".join([a.uid for a in analyzers]), ", ".join(filenames),
+                                               tb))
         return
 
     # Selected data will be a dict with analyzer.uid => data
@@ -82,7 +100,7 @@ def retrieve_data(simulation, analyzers, cache):
         # If the analyzer needs the parsed data, parse
         if analyzer.parse:
             try:
-                data = {filename:SimulationOutputParser.parse(filename, content)
+                data = {filename: SimulationOutputParser.parse(filename, content)
                         for filename, content in byte_arrays.items()}
             except:
                 tb = traceback.format_exc()

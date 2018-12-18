@@ -1,21 +1,27 @@
 import json
 
-import numpy as np
-from scipy.spatial import cKDTree
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
+from scipy.spatial.kdtree import KDTree
 
-from . routes import find_route,route_time,plot_route
+from dtk.tools.demographics.routes import find_route, route_time, plot_route
 
-with open('cache/raster_nodes_Haiti.json') as f:
-    node_json = json.loads(f.read())
+max_connections = {'local': 8, 'regional': 30}
 
-latlonpops = [(n['Latitude'],n['Longitude'],n['InitialPopulation']) for n in node_json]
-lonlats=np.array([(lon,lat) for lat,lon,pop in latlonpops])
-neighbor_tree=cKDTree(lonlats,leafsize=100)
-print('There are %d selected nodes' % len(lonlats))
 
-def query_neighbor_routes(max_srcs=20):
+def load_neighbor_data(src_file: str = 'cache/raster_nodes_Haiti.json'):
+    with open(src_file) as f:
+        node_json = json.loads(f.read())
+
+    latlonpops = [(n['Latitude'], n['Longitude'], n['InitialPopulation']) for n in node_json]
+    lonlats = np.array([(lon, lat) for lat, lon, pop in latlonpops])
+    neighbor_tree = KDTree(lonlats, leafsize=100)
+    print('There are %d selected nodes' % len(lonlats))
+    return latlonpops, lonlats, neighbor_tree
+
+
+def query_neighbor_routes(lonlats, neighbor_tree, max_srcs=20):
     for i,item in enumerate(lonlats[::50]): ##
         print(i,item)
         dists,idxs=neighbor_tree.query(item,k=5,distance_upper_bound=10)
@@ -32,7 +38,8 @@ def query_neighbor_routes(max_srcs=20):
             #Don't overuse the OSRM test server accidentally
             break
 
-def adjacency_network():
+
+def adjacency_network(latlonpops, neighbor_tree):
     G=nx.Graph()
     for i,item in enumerate(latlonpops):
         lat,lon,pop=item
@@ -46,6 +53,7 @@ def adjacency_network():
     print('Connected components:',[len(c) for c in nx.connected_components(G)])
     return G
 
+
 def plot_network(G,nc='navy',ec='darkgray',na=0.2,ea=0.2):
     plt.figure('AdjacencyNetwork',figsize=(10,8))
     nodes=G.nodes(data=True)
@@ -56,6 +64,7 @@ def plot_network(G,nc='navy',ec='darkgray',na=0.2,ea=0.2):
     plt.gca().set(aspect='equal')
     plt.tight_layout()
 
+
 def path_lengths(G,src=None):
     if src:
         D=nx.single_source_dijkstra_path_length(G,src)
@@ -64,14 +73,14 @@ def path_lengths(G,src=None):
         D = nx.all_pairs_dijkstra_path_length(G)
         return D
 
+
 def gravity(mass,dist,const=0.01):
     if not dist > 0:
         raise Exception('Distance must be positive')
     return const * mass * pow(dist,-2)
 
-max_connections={'local':8,'regional':30}
 
-def gravity_network(G,D,mode='regional'):
+def gravity_network(neighbor_tree, G, D, mode='regional'):
     H=nx.DiGraph()
     H.add_nodes_from(G.nodes(data=True))
     for src,lengths in D.items():
@@ -90,13 +99,10 @@ def gravity_network(G,D,mode='regional'):
             print('Not supporting mode=%s' % mode)
     return H
 
-#query_neighbor_routes()
-
-G=adjacency_network()
-#plot_network(G)
-
-D=path_lengths(G,src=100)
-H=gravity_network(G,D,mode='local')
-plot_network(H,ea=0.5,na=0.2,ec=[e[2]['weight'] for e in H.edges(data=True)])
-
-plt.show()
+# #query_neighbor_routes()
+# G=adjacency_network()
+# #plot_network(G)
+# D=path_lengths(G,src=100)
+# H=gravity_network(G,D,mode='local')
+# plot_network(H,ea=0.5,na=0.2,ec=[e[2]['weight'] for e in H.edges(data=True)])
+# plt.show()

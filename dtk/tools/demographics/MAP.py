@@ -1,10 +1,11 @@
-import json
+
 import time
 
-from . Node import *
-from . raster import *
-from . routes import get_raster_nodes
-from . db import *
+from dtk.tools.demographics import raster
+from dtk.tools.demographics.Node import *
+from dtk.tools.demographics.db import *
+from dtk.tools.demographics.routes import get_raster_nodes
+
 
 def query_PfPR_by_node(node_ids):
     cnxn = idm_DB_connection()
@@ -23,14 +24,15 @@ def query_PfPR_by_node(node_ids):
     cnxn.close()
     return rows
 
+
 def PfPR_from_file(geotiff_file, node_ids):
     A, transform_fn = raster.read(geotiff_file)
     lon,lat,alt = transform_fn(0,0) # upper-left corner of MAP
-    xpixUL,ypixUL = Node.xpix_ypix_from_lat_lon(lat, lon, Node.Node.res_in_degrees) #default is 2.5arcmin
+    xpixUL, ypixUL = Node.xpix_ypix_from_lat_lon(lat, lon, Node.res_in_degrees)  # default is 2.5arcmin
     
     # utility to map nodeid to raster index
     def raster_idx_from_nodeid(nodeid):
-        xpix,ypix = Node.get_xpix_ypix(nodeid) # indexed to ll=(-90,-180)
+        xpix, ypix = get_xpix_ypix(nodeid)  # indexed to ll=(-90,-180)
         return ((xpix-xpixUL),(ypixUL-ypix))
 
     rows=[]
@@ -43,7 +45,7 @@ def PfPR_from_file(geotiff_file, node_ids):
 if __name__ == '__main__':
 
     nodes = get_raster_nodes('cache/raster_nodes_Haiti.json', N=-1)
-    nodeids = [Node.nodeid_from_lat_lon(n['Latitude'],
+    nodeids = [nodeid_from_lat_lon(n['Latitude'],
                                         n['Longitude'],
                                         res_in_deg=2.5/60) for n in nodes]
 

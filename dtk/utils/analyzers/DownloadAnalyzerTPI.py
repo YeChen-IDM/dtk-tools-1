@@ -1,17 +1,18 @@
-from io import BytesIO
 import os
+from io import BytesIO
 
-from dtk.utils.analyzers.BaseShelfAnalyzer import BaseShelfAnalyzer
+from dtk.utils.analyzers.BaseShelveAnalyzer import BaseShelveAnalyzer
 
-class DownloadAnalyzerTPI(BaseShelfAnalyzer):
+
+class DownloadAnalyzerTPI(BaseShelveAnalyzer):
     """
     Similar to DownloadAnalyzer, but not quite, as the output directories need to be the exp_name and
     all sim results are sorted into subdirectories by their associated requested filename.
     """
     DONE = True
 
-    def __init__(self, filenames, TPI_tag='TPI', output_dir="output", shelf_filename=None):
-        super(DownloadAnalyzerTPI, self).__init__(shelf_filename=shelf_filename)
+    def __init__(self, filenames, TPI_tag='TPI', output_dir="output", shelve_file=None):
+        super(DownloadAnalyzerTPI, self).__init__(False, False, shelve_file=shelve_file)
         self.filenames = filenames
         self.parse = False
         self.TPI_tag = TPI_tag

@@ -1,7 +1,9 @@
 import logging
 import os
+
 import pandas as pd
-from calibtool.algorithms import NextPointAlgorithm
+
+from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
 
 logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
