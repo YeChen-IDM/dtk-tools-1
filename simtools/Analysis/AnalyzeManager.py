@@ -19,9 +19,29 @@ from simtools.Utilities.General import init_logging, animation
 
 logger = init_logging('AnalyzeManager')
 
-ANALYZE_TIMEOUT = 3600*8  # Maximum seconds before timing out - set to 1h
-WAIT_TIME = 1.15          # How much time to wait between check if the analysis is done
+ANALYZE_TIMEOUT = 3600 * 8  # Maximum seconds before timing out - set to 1h
+WAIT_TIME = 1.15  # How much time to wait between check if the analysis is done
 EXCEPTION_KEY = "__EXCEPTION__"
+
+
+def pool_worker_initializer(func, analyzers, cache, path_mapping) -> None:
+    """
+    Initializer function for the process poll.
+    Allows the pool to associate the analyzers, cache and path_mapping to the function executed to retrieve data.
+    We use an initializer to improve the performances.
+
+    Args:
+        func: The fucntion that the pool will call (probably `retrieve_data` here)
+        analyzers: The list of all analyzers to run
+        cache: The cache object
+        path_mapping: The mapping for path translation when running on SSMT
+
+    Returns:
+
+    """
+    func.analyzers = analyzers
+    func.cache = cache
+    func.path_mapping = path_mapping
 
 
 class AnalyzeManager(CacheEnabled):
@@ -47,7 +67,8 @@ class AnalyzeManager(CacheEnabled):
 
         # Initial adding of experiments
         if exp_list:
-            exp_list = exp_list if isinstance(exp_list, collections.Iterable) and not isinstance(exp_list, str) else [exp_list]
+            exp_list = exp_list if isinstance(exp_list, collections.Iterable) and not isinstance(exp_list, str) else [
+                exp_list]
             for exp in exp_list: self.add_experiment(exp)
 
         # Initial adding of the simulations
@@ -64,7 +85,7 @@ class AnalyzeManager(CacheEnabled):
 
     def filter_simulations(self, simulations):
         if self.force_analyze:
-            self.simulations.update({s.id:s for s in simulations})
+            self.simulations.update({s.id: s for s in simulations})
         else:
             for s in simulations:
                 if s.status != SimulationState.Succeeded:
@@ -132,9 +153,14 @@ class AnalyzeManager(CacheEnabled):
         # Clear the cache
         self.cache = self.initialize_cache(shards=self.max_threads)
 
+        # Check if we are on SSMT
+        ssmt_path_mapping = os.environ.get("COMPS_DATA_MAPPING", None)
+        if ssmt_path_mapping:
+            ssmt_path_mapping.lower().split(';')
+
         # If any of the analyzer needs the dir map, create it
         # Or if we are on SSMT
-        if "COMPS_DATA_MAPPING" in os.environ or any(a.need_dir_map for a in self.analyzers):
+        if ssmt_path_mapping or any(a.need_dir_map for a in self.analyzers):
             # preload the global dir map
             from simtools.Utilities.SimulationDirectoryMap import SimulationDirectoryMap
             for experiment in self.experiments:
@@ -154,33 +180,41 @@ class AnalyzeManager(CacheEnabled):
             print(" | {} simulation{} - {} experiment{}"
                   .format(scount, pluralize(scount), len(self.experiments), pluralize(self.experiments)))
             print(" | force_analyze is {} and {} simulation{} ignored"
-                  .format(on_off(self.force_analyze), len(self.ignored_simulations), pluralize(self.ignored_simulations)))
+                  .format(on_off(self.force_analyze), len(self.ignored_simulations),
+                          pluralize(self.ignored_simulations)))
             print(" | Analyzer{}: ".format(pluralize(self.analyzers)))
             for a in self.analyzers:
                 print(" |  - {} (Directory map: {} / File parsing: {} / Use cache: {})"
                       .format(a.uid, on_off(a.need_dir_map), on_off(a.parse), on_off(hasattr(a, "cache"))))
             print(" | Pool of {} analyzing processes".format(max_threads))
 
-        pool = Pool(max_threads)
         if scount == 0 and self.verbose:
             print("No experiments/simulations for analysis.")
-        else:
-            results = pool.starmap_async(retrieve_data, itertools.product(self.simulations.values(), (self.analyzers,), (self.cache,)))
+            exit()
 
-            while not results.ready():
-                self._check_exception()
+        # Create the pool
+        pool = Pool(max_threads,
+                    initializer=pool_worker_initializer,
+                    initargs=(retrieve_data, self.analyzers, self.cache, ssmt_path_mapping))
 
-                time_elapsed = time.time()-start_time
-                if self.verbose:
-                    sys.stdout.write("\r {} Analyzing {}/{}... {} elapsed"
-                                     .format(next(animation), len(self.cache), scount, verbose_timedelta(time_elapsed)))
-                    sys.stdout.flush()
+        # Add the simulations
+        results = pool.map_async(retrieve_data, self.simulations.values())
 
-                if time_elapsed > ANALYZE_TIMEOUT:
-                    raise Exception("Timeout while waiting the analysis to complete...")
+        # Wait for the results to be ready
+        while not results.ready():
+            self._check_exception()
 
-                time.sleep(WAIT_TIME)
-            results.get()
+            time_elapsed = time.time() - start_time
+            if self.verbose:
+                sys.stdout.write("\r {} Analyzing {}/{}... {} elapsed"
+                                 .format(next(animation), len(self.cache), scount, verbose_timedelta(time_elapsed)))
+                sys.stdout.flush()
+
+            if time_elapsed > ANALYZE_TIMEOUT:
+                raise Exception("Timeout while waiting the analysis to complete...")
+
+            time.sleep(WAIT_TIME)
+        results.get()
 
         # At this point we have all our results
         # Give to the analyzer
