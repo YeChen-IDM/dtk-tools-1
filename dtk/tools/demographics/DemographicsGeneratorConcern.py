@@ -198,8 +198,7 @@ class DefaultsDictionaryGeneratorConcern(DemographicsGeneratorConcern):
             }
             '''
             extra_node_attributes: Optional dictionary to add to the node attributes. This is mainly useful when you
-            want to use the default value for node_attributes with some additional properties, like
-             InitialPopulation
+            want to use the default value for node_attributes with some additional properties, like InitialPopulation
             update_node: Optional function that will be called per node.
         """
         self.individual_attributes = individual_attributes
@@ -324,6 +323,7 @@ class GenericMortalityDistributionConcern(DemographicsGeneratorConcern):
                                                                             self.population_removal_rate)
         }
         )
+        return defaults
 
 
 class DefaultsBirthRateConcern(DemographicsGeneratorConcern):
@@ -334,7 +334,7 @@ class DefaultsBirthRateConcern(DemographicsGeneratorConcern):
         if 'NodeAttributes' not in defaults:
             defaults['NodeAttributes'] = {}
         defaults['NodeAttributes'].update({'BirthRate': self.birth_rate})
-        pass
+        return defaults
 
     def update_node(self, defaults: dict, node: Node, node_attributes: dict, node_individual_attributes: dict):
         pass
@@ -573,6 +573,9 @@ class EquilibriumAgeDistributionConcern(DemographicsGeneratorConcern):
         # if we have country level data for node, get that as the birth rate
         if "Metadata" in node_attributes and "CountryBirthRate" in node_attributes["Metadata"]:
             br = node_attributes["Metadata"]["CountryBirthRate"]
+        elif "NodeAttributes" in defaults and "Metadata" in defaults['NodeAttributes'] and \
+                "CountryBirthRate" in defaults["NodeAttributes"]["Metadata"]:
+            br = defaults["NodeAttributes"]["Metadata"]["CountryBirthRate"]
         else:
             br = self.default_birth_rate
         resval, distval = self.get_node_distribution(node_attributes["BirthRate"], br)
@@ -580,7 +583,6 @@ class EquilibriumAgeDistributionConcern(DemographicsGeneratorConcern):
         keys = {k.lower(): k for k in node_attributes.keys()}
 
         age_dist_config = {
-            ""
             "DistributionValues": [distval.tolist()],
             "ResultScaleFactor": 1,
             "ResultValues":
@@ -596,7 +598,7 @@ class EquilibriumAgeDistributionConcern(DemographicsGeneratorConcern):
                 })
         node_individual_attributes.update({"AgeDistribution": age_dist_config})
 
-    def update_defaults(self, defaults: dict):
+    def update_defaults(self, defaults: dict) -> dict:
         if 'IndividualAttributes' not in defaults:
             defaults['IndividualAttributes'] = {}
         # send our birth rate as the population removal rate
@@ -604,6 +606,7 @@ class EquilibriumAgeDistributionConcern(DemographicsGeneratorConcern):
                                                                                               self.default_birth_rate)
         defaults["IndividualAttributes"] = DefaultIndividualAttributesConcern. \
             get_individual_attributes(mod_mortality, self.prevalence1, self.prevalence2, self.prevalence_flag)
+        return defaults
 
 
 class WorldBankBirthRateConcern(DemographicsGeneratorConcern):
@@ -658,18 +661,21 @@ class WorldBankBirthRateConcern(DemographicsGeneratorConcern):
         if "country" in keys and node_attributes[keys["country"]] and node_attributes[keys["country"]] != self.default_country:
             country_condition = self.birthrate_df['Country Name'] == node_attributes[keys["country"]]
             birth_rate = self.birthrate_df[country_condition][self.birthrate_year].values[0]
+            if 'MetaData' not in node_attributes:
+                node_attributes['Metadata'] = {}
+                node_attributes['Metadata'].update(self.get_birthrate_metadata(birth_rate, self.birthrate_year))
         else:
             birth_rate = self.default_birth_rate
         per_node_birth_rate = (float(node.pop) / 1000) * birth_rate / 365.0
         node_attributes['BirthRate'] = per_node_birth_rate
-        # used by other generators to make local node config decisions
-        if 'MetaData' not in node_attributes:
-            node_attributes['Metadata'] = {}
-            node_attributes['Metadata'].update({
+
+    @staticmethod
+    def get_birthrate_metadata(birth_rate, birthrate_year):
+        return {
                 'CountryBirthRate': birth_rate,
                 'BirthRateSource': 'World Bank',
-                'World Bank Year': self.birthrate_year
-            })
+            'World Bank Year': birthrate_year
+        }
 
     def update_defaults(self, defaults: dict):
         """
@@ -682,7 +688,11 @@ class WorldBankBirthRateConcern(DemographicsGeneratorConcern):
         """
         if 'IndividualAttributes' not in defaults:
             defaults['IndividualAttributes'] = {}
+        if 'IndividualAttributes' not in defaults:
+            defaults['NodeAttributes'] = {}
         ia = defaults['IndividualAttributes']
+        # set the default birth rate metadata
+        defaults['NodeAttributes'].update(self.get_birthrate_metadata(self.default_birth_rate, self.birthrate_year))
         if self.update_mortality_distribution:
             if "MortalityDistribution" not in ia:
                 conf = GenericMortalityDistributionConcern. \
