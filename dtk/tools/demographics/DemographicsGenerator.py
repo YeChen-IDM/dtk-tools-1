@@ -125,6 +125,7 @@ class DemographicsGenerator:
         """
         nodes_list = list()
         warn_no_pop = False
+        cls.validate_res_in_arcsec(res_in_arcsec)
         with open(population_input_file, 'r') as pop_csv:
             reader = csv.DictReader(pop_csv)
             for row in reader:
