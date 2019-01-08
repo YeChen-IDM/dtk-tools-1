@@ -7,7 +7,7 @@ def triggered_campaign_delay_event(config_builder, start,  nodeIDs=[], delay_dis
                                    coverage=1,
                                    triggered_campaign_delay=0, trigger_condition_list=[],
                                    listening_duration=-1, event_to_send_out=None, node_property_restrictions=[],
-                                   ind_property_restrictions=[]):
+                                   ind_property_restrictions=[], only_target_residents=True):
     if not isinstance(nodeIDs, dict):
         if nodeIDs:
             nodeIDs = NodeSetNodeList(Node_List=nodeIDs)
@@ -46,7 +46,7 @@ def triggered_campaign_delay_event(config_builder, start,  nodeIDs=[], delay_dis
             Intervention_Config=NodeLevelHealthTriggeredIV(
                 Trigger_Condition_List=trigger_condition_list,
                 Duration=listening_duration,
-                Target_Residents_Only=True,
+                Target_Residents_Only=only_target_residents,
                 Node_Property_Restrictions=node_property_restrictions,
                 Property_Restrictions_Within_Node=ind_property_restrictions,
                 Actual_IndividualIntervention_Config=intervention
