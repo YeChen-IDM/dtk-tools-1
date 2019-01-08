@@ -13,19 +13,3 @@ class BaseCalibrationAnalyzer(BaseAnalyzer):
 
     def cache(self):
         return json.dumps(self, cls=GeneralEncoder)
-
-    # For retro compatibility
-    # Will disappear with the calibtool 2.0
-    @property
-    def name(self):
-        return self.uid
-
-    @property
-    def result(self):
-        return self.results
-
-    @result.setter
-    def result(self, value):
-        self.results = value
-
-    # End retro compatibility
