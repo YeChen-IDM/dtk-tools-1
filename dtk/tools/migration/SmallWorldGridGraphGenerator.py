@@ -1,5 +1,6 @@
 import random
 import networkx as nx
+import warnings
 from dtk.tools.migration.GraphGenerator import GraphGenerator
 
 
@@ -10,6 +11,7 @@ class SmallWorldGridGraphGenerator(GraphGenerator):
 
     def __init__(self, migration_network_file_path: str, demographics_file_path: str):
         super().__init__(migration_network_file_path, demographics_file_path)
+        warnings.warn("SmallWorldGridGraphGenerator is deprecated.", DeprecationWarning)
         self.graph = None
 
     def generate_graph(self) -> nx.Graph():

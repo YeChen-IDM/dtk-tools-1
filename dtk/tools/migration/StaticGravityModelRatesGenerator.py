@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from geopy.distance import distance
 from dtk.tools.migration.LinkRatesModelGenerator import LinkRatesModelGenerator
+import os
 
 
 class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
@@ -17,15 +18,29 @@ class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
 
         Args:
             demographics_file_path: Demographics file to load data from
-            gravity_params: TODO better description of these
+            gravity_params: a list/array of gravity parameters used to calculated migration rate. Expected three
+            positive value and a negative value.
             exclude_nodes: List of nodes to exclude from link rate generation
         """
         super().__init__()  # This Model has no graph
+
+        if not os.path.isfile(demographics_file_path):
+            raise ValueError("A demographics file is required.")
+
         self.demographics_file_path = demographics_file_path
         self.gravity_params = gravity_params
+
         if len(self.gravity_params) != 4:
-            # TODO better error here
             raise ValueError("You must provide all 4 gravity params")
+
+        # migration rate is proportional to population in original node and population in destination node.
+        if self.gravity_params[0] <= 0 or self.gravity_params[1] <= 0 or self.gravity_params[2] <= 0:
+            raise ValueError("The first three values in gravity_params must be positive.")
+
+        # migration rate is inversely proportional to distance.
+        if self.gravity_params[-1] >= 0:
+            raise ValueError("The last value in gravity_params must be negative. ")
+
         self.exclude_nodes = exclude_nodes
 
     @staticmethod
@@ -92,6 +107,7 @@ class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
         Returns:
             If return_prob_sums is True it returns a tuple containing the link rates dictionary and then a list of
             total migration probabilities for each node
+            if return_prob_sums is False it returns the link rates dictionary
         """
         migr = {}
 

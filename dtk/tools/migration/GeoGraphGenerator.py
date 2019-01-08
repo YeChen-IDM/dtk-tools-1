@@ -1,5 +1,6 @@
 import itertools
 from math import radians, cos, sin, asin, sqrt
+import warnings
 
 import networkx as nx
 
@@ -22,6 +23,8 @@ class GeoGraphGenerator(GraphGenerator):
             migration_radius:
         """
         super().__init__(migration_network_file_path, demographics_file_path)
+        warnings.warn("GeoGraphGenerator is deprecated.", DeprecationWarning)
+
         self.migration_radius = migration_radius
 
     def generate_graph(self) -> nx.Graph():
@@ -99,4 +102,5 @@ class GeoGraphGenerator(GraphGenerator):
 
         # 6367 km is the radius of the Earth
         km = 6367 * c
+
         return km

@@ -22,8 +22,9 @@ class GravityModelRatesGenerator(GraphGeneratedLinkRatesModelGenerator):
             coeff: Gravity Model coefficient for calculating the mig_rate
         """
         super().__init__(graph_generator)
+        warnings.warn("GravityModelRatesGenerator is deprecated.", DeprecationWarning)
         self.graph_generator = graph_generator
-        if graph_generator is None:
+        if not isinstance(graph_generator, GraphGenerator):
             raise ValueError("A Graph Generator is required for the GravityModelRatesGenerator")
 
         self.coeff = coeff

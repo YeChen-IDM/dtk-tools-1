@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from enum import Enum
 from struct import pack
 from typing import Union, Tuple, List
@@ -20,14 +21,12 @@ class MigrationTypes(Enum):
 
 
 # Define the max destinations(connections) depending on the migration type within the DTK
-# TODO Verify with Benoit
-
-
+# max destinations is 100 for any migration type
 MAX_DESTINATIONS_BY_ROUTE = {
-    MigrationTypes.local: 90,
-    MigrationTypes.regional: 90,
-    MigrationTypes.sea: 5,
-    MigrationTypes.air: 60
+    MigrationTypes.local: 100,
+    MigrationTypes.regional: 100,
+    MigrationTypes.sea: 100,
+    MigrationTypes.air: 100
 }
 
 logger = logging.getLogger(__name__)
@@ -148,7 +147,7 @@ class MigrationFile(BaseInputFile):
             self.get_filler_nodes(source, dests, max_size, matrix_id.keys())
 
         with open(migration_bin_file_path, 'wb') as migration_file:
-
+            max_destinations = 0
             for nodeid, destinations in matrix_id.items():
                 if route is not None:
                     if len(destinations) > MAX_DESTINATIONS_BY_ROUTE[route]:
@@ -159,6 +158,7 @@ class MigrationFile(BaseInputFile):
                         # trim destinations to max size of route
                         destinations = {k: destinations[k] for k in
                                         destinations.keys()[:MAX_DESTINATIONS_BY_ROUTE[route]]}
+                    max_destinations = max(len(destinations), max_destinations)
 
                 destinations_id = pack('L' * len(destinations.keys()), *destinations.keys())
                 destinations_rate = pack('d' * len(destinations.values()), *destinations.values())
@@ -168,7 +168,7 @@ class MigrationFile(BaseInputFile):
                 migration_file.write(destinations_rate)
 
                 # Write offset
-                offset_str = "%s%s%s" % (offset_str, "{0:08x}".format(nodeid), "{0:08x}".format(offset))
+                offset_str = "%s%s%s" % (offset_str, "{0:08X}".format(nodeid), "{0:08X}".format(offset))
 
                 # Increment offset
                 offset += 12 * len(destinations)
@@ -177,15 +177,16 @@ class MigrationFile(BaseInputFile):
         # createmigrationheader script and here
         if compiled_demographics_file_path:
             from dtk.tools.migration import createmigrationheader
-            demo_json = createmigrationheader.load_demographics_file(open(compiled_demographics_file_path, 'r'))
-            migration_headers = createmigrationheader.get_migration_json(demo_json, MAX_DESTINATIONS_BY_ROUTE[route],
+            with open(compiled_demographics_file_path, 'r') as compiled_demo_file:
+                demo_json = createmigrationheader.load_demographics_file(compiled_demo_file)
+            migration_headers = createmigrationheader.get_migration_json(demo_json, max_destinations,
                                                                          route.value, 'dtk-tools')
         else:  # Use the short method
             # TODO Test that this is sufficient
             # Write the headers
             meta = self.generate_headers({
                 "NodeCount": len(matrix_id),
-                "DatavalueCount": MAX_DESTINATIONS_BY_ROUTE[route]
+                "DatavalueCount": max_destinations
             })
             migration_headers = {
                 "Metadata": meta,
@@ -194,7 +195,8 @@ class MigrationFile(BaseInputFile):
 
         if migration_header_file_path is None:
             migration_header_file_path = f"{migration_bin_file_path}.json"
-        json.dump(migration_headers, open(migration_header_file_path, 'w'), indent=3)
+        with open(migration_header_file_path, 'w') as migration_header_file:
+            json.dump(migration_headers, migration_header_file, indent=3)
 
     @staticmethod
     def get_filler_nodes(source, dests, n, available_nodes):
