@@ -255,7 +255,7 @@ class IterationState:
         analyzerManager.analyze()
 
         # Ask the analyzers to cache themselves
-        cached_analyses = {a.uid: a.cache() for a in analyzerManager.analyzers}
+        cached_analyses = {a.uid: a.cache() if callable(a.cache) else {} for a in analyzerManager.analyzers}
         logger.debug(cached_analyses)
 
         # Get the results from the analyzers and ask the next point how it wants to cache them
