@@ -1,4 +1,4 @@
-from malaria.interventions.malaria_drugs import add_drug_campaign
+from malaria.interventions.malaria_drug_campaigns import add_drug_campaign
 
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from dtk.vector.study_sites import configure_site
@@ -18,7 +18,7 @@ cb.update_params({'Num_Cores': 1,
                   'x_Temporary_Larval_Habitat': 0.05,
                   'Simulation_Duration': 365})
 
-add_drug_campaign(cb, 'ALP', start_days=[10])
+add_drug_campaign(cb, 'MDA', 'SPA', start_days=[10])
 add_patient_report(cb)
 
 run_sim_args = {'config_builder': cb,
