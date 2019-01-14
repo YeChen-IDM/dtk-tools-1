@@ -2,6 +2,7 @@ import contextlib
 import functools
 import logging
 import os
+import re
 import sys
 
 import time
@@ -24,6 +25,7 @@ def init_logging(name):
         logging_initialized = True
     return logging.getLogger(name)
 
+
 try:
     logger = init_logging('Utils')
 except:
@@ -45,7 +47,8 @@ def retrieve_item(itemid):
     # Try experiments first
     try:
         return retrieve_experiment(itemid)
-    except: pass
+    except:
+        pass
 
     # This was not an experiment, maybe a batch ?
     batch = DataStore.get_batch_by_id(itemid)
@@ -69,10 +72,11 @@ def retrieve_item(itemid):
     # Nothing, consider COMPS simulation
     try:
         return retrieve_simulation(itemid)
-    except: pass
+    except:
+        pass
 
     # Didnt find anything sorry
-    raise(Exception('Could not find any item corresponding to %s' % itemid))
+    raise (Exception('Could not find any item corresponding to %s' % itemid))
 
 
 def utc_to_local(utc_dt):
@@ -81,11 +85,11 @@ def utc_to_local(utc_dt):
 
     local_tz = timezone('US/Pacific')
     local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
-    return local_tz.normalize(local_dt) # .normalize might be unnecessary
+    return local_tz.normalize(local_dt)  # .normalize might be unnecessary
 
 
 @contextlib.contextmanager
-def nostdout(stdout = False, stderr=False):
+def nostdout(stdout=False, stderr=False):
     """
     Context used to suppress any print/logging from block of code
 
@@ -135,6 +139,7 @@ def retry_function(func, wait=1.5, max_retries=5):
     
     :return: 
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         retExc = None
@@ -150,6 +155,7 @@ def retry_function(func, wait=1.5, max_retries=5):
                 retExc = e
                 time.sleep(wait)
         raise retExc if retExc else Exception()
+
     return wrapper
 
 
@@ -166,7 +172,7 @@ def caller_name(skip=2):
     stack = inspect.stack()
     start = 0 + skip
     if len(stack) < start + 1:
-      return ''
+        return ''
     parentframe = stack[start][0]
 
     name = []
@@ -179,7 +185,7 @@ def caller_name(skip=2):
         name.append(parentframe.f_locals['self'].__class__.__name__)
     codename = parentframe.f_code.co_name
     if codename != '<module>':  # top level usually
-        name.append( codename ) # function or a method
+        name.append(codename)  # function or a method
     del parentframe
     return ".".join(name)
 
@@ -221,6 +227,7 @@ def get_md5(filename):
             md5calc.update(data)
 
     return uuid.UUID(md5calc.hexdigest())
+
 
 class CommandlineGenerator:
     """
@@ -324,8 +331,11 @@ def is_running(pid, name_part):
 
     return False
 
+
 import importlib
 import pkgutil
+
+
 def import_submodules(package, recursive=True):
     """ Import all submodules of a module, recursively, including subpackages
 
@@ -343,6 +353,7 @@ def import_submodules(package, recursive=True):
             results.update(import_submodules(full_name))
     return results
 
+
 labels = [
     (1024 ** 5, ' PB'),
     (1024 ** 4, ' TB'),
@@ -350,7 +361,7 @@ labels = [
     (1024 ** 2, ' MB'),
     (1024 ** 1, ' KB'),
     (1024 ** 0, (' byte', ' bytes')),
-    ]
+]
 
 verbose = [
     (1024 ** 5, (' petabyte', ' petabytes')),
@@ -359,7 +370,8 @@ verbose = [
     (1024 ** 2, (' megabyte', ' megabytes')),
     (1024 ** 1, (' kilobyte', ' kilobytes')),
     (1024 ** 0, (' byte', ' bytes')),
-    ]
+]
+
 
 def file_size(bytes, system=labels):
     """
@@ -369,7 +381,7 @@ def file_size(bytes, system=labels):
     for factor, suffix in system:
         if bytes >= factor:
             break
-    amount = round(bytes/factor)
+    amount = round(bytes / factor)
     if isinstance(suffix, tuple):
         singular, multiple = suffix
         if amount == 1:
@@ -377,6 +389,7 @@ def file_size(bytes, system=labels):
         else:
             suffix = multiple
     return str(amount) + suffix
+
 
 def files_in_dir(dir, filters=None):
     """
@@ -397,6 +410,7 @@ def files_in_dir(dir, filters=None):
                 discovered_files.append(trimmed)
     return discovered_files
 
+
 def timestamp(time=None):
     """
     :param time: a time object; if None provided, use now.
@@ -408,6 +422,7 @@ def timestamp(time=None):
     timestamp = time.strftime('%Y%m%d_%H%M%S')
     return timestamp
 
+
 def timestamp_filename(filename, time=None):
     """
     Create a timestamped filename by appending the time to the given filename.
@@ -417,6 +432,7 @@ def timestamp_filename(filename, time=None):
     new_filename = '.'.join([filename, timestamp(time)])
     return new_filename
 
+
 def copy_and_reset_StringIO(sio):
     """
     A method to copy a StringIO and make sure read access starts at the beginning.
@@ -425,7 +441,7 @@ def copy_and_reset_StringIO(sio):
     """
     import copy
     new_sio = copy.deepcopy(sio)
-    new_sio.seek(0) # just in case the original had been read some
+    new_sio.seek(0)  # just in case the original had been read some
     return new_sio
 
 
@@ -463,3 +479,16 @@ def batch_list(iterable, n=1):
     Returns: List of lists of n elements
     """
     return batch(iter(iterable), n)
+
+
+def remove_special_chars(str, replace="_"):
+    """
+    Removes the special characters from a string and replace them with `replace`.
+
+    Args:
+        str: The string to clean up
+        replace: The character used to replace special
+
+    Returns: Cleaned up string
+    """
+    return re.sub('[^A-Za-z0-9]+', replace, str)
