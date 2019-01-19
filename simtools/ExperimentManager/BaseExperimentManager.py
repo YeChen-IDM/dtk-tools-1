@@ -252,7 +252,6 @@ class BaseExperimentManager(CacheEnabled):
             simulations_created = len(self.cache)
 
             if not any([p.is_alive() for p in creator_processes]):
-                self.destroy_cache()
                 sys.stdout.flush()
                 print("\n\nError during commissioning. Please check the exception and try again...")
                 exit()
@@ -267,7 +266,6 @@ class BaseExperimentManager(CacheEnabled):
 
         # Insert simulations in the cache
         DataStore.bulk_insert_simulations(self.cache)
-        self.destroy_cache()
 
         # Refresh the experiment
         self.refresh_experiment()
