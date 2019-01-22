@@ -87,7 +87,7 @@ class SiteDataPlotter(BasePlotter):
 
             for rank, sample in iter_samples['sample'].iteritems():  # index is rank
                 fname = os.path.join(self.directory, '%s_%s' % (site_name, analyzer_name), 'rank%d' % rank)
-                fig = plt.figure(fname, figsize=(4, 3))
+                fig = plt.figure(fname, figsize=(8, 6))
 
                 analyzer.plot_comparison(fig, analyzer_data['samples'][sample], fmt='-o', color='#CB5FA4', alpha=1, linewidth=1)
                 analyzer.plot_comparison(fig, analyzer_data['ref'], fmt='-o', color='#8DC63F', alpha=1, linewidth=1, reference=True)

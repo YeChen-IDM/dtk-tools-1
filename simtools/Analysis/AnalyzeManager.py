@@ -1,5 +1,4 @@
 import collections
-import itertools
 import os
 import re
 import sys
@@ -139,7 +138,7 @@ class AnalyzeManager(CacheEnabled):
             sys.stdout.flush()
             print("")
             print(exception)
-            exit()
+            return True
 
     def analyze(self):
         # Start the timer
@@ -202,7 +201,10 @@ class AnalyzeManager(CacheEnabled):
 
         # Wait for the results to be ready
         while not results.ready():
-            self._check_exception()
+            # If an exception happen, kill everything and exit
+            if self._check_exception():
+                pool.terminate()
+                return
 
             time_elapsed = time.time() - start_time
             if self.verbose:
@@ -243,5 +245,3 @@ class AnalyzeManager(CacheEnabled):
 
         for a in self.analyzers:
             a.destroy()
-
-        self.destroy_cache()

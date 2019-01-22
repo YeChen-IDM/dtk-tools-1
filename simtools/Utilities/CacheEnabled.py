@@ -1,3 +1,5 @@
+import os
+import shutil
 import tempfile
 
 from diskcache import FanoutCache, Cache, Deque, DEFAULT_SETTINGS
@@ -16,17 +18,17 @@ class CacheEnabled:
 
     def initialize_cache(self, shards=None, timeout=1, queue=False):
         # Create a temporary directory for the cache
-        self.cache_directory = tempfile.TemporaryDirectory()
+        self.cache_directory = tempfile.mkdtemp()
 
         # Create a queue?
         if queue:
-            self.cache = Deque(directory=self.cache_directory.name)
+            self.cache = Deque(directory=self.cache_directory)
             self.queue = True
         elif shards:
-            self.cache = FanoutCache(self.cache_directory.name, shards=shards, timeout=timeout)
+            self.cache = FanoutCache(self.cache_directory, shards=shards, timeout=timeout)
             self.queue = False
         else:
-            self.cache = Cache(self.cache_directory.name, timeout=timeout)
+            self.cache = Cache(self.cache_directory, timeout=timeout)
             self.queue = False
 
         return self.cache
@@ -39,4 +41,11 @@ class CacheEnabled:
         else:
             # For all other cases, just call the normal close
             self.cache.close()
+
+    def __del__(self):
+        if self.cache:
+            self.destroy_cache()
+
+        if self.cache_directory and os.path.exists(self.cache_directory):
+            shutil.rmtree(self.cache_directory)
 

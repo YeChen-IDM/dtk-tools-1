@@ -8,15 +8,16 @@ class DemographicsFile(BaseInputFile):
 
     @classmethod
     def from_file(cls, base_file):
-        content = json.load(open(base_file, 'rb'))
-        nodes = []
+        with open(base_file, 'rb') as src:
+            content = json.load(src)
+            nodes = []
 
-        # Load the nodes
-        for node in content["Nodes"]:
-            nodes.append(Node.from_data(node))
+            # Load the nodes
+            for node in content["Nodes"]:
+                nodes.append(Node.from_data(node))
 
-        # Load the idref
-        idref = content['Metadata']['IdReference']
+            # Load the idref
+            idref = content['Metadata']['IdReference']
 
         # Create the file
         return cls(nodes, idref, base_file)
@@ -28,7 +29,8 @@ class DemographicsFile(BaseInputFile):
         self.content = None
 
         if base_file:
-            self.content = json.load(open(base_file,'rb'))
+            with open(base_file, 'rb') as src:
+                self.content = json.load(src)
         else:
             meta = self.generate_headers()
             self.content = {

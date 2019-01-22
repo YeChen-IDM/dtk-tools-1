@@ -171,3 +171,8 @@ def add_node_demographics_report(cb, stratify_by_gender=0, age_bins=[], IP_key_t
                                                       IP_key_to_collect=IP_key_to_collect,
                                                       type='ReportNodeDemographics')
     cb.add_reports(node_demographics_report)
+
+
+def add_human_migration_tracking_report(cb):
+    human_migration_tracking_report = BaseReport(type='ReportHumanMigrationTracking')
+    cb.add_reports(human_migration_tracking_report)

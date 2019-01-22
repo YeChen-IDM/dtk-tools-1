@@ -2,6 +2,8 @@ from simtools.Analysis.BaseAnalyzers.BaseAnalyzer import BaseAnalyzer
 import shutil
 import os
 
+from simtools.Utilities.General import remove_special_chars
+
 
 class BaseCacheAnalyzer(BaseAnalyzer):
 
@@ -14,7 +16,7 @@ class BaseCacheAnalyzer(BaseAnalyzer):
 
     def initialize(self):
         from diskcache import Cache
-        self.cache = Cache(self.cache_location or self.uid + "_cache")
+        self.cache = Cache(self.cache_location or remove_special_chars(self.uid) + "_cache")
 
     def filter(self, simulation):
         return self.force or not self.is_in_cache(simulation.id)

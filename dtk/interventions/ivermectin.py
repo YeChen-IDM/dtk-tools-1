@@ -19,7 +19,6 @@ receiving_IV_event = BroadcastEvent(Broadcast_Event="Received_Ivermectin")
 def ivermectin_config_by_duration(drug_code=None):
     """
     Returns the correct ``Killing_Config`` parameter depending on the ``drug_code``
-
     :param drug_code: Can be ``'DAY'``, ``'WEEK'`` or ``'MONTH'`` or a number of days and drive the ``Killing_config`` (see `Killing_Config in Ivermectin <https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin>`_ for more info).
     :return: a dictionary with the correct ``Killing_Config / Box_Duration`` set.
     """
@@ -34,6 +33,8 @@ def ivermectin_config_by_duration(drug_code=None):
             cfg.Killing_Config.Box_Duration = 7
         elif drug_code == 'MONTH':
             cfg.Killing_Config.Box_Duration = 30
+        elif drug_code == '90DAYS':
+            cfg.Killing_Config.Box_Duration = 90
         else:
             raise Exception("Don't recognize drug_code" % drug_code)
     elif isinstance(drug_code, (int, float)):
@@ -44,13 +45,13 @@ def ivermectin_config_by_duration(drug_code=None):
     return cfg
 
 
+
 def add_ivermectin(config_builder, drug_code, coverage, start_days,
                    trigger_condition_list=[], triggered_campaign_delay=0,
                    listening_duration=-1, nodeids=[], target_residents_only=1,
                    node_property_restrictions=[], ind_property_restrictions=[]):
     """
     Add an ivermectin event to the config_builder passed.
-
     :param config_builder: The config builder getting the intervention event
     :param drug_code: Can be 'DAY', 'WEEK' or 'MONTH' and drive the ``Killing_config`` (see `Killing_Config in Ivermectin <https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin>`_ for more info).
     :param coverage: Set the ``Demographic_Coverage``
@@ -59,6 +60,7 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
     :param listening_duration: for how long the NLHTIV will listen for the trigger
     :return: Nothing
     """
+
 
     cfg = ivermectin_config_by_duration(drug_code)
 

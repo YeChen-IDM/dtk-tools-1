@@ -6,14 +6,14 @@ import os
 import shutil
 import subprocess
 
-import simtools.AnalyzeManager.AnalyzeHelper as AnalyzeHelper
+import simtools.Analysis.AnalyzeHelper as AnalyzeHelper
 from dtk import commands_args
 from dtk.utils.analyzers import StdoutAnalyzer
 from dtk.utils.analyzers import TimeseriesAnalyzer, VectorSpeciesAnalyzer
 from dtk.utils.analyzers import sample_selection
 from dtk.utils.analyzers.group import group_by_name
 from dtk.utils.analyzers.plot import plot_grouped_lines
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
+from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.DataAccess.DataStore import DataStore
 from simtools.DataAccess.LoggingDataStore import LoggingDataStore
 from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager

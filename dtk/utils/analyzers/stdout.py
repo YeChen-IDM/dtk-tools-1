@@ -1,6 +1,6 @@
 import logging
 
-from dtk.utils.analyzers.BaseAnalyzer import BaseAnalyzer
+from simtools.Analysis.BaseAnalyzers.BaseAnalyzer import BaseAnalyzer
 
 logger = logging.getLogger(__name__)
 

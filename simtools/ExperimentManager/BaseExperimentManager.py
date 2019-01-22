@@ -244,12 +244,17 @@ class BaseExperimentManager(CacheEnabled):
             logger.info(" | Simulations per batch: {}".format(sim_per_batch))
 
         # Status display
-        while simulations_created == 0 or simulations_created != simulations_expected or t.isAlive():
+        while simulations_created != simulations_expected or t.isAlive():
             sys.stdout.write("\r {} Created simulations: {}/{}".format(next(animation), simulations_created, simulations_expected))
             sys.stdout.flush()
 
             # Refresh the number of sims created
             simulations_created = len(self.cache)
+
+            if not any([p.is_alive() for p in creator_processes]):
+                sys.stdout.flush()
+                print("\n\nError during commissioning. Please check the exception and try again...")
+                exit()
 
             time.sleep(0.3)
 
@@ -261,7 +266,6 @@ class BaseExperimentManager(CacheEnabled):
 
         # Insert simulations in the cache
         DataStore.bulk_insert_simulations(self.cache)
-        self.destroy_cache()
 
         # Refresh the experiment
         self.refresh_experiment()

@@ -586,7 +586,7 @@ class CalibManager(object):
         return self.next_point.get_param_names()
 
     def site_analyzer_names(self):
-        return {site.name: [a.name for a in site.analyzers] for site in self.sites}
+        return {site.name: [a.uid for a in site.analyzers] for site in self.sites}
 
     def get_last_iteration(self):
         calib_data = self.read_calib_data()

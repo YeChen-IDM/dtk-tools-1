@@ -18,6 +18,7 @@ class ClimateGeneratorTests(unittest.TestCase):
         cls.output_path = "climate_generator_test"
         if not os.path.isdir(cls.output_path):
             os.mkdir(cls.output_path)
+
     def setUp(self):
         self.test_output = os.path.join(self.output_path, self._testMethodName)
         if os.path.isdir(self.test_output):
@@ -271,16 +272,16 @@ class ClimateGeneratorTests(unittest.TestCase):
     def test_work_order_generation(self):
         """
         Tests constructor and generate_climate_files() of ClimateGenerator.
-        Asserts wo_file("something") is not stored in working directory.
+        Asserts wo_file("foo") is not stored in working directory.
         Returns:
 
         """
-        wo_file = 'something'
+        wo_file = 'foo'
         if os.path.isfile(wo_file):
             os.remove(wo_file)
         climate_demog = self.get_test_demo(self.test_output)
-        # the ClimateGenerator will put "something" in working directory and the work item should runs fine(use
-        # "something" as "WorkOrder.json".)
+        # the ClimateGenerator will put "foo" in working directory and the work item should runs fine(use
+        # "foo" as "WorkOrder.json".)
         cg = ClimateGenerator(demographics_file_path=climate_demog,
                               work_order_path=wo_file,
                               climate_files_output_path=self.test_output,

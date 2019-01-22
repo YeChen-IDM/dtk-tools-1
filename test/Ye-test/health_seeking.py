@@ -69,7 +69,7 @@ def add_health_seeking(config_builder,
 
         actual_config = build_actual_treatment_cfg(t['rate'], drug_config, drugs)
         if disqualifying_properties:
-            actual_config['Disqualifying_Properties'] = disqualifying_properties
+            actual_config.Disqualifying_Properties = disqualifying_properties
 
         health_seeking_config = StandardInterventionDistributionEventCoordinator(
             Number_Repetitions=repetitions,

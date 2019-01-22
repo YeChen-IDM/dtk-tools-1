@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from enum import Enum
 from struct import pack
 from typing import Union, Tuple, List
@@ -8,7 +9,7 @@ from dtk.tools.climate.BaseInputFile import BaseInputFile
 
 class MigrationTypes(Enum):
     """
-    Enum that lists the supported migration types
+    Enum that lists the supported migration types.
     """
     local = 'local'
     sea = 'sea'
@@ -20,31 +21,36 @@ class MigrationTypes(Enum):
 
 
 # Define the max destinations(connections) depending on the migration type within the DTK
-# TODO Verify with Benoit
-
-
+# max destinations is 100 for any migration type
 MAX_DESTINATIONS_BY_ROUTE = {
-    MigrationTypes.local: 90,
-    MigrationTypes.regional: 90,
-    MigrationTypes.sea: 5,
-    MigrationTypes.air: 60
+    MigrationTypes.local: 100,
+    MigrationTypes.regional: 100,
+    MigrationTypes.sea: 100,
+    MigrationTypes.air: 100
 }
 
 logger = logging.getLogger(__name__)
 
 
 class MigrationFile(BaseInputFile):
+    """
+    Methods to create migration files for use with EMOD.
+    """
+
     def __init__(self, idref, matrix):
         """
         Initialize a MigrationFile.
-        :param idref: 
-        :param matrix: The matrix needs to be of the format:
-            {
-               node_source1: {
-                  node_destination_1: rate,
-                  node_destination_2: rate
+
+        Args:
+            idref: The ID reference.
+            matrix: The migration matrix must be in the following format::
+
+                {
+                   node_source1: {
+                      node_destination_1: rate,
+                      node_destination_2: rate
+                    }
                 }
-            }
         """
         super(MigrationFile, self).__init__(idref)
         self.idref = idref
@@ -53,7 +59,7 @@ class MigrationFile(BaseInputFile):
     @staticmethod
     def flatten_matrix(matrix) -> List[Tuple[int, int, float]]:
         """
-        Flattens a migration matrix into a series of rows in the format of::
+        Flatten a migration matrix into a series of rows in the following format::
             
             [
                 src_node_id1, dest_node_id_1, rate
@@ -62,7 +68,7 @@ class MigrationFile(BaseInputFile):
             ]
         
         Args:
-            matrix: Matrix to flatten. needs to be in the following format::
+            matrix: The matrix to flatten. Must be in the following format::
                 
                 {
                    "node_source1": {
@@ -73,7 +79,7 @@ class MigrationFile(BaseInputFile):
                 
 
         Returns:
-
+            A series of rows describing the migration patterns.
         """
         items: List[Tuple[int, int, float]] = []
         for src, v in matrix.items():
@@ -83,10 +89,10 @@ class MigrationFile(BaseInputFile):
 
     def save_as_txt(self, rates_txt_file_path: str):
         """
-        Save the migration file to a human readable format
+        Save the migration file to a human-readable format.
 
         Args:
-            rates_txt_file_path:
+            rates_txt_file_path: The path where the migration text file will be saved.
         Returns:
             None
         """
@@ -97,10 +103,10 @@ class MigrationFile(BaseInputFile):
 
     def load_from_text(self, rates_txt_file_path: str):
         """
-        Load files from human readable text files generated from save_as_text into the matrix
+        Load files from human-readable text files generated from :py:meth:`save_as_txt` into the matrix.
 
         Args:
-            rates_txt_file_path:
+            rates_txt_file_path: The path to the migration text file.
         Returns:
             None
         """
@@ -118,17 +124,13 @@ class MigrationFile(BaseInputFile):
                       migration_header_file_path: Union[str, None] = None,
                       compiled_demographics_file_path: Union[str, None] = None):
         """
-        Convert the input into a DTK binary Migration file
+        Convert the input into an EMOD binary migration file.
 
         Args:
-            migration_bin_file_path: The path the write the migration binary file
-            route: What route(Migration Type) to apply to the generated file. When set, this will take into account
-            the MAX_DESTINATIONS_BY_ROUTE for the selected MigrationType.
-            migration_header_file_path: Optional path to save the migration header. The default is add a '.json' to the
-             migration_bin_file_path
-            compiled_demographics_file_path: Optional path to the compiled demographics file. When this is passed, we
-            user the createmigrationheader tool to save the migration file header. Otherwise, we fall back to
-            a more simple header
+            migration_bin_file_path: The location to save the migration binary file.
+            route: The route (**MigrationType**) to apply to the generated file. When set, this will take into account the MAX_DESTINATIONS_BY_ROUTE for the selected **MigrationType**.
+            migration_header_file_path: Optional, the path where the migration header file will be saved. The default value is <migration_bin_file_path>.json.
+            compiled_demographics_file_path: Optional, the path to the compiled demographics file. If included, the **creationmigrationheader** tool saves the migration header; otherwise, a simpler header is used. 
         Returns:
             None
         """
@@ -148,7 +150,7 @@ class MigrationFile(BaseInputFile):
             self.get_filler_nodes(source, dests, max_size, matrix_id.keys())
 
         with open(migration_bin_file_path, 'wb') as migration_file:
-
+            max_destinations = 0
             for nodeid, destinations in matrix_id.items():
                 if route is not None:
                     if len(destinations) > MAX_DESTINATIONS_BY_ROUTE[route]:
@@ -159,6 +161,7 @@ class MigrationFile(BaseInputFile):
                         # trim destinations to max size of route
                         destinations = {k: destinations[k] for k in
                                         destinations.keys()[:MAX_DESTINATIONS_BY_ROUTE[route]]}
+                    max_destinations = max(len(destinations), max_destinations)
 
                 destinations_id = pack('L' * len(destinations.keys()), *destinations.keys())
                 destinations_rate = pack('d' * len(destinations.values()), *destinations.values())
@@ -168,7 +171,7 @@ class MigrationFile(BaseInputFile):
                 migration_file.write(destinations_rate)
 
                 # Write offset
-                offset_str = "%s%s%s" % (offset_str, "{0:08x}".format(nodeid), "{0:08x}".format(offset))
+                offset_str = "%s%s%s" % (offset_str, "{0:08X}".format(nodeid), "{0:08X}".format(offset))
 
                 # Increment offset
                 offset += 12 * len(destinations)
@@ -177,15 +180,16 @@ class MigrationFile(BaseInputFile):
         # createmigrationheader script and here
         if compiled_demographics_file_path:
             from dtk.tools.migration import createmigrationheader
-            demo_json = createmigrationheader.load_demographics_file(open(compiled_demographics_file_path, 'r'))
-            migration_headers = createmigrationheader.get_migration_json(demo_json, MAX_DESTINATIONS_BY_ROUTE[route],
+            with open(compiled_demographics_file_path, 'r') as compiled_demo_file:
+                demo_json = createmigrationheader.load_demographics_file(compiled_demo_file)
+            migration_headers = createmigrationheader.get_migration_json(demo_json, max_destinations,
                                                                          route.value, 'dtk-tools')
         else:  # Use the short method
             # TODO Test that this is sufficient
             # Write the headers
             meta = self.generate_headers({
                 "NodeCount": len(matrix_id),
-                "DatavalueCount": MAX_DESTINATIONS_BY_ROUTE[route]
+                "DatavalueCount": max_destinations
             })
             migration_headers = {
                 "Metadata": meta,
@@ -194,13 +198,14 @@ class MigrationFile(BaseInputFile):
 
         if migration_header_file_path is None:
             migration_header_file_path = f"{migration_bin_file_path}.json"
-        json.dump(migration_headers, open(migration_header_file_path, 'w'), indent=3)
+        with open(migration_header_file_path, 'w') as migration_header_file:
+            json.dump(migration_headers, migration_header_file, indent=3)
 
     @staticmethod
     def get_filler_nodes(source, dests, n, available_nodes):
         """
-        Fills the destinations with n filler nodes.
-        Makes sure the nodes ids chosen are not the source, not the destinations and come from the available_nodes
+        Fill the destinations with n filler nodes.
+        Verifies that the node IDs chosen are not the source, not the destinations, and come from the **available_nodes**.
         """
         while len(dests) < n:
             for node in available_nodes:
@@ -212,6 +217,7 @@ class MigrationFile(BaseInputFile):
         Transform the matrix of ``{node:{destination:rate}}`` into ``{node.id: {dest.id:rate}}``
         
         Returns: 
+            A matrix.
         """
         return {
             node.id if hasattr(node, 'id') else node: {

@@ -1,6 +1,6 @@
 import os
 
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
+from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.DataAccess.DataStore import DataStore
 from simtools.DataAccess.Schema import Batch, Experiment, Simulation
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory

@@ -74,11 +74,6 @@ def set_geography(cb, geography, static=False, pop_scale=1):
     :param pop_scale: Used if the demographics is not static and will
     :return: Nothing
     """
-
-    print('\n\n---\n'
-          'set_geography is deprecated. Please link to the relevant climate files in your script directly.'
-          '\n---\n\n')
-
     params = get_converted_paths_for_geography(geography)
     #logging.debug('Geography parameters: %s' % params)
     cb.update_params(params)

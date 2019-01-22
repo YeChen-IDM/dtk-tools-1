@@ -106,7 +106,7 @@ def dirichlet_single(raw_data, sim_data):
     return LL
 
 
-def beta_binomial(raw_nobs, sim_nobs, raw_data, sim_data):
+def beta_binomial(raw_nobs, sim_nobs, raw_data, sim_data, return_mean=True):
 
     num_bins = len(raw_data)
 
@@ -122,11 +122,12 @@ def beta_binomial(raw_nobs, sim_nobs, raw_data, sim_data):
         LL -= gammaln(sim_data[this_bin] + 1)
         LL -= gammaln(sim_nobs[this_bin] - sim_data[this_bin] + 1)
 
-    LL /= num_bins
+    if num_bins != 0 and return_mean:
+        LL /= num_bins
     return LL
 
 
-def gamma_poisson(raw_nobs, sim_nobs, raw_data, sim_data):
+def gamma_poisson(raw_nobs, sim_nobs, raw_data, sim_data, return_mean=True):
 
     num_bins = len(raw_data)
 
@@ -142,8 +143,9 @@ def gamma_poisson(raw_nobs, sim_nobs, raw_data, sim_data):
         LL -= gammaln(raw_data[this_bin] + 1)
         LL -= gammaln(sim_data[this_bin] + 1)
 
-    if num_bins != 0:
+    if num_bins != 0 and return_mean:
         LL /= num_bins
+
     return LL
 
 """

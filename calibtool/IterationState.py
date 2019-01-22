@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import pandas as pd
 from calibtool.utils import StatusPoint
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
+from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from simtools.Utilities.Encoding import NumpyEncoder, json_numpy_obj_hook
@@ -48,13 +48,17 @@ class IterationState:
 
         if 'calibration_start' in kwargs:
             cs = kwargs.pop('calibration_start') or datetime.now().replace(microsecond=0)
-            if not isinstance(cs, datetime): self.calibration_start = datetime.strptime(cs, '%Y-%m-%d %H:%M:%S')
-            else: self.calibration_start = cs
+            if not isinstance(cs, datetime):
+                self.calibration_start = datetime.strptime(cs, '%Y-%m-%d %H:%M:%S')
+            else:
+                self.calibration_start = cs
 
         if 'iteration_start' in kwargs:
             cs = kwargs.pop('iteration_start') or datetime.now().replace(microsecond=0)
-            if not isinstance(cs, datetime): self.iteration_start = datetime.strptime(cs, '%Y-%m-%d %H:%M:%S')
-            else: self.iteration_start = cs
+            if not isinstance(cs, datetime):
+                self.iteration_start = datetime.strptime(cs, '%Y-%m-%d %H:%M:%S')
+            else:
+                self.iteration_start = cs
 
         self._status = None
         self.update(**kwargs)
@@ -243,25 +247,19 @@ class IterationState:
         if not self.exp_manager:
             self.exp_manager = ExperimentManagerFactory.from_experiment(self.experiment_id)
 
-        from simtools.Analysis.BaseAnalyzers.BaseAnalyzer import BaseAnalyzer
-        from simtools.Analysis.AnalyzeManager import AnalyzeManager as am
-        if all(isinstance(a, BaseAnalyzer) for a in self.analyzer_list):
-            analyzerManager = am(exp_list=self.exp_manager.experiment,
-                                 analyzers=self.analyzer_list,
-                                 working_dir=self.iteration_directory,
-                                 verbose=True)
-        else:
-            analyzerManager = AnalyzeManager(exp_list=self.exp_manager.experiment,
-                                             analyzers=self.analyzer_list,
-                                             working_dir=self.iteration_directory)
+        analyzerManager = AnalyzeManager(exp_list=self.exp_manager.experiment,
+                                         analyzers=self.analyzer_list,
+                                         working_dir=self.iteration_directory,
+                                         verbose=True)
+
         analyzerManager.analyze()
 
         # Ask the analyzers to cache themselves
-        cached_analyses = {a.uid if not callable(a.uid) else a.uid(): a.cache() if callable(a.cache) else {} for a in analyzerManager.analyzers}
+        cached_analyses = {a.uid: a.cache() if callable(a.cache) else {} for a in analyzerManager.analyzers}
         logger.debug(cached_analyses)
 
         # Get the results from the analyzers and ask the next point how it wants to cache them
-        results = pd.DataFrame({a.uid if not callable(a.uid) else a.uid(): a.result for a in analyzerManager.analyzers})
+        results = pd.DataFrame({a.uid: a.results for a in analyzerManager.analyzers})
         cached_results = self.next_point_algo.get_results_to_cache(results)
 
         # Store the analyzers and results in the iteration state
@@ -313,7 +311,6 @@ class IterationState:
         iteration_time_elapsed = current_time - self.iteration_start
         logger.info("Iteration %s done (took %s)" % (self.iteration, verbose_timedelta(iteration_time_elapsed)))
 
-
     def kill(self):
         """
         Kill the current calibration
@@ -349,18 +346,18 @@ class IterationState:
 
     def to_file(self):
         state = {
-                 'status': self.status.name,
-                 'samples_for_this_iteration': self.samples_for_this_iteration,
-                 'analyzers': self.analyzers,
-                 'iteration': self.iteration,
-                 'iteration_start': self.iteration_start,
-                 'results': self.results,
-                 'calibration_name': self.calibration_name,
-                 'experiment_id': self.experiment_id,
-                 'simulations': self.simulations,
-                 'next_point': self.next_point_algo.get_state(),
-                 'suite_id': self.suite_id
-                }
+            'status': self.status.name,
+            'samples_for_this_iteration': self.samples_for_this_iteration,
+            'analyzers': self.analyzers,
+            'iteration': self.iteration,
+            'iteration_start': self.iteration_start,
+            'results': self.results,
+            'calibration_name': self.calibration_name,
+            'experiment_id': self.experiment_id,
+            'simulations': self.simulations,
+            'next_point': self.next_point_algo.get_state(),
+            'suite_id': self.suite_id
+        }
 
         with open(self.iteration_file, 'w') as f:
             json.dump(state, f, indent=4, cls=NumpyEncoder)

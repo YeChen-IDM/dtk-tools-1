@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import os
-from simtools.AnalyzeManager.AnalyzeManager import AnalyzeManager
+from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
 from calibtool.resamplers.CalibrationPoint import CalibrationPoint, CalibrationParameter
 
