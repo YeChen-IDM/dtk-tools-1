@@ -42,7 +42,7 @@ def analyze(args, unknownArgs, builtinAnalyzers):
     # create instance of AnalyzeManager
     analyzeManager = AnalyzeManager(exp_list=exp_dict.values(), sim_list=sim_dict.values(), analyzers=analyzers)
 
-    exp_ids_to_be_saved = list(set(exp_dict.keys()) - set(analyzeManager.experiments_simulations.keys()))
+    exp_ids_to_be_saved = list(set(exp_dict.keys()) - set([s.experiment for s in analyzeManager.simulations.values()]))
     exp_to_be_saved = [exp_dict[exp_id] for exp_id in exp_ids_to_be_saved]
 
     # if batch name exists, always save experiments
