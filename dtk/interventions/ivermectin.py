@@ -47,9 +47,9 @@ def ivermectin_config_by_duration(drug_code=None):
 
 
 def add_ivermectin(config_builder, drug_code, coverage, start_days,
-                   trigger_condition_list=[], triggered_campaign_delay=0,
-                   listening_duration=-1, nodeids=[], target_residents_only=1,
-                   node_property_restrictions=[], ind_property_restrictions=[]):
+                   trigger_condition_list=None, triggered_campaign_delay=0,
+                   listening_duration=-1, nodeids=None, target_residents_only=1,
+                   node_property_restrictions=None, ind_property_restrictions=None):
     """
     Add an ivermectin event to the config_builder passed.
     :param config_builder: The config builder getting the intervention event
@@ -60,6 +60,11 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
     :param listening_duration: for how long the NLHTIV will listen for the trigger
     :return: Nothing
     """
+
+    if node_property_restrictions is None:
+        node_property_restrictions = []
+    if ind_property_restrictions is None:
+        ind_property_restrictions = []
 
 
     cfg = ivermectin_config_by_duration(drug_code)
