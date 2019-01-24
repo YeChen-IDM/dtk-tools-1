@@ -10,12 +10,18 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_s
     Args:
         cb: The config builder object.
         start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
-        kill_cfg: The killing efficacy and waning of ATSB (**Killing_Config** parameter) and species (optional, will be added based on the configuration file if not included).
-        duration: TBD
-        duration_std_dev: TBD
-        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
-        node_property_restrictions: The NodeProperty key:value pairs that nodes must have to receive the intervention (**Node_Property_Restrictions** parameter).
+        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage**
+            parameter).
+        kill_cfg: The killing efficacy and waning of ATSB (**Killing_Config** parameter) and species (optional, will be
+            added based on the configuration file if not included).
+        duration: How long the ATSB is active for, independent of the waning profile of killing. Allows the node to get
+           rid of an ATSB prematurely, much like bednet users stop using perfectly good bednets in UsageDependentBednet.
+           Expiration time of the ATSB is drawn from a Gaussian distribution with (mu, s) = (duration, duration_std_dev)
+        duration_std_dev: Width of the Gaussian distribution from which the ATSB expiration time is drawn.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value
+            of NodeSetAll.
+        node_property_restrictions: The NodeProperty key:value pairs that nodes must have to receive the intervention
+            (*Node_Property_Restrictions** parameter).
 
     Returns:
         None
@@ -106,7 +112,7 @@ def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initi
                     "Event_Name": "Individual Repellent",
                     "Blocking_Config": {
                         "Initial_Effect": initial_blocking,
-                        "Decay_Time_Constant": duration,
+                        "Box_Duration": duration,
                         "class": "WaningEffectBox"
                     },
                     "Cost_To_Consumer": cost
@@ -272,7 +278,7 @@ def add_eave_tubes(config_builder, start, coverage=1, initial_killing=1.0, killi
         killing_duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
         initial_blocking:  The initial blocking effect of the eave tubes (**Initial_Effect** parameter in **Blocking_Config**).
         blocking_duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
-        outdoor_killing_discount:
+        outdoor_killing_discount: Scales initial killing effect to differentially kill outdoor vectors vs indoor vectors.
         cost: The cost of each individual application (**Cost_To_Consumer** parameter).
         nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
 
