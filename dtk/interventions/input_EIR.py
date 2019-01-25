@@ -2,7 +2,7 @@ from dtk.utils.Campaign.CampaignClass import *
 
 
 def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start_day=0, nodeIDs=None,
-                 ind_property_restrictions=[]):
+                 ind_property_restrictions=None):
     """
     Create an intervention introducing new infections (see `InputEIR <https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-inputeir>`_ for detail)
     If another InputEIR event is distributed to a node with an existing InputEIR event, the second one replaces the
@@ -20,6 +20,8 @@ def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start
     """
 
     nodes = NodeSetNodeList(Node_List=nodeIDs) if nodeIDs else NodeSetAll()
+    if ind_property_restrictions is None:
+        ind_property_restrictions = []
 
     if len(monthlyEIRs) is not 12:
         raise Exception('The input argument monthlyEIRs should have 12 entries, not %d' % len(monthlyEIRs))
