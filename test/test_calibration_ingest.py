@@ -10,9 +10,13 @@ import dtk.utils.observations.utils as ingest_utils
 class TestCalibrationIngest(unittest.TestCase):
     def setUp(self):
         self.data_directory = os.path.join(os.path.dirname(__file__), 'input', 'Excel', 'ingest')
+        self.result = False
 
     def tearDown(self):
-        pass
+        if self.result:
+            print(f"{self._testMethodName}: passed.\n")
+        else:
+            print(f"{self._testMethodName}: failed.\n")
 
     # parameter parsing
 
@@ -22,6 +26,7 @@ class TestCalibrationIngest(unittest.TestCase):
             filename = os.path.join(self.data_directory, filename)
             self.assertRaises(ingest_utils.IncompleteParameterSpecification,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_fail_if_parameter_initial_beyond_min_max(self):
         filenames = ['parameter_below_min.xlsm', 'parameter_above_max.xlsm']
@@ -29,6 +34,7 @@ class TestCalibrationIngest(unittest.TestCase):
             filename = os.path.join(self.data_directory, filename)
             self.assertRaises(ingest_utils.ParameterOutOfRange,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_fail_if_parameter_has_non_numeric_value(self):
         filenames = ['parameter_has_non_numeric_value.xlsm']
@@ -36,6 +42,7 @@ class TestCalibrationIngest(unittest.TestCase):
             filename = os.path.join(self.data_directory, filename)
             self.assertRaises(ingest_utils.ParameterOutOfRange,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     # analyzer parsing
 
@@ -50,6 +57,7 @@ class TestCalibrationIngest(unittest.TestCase):
             filename = os.path.join(self.data_directory, filename)
             self.assertRaises(ingest_utils.IncompleteAnalyzerSpecification,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_fail_if_analyzer_weight_is_non_numeric(self):
         filenames = ['analzyer_weight_has_non_numeric_value.xlsm']
@@ -57,6 +65,7 @@ class TestCalibrationIngest(unittest.TestCase):
             filename = os.path.join(self.data_directory, filename)
             self.assertRaises(ingest_utils.InvalidAnalyzerWeight,
                               ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     # reference data parsing
 
@@ -64,6 +73,7 @@ class TestCalibrationIngest(unittest.TestCase):
         filename = os.path.join(self.data_directory, 'missing_reference_values.xlsm')
         self.assertRaises(ingest_utils.IncompleteDataSpecification,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     # other
 
@@ -71,6 +81,7 @@ class TestCalibrationIngest(unittest.TestCase):
         filename = os.path.join(self.data_directory, 'not_a_xlsm_file.csv')
         self.assertRaises(ingest_utils.UnsupportedFileFormat,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     # ck4, update this test with the latest ingest form
     def test_a_properly_filled_xlsm_sheet(self):
@@ -110,7 +121,7 @@ class TestCalibrationIngest(unittest.TestCase):
                 'distribution': 'Beta',
                 'provinciality': 'Non-provincial',
                 'weight': 0.25,
-                'age_bins': '[15:50);[50:100)',
+                'age_bins': ['[15:50);[50:100)'],
                 'scale_population': False
             },
             {
@@ -181,6 +192,7 @@ class TestCalibrationIngest(unittest.TestCase):
         expected_reference = PopulationObs(dataframe=df, stratifiers=expected_stratifiers)
         reference, expected_reference = self.ensure_same_column_order(reference, expected_reference)
         self.assertTrue(reference.equals(expected_reference))
+        self.result = True
 
     def ensure_same_column_order(self, dfw1, dfw2):
         self.assertEqual(sorted(dfw1._dataframe.columns), sorted(dfw2._dataframe.columns))
@@ -195,6 +207,7 @@ class TestCalibrationIngest(unittest.TestCase):
         filename = os.path.join(self.data_directory, 'obs_data_missing_weight_column.xlsm')
         self.assertRaises(ingest_utils.IncompleteDataSpecification,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_obs_data_specified_and_default_weights_are_correctly_parsed(self):
         filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
@@ -210,6 +223,7 @@ class TestCalibrationIngest(unittest.TestCase):
             ref = reference.filter(keep_only=[channel, PopulationObs.WEIGHT_CHANNEL])
             actual = ref._dataframe[PopulationObs.WEIGHT_CHANNEL]
             self.assertTrue((actual == expected_vals).all())
+        self.result = True
 
     # site info parsing - HIV issue 63
 
@@ -217,16 +231,19 @@ class TestCalibrationIngest(unittest.TestCase):
         filename = os.path.join(self.data_directory, 'site_info_invalid_node_number.xlsm')
         self.assertRaises(ingest_utils.SiteNodeMappingException,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_site_info_missing_node_number(self):
         filename = os.path.join(self.data_directory, 'site_info_missing_node_number.xlsm')
         self.assertRaises(ingest_utils.SiteNodeMappingException,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_site_info_missing_node_name(self):
         filename = os.path.join(self.data_directory, 'site_info_missing_node_name.xlsm')
         self.assertRaises(ingest_utils.SiteNodeMappingException,
                           ingest_utils.parse_ingest_data_from_xlsm, filename=filename)
+        self.result = True
 
     def test_site_info_valid_data_parsed(self):
         filename = os.path.join(self.data_directory, 'site_info_valid_data.xlsm')
@@ -236,10 +253,12 @@ class TestCalibrationIngest(unittest.TestCase):
             'site_name': 'Chile',
             'census_year': 2017,
             'census_population': 17574003,
-            'census_age_bin': AgeBin(start=0, end=100)
+            'census_age_bin': AgeBin(start=0, end=100),
+            'node_map': {1: 'Atacama', 2: 'Antofagasta', 3: 'Coquimbo'}
         }
         for k, expected_value in expected.items():
             self.assertEqual(site_info[k], expected_value)
+        self.result = True
 
 
 if __name__ == '__main__':
