@@ -18,8 +18,6 @@ class TestCalibrationIngest(unittest.TestCase):
         else:
             print(f"{self._testMethodName}: failed.\n")
 
-        pass
-
     # parameter parsing
 
     def test_fail_if_parameters_have_missing_values(self):
