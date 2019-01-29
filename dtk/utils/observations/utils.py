@@ -6,6 +6,7 @@ import tempfile
 import dtk.utils.io.excel as excel
 
 from dtk.utils.observations.AgeBin import AgeBin
+from dtk.utils.observations.Channel import Channel
 from dtk.utils.observations.PopulationObs import PopulationObs
 
 
@@ -62,7 +63,12 @@ def parse_ingest_data_from_xlsm(filename):
     for analyzer in analyzers:
         analyzer['scale_population'] = obs_metadata['scale_population'][analyzer['channel']]
 
-    return params, site_info, reference, analyzers
+    channels = []
+    for channel_name, scaling in obs_metadata['scale_population'].items():
+        channel_type = 'count' if scaling is True else 'fraction' # ck4, this is ugly, should rework this & the analyzer use of Channel object
+        channels.append(Channel(name=channel_name, type=channel_type))
+
+    return params, site_info, reference, analyzers, channels
 
 
 # ck4, add tests

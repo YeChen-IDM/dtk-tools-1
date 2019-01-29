@@ -84,9 +84,10 @@ class DataFrameWrapper:
         # detect and drop any NaN-containing (extraneous) columns/stratifiers now that NaN containing
         # rows have been removed
         filtered_df = filtered_df.dropna(axis='columns')
-        stratifiers = list(set(filtered_df.columns) - set(kept_non_stratifiers))
+        trimmed_stratifiers = set(self.stratifiers) - set(filtered_df.columns)
+        stratifiers_remaining = list(set(self.stratifiers) - trimmed_stratifiers)
 
-        return type(self)(dataframe=filtered_df, stratifiers=stratifiers)
+        return type(self)(dataframe=filtered_df, stratifiers=stratifiers_remaining)
 
     def merge(self, other_dfw, index, keep_only=None):
         """

@@ -1,5 +1,8 @@
 import math
 import numpy as np
+import pandas as pd
+
+from scipy.stats import norm
 
 from dtk.utils.observations.BaseDistribution import BaseDistribution
 
@@ -9,7 +12,7 @@ class GaussianDistribution(BaseDistribution):
 
     UNCERTAINTY_CHANNEL = 'two_sigma'
 
-    def prepare(self, dfw, channel, provinciality, age_bins, weight_channel, additional_keep=None):
+    def prepare(self, dfw, channel, weight_channel=None, additional_keep=None):
         additional_keep = additional_keep or []
         # First verify that the data row uncertainties are set properly (all > 0)
         try:
@@ -21,9 +24,29 @@ class GaussianDistribution(BaseDistribution):
             raise self.InvalidUncertaintyException('All %s values must be present and positive (>0) for gaussian distributions.' %
                                                    self.UNCERTAINTY_CHANNEL)
 
-        dfw = dfw.filter(keep_only=[channel, self.UNCERTAINTY_CHANNEL, weight_channel]+additional_keep)
+        channels_to_keep = [channel, self.UNCERTAINTY_CHANNEL]+additional_keep
+        channels_to_keep = channels_to_keep + [weight_channel] if weight_channel is not None else channels_to_keep
+        dfw = dfw.filter(keep_only=channels_to_keep)
         self.additional_channels.append(self.UNCERTAINTY_CHANNEL)
         return dfw
+
+    @staticmethod
+    def construct_gaussian_channel(channel, type):
+        # age_bins = age_bins if isinstance(age_bins, list) else [age_bins]
+        # age_bin_str = '_'.join([str(age_bin) for age_bin in age_bins])
+        return '%s--Gaussian-%s' % (channel, type)
+
+    def add_percentile_values(self, dfw, channel, p):
+        required_items = [channel, self.UNCERTAINTY_CHANNEL]
+        dfw.verify_required_items(needed=required_items)
+
+        values = norm.ppf(p, dfw._dataframe[channel], dfw._dataframe[self.UNCERTAINTY_CHANNEL])
+        p_channel = self.construct_gaussian_channel(channel=channel, type=p)
+
+        values_df = pd.DataFrame({p_channel: values})
+        dfw._dataframe = dfw._dataframe.join(values_df)
+        new_channels = [p_channel]
+        return new_channels
 
     def compare(self, df, reference_channel, data_channel):
         # Note: Might be called extra times by pandas on apply for purposes of "optimization"
