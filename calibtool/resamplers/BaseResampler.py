@@ -65,7 +65,7 @@ class BaseResampler(metaclass=ABCMeta):
         am.analyze()
 
         # compute a single likelihood value from all of the analyzers on a per-simulation basis
-        result_tuples = zip_longest([analyzer.results for analyzer in am.analyzers])
+        result_tuples = zip_longest(*[analyzer.results for analyzer in am.analyzers])
         try:
             results = [sum(tup) for tup in result_tuples]
         except TypeError as e:  # if 1+ None values snuck in...
