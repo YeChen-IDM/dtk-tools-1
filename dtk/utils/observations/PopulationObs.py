@@ -19,11 +19,6 @@ class PopulationObs(DataFrameWrapper):
         self.derived_items = []
         self.adjusted_years = False
 
-    def get_years(self):
-        additional_required_stratifier = ['Year']
-        self.verify_required_items(needed=additional_required_stratifier)
-        return sorted(list(set(self._dataframe['Year'])))
-
     #
     # derived data computations
     #
@@ -59,7 +54,7 @@ class PopulationObs(DataFrameWrapper):
     def get_years(self):
         required_data = ['Year']
         self.verify_required_items(needed=required_data)
-        return list(self._dataframe['Year'].unique())
+        return sorted(self._dataframe['Year'].unique())
 
     def adjust_years(self):
         if not self.adjusted_years:
