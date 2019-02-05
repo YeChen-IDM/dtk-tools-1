@@ -1,4 +1,4 @@
-from typing import Set
+from typing import List, Optional, Mapping
 
 from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.DataFrameWrapper import DataFrameWrapper
@@ -11,12 +11,13 @@ class PopulationObs(DataFrameWrapper):
     AGGREGATED_PROVINCE = 'All'
     WEIGHT_CHANNEL = 'weight'
 
-    def __init__(self, filename=None, dataframe=None, stratifiers=None):
+    def __init__(self, filename=None, dataframe=None, stratifiers=None, observations=None):
         super().__init__(filename=filename, dataframe=dataframe, stratifiers=stratifiers)
 
         # calculations using the data should update this list after joining on self._dataframe
         self.derived_items = []
         self.adjusted_years = False
+        self.observations = observations
 
     #
     # derived data computations
@@ -73,29 +74,39 @@ class PopulationObs(DataFrameWrapper):
         self.derived_items += new_channels
         return new_channels
 
-    def is_included_in(self, target: object, columns_to_check: Set[str] = ['AgeBin', 'Year', 'Gender']) -> bool:
+    def find_missing_tuples(self, target:object, columns_to_check: List[str] = ['AgeBin', 'Year', 'Gender']) -> Mapping[str, Optional[tuple]]:
         """
-        Checks if all tuples created by the columns to check exists in the target.
-
-        For example if self:
-        AgeBins | Year | Gender
-        [0:5)   | 2001 | Male
-        [0:5)   | 2001 | Female
-
-        And target:
-        AgeBins | Year | Gender
-        [0:5)   | 2001 | Male
-        [0:5)   | 2001 | Female
-        [5:10)  | 2001 | Male
-        [5:10)  | 2001 | Female
-
-        The function will return true.
+        Finds the missing tuples in the target.
+        While the `is_included_in` function returns True or False if included or not, this slower function
+        searches for all the missing tuples.
 
         Args:
-            columns_to_check: Which columns to include in the check
-            target: THe PopulationObs target
+            target: The target PopulationObs in which to check
+            columns_to_check: Which columns are we basing the check
 
-        Returns: True if the current PopulationObs is included in the target, False if not
+        Returns: Dict with key: observation (incidece, population) value: list of missing tuples for this observation
+        None if nothing is missing
         """
-        return self._dataframe[columns_to_check].isin(target._dataframe[columns_to_check]).all().all()
+        missing = {}
+        base_db = self._dataframe
+        target_df = target._dataframe
+
+        for obs in self.observations:
+            colums_to_keep = [*columns_to_check, obs]
+            # Only consider observations where is not None and discard the rest
+            left = base_db[base_db[obs].notnull()][colums_to_keep]
+            right = target_df[target_df[obs].notnull()][colums_to_keep]
+
+            # Merge the 2 dataframes
+            merged_df = left.merge(right, how='left', on=columns_to_check, indicator=True)
+
+            # Only keep the keys that are in the left one (our current object)
+            left_only = merged_df[merged_df['_merge'] == "left_only"]
+            if left_only.empty:
+                continue
+
+            # We had missing ones
+            missing[obs] = [tuple(x) for x in left_only[columns_to_check].values]
+
+        return missing
 

@@ -260,14 +260,20 @@ class TestCalibrationIngest(unittest.TestCase):
             self.assertEqual(site_info[k], expected_value)
         self.result = True
 
-    def test_is_included_in(self):
+    def test_missing_tuples(self):
         filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
         _, _, reference, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
-        self.assertTrue(reference.is_included_in(reference))
+        self.assertFalse(reference.find_missing_tuples(reference))
+
+        filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
+        _, _, reference, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
 
         filename = os.path.join(self.data_directory, 'obs_data_missing_rows_and_default_weight_column_values.xlsm')
         _, _, reference_missing, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
-        self.assertFalse(reference.is_included_in(reference_missing))
+
+        self.assertEqual(len(reference.find_missing_tuples(reference_missing)["Incidence"]), 1)
+        self.assertEqual(len(reference.find_missing_tuples(reference_missing)["Prevalence"]), 2)
+
 
 
 if __name__ == '__main__':
