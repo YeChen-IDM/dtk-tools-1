@@ -8,20 +8,27 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_s
     **StandardInterventionDistributionEventCoordinator**.
 
     Args:
-        cb: The config builder object.
+        cb: The The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` 
+            containing the campaign configuration.
         start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage**
+        coverage: The proportion of the population that will receive the 
+            intervention (**Demographic_Coverage** parameter).
+        kill_cfg: The killing efficacy and waning of ATSB (**Killing_Config** 
+            parameter) and species (optional, will be added based on the 
+            configuration file if not included).
+        duration: The length of time the ATSB is active for, independent
+            of the waning profile of killing. This allows the node to prematurely
+            get rid of the ATSB, much like **UsageDependentBednet** allows
+            bednet users to get rid of good bednets. The expiration time
+            is drawn from a Gaussian distribution with (mu, s) = (duration,
+            duration_std_dev). 
+        duration_std_dev: Width of the Gaussian distribution from which 
+            the ATSB expiration time is drawn.
+        nodeIDs: The list of nodes to apply this intervention to 
+            (**Node_List** parameter). If not provided, set value of NodeSetAll.
+        node_property_restrictions: The NodeProperty key:value pairs that 
+            nodes must have to receive the intervention (*Node_Property_Restrictions** 
             parameter).
-        kill_cfg: The killing efficacy and waning of ATSB (**Killing_Config** parameter) and species (optional, will be
-            added based on the configuration file if not included).
-        duration: How long the ATSB is active for, independent of the waning profile of killing. Allows the node to get
-           rid of an ATSB prematurely, much like bednet users stop using perfectly good bednets in UsageDependentBednet.
-           Expiration time of the ATSB is drawn from a Gaussian distribution with (mu, s) = (duration, duration_std_dev)
-        duration_std_dev: Width of the Gaussian distribution from which the ATSB expiration time is drawn.
-        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value
-            of NodeSetAll.
-        node_property_restrictions: The NodeProperty key:value pairs that nodes must have to receive the intervention
-            (*Node_Property_Restrictions** parameter).
 
     Returns:
         None
@@ -94,15 +101,24 @@ def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initi
     Add a topical insect repellent intervention (**SimpleIndividualRepellent** class) using the **StandardInterventionDistributionEventCoordinator**.
 
     Args:
-        config_builder: The config builder object.
+        config_builder: The The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` containing the 
+            campaign configuration.
         start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage_by_ages: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter) modified by the minimum and maximum age range (**Target_Age_Min** and **Target_Age_Max** in the event coordinator).
+        coverage_by_ages: The proportion of the population that will receive the 
+            intervention (**Demographic_Coverage** parameter) modified by the 
+            minimum and maximum age range (**Target_Age_Min** and **Target_Age_Max** 
+            in the event coordinator).
         cost: The cost of each individual application (**Cost_To_Consumer** parameter).
-        initial_blocking: The initial blocking effect of the repellent (**Initial_Effect** parameter).
-        duration: The duration of the effectiveness (**Box_Duration** parameter with the **WaningEffectBox** class).
-        repetitions: The number of times to repeat the intervention (**Number_Repetitions** parameter).
-        interval: The timesteps between repeated distributions (**Timesteps_Between_Repetitions** parameter).
-        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+        initial_blocking: The initial blocking effect of the repellent 
+            (**Initial_Effect** parameter).
+        duration: The duration of the effectiveness (**Box_Duration** 
+            parameter with the **WaningEffectBox** class).
+        repetitions: The number of times to repeat the intervention 
+            (**Number_Repetitions** parameter).
+        interval: The timesteps between repeated distributions 
+            (**Timesteps_Between_Repetitions** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
 
     Returns:
         None
@@ -165,13 +181,21 @@ def add_ors_node(config_builder, start, coverage=1, initial_killing=0.95, durati
     Add an outdoor residential spraying intervention (**SpaceSpraying** class) using **NodeEventCoordinator**.
 
     Args:
-        config_builder: The config builder object.
-        start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
-        initial_killing:  The initial killing effect of the outdoor spraying (**Initial_Effect** parameter).
-        duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
-        cost: The cost of each individual application (**Cost_To_Consumer** parameter).
-        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+        config_builder: The The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` 
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention 
+            (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the 
+            intervention (**Demographic_Coverage** parameter).
+        initial_killing:  The initial killing effect of the outdoor spraying 
+            (**Initial_Effect** parameter).
+        duration: The exponential decay constant of the effectiveness 
+            (**Decay_Time_Constant** parameter with the **WaningEffectExponential** 
+            class).
+        cost: The cost of each individual application (**Cost_To_Consumer** 
+            parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** 
+            parameter). If not provided, set value of NodeSetAll.
 
     Returns:
         None
@@ -218,14 +242,22 @@ def add_larvicide(config_builder, start, coverage=1, initial_killing=1.0, durati
     Add a larvicide intervention (**Larvicides** class).
 
     Args:
-        config_builder: The config builder object.
-        start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
-        initial_killing:  The initial killing effect of the larvicide (**Initial_Effect** parameter).
-        duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
-        cost: The cost of each individual application (**Cost_To_Consumer** parameter).
-        habitat_target: The larval habitat to target (**Habitat_Target** parameter).
-        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+        config_builder: The The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` 
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention 
+            (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the 
+            intervention (**Demographic_Coverage** parameter).
+        initial_killing:  The initial killing effect of the larvicide 
+            (**Initial_Effect** parameter).
+        duration: The exponential decay constant of the effectiveness 
+            (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
+        cost: The cost of each individual application (**Cost_To_Consumer** 
+            parameter).
+        habitat_target: The larval habitat to target (**Habitat_Target** 
+            parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** 
+            parameter). If not provided, set value of NodeSetAll.
 
     Returns:
         None
@@ -271,16 +303,26 @@ def add_eave_tubes(config_builder, start, coverage=1, initial_killing=1.0, killi
     Add insecticidal tubes to the eaves of houses (**IRSHousingModification** intervention class).
 
     Args:
-        config_builder: The config builder object.
-        start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
-        initial_killing:  The initial killing effect of the eave tubes (**Initial_Effect** parameter in **Killing_Config**).
-        killing_duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
-        initial_blocking:  The initial blocking effect of the eave tubes (**Initial_Effect** parameter in **Blocking_Config**).
-        blocking_duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
-        outdoor_killing_discount: Scales initial killing effect to differentially kill outdoor vectors vs indoor vectors.
+        config_builder: The The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` 
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention 
+            (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the intervention 
+            (**Demographic_Coverage** parameter).
+        initial_killing:  The initial killing effect of the eave tubes 
+            (**Initial_Effect** parameter in **Killing_Config**).
+        killing_duration: The exponential decay constant of the effectiveness 
+            (**Decay_Time_Constant** parameter with the **WaningEffectExponential** 
+            class).
+        initial_blocking:  The initial blocking effect of the eave tubes 
+            (**Initial_Effect** parameter in **Blocking_Config**).
+        blocking_duration: The exponential decay constant of the effectiveness 
+            (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
+        outdoor_killing_discount: The value to differentially scale initial 
+            killing effect for outdoor vectors vs. indoor vectors.
         cost: The cost of each individual application (**Cost_To_Consumer** parameter).
-        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** 
+            parameter). If not provided, set value of NodeSetAll.
 
     Returns:
         None
