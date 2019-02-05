@@ -252,7 +252,9 @@ class IterationState:
                                          working_dir=self.iteration_directory,
                                          verbose=True)
 
-        analyzerManager.analyze()
+        if not analyzerManager.analyze():
+            print("Error encountered during analysis... Exiting")
+            exit()
 
         # Ask the analyzers to cache themselves
         cached_analyses = {a.uid: a.cache() if callable(a.cache) else {} for a in analyzerManager.analyzers}

@@ -263,7 +263,7 @@ class TestCalibrationIngest(unittest.TestCase):
     def test_missing_tuples(self):
         filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
         _, _, reference, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
-        self.assertFalse(reference.find_missing_tuples(reference))
+        self.assertFalse(reference.find_missing_tuples(reference, value_column_base="Prevalence"))
 
         filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
         _, _, reference, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
@@ -271,8 +271,8 @@ class TestCalibrationIngest(unittest.TestCase):
         filename = os.path.join(self.data_directory, 'obs_data_missing_rows_and_default_weight_column_values.xlsm')
         _, _, reference_missing, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
 
-        self.assertEqual(len(reference.find_missing_tuples(reference_missing)["Incidence"]), 1)
-        self.assertEqual(len(reference.find_missing_tuples(reference_missing)["Prevalence"]), 2)
+        self.assertEqual(len(reference.find_missing_tuples(reference_missing, value_column_base="Incidence")), 1)
+        self.assertEqual(len(reference.find_missing_tuples(reference_missing, value_column_base="Prevalence")), 2)
 
 
 

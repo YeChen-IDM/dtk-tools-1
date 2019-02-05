@@ -147,7 +147,7 @@ class AnalyzeManager(CacheEnabled):
         # If no analyzers -> quit
         if not all((self.analyzers, self.simulations)):
             print("No analyzers or experiments selected, exiting...")
-            return
+            return False
 
         # Clear the cache
         self.cache = self.initialize_cache(shards=self.max_threads)
@@ -189,7 +189,7 @@ class AnalyzeManager(CacheEnabled):
 
         if scount == 0 and self.verbose:
             print("No experiments/simulations for analysis.")
-            exit()
+            return False
 
         # Create the pool
         pool = Pool(max_threads,
@@ -204,7 +204,7 @@ class AnalyzeManager(CacheEnabled):
             # If an exception happen, kill everything and exit
             if self._check_exception():
                 pool.terminate()
-                return
+                return False
 
             time_elapsed = time.time() - start_time
             if self.verbose:
@@ -245,3 +245,5 @@ class AnalyzeManager(CacheEnabled):
 
         for a in self.analyzers:
             a.destroy()
+
+        return True
