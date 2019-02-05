@@ -1,11 +1,10 @@
-import pandas as pd
+from typing import Set
 
 from dtk.utils.observations.AgeBin import AgeBin
 from dtk.utils.observations.DataFrameWrapper import DataFrameWrapper
 
 
 class PopulationObs(DataFrameWrapper):
-
     PROVINCIAL = 'Provincial'
     NON_PROVINCIAL = 'Non-provincial'
     AGGREGATED_NODE = 0  # a reserved node number for non-provincial analysis
@@ -60,7 +59,7 @@ class PopulationObs(DataFrameWrapper):
         if not self.adjusted_years:
             required_data = ['Year']
             self.verify_required_items(needed=required_data)
-            self._dataframe = self._dataframe.assign(**{'Year': self._dataframe['Year']+0.5})
+            self._dataframe = self._dataframe.assign(**{'Year': self._dataframe['Year'] + 0.5})
             self.adjusted_years = True
 
     def add_percentile_values(self, channel, distribution, p):
@@ -73,3 +72,30 @@ class PopulationObs(DataFrameWrapper):
         new_channels = distribution.add_percentile_values(dfw=self, channel=channel, p=p)
         self.derived_items += new_channels
         return new_channels
+
+    def is_included_in(self, target: object, columns_to_check: Set[str] = ['AgeBin', 'Year', 'Gender']) -> bool:
+        """
+        Checks if all tuples created by the columns to check exists in the target.
+
+        For example if self:
+        AgeBins | Year | Gender
+        [0:5)   | 2001 | Male
+        [0:5)   | 2001 | Female
+
+        And target:
+        AgeBins | Year | Gender
+        [0:5)   | 2001 | Male
+        [0:5)   | 2001 | Female
+        [5:10)  | 2001 | Male
+        [5:10)  | 2001 | Female
+
+        The function will return true.
+
+        Args:
+            columns_to_check: Which columns to include in the check
+            target: THe PopulationObs target
+
+        Returns: True if the current PopulationObs is included in the target, False if not
+        """
+        return self._dataframe[columns_to_check].isin(target._dataframe[columns_to_check]).all().all()
+

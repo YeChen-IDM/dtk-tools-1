@@ -190,7 +190,7 @@ def _parse_analyzers(wb, wb_path):
             'weight': weights[i]
         }
         if age_bins[i] == CUSTOM_AGE_BINS:
-            analyzer_dict['age_bins'] = custom_age_bins[i].split(',')
+            analyzer_dict['age_bins'] = custom_age_bins[i].split(',') if custom_age_bins[i] else None
         elif age_bins[i] == ALL_MATCHING_AGE_BINS:
             analyzer_dict['age_bins'] = AgeBin.ALL
         else:
