@@ -3,10 +3,21 @@ from dtk.utils.Campaign.CampaignClass import *
 
 def heg_release(cb, released_number, num_repetitions = 13, timesteps_between_reps = 14):
     """
-    Homing endonucleouse genetic intervention.
+    Release *A. arabiensis* mosquitoes with a homing endonucleouse (HEG) genetic
+    modification using the **MosquitoRelease** class.
 
-    :param cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` object
-    :return: Nothing
+    Args:
+        cb: The :py:class:`DTKConfigBuilder
+            <dtk.utils.core.DTKConfigBuilder>` object.
+        released_number: The number of mosquitoes to release
+            (**Released_Number** parameter).
+        num_repetitions: The number of times to repeat the
+            intervention.
+        timesteps_between_reps: The number of time steps between
+            repetitions.
+
+    Returns:
+        None
     """
 
     heg_release_event = CampaignEvent(

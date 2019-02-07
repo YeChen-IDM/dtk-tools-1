@@ -8,22 +8,28 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
     Reduce available larval habitat in a node-specific way.
 
     Args:
-        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` object.
+        cb: The :py:class:`DTKConfigBuilder 
+            <dtk.utils.core.DTKConfigBuilder>` object.
         df: The dataframe containing habitat scale factors.
-        start_day: The date of scaling habitats for all scaling actions specified in df.
-            Only applied if no Start_Day column in df.
-        repetitions: The number of repetitions.
-        tsteps_btwn_repetitions: The number of timesteps between repetitions.
-        node_property_restrictions: The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+        start_day: The date that habitats are scaled for all scaling
+            actions specified in **df**. Applied only if there is no
+            Start_Day column in **df**.
+        repetitions: The number of times to repeat the intervention.
+        tsteps_btwn_repetitions: The number of time steps between 
+            repetitions.
+        node_property_restrictions: The node property values to target; 
+            used with NodePropertyRestrictions. For example, 
+            ``[{ "NodeProperty1" : "PropertyValue1" }, 
+            {'NodeProperty2': "PropertyValue2"}, ...]``.
 
-    :Examples: 
+    :Examples:
 
     Scale TEMPORARY_RAINFALL by 3-fold for all nodes, all species::
 
         df = pd.DataFrame({ 'TEMPORARY_RAINFALL': [3],
                          })
 
-    Scale TEMPORARY_RAINFALL by 3-fold for all nodes, arabiensis only::
+     Scale TEMPORARY_RAINFALL by 3-fold for all nodes, arabiensis only::
 
         df = pd.DataFrame({ 'TEMPORARY_RAINFALL.arabiensis': [3],
                          })
@@ -60,7 +66,8 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
                              'Start_Day': [0, 30, 60, 65, 65],
                              })
     
-    :return: Nothing
+    Returns:
+        None
     """
 
     if 'Start_Day' not in df.columns.values:
@@ -114,6 +121,31 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
 
 def add_habitat_reduction_event(cb, start_day, node_cfg, hab_scales, repetitions, tsteps_btwn_repetitions,
                                 node_property_restrictions):
+
+    """
+    Add a campaign event that reduces mosquito larval habitat.
+
+    Args:
+        cb: The :py:class:`DTKConfigBuilder
+            <dtk.utils.core.DTKConfigBuilder>` object.
+        start_day: The date the campaign event starts
+            (**Start_Day** parameter).
+        node_cfg: The node configuration that specifies which nodes
+            in which to apply the event (**Nodeset_Config**
+            parameter).
+        hab_scales: The amount by which the intervention scales
+            the larval habitat.
+        repetitions: The number of times to repeat the intervention.
+        tsteps_btwn_repetitions: The number of time steps between
+            repetitions.
+        node_property_restrictions: The node property values to target;
+            used with NodePropertyRestrictions. For example,
+            ``[{ "NodeProperty1" : "PropertyValue1" },
+            {'NodeProperty2': "PropertyValue2"}, ...]``.
+
+    Returns:
+        None
+    """
 
     # A permanent node-specific scaling of larval habitat by habitat type
     habitat_reduction_event = {

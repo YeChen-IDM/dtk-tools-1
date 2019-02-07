@@ -20,14 +20,14 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_s
             of the waning profile of killing. This allows the node to prematurely
             get rid of the ATSB, much like **UsageDependentBednet** allows
             bednet users to get rid of good bednets. The expiration time
-            is drawn from a Gaussian distribution with (mu, s) = (duration,
-            duration_std_dev). 
+            is drawn from a Gaussian distribution with (mu, s) = (**duration**,
+            **duration_std_dev**). 
         duration_std_dev: Width of the Gaussian distribution from which 
             the ATSB expiration time is drawn.
         nodeIDs: The list of nodes to apply this intervention to 
             (**Node_List** parameter). If not provided, set value of NodeSetAll.
         node_property_restrictions: The NodeProperty key:value pairs that 
-            nodes must have to receive the intervention (*Node_Property_Restrictions** 
+            nodes must have to receive the intervention (**Node_Property_Restrictions** 
             parameter).
 
     Returns:
