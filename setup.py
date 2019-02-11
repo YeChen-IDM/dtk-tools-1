@@ -16,7 +16,7 @@ from setuptools import setup, find_packages
 #         atexit.register(setup_post)
 
 setup(name='dtk-tools',
-      version='1.0.0',
+      version='v1.0.0',
       description='Facilitating submission and analysis of simulations',
       url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
       author='Edward Wenger,'

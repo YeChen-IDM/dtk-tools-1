@@ -70,6 +70,8 @@ coverage: ## check code coverage quickly with the default Python
 docs: ## generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+
+docs-browser: docs ## Builds docs and launch in browser
 	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
@@ -90,7 +92,9 @@ commit-version: ## Commits our files that contain version info to repo
 	git commit -m "Increment Version from $(shell git describe --tags --abbrev=0) to $(VERSION)"
 
 release-staging: docs staging-version prepare-version dist do-staging-upload
-release-production: docs next-version prepare-version dist do-production-upload commit-version tag-next## package and upload a release
+release-next-production-version: docs next-version prepare-version dist do-production-upload commit-version tag-next## package and upload a Production release automaticly iterating the version number
+# You should set the VERSIOn variable before running this
+release-manual-release-production: docs prepare-version dist do-production-upload commit-version tag-next ## package and upload a Production release with current release information
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist
