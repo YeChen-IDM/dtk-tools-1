@@ -19,7 +19,7 @@ Make sure you have **Python 3.6 x64** installed (available [here](https://www.py
 
 From a command-prompt, run the following from the **dtk-tools** directory:
 ```
-python setup.py
+python setup_manual.py
 ```
 
 **Note:** If `pip` command is not found on your system, make sure to add the Python scripts directory (by default in Windows: `C:\Python27\Scripts`)
