@@ -85,7 +85,8 @@ do-production-upload: # Uploading dist to production
 
 prepare-version: ## Updates any files that have version info in them
 	echo Version: $(VERSION)
-	perl -pi -e "s|version='(.*?)'|version='$(VERSION)'|" setup.py dtk/__init__.py
+	perl -pi -e "s|__version__ = '(.*?)'|__version__ = '$(VERSION)'|" dtk/__init__.py
+	perl -pi -e "s|version='(.*?)'|version='$(VERSION)'|" setup.py 
 
 commit-version: ## Commits our files that contain version info to repo
 	git add setup.py dtk/__init__.py
