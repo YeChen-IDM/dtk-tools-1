@@ -84,12 +84,13 @@ class AnalyzeManager(CacheEnabled):
         self.cache = None
 
     def filter_simulations(self, simulations):
-        # If we already reached the maximum_simulation count -> exit
-        if self.max_sims and len(self.simulations) >= self.max_sims:
-            return
+        if self.max_sims is not None:
+            # If we already reached the maximum_simulation count -> exit
+            if self.max_sims <= 0 : return
 
-        # If a max_sims is specified, truncate the list to only take the simulations to reach the max_sims
-        simulations = simulations[:self.max_sims - len(self.simulations)]
+            # Truncate the simulations to only add the needed ones
+            simulations = simulations[:self.max_sims - len(self.simulations)]
+            self.max_sims -= len(self.simulations)
 
         if self.force_analyze:
             self.simulations.update({s.id: s for s in simulations})
