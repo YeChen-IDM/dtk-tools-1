@@ -116,7 +116,7 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
 
     gender = "All"
     age_min = 0
-    age_max = 150
+    age_max = 3.40282e+38
     if target_group != "Everyone" and isinstance(target_group, dict):
         try:
             age_min = target_group["agemin"]
@@ -126,8 +126,8 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
                 target_group = "ExplicitAgeRangesAndGender"
             else:
                 target_group = "ExplicitAgeRanges"
-        except:
-            raise ValueError("Unknown target_group parameter. Please pass in 'Everyone' or a dictionary of "
+        except KeyError:
+            raise KeyError("Unknown target_group parameter. Please pass in 'Everyone' or a dictionary of "
                              "{'agemin' : x, 'agemax' : y, 'gender': 'Female'} to target  to individuals between x and "
                              "y years of age, and (optional) gender.\n")
 

@@ -52,29 +52,35 @@ def triggered_campaign_delay_event(config_builder, start: int=0,  nodeIDs: list=
         ind_property_restrictions = []
     if not event_to_send_out:
         event_to_send_out = 'Delayed_Event_%d' % random.randrange(100000)
+    if not triggered_campaign_delay:
+        raise ValueError("Why are you using this with a 0 delay? This is used to add delay to triggered events by "
+                         "sending out a delayed event.\n")
 
     event_cfg = BroadcastEvent(Broadcast_Event=event_to_send_out)
 
-    if triggered_campaign_delay:
-        if delay_distribution == 'FIXED_DURATION':
-            intervention = DelayedIntervention(
-                Delay_Distribution=delay_distribution,
-                Delay_Period=triggered_campaign_delay,
-                Actual_IndividualIntervention_Configs=[event_cfg]
-            )
-        elif delay_distribution == 'GAUSSIAN_DURATION':
-            intervention = DelayedIntervention(
-                Delay_Distribution=delay_distribution,
-                Delay_Period_Mean=delay_period_mean,
-                Delay_Period_Std_Dev=delay_period_std_dev,
-                Delay_Period_Max=delay_period_max,
-                Actual_IndividualIntervention_Configs=[event_cfg]
+    if delay_distribution == 'FIXED_DURATION':
+        intervention = DelayedIntervention(
+            Delay_Distribution=delay_distribution,
+            Delay_Period=triggered_campaign_delay,
+            Delay_Period_Fixed=triggered_campaign_delay, # new style
+            Actual_IndividualIntervention_Configs=[event_cfg]
+         )
+    elif delay_distribution == 'GAUSSIAN_DURATION':
+        intervention = DelayedIntervention(
+            Delay_Distribution=delay_distribution,
+            Delay_Period_Mean=delay_period_mean,
+            Delay_Period_Std_Dev=delay_period_std_dev,
+            Delay_Period_Max=delay_period_max,
+            Delay_Period_Gaussian_Mean=delay_period_mean, # new style
+            Delay_Period_Gaussian_Std_Dev=delay_period_std_dev,  #new style
+            Delay_Period_Gaussian_Max=delay_period_max, # new style
+            Actual_IndividualIntervention_Configs=[event_cfg]
             )
     else:
-        intervention = event_cfg
+        raise ValueError("{} is not a recognized delay_distribution. Please use GAUSSIAN_DURATION or FIXED_DURAION.\n")
 
     triggered_delay = CampaignEvent(
-        Start_Day=int(start),
+        Start_Day=start,
         Nodeset_Config=node_cfg,
         Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
                 Intervention_Config=NodeLevelHealthTriggeredIV(
