@@ -44,13 +44,14 @@ def pool_worker_initializer(func, analyzers, cache, path_mapping) -> None:
 
 
 class AnalyzeManager(CacheEnabled):
-    def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False,
+    def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False, max_sims=None,
                  verbose=True):
         super().__init__()
         self.analyzers = []
         self.experiments = set()
         self.simulations = {}
         self.ignored_simulations = {}
+        self.max_sims = max_sims
         try:
             with SetupParser.TemporarySetup() as sp:
                 self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
@@ -83,6 +84,13 @@ class AnalyzeManager(CacheEnabled):
         self.cache = None
 
     def filter_simulations(self, simulations):
+        # If we already reached the maximum_simulation count -> exit
+        if self.max_sims and len(self.simulations) >= self.max_sims:
+            return
+
+        # If a max_sims is specified, truncate the list to only take the simulations to reach the max_sims
+        simulations = simulations[:self.max_sims - len(self.simulations)]
+
         if self.force_analyze:
             self.simulations.update({s.id: s for s in simulations})
         else:
