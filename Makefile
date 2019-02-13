@@ -107,7 +107,7 @@ current-version: ## prints out current version
 	@echo Current version is $(shell git describe --tags --abbrev=0)
 
 staging-version: ## Current version + tag
-	$(eval VERSION=$(shell git tag -l --sort=-v:refname | grep -w 'v[0-9]\.[0-9]\.[0-9]$$' | head -n 1)+$(shell git log --pretty=format:'%h' -n 1))
+	$(eval VERSION=$(shell git tag -l --sort=-v:refname | grep -w 'v[0-9]\.[0-9]\.[0-9]$$' | head -n 1)+nightly)
 	@echo "Staging Version is :$(VERSION)"
 
 next-version: ## Calculates the next semantic ersion
