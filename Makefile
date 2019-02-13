@@ -93,9 +93,9 @@ commit-version: ## Commits our files that contain version info to repo
 	git commit -m "Increment Version from $(shell git describe --tags --abbrev=0) to $(VERSION)"
 
 release-staging: docs staging-version prepare-version dist do-staging-upload
-release-next-production-version: docs next-version prepare-version dist do-production-upload commit-version tag-next## package and upload a Production release automaticly iterating the version number
+release-next-production-version: docs next-version prepare-version dist do-staging-upload commit-version tag-next## package and upload a Production release automaticly iterating the version number
 # You should set the VERSIOn variable before running this
-release-manual-release-production: docs prepare-version dist do-production-upload commit-version tag-next ## package and upload a Production release with current release information
+release-manual-release-production: docs prepare-version dist do-staging-upload commit-version tag-next ## package and upload a Production release with current release information
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist
