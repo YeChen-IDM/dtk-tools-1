@@ -73,8 +73,8 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
             (**Decay_Time_Constant** parameter with the
             **WaningEffectExponential** class).
         waning: A dictionary defining the durability of the spray. If empty,
-            the default DECAYDURABILITY with 1 year primary and 1 year secondary
-            will be used.
+            the default of **WaningEffectExponential** with
+            **Initial_Effect** = 0.5 and **Decay_Time_Constant** = 90 is used.
         ind_property_restrictions: The IndividualProperty key:value pairs
             that individuals must have to receive the intervention (
             **Property_Restrictions_Within_Node** parameter). In the format ``[{
