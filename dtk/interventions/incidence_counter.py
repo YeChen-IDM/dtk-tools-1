@@ -22,7 +22,6 @@ def add_incidence_counter(cb,
 
 
     Args:
-
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
             that will receive the intervention.
         start_day: The day to distribute the intervention (**Start_Day**
@@ -49,13 +48,13 @@ def add_incidence_counter(cb,
             parameter). If not provided, set value of NodeSetAll.
         ind_property_restrictions: The IndividualProperty key:value pairs
             that individuals must have to receive the intervention (
-            **Property_Restrictions_Within_Node** parameter) For example,
+            **Property_Restrictions_Within_Node** parameter). In the format
             ``[{"IndividualProperty1: "PropertyValue1"},
             {"IndividualProperty2: "IndividualValue2"} ...]``.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
-            parameter). For example, ``[{ "NodeProperty1" : "PropertyValue1" },
-            {'NodeProperty2': "PropertyValue2"}, ...]``.
+            parameter). In the format ``[{"NodeProperty1": "PropertyValue1"},
+            {"NodeProperty2": "PropertyValue2"}, ...]``.
 
     Returns:
         None

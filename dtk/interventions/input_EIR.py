@@ -4,10 +4,10 @@ from dtk.utils.Campaign.CampaignClass import *
 def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start_day=0, nodeIDs=None,
                  ind_property_restrictions=None):
     """
-    Create an intervention introducing new infections using the **InputEIR**
-    class. If another InputEIR event is distributed to a node with an
-    existing InputEIR event, the second one replaces the first (much like a
-    new bednet replaces an old bednet).
+    Create an intervention introducing new malaria infections using the
+    **InputEIR** class. If another InputEIR event is distributed to a node
+    with an existing InputEIR event, the second one replaces the first (much
+    like a new bednet replaces an old bednet).
 
     Args:
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
