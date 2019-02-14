@@ -10,32 +10,65 @@ def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, disca
                        ind_property_restrictions=[], node_property_restrictions=[]):
 
     """
-    Add an ITN intervention to the config_builder passed.
-    "as_birth" and "triggered_condition_list" are mutually exclusive with "as_birth" trumping the trigger
-    You will need to add the following custom events:
+    Add an insecticide-treated net (ITN) intervention with a seasonal usage
+    pattern to the campaign using the **UsageDependentBednet** class. The
+    arguments **as_birth** and **triggered_condition_list** are mutually
+    exclusive. If both are provided, **triggered_condition_list** is ignored.
+
+    You must add the following custom events:
         
-        * "Bednet_Discarded",
-        * "Bednet_Got_New_One",
-        * "Bednet_Using"
+        * Bednet_Discarded
+        * Bednet_Got_New_One
+        * Bednet_Using
 
-    :param config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the ITN event
-    :param start: The start day of the bed net distribution
-    :param coverage_all: Fraction of the population receiving bed nets in a given distribution event
-    :param waning: A dictionary defining the durability and initial potency of killing and blocking. Rates assume exponential decay.
-    :param discard: A dictionary defining the net retention rates. Default is no discarding of nets.
-    :param age_dep: A dictionary defining the age dependence of net use. Default is uniform across all ages.
-    :param seasonal_dep: A dictionary defining the seasonal dependence of net use. Default is constant use during the year.
-    :param cost: Set the ``Cost_To_Consumer`` parameter
-    :param nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-    :param as_birth: If true, event is specified as a birth-triggered intervention.
-    :param duration: If run as a birth-triggered event or a trigger_condition_list, specifies the duration for the distribution to continue. Default
-        is to continue until the end of the simulation.
-    :param trigger_condition_list: sets up a NodeLevelHealthTriggeredIV that listens for the defined trigger string event before giving out the intervention,
-        "as_birth" and "trigger_condition_list" options are mutually exclusive, if "as_birth" is true, trigger_condition_list will be ignored.
-    :param ind_property_restrictions: Restricts irs based on list of individual properties in format [{"BitingRisk":"High"}, {"IsCool":"Yes}]
-    :param node_property_restrictions: restricts irs based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes}]    
+    Args:
 
-    :return: Nothing
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        start: The day on which to start distributing the bednets
+            (**Start_Day** parameter).
+        coverage_all: Fraction of the population receiving bed nets in a given distribution event
+        waning: A dictionary defining the durability of the nets
+            (**Killing_Config** and **Blocking_Config**). For example,
+            to update killing efficacy, provide ``{'Killing_Config' :
+            {"Initial_Effect": 0.8}}``. Default is exponential decay with 0.6
+            killing efficacy with 1460 decay and 0.9 blocking efficacy with
+            730 decay.
+        discard: A dictionary defining the net retention rates (
+            **Usage_Config_List** parameter). Default is not to discard nets.
+        age_dep: A dictionary defining the age dependence of net use.
+            Must contain a list of ages in years and list of usage rate. Default
+            is uniform across all ages.
+        seasonal_dep: A dictionary defining the seasonal dependence of net use.
+            Default is constant use during the year. Times are given in days
+            of the year; values greater than 365 are ignored. Dictionaries
+            can be (times, values) for linear spline or (minimum coverage,
+            day of maximum coverage) for sinusoidal dynamics.
+        cost: The per-unit cost (**Cost_To_Consumer** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+        as_birth: If true, event is specified as a birth-triggered intervention.
+        duration: If run as a birth-triggered event or a trigger_condition_list,
+            specifies the duration for the distribution to continue. Default
+            is to continue until the end of the simulation.
+        triggered_campaign_delay: (Optional) After the trigger is received,
+            the number of time steps until the campaign starts. Eligibility
+            of people or nodes for the campaign is evaluated on the start
+            day, not the triggered day.
+        trigger_condition_list: (Optional) A list of the events that will
+            trigger the ITN intervention. If included, **start** is the day
+            when monitoring for triggers begins. This argument cannot
+            configure birth-triggered ITN (use **as_birth** instead).
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention (
+            **Property_Restrictions_Within_Node** parameter). In the format ``[{
+            "BitingRisk":"High"}, {"IsCool":"Yes}]``.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+
+    Returns:
+        None
     """
 
     # Assign net protective properties #

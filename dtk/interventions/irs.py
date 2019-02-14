@@ -91,7 +91,7 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
             when monitoring for triggers begins. This argument cannot
             configure birth-triggered IRS (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
-        event will monitor for triggers. Default is -1, which is indefinitely.
+            event will monitor for triggers. Default is -1, which is indefinitely.
 
     Returns:
         None
@@ -223,7 +223,7 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
             when monitoring for triggers begins. This argument cannot
             configure birth-triggered IRS (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
-        event will monitor for triggers. Default is -1, which is indefinitely.
+            event will monitor for triggers. Default is -1, which is indefinitely.
 
     Returns:
         None

@@ -16,29 +16,47 @@ receiving_itn_event = BroadcastEvent(Broadcast_Event='Received_ITN')
 def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=[], node_property_restrictions=[],
             ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=1):
     """
-     Add an ITN intervention to the config_builder passed.
+     Add an insecticide-treated net (ITN) intervention to the campaign
+     using the **SimpleBednet** class.
     
     Args:
 
-        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the ITN event
-        start: The start day of the bednet distribution
-        coverage_by_ages: a list of dictionaries defining the coverage per age group
-            [{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]
-            birthtriggered(in coverage_by_age) and triggered_condition_list are mututally exclusive. "birth" option will be ingnored if you're
-            using trigger_condition_list
-        waning: a dictionary defining the durability of the nets. if empty the default decay profile will be used.
-            For example, update usage duration to 180 days as waning={'Usage_Config' : {"Expected_Discard_Time": 180}}
-        cost: Set the ``Cost_To_Consumer`` parameter
-        nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-        node_property_restrictions: restricts itn based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes, "LovelyWeather":"No}]
-        ind_property_restrictions: Restricts itn based on list of individual properties in format [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]
-        triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
-            Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
-        trigger_condition_list: when not empty,  the start day is the day to start listening for the trigger conditions listed, distributing the spraying
-            when the trigger is heard. This does not distribute the BirthTriggered intervention.
-        listening_duration: how long the distributed event will listen for the trigger for, default is 1, which is indefinitely
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        start: The day on which to start distributing the bednets
+            (**Start_Day** parameter).
+        coverage_by_ages: A list of dictionaries defining the coverage per
+            age group. For example, ``[{"coverage":1,"min": 1, "max": 10},
+            {"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth",
+            "duration":34}]``.
+        waning: A dictionary defining the durability of the nets. If not
+            provided, the default decay profile for **Killing_Config**,
+            **Blocking_Config**, and **Usage_Config** are used. For example,
+            to update usage duration, provide ``{'Usage_Config' : {
+            "Expected_Discard_Time": 180}}``.
+        cost: The per-unit cost (**Cost_To_Consumer** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention (
+            **Property_Restrictions_Within_Node** parameter). In the format ``[{
+            "BitingRisk":"High"}, {"IsCool":"Yes}]``.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+        triggered_campaign_delay: After the trigger is received, the number of
+            time steps until the campaign starts. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        trigger_condition_list: (Optional) A list of the events that will
+            trigger the ITN intervention. If included, **start** is the day
+            when monitoring for triggers begins. This argument cannot
+            configure birth-triggered ITN (use **coverage_by_ages** instead).
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is indefinitely.
     
-    :return: Nothing
+    Returns:
+        None
     """
 
     if waning:
