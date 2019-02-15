@@ -1,5 +1,5 @@
 """ 
-Old IRS parameters::
+This module has been updated. The old IRS parameters were as follows::
 
         irs_housingmod = {"class": "IRSHousingModification",
                           "Blocking_Rate": 0.0,  # i.e. repellency
@@ -49,30 +49,52 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
             initial_killing=0.5, duration=90, waning={}, node_property_restrictions=[],
             ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1):
     """
-    Add an IRS intervention to the config_builder passed.
-    Please note that using trigger_condition_list does not work for birth-triggered ("birth" in coverage_by_ages).
-    when using trigger_condition_list, the "birth" option will be ignored.
+    Add an indoor residual spraying (IRS) intervention using the
+    **IRSHousingModification** class, an individual-level intervention. This
+    can be distributed on a scheduled day or can be triggered by a list of
+    events.
     
     Args:
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention
+            (**Start_Day** parameter) or the day to begin monitoring for
+            events that trigger IRS.
+        coverage_by_ages: A list of dictionaries defining the coverage per
+            age group or birth-triggered intervention. For example,
+            ``[{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11,
+            "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]``
+        cost: The per-unit cost (**Cost_To_Consumer** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+        initial_killing: The initial killing effect of IRS
+            (**Initial_Effect** in **Killing_Config**).
+        duration: The exponential decay constant of the effectiveness
+            (**Decay_Time_Constant** parameter with the
+            **WaningEffectExponential** class).
+        waning: A dictionary defining the durability of the spray. If empty,
+            the default of **WaningEffectExponential** with
+            **Initial_Effect** = 0.5 and **Decay_Time_Constant** = 90 is used.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention (
+            **Property_Restrictions_Within_Node** parameter). In the format ``[{
+            "BitingRisk":"High"}, {"IsCool":"Yes}]``.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+        triggered_campaign_delay: After the trigger is received, the number of
+            time steps until the campaign starts. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        trigger_condition_list: (Optional) A list of the events that will
+            trigger the IRS intervention. If included, **start** is the day
+            when monitoring for triggers begins. This argument cannot
+            configure birth-triggered IRS (use **coverage_by_ages** instead).
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is indefinitely.
 
-        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` holding the campaign that will receive the IRS event
-        start: The start day of the spraying
-        coverage_by_ages: a list of dictionaries defining the coverage per age group or birth-triggered intervention
-            [{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11, "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]
-        cost: Set the ``Cost_To_Consumer`` parameter
-        nodeIDs: If empty, all nodes will get the intervention. If set, only the nodeIDs specified will receive the intervention.
-        initial_killing: sets Initial Effect within the killing config
-        duration: sets the Decal_Time_Constant within the killing config
-        waning: a dictionary defining the durability of the nets. if empty the default ``DECAYDURABILITY`` with 1 year primary and 1 year secondary will be used.
-        ind_property_restrictions: Restricts irs based on list of individual properties in format [{"BitingRisk":"High"}, {"IsCool":"Yes}]
-        node_property_restrictions: restricts irs based on list of node properties in format [{"Place":"RURAL"}, {"ByALake":"Yes}]
-        triggered_campaign_delay: how many time steps after receiving the trigger will the campaign start.
-        Eligibility of people or nodes for campaign is evaluated on the start day, not the triggered day.
-        trigger_condition_list: when not empty, the start day is the day to start listening for the trigger conditions listed, distributing the spraying
-            when the trigger is heard. This does not distribute the BirthTriggered intervention.
-        listening_duration: how long the distributed event will listen for the trigger for, default is -1, which is indefinitely
-
-    :return: Nothing
+    Returns:
+        None
     """
 
     receiving_irs_event = BroadcastEvent(Broadcast_Event="Received_IRS")
@@ -167,7 +189,45 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                  waning_effect_type='WaningEffectExponential', cost=None,
                  irs_ineligibility_duration=0, nodeIDs=[], node_property_restrictions=[],
                  triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1):
+    """
+    Add an indoor residual spraying (IRS) intervention using the
+    **SpaceSpraying** class, a node-level intervention. This can be distributed
+    on a scheduled day or can be triggered by a list of events.
 
+    Args:
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention
+            (**Start_Day** parameter) or the day to begin monitoring for
+            events that trigger IRS.
+        initial_killing: The initial killing effect of IRS
+            (**Initial_Effect** in **Killing_Config**).
+        box_duration: For "box" waning effects, the number of time steps
+            until the efficacy of the intervention begins to decay.
+        waning_effect_type: The way in which IRS efficacy decays (see Waning
+        Effect classes).
+        cost: The per-unit cost (**Cost_To_Consumer** parameter).
+        irs_ineligibility_duration: The number of time steps after a node is
+            sprayed before it is eligible for another round of IRS.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+        triggered_campaign_delay: After the trigger is received, the number of
+            time steps until the campaign starts. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        trigger_condition_list: (Optional) A list of the events that will
+            trigger the IRS intervention. If included, **start** is the day
+            when monitoring for triggers begins. This argument cannot
+            configure birth-triggered IRS (use **coverage_by_ages** instead).
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is indefinitely.
+
+    Returns:
+        None
+    """
     irs_config = copy.deepcopy(node_irs_config)
     irs_config.Killing_Config.Initial_Effect = initial_killing
     irs_config.Killing_Config.Decay_Time_Constant = box_duration

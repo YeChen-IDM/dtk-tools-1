@@ -17,30 +17,47 @@ def add_incidence_counter(cb,
                           ind_property_restrictions=[]
                           ):
     """
-    Add an intervention to
+    Add an intervention that monitors for the number of new cases that occur
+    during a given time period using the **IncidenceEventCoordinator** class.
+
 
     Args:
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            that will receive the intervention.
+        start_day: The day to distribute the intervention (**Start_Day**
+            parameter).
+        repetitions: The number of times to repeat the intervention.
+        tsteps_btwn_repetitions:  The number of time steps between repetitions.
+        count_duration: The number of time steps during which to monitor for
+            new cases.
+        count_triggers: A list of the events that will increment the
+            monitor's count.
+        threshold_type: To monitor raw counts, use COUNT; to normalize
+            by population, use PERCENTAGE.
+        thresholds: The thresholds for each count trigger that will trigger a
+            response.
+        triggered_events: The event names to broadcast upon surpassing each
+            threshold.
+        coverage: The demographic coverage of the monitoring. This value
+            affects the probability that a **count_trigger** will be counted by
+            is ignored for calculating the denominator for PERCENTAGE.
+        target_group: Optionally, the age range that monitoring is restricted
+            to, formatted as a dict of ``{'agemin': x, 'agemax': y}``. By
+            default, everyone is monitored.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention (
+            **Property_Restrictions_Within_Node** parameter). In the format
+            ``[{"IndividualProperty1: "PropertyValue1"},
+            {"IndividualProperty2: "IndividualValue2"} ...]``.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"NodeProperty1": "PropertyValue1"},
+            {"NodeProperty2": "PropertyValue2"}, ...]``.
 
-        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing
-            intervention.
-        start_day: date upon which to change biting risk
-        repetitions: Number of repetitions
-        tsteps_btwn_repetitions: days between repetitions
-        count_duration: how long to monitor for
-        count_triggers: which events increment the monitor's count
-        threshold_type: 'COUNT' for raw counts or 'PERCENTAGE' to normalize by population
-        thresholds: thresholds at which to engage a response
-        triggered_events: event name to broadcast upon surpassing thresholds. Needs one per threshold.
-        coverage: Demographic coverage of the monitoring. Affects probability a count_trigger will be counted but is
-            ignored for calculating denominator for PERCENTAGE.
-        target_group: to restrict monitoring by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting
-            everyone.
-        nodeIDs: list of node IDs to monitor; if empty, defaults to all nodes
-        ind_property_restrictions: used with Property_Restrictions_Within_Node. Format: list of dicts:
-            [{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]
-        node_property_restrictions: used with NodePropertyRestrictions.
-            Format: list of dicts: [{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]
-
+    Returns:
+        None
     """
 
     counter_config = {
