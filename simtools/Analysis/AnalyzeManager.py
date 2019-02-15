@@ -45,13 +45,15 @@ def pool_worker_initializer(func, analyzers, cache, path_mapping) -> None:
 
 class AnalyzeManager(CacheEnabled):
     def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False, max_sims=None,
-                 verbose=True):
+                 verbose=True, force_manager_working_directory=False):
         super().__init__()
         self.analyzers = []
         self.experiments = set()
         self.simulations = {}
         self.ignored_simulations = {}
         self.max_sims = max_sims
+        self.force_wd = force_manager_working_directory
+
         try:
             with SetupParser.TemporarySetup() as sp:
                 self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
@@ -135,8 +137,13 @@ class AnalyzeManager(CacheEnabled):
             analyzer.uid += "({})".format(number)
             number += 1
 
+        # Setup the working dir
+        if self.force_wd:
+            analyzer.working_dir = self.working_dir
+        else:
+            analyzer.working_dir = analyzer.working_dir or self.working_dir
+
         # Then call the initialize method
-        analyzer.working_dir = analyzer.working_dir or self.working_dir
         analyzer.initialize()
 
         self.analyzers.append(analyzer)
