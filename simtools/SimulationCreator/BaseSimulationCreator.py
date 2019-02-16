@@ -35,13 +35,25 @@ class BaseSimulationCreator(Process):
     def process(self):
         self.pre_creation()
 
-        for batch in iter(self.work_queue.get, None):
+        # Poison
+        batches = self.work_queue.get()
+        if not batches:
+            return
+
+        for batch in batches:
             for mod_fn_list in batch:
                 cb = pickle.loads(pickle.dumps(self.config_builder, protocol=pickle.HIGHEST_PROTOCOL))
 
                 # modify next simulation according to experiment builder
                 # also retrieve the returned metadata
                 tags = self.initial_tags.copy() if self.initial_tags else {}
+
+                # Make sure mod_fn_list is a list (could be a single function)
+                try:
+                    mod_fn_list = iter(mod_fn_list)
+                except TypeError:
+                    mod_fn_list = iter([mod_fn_list])
+
                 for func in mod_fn_list:
                     md = func(cb)
                     tags.update(md)
