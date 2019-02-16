@@ -1,21 +1,6 @@
 from setuptools import setup, find_packages
 from dtk import __version__ as DTK_VERSION
 
-# from dtk.post_install import setup_post
-
-
-# class PostInstallCommand(install):
-#     """Post-installation for installation mode."""
-#
-#     def run(self):
-#         print('PostInstallCommand.run got called.')
-#         # check_call("python post-install.py".split())
-#         # check_call("dtksetup post".split())
-#         # setup_post()
-#         install.run(self)
-#         # setup_post()
-#         atexit.register(setup_post)
-
 setup(name='dtk-tools',
       version=DTK_VERSION,
       description='Facilitating submission and analysis of simulations',
@@ -25,7 +10,7 @@ setup(name='dtk-tools',
              'Daniel Klein,'
              'Jaline Gerardin,'
              'Milen Nikolov,'
-             'Aaron Roney,'
+             'Clinton Collins,'
              'Zhaowei Du,'
              'Prashanth Selvaraj,'
              'Clark Kirkman IV',
@@ -34,7 +19,7 @@ setup(name='dtk-tools',
                    'dklein@idmod.org,'
                    'jgerardin@idmod.org,'
                    'mnikolov@idmod.org,'
-                   'aroney@idmod.org,'
+                   'ccollins@idmod.org,'
                    'zdu@idmod.org,'
                    'pselvaraj@idmod.org,'
                    'ckirkman@idmod.org',
@@ -64,14 +49,8 @@ setup(name='dtk-tools',
           'patsy',
           'astor',
           'openpyxl>=2.5.3',
-          'sklearn>=0.0',
           'geopy'],
-      setup_requires=['numpy==1.16.1'],
-      # install_requires=[],
       dependency_links=['https://packages.idmod.org/api/pypi/idm-pypi-production/simple'],
-      # cmdclass={
-      #    'install': PostInstallCommand
-      # },
       entry_points={
           'console_scripts': ['calibtool = calibtool.commands:main', 'dtk = dtk.commands:main',
                               'dtksetup = dtk.post_install:main']
