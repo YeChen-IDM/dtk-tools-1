@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from dtk import __version__ as DTK_VERSION
 
 # from dtk.post_install import setup_post
 
@@ -16,7 +17,7 @@ from setuptools import setup, find_packages
 #         atexit.register(setup_post)
 
 setup(name='dtk-tools',
-      version='v1.0.0',
+      version=DTK_VERSION,
       description='Facilitating submission and analysis of simulations',
       url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
       author='Edward Wenger,'
@@ -26,7 +27,7 @@ setup(name='dtk-tools',
              'Milen Nikolov,'
              'Aaron Roney,'
              'Zhaowei Du,'
-             'Prashanth Selvaraj'
+             'Prashanth Selvaraj,'
              'Clark Kirkman IV',
       author_email='ewenger@idmod.org,'
                    'braybaud@idmod.org,'
@@ -35,7 +36,7 @@ setup(name='dtk-tools',
                    'mnikolov@idmod.org,'
                    'aroney@idmod.org,'
                    'zdu@idmod.org,'
-                   'pselvaraj@idmod.org'
+                   'pselvaraj@idmod.org,'
                    'ckirkman@idmod.org',
       packages=find_packages(),
       install_requires=[
@@ -43,7 +44,7 @@ setup(name='dtk-tools',
           'requests',
           'diskcache',
           'github3.py>=1.0.0a4',
-          'numpy==1.14.6',
+          'numpy==1.16.1',
           'packaging',
           'python-snappy==0.5.2',
           'pyCOMPS==2.3.1',
@@ -65,7 +66,7 @@ setup(name='dtk-tools',
           'openpyxl>=2.5.3',
           'sklearn>=0.0',
           'geopy'],
-      setup_requires = ['numpy==1.14.6'],
+      setup_requires=['numpy==1.16.1'],
       # install_requires=[],
       dependency_links=['https://packages.idmod.org/api/pypi/idm-pypi-production/simple'],
       # cmdclass={
