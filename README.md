@@ -39,7 +39,7 @@ On unix platform:
 Create a `pip.ini` file (`pip.conf` if on Unix) in your virtual environment folder (here `idmtools`) with the following content:
 ```ini
 [global]
-index-url = https://packages.idmod.org/api/pypi/idm-pypi-production/simple
+index-url = https://packages.idmod.org/api/pypi/pypi-production/simple
 ```
 
 Install dtk-tools:
