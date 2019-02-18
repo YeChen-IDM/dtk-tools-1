@@ -12,31 +12,35 @@ def triggered_campaign_delay_event(config_builder, start: int=0,  nodeIDs: list=
                                    only_target_residents: bool=1):
     """
     Creates a triggered campaign that broadcasts an event after a delay. The event it broadcasts can be specified
-    or it is randomly generated. You can use either FIXED_DURATION or GAUSSIAN_DURATION for the delay
+    or it is randomly generated. You can use either FIXED_DURATION or GAUSSIAN_DURATION for the delay.
+
     Args:
-        config_builder:
-        start: the first day of the campaign
-        nodeIDs: list of nodeIDs there this campaign
-        delay_distribution: distribution of the length of the delay, can be FIXED_DURAION or GAUSSIAN_DURATION,
-            FIXED_DURATION is the default
-        delay_period_mean: for GAUSSIAN_DURATION: the mean time of the duration of the event being sent out
-        delay_period_std_dev: for GAUSSIAN_DURATION: the std deviation of the duration of the event being sent out
-        delay_period_max: for GAUSSIAN_DURATION: the maximum time of the duration of the event being sent out
-        coverage: sets Demographic_Coverage
-        triggered_campaign_delay: for FIXED_DURATION: the delay time of the event being sent out
-        trigger_condition_list: list of events that trigger the delayed event broadcast,
-            example: ["HappyBirthday", "Received_Treatment"]
-        listening_duration: the duration for which the listen for the trigger, Default: -1 indicates "indefinitely/forever"
-        event_to_send_out: if specified, the event that will be sent out after the delay
-        node_property_restrictions: Restricts intervention based on list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land) nodes
+
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` containing the intervention.
+        start: the first day of the campaign.
+        nodeIDs: The list of node IDs; if empty, defaults to all nodes.
+        delay_distribution: The distribution of the length of the delay, possible values are FIXED_DURATION or
+            GAUSSIAN_DURATION. FIXED_DURATION is the default
+        delay_period_mean: Used with GAUSSIAN_DURATION; the mean time of the duration of the event being sent out.
+        delay_period_std_dev: Used with GAUSSIAN_DURATION; the std deviation of the duration of the event being sent out.
+        delay_period_max: Used with GAUSSIAN_DURATION; the maximum time of the duration of the event being sent out.
+        coverage: The Demographic_Coverage of the distribution.
+        triggered_campaign_delay: Used with FIXED_DURATION; the delay time of the event being sent out.
+        trigger_condition_list: The list of events that trigger the delayed event broadcast, for
+            example: ["HappyBirthday", "Received_Treatment"].
+        listening_duration: The duration for which the event will listen for the trigger.
+            The default is -1, which indicates "indefinitely/forever."
+        event_to_send_out: If specified, this is the event that will be sent out after the delay.
+        node_property_restrictions: Restricts the intervention based on a list of dictionaries of node properties in
+            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}];  the default is no restrictions. Restrictions
+            within each dictionary are connected by "and," and within the list are connected by "or." In the example,
+            the restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land).
         ind_property_restrictions: Restricts intervention based on list of dictionaries of individual properties in
-            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich) individuals
-        only_target_residents: only affects people who started the simulation and still are in the node targeted
+            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; the default is no restrictions.
+            Restrictions within each dictionary are connected by "and," and within the list are connected by "or." In the
+            example, the restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich).
+        only_target_residents: The intervention only affects people who started the simulation  in the targeted node,
+            and still are in the targeted node.
 
     Returns:
         The event that will be broadcast after the delay.
