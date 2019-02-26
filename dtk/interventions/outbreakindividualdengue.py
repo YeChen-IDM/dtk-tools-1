@@ -6,7 +6,7 @@ from dtk.utils.Campaign.CampaignEnum import *
 def add_OutbreakIndividualDengue(config_builder, start, coverage_by_age, strain_id_name, nodeIDs=[]):
     """
     Add introduction of new dengue infections to the campaign using
-    the **OutbreakIndividualDengue** class. Outbreaks can be recurring.
+    the **OutbreakIndividualDengue** class. 
 
     Args:
         config_builder: The The :py:class:`DTKConfigBuilder
