@@ -63,16 +63,24 @@ It will create an `examples` directory containing all the built-in dtk-tools exa
 
 To install the dtk-tools, first clone the repository:
 ```
-git clone https://github.com/InstituteforDiseaseModeling/dtk-tools.git
+> git clone https://github.com/InstituteforDiseaseModeling/dtk-tools.git
+```
+
+Create a `pip.ini` file (`pip.conf` if on Unix) in your virtual environment folder (here `idmtools`) with the following content:
+```ini
+[global]
+index-url = https://packages.idmod.org/api/pypi/pypi-production/simple
 ```
 
 From a command-prompt, run the following from the **dtk-tools** directory:
 ```
-python setup_manual.py
+> pip install -e .
 ```
 
-**Note:** If `pip` command is not found on your system, make sure to add the Python scripts directory (by default in Windows: `C:\Python27\Scripts`)
-to your `PATH` environment variable.
+Run the initialization:
+```bash
+> dtksetup init
+```
 
 #### Setup
 
