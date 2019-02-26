@@ -18,14 +18,21 @@ receiving_IV_event = BroadcastEvent(Broadcast_Event="Received_Ivermectin")
 
 def ivermectin_config_by_duration(box_duration='WEEK', initial_effect: float=0.95):
     """
-    Returns an ivermectin configuration with the Box_Duration set to "drug_code" parameter. Default being 7 days (WEEK)
+    Provide the duration of ivermectin efficacy and return the correct
+    **Killing_Config** dictionary using the **WaningEffectBox** class.
+
     Args:
-        box_duration: configures the length of ivermectin effect, its Box_Duration. Can be "DAY", "WEEK", "MONTH",
-            "90DAYS", or an integer or float of the number of days of the effect.
-        initial_effect: Initial strength of the effect, example: 0.9 (about 90% effective)
+        drug_code: The duration of drug efficacy. Supported values are:
+
+            * DAY
+            * WEEK
+            * MONTH
+            * XDAYS where "X" is an integer.
+        initial_effect: The initial efficacy of the drug treatment.
 
     Returns:
-            Returns a dictionary of ivermectin configuration with the Box_Duration set to "drug_code" parameter.
+        A dictionary of ivermectin configuration with the **Box_Duration**
+        set to the **drug_code** parameter.
     """
 
     cfg = copy.deepcopy(ivermectin_cfg)
@@ -53,40 +60,80 @@ def ivermectin_config_by_duration(box_duration='WEEK', initial_effect: float=0.9
     return cfg
 
 
+
 def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: float=0.95, coverage: float=1.0,
                    start_days: list=None, trigger_condition_list: list=None, triggered_campaign_delay: int=0,
                    listening_duration: int=-1, nodeIDs: list=None, target_group: any="Everyone",
                    target_residents_only: bool=1, node_property_restrictions: list=None,
                    ind_property_restrictions: list=None):
+
     """
-    Adds an ivermectin distribution event
+    Add an ivermectin intervention to the campaign using the **Ivermectin**
+    class.
+
     Args:
-        config_builder: the config builder getting the event
-        box_duration: configures the length of ivermectin effect for Box_Duration. Can be "DAY", "WEEK", "MONTH",
-            "90DAYS", or an integer or float of the number of days of the effect.
-        initial_effect: Initial strength of the effect, example: 0.9 (about 90% effective)
-        coverage: sets the "Demographic_Coverage", example: 0.7 (about 70% of people will receive ivermectin)
-        start_days: list of integer days on which ivermectin will be distributed, example:[1,31,61,91]
-        trigger_condition_list: makes ivermectin distribution a triggered event that's distributed on the first of the
-            start_days, example: ["NewClinicalCase", "NewInfection"]
-        triggered_campaign_delay: number of days campaign is delayed after being triggered, ex: 3
-        listening_duration: how many days the triggered campaign will be active for, -1 indicates "indefinitely"
-        nodeIDs: list of nodes to which the campaign will be distributed, example:[2384,12,932]
-        target_group:  dictionary of {'agemin' : x, 'agemax' : y, 'gender':} to target  to individuals between
-            x and y years of age. Default is 'Everyone'
-        target_residents_only: if only the people who started out the simulation in this node will be affected
-        node_property_restrictions: Restricts intervention based on list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land) nodes
-        ind_property_restrictions: Restricts intervention based on list of dictionaries of individual properties in
-            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich) individuals
+        config_builder: The :py:class:`DTKConfigBuilder
+            <dtk.utils.core.DTKConfigBuilder>` containing the campaign
+            configuration.
+        box_duration: The length of ivermectin effect for **Box_Duration**.
+            Accepted values are an integer, float, or one of the following:
+
+            * DAY
+            * WEEK
+            * MONTH
+            * 90DAYS
+
+        initial_effect: The initial efficacy of the drug treatment.
+        coverage: The proportion of the population covered by the intervention
+            (**Demographic_Coverage** parameter).
+        start_days: A list of days when ivermectin is distributed
+            (**Start_Day** parameter).
+        trigger_condition_list: A list of the events that will
+            trigger the ivermectin intervention. If included, **start_days** is
+            then used to distribute **NodeLevelHealthTriggeredIV**.
+        triggered_campaign_delay: After the trigger is received, the number of
+            time steps until distribution starts. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is
+            indefinitely.
+        node_IDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter).
+        target_group: A dictionary targeting an age range and gender of
+            individuals for treatment. In the format
+            ``{"agemin": x, "agemax": y, "gender": "z"}``.
+        target_residents_only: Set to 1 to target only individuals
+            who started the simulation in this node and are still in
+            this node; set to 0 to target all individuals, including those who are
+            traveling.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention
+            (**Node_Property_Restrictions** parameter). In the format
+            ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention
+            (**Property_Restrictions_Within_Node** parameter). In the format
+            ``[{"BitingRisk":"High"}, {"IsCool":"Yes}]``.
 
     Returns:
-        Nothing, Ivermectin campaign is added to the final campaign.json file created by the config_builder
+        None
 
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_ivermectin(config_builder, box_duration=45,
+                           initial_effect=0.75, coverage=0.8,
+                           start_days=[1, 30, 60],
+                           trigger_condition_list=["NewClinicalCase", "NewSevereCase"],
+                           triggered_campaign_delay=7, listening_duration=-1,
+                           nodeIDs=[1, 4, 6],
+                           target_group={"agemin": 3,
+                                         "agemax": 10,
+                                         "gender": "female"},
+                           target_residents_only=1,
+                           ind_property_restrictions=[{"BitingRisk": "Medium"}])
     """
 
     if node_property_restrictions is None:

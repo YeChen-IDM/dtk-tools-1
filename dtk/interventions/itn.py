@@ -32,7 +32,7 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
         waning: A dictionary defining the durability of the nets. If not
             provided, the default decay profile for **Killing_Config**,
             **Blocking_Config**, and **Usage_Config** are used. For example,
-            to update usage duration, provide ``{'Usage_Config' : {
+            to update usage duration, provide ``{"Usage_Config" : {
             "Expected_Discard_Time": 180}}``.
         cost: The per-unit cost (**Cost_To_Consumer** parameter).
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
@@ -43,7 +43,7 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
             "BitingRisk":"High"}, {"IsCool":"Yes}]``.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
-            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
         triggered_campaign_delay: After the trigger is received, the number of
             time steps until the campaign starts. Eligibility of people or nodes
             for the campaign is evaluated on the start day, not the triggered
@@ -54,9 +54,23 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
             configure birth-triggered ITN (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is indefinitely.
-    
+
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            coverage_by_ages = [{"coverage": 1, "min": 1, "max": 10},
+                                {"coverage": 0.75, "min": 11, "max": 60}]
+            add_ITN(config_builder, start=1, coverage_by_ages,
+                    cost=1, nodeIDs=[2, 5, 7, 21],
+                    node_property_restrictions=[{"Place": "Urban"}],
+                    ind_property_restrictions=[{"Biting_Risk": "High"],
+                    triggered_campaign_delay=14,
+                    trigger_condition_list=["NewClinicalCase", "NewSevereCase"],
+                    listening_duration=-1)
     """
 
     if waning:

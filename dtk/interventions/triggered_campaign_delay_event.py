@@ -11,39 +11,67 @@ def triggered_campaign_delay_event(config_builder, start: int=0,  nodeIDs: list=
                                    node_property_restrictions: list=None, ind_property_restrictions: list=None,
                                    only_target_residents: bool=1):
     """
-    Creates a triggered campaign that broadcasts an event after a delay. The event it broadcasts can be specified
-    or it is randomly generated. You can use either FIXED_DURATION or GAUSSIAN_DURATION for the delay.
+    Create a triggered campaign that broadcasts an event after a delay. The
+    event it broadcasts can be specified or randomly generated.
 
     Args:
-
-        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` containing the intervention.
-        start: the first day of the campaign.
-        nodeIDs: The list of node IDs; if empty, defaults to all nodes.
-        delay_distribution: The distribution of the length of the delay, possible values are FIXED_DURATION or
-            GAUSSIAN_DURATION. FIXED_DURATION is the default
-        delay_period_mean: Used with GAUSSIAN_DURATION; the mean time of the duration of the event being sent out.
-        delay_period_std_dev: Used with GAUSSIAN_DURATION; the std deviation of the duration of the event being sent out.
-        delay_period_max: Used with GAUSSIAN_DURATION; the maximum time of the duration of the event being sent out.
-        coverage: The Demographic_Coverage of the distribution.
-        triggered_campaign_delay: Used with FIXED_DURATION; the delay time of the event being sent out.
-        trigger_condition_list: The list of events that trigger the delayed event broadcast, for
-            example: ["HappyBirthday", "Received_Treatment"].
-        listening_duration: The duration for which the event will listen for the trigger.
-            The default is -1, which indicates "indefinitely/forever."
-        event_to_send_out: If specified, this is the event that will be sent out after the delay.
-        node_property_restrictions: Restricts the intervention based on a list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}];  the default is no restrictions. Restrictions
-            within each dictionary are connected by "and," and within the list are connected by "or." In the example,
-            the restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land).
-        ind_property_restrictions: Restricts intervention based on list of dictionaries of individual properties in
-            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; the default is no restrictions.
-            Restrictions within each dictionary are connected by "and," and within the list are connected by "or." In the
-            example, the restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich).
-        only_target_residents: The intervention only affects people who started the simulation  in the targeted node,
-            and still are in the targeted node.
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, defaults to all nodes.
+        delay_distribution: The distribution type of the length of the delay.
+            Possible values are FIXED_DURATION or GAUSSIAN_DURATION.
+        delay_period_mean: For GAUSSIAN_DURATION, the mean duration of the
+            delay period.
+        delay_period_std_dev: For GAUSSIAN_DURATION, the standard deviation of
+            the delay period.
+        delay_period_max: For GAUSSIAN_DURATION, the maximum duration of the
+            delay period.
+        coverage: The proportion of the population covered by the intervention
+            (**Demographic_Coverage** parameter).
+        triggered_campaign_delay: For FIXED_DURATION, the duration of the delay
+            period. Eligibility of people or nodes for the campaign is
+            evaluated on the start day, not the triggered day.
+        trigger_condition_list: A list of the events that will
+            trigger the delayed event broadcast. For example, ["HappyBirthday",
+            "Received_Treatment"].
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is
+            indefinitely.
+        event_to_send_out: If specified, the event that will be broadcast
+            after the delay.
+        node_property_restrictions:The NodeProperty key:value pairs that
+            nodes must have to receive the intervention
+            (**Node_Property_Restrictions** parameter). In the format
+            ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention
+            (**Property_Restrictions_Within_Node** parameter). In the format
+            ``[{"BitingRisk":"High"}, {"IsCool":"Yes}]``.
+        only_target_residents: If true (1), the campaign only affects people
+            who started the simulation in the node and still are in the node
+            targeted.
 
     Returns:
-        The event that will be broadcast after the delay.
+        The event that is broadcast after the delay.
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            triggered_campaign_delay_event(config_builder, start=0,
+                                           nodeIDs=[1, 5, 11],
+                                           delay_distribution="GAUSSIAN_DURATION",
+                                           delay_period_mean=14,
+                                           delay_period_std_dev=4,
+                                           delay_period_max=30, coverage=1,
+                                           trigger_condition_list=["HappyBirthday"],
+                                           listening_duration=-1,
+                                           event_to_send_out="FirstCheckup",
+                                           node_property_restrictions=[{"Place": "Urban"}],
+                                           only_target_residents=1)
 
     """
     if nodeIDs:

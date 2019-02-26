@@ -10,43 +10,65 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
                          trigger_condition_list: list=None, listening_duration: int=-1,
                          disqualifying_properties: list=None):
     """
-    Creates an intervention that changes node property <target_property_name>'s value to <target_property_value>,
-    on day <start_day> or on <trigger_condition_list> event, you can narrow down which nodes and values get affected
-    using <node_property_restrictions>.
+    Add an intervention that changes the node property value to another on a
+    particular day or after a triggering event using the
+    **NodePropertyValueChanger** class.
+
     Args:
-        cb: the config builder getting the event, default: no default, must pass in
-        target_property_name: String NodeProperty whose value we are changing to target_property_value,
-            default: no default, must define, example: "Place"
-        target_property_value: String value to which we are updating the target_property_name NodeProperty
-            default: no default, must define, example: "Urban"
-        start_day: Integer day on which the intervention will be distributed or initialized (if triggered or with delay)
-            default: 0, example: 90 (about 3 months in)
-        daily_prob: The probability each day that the NodeProperty value will move to the target_property_value,
-            default: 1 (all on the same day), example: 0.1
-        max_duration: The maximum amount of time nodes have to move to a new NodeProperty value. This timing works in
-            conjunction with daily_prob (Daily_Probability), nodes not moved to the new value by the end of max_duration
-            keep the same value, default: 3.40282e+38, ex: 10
-        revert: The number of days before an node moves back to its original NodeProperty value,
-            default: 0 (means the new value is kept forever, never reverted), example: 35 (revert after 35 days)
-        nodeIDs: list of nodes to which the campaign will be distributed, example:[2384,12,932]
-        node_property_restrictions: use this to restrict which NodeProperty Value you want to change FROM.
-            Restricts intervention based on list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land) nodes
-        triggered_campaign_delay: number of days campaign is delayed after being triggered,
-            default: 0 (no delay), ex: 3 (delay property change by 3 days)
-        trigger_condition_list:  list of events that trigger property change, makes property change a triggered event
-            that's initially created on the start_day, default: None (not a triggered event)
-            example: ["NewClinicalCase", "NewInfection"]
-        listening_duration: how many days the triggered campaign will be active for,
-            default: -1 (intervention is active forever), example: 60 (only active for 60 days)
-        disqualifying_properties: A list of NodeProperty key:value pairs that cause an intervention to be aborted
-            (persistent interventions will stop being distributed to nodes with these values).
-            default: None, no restrictions, example: ["Place:Swamp"]
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        target_property_name: The node property key to assign to the node. For
+            example, InterventionStatus.
+        target_property_value: The node property value to assign to the node.
+            For example, RecentDrug.
+        start_day: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        daily_prob: The daily probability that a node's property value will
+            be updated (**Daily_Probability** parameter). For example,
+            the default value of 1 changes all values on the same day.
+        max_duration: The maximum amount of time nodes have to move to a new
+            NodeProperty value. This timing works in conjunction with
+            **daily_prob**; nodes not moved to the new value by the end of
+            **max_duration** keep the same value.
+        revert: The number of days before a node reverts to its original
+            property value. Default of 0 means the new value is kept forever.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, defaults to all nodes.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"Swamp", "Place":"NoRoads"},
+            {"Place":"ForestLand}]``. Restrictions within each dictionary are
+            connected with "and" condition and within the list are "or",
+            so the example restricts the intervention to (Swamp Land AND No
+            Roads) OR (Forest Land) nodes.
+        triggered_campaign_delay: The number of days the campaign is delayed
+            after being triggered. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        trigger_condition_list: A list of the events that will
+            trigger the intervention. If included, **start_day** is the day
+            when monitoring for triggers begins.
+        listening_duration: The number of time steps that the
+            triggered campaign will be active for. Default is -1, which is
+            indefinitely.
+        disqualifying_properties: A list of NodeProperty key:value pairs that
+            cause an intervention to be aborted (persistent interventions
+            will stop being distributed to nodes with these values). For
+            example, ["Place:Swamp"].
 
     Returns:
-        Nothing, a campaign event is added to the campaign.json file
+        None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_node_property(cb, target_property_name="InterventionStatus",
+            target_property_value="RecentSpray", start_day=0,
+                             daily_prob=1, max_duration=1,
+                             revert=0, triggered_campaign_delay=0,
+                             trigger_condition_list=["SpaceSpraying"],
+                             listening_duration=-1)
 
     """
     if not target_property_name or not target_property_value:
@@ -105,6 +127,7 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
         cb.add_event(changer_event)
 
 
+
 def change_individual_property_at_age(cb, target_property_name: str=None, target_property_value: str=None,
                                       change_age_in_days: int=None, start_day: int=0,
                                       listening_duration: int=-1, coverage: float=1, daily_prob: float=1,
@@ -112,45 +135,69 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
                                       node_property_restrictions: list=None, ind_property_restrictions: list=None,
                                       disqualifying_properties: list=None):
     """
-        Creates event that changes individual's individual property at <change_age_in_days> days after birth.
+    Add an intervention that changes an individual's individual property at
+    a given number of days after birth using the **PropertyValueChanger**
+    class.
+
     Args:
-        cb: the config builder getting the event, default: no default, must pass in
-        target_property_name: String NodeProperty whose value we are changing to target_property_value,
-            default: no default, must define, example: "Place"
-        target_property_value: String value to which we are updating the target_property_name NodeProperty
-            default: no default, must define, example: "Urban"
-        change_age_in_days: at what age, in days to enact property change, must define,
-            example: 90 (about 3 months after birth)
-        start_day: Integer day on which the intervention will be distributed or initialized (if triggered or with delay)
-            default: 0, example: 90 (about 3 months in)
-        coverage: sets the "Demographic_Coverage", default: 1 (everyone), example: 0.7 (about 70% of otherwise qualifing
-            individuals will receive a property change)
-        daily_prob: The probability each day that the NodeProperty value will move to the target_property_value,
-            default: 1 (all on the same day), example: 0.1
-        max_duration: The maximum amount of time nodes have to move to a new NodeProperty value. This timing works in
-            conjunction with daily_prob (Daily_Probability), nodes not moved to the new value by the end of max_duration
-            keep the same value, default: 3.40282e+38, ex: 10
-        revert: The number of days before an node moves back to its original NodeProperty value,
-            default: 0 (means the new value is kept forever, never reverted), example: 35 (revert after 35 days)
-        nodeIDs: list of nodes to which the campaign will be distributed, example:[2384,12,932]
-        node_property_restrictions: use this to restrict which NodeProperty Value you want to change FROM.
-            Restricts intervention based on list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land) nodes
-        ind_property_restrictions: Restricts intervention based on list of dictionaries of individual properties in
-            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich) individuals
-        listening_duration: how many days the triggered campaign will be active for,
-            default: -1 (intervention is active forever), example: 60 (only active for 60 days)
-        disqualifying_properties: A list of NodeProperty key:value pairs that cause an intervention to be aborted
-            (persistent interventions will stop being distributed to nodes with these values).
-            default: None, no restrictions, example: ["Risk:High"]
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        target_property_name: The individual property key to assign to the
+            individual. For example, InterventionStatus.
+        target_property_value: The individual property value to assign to the
+            individual. For example, RecentDrug.
+        change_age_in_days: The age, in days, after birth to change the property
+            value.
+        start_day: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        duration: The number of days to continue the intervention after
+            **start_day**.
+        coverage: The proportion of the population that will receive the
+            intervention (**Demographic_Coverage** parameter).
+        daily_prob: The daily probability that an individual's property value
+            will be updated (**Daily_Probability** parameter). Default is 1,
+            which changes property values for all individuals on the same day.
+        max_duration: The maximum amount of time nodes have to move to a new
+            NodeProperty value. This timing works in conjunction with
+            **daily_prob**; nodes not moved to the new value by the end of
+            **max_duration** keep the same value.
+        revert: The number of days before a node reverts to its original
+            property value. Default of 0 means the new value is kept forever.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, defaults to all nodes.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"Swamp", "Place":"NoRoads"},
+            {"Place":"ForestLand}]``. Restrictions within each dictionary are
+            connected with "and" condition and within the list are "or",
+            so the example restricts the intervention to (Swamp Land AND No
+            Roads) OR (Forest Land) nodes.
+        ind_property_restrictions: The IndividualProperty key:value pairs to
+            target (**Property_Restrictions_Within_Node** parameter). In the
+            format ``[{"IndividualProperty1" : "PropertyValue1"},
+            {'IndividualProperty2': "PropertyValue2"}, ...]``
+        listening_duration: The number of time steps that the
+            triggered campaign will be active for. Default is -1, which is
+            indefinitely.
+        disqualifying_properties: A list of NodeProperty key:value pairs that
+            cause an intervention to be aborted (persistent interventions
+            will stop being distributed to nodes with these values).  For
+            example, ["Place:Swamp"].
 
     Returns:
-        Nothing, adds an intervention event to the campaign.json
+        None
 
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_individual_property_at_age(cb,
+                                              target_property_name= "ImmuneStatus",
+                                              target_property_value="NoMaternalImmunity",
+                                              change_age_in_days=120, start_day=0,
+                                              listening_duration=-1, coverage=1,
+                                              daily_prob=1, max_duration=1,
+                                              revert=0)
     """
     if not target_property_name or not target_property_value or not change_age_in_days:
         raise ValueError("Please define all:  target_property_name and target_property_value and change_age_in_days.\n")
@@ -192,6 +239,7 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
         )
     )
 
+
     cb.add_event(campaign_event)
 
 
@@ -203,54 +251,81 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
                                listening_duration: int=-1, blackout_flag: bool=True,
                                disqualifying_properties: list=None, target_residents_only: bool=False):
     """
-    Creates campaign that changes IndividualProperty <target_property_name> to a new value <target_property_value>,
-    with optional restrictions by <node_property_restrictions> and individual property restrictions
-    <ind_property_restrictions>, which is useful when you only want to change a subset of people.
+    Add an intervention that changes the individual property value to another on a
+    particular day or after a triggering event using the
+    **PropertyValueChanger** class.
+    
     Args:
-        cb: the config builder getting the event, default: no default, must pass in
-        target_property_name: String NodeProperty whose value we are changing to target_property_value,
-            default: no default, must define, example: "Place"
-        target_property_value: String value to which we are updating the target_property_name NodeProperty
-            default: no default, must define, example: "Urban"
-        target_group:  dictionary of {'agemin' : x, 'agemax' : y, 'gender': "Female"} to target  to individuals between
-            x and y years of age, default: 'Everyone', example: {'agemin' : 5, 'agemax' : 15, 'gender': "Female"}
-        start_day: Integer day on which the intervention will be distributed or initialized (if triggered or with delay)
-            default: 0, example: 90 (about 3 months in)
-        coverage: sets the "Demographic_Coverage", default: 1 (everyone), example: 0.7 (about 70% of otherwise qualifing
-            individuals will receive a property change)
-        daily_prob: The probability each day that the NodeProperty value will move to the target_property_value,
-            default: 1 (all on the same day), example: 0.1
-        max_duration: The maximum amount of time nodes have to move to a new NodeProperty value. This timing works in
-            conjunction with daily_prob (Daily_Probability), nodes not moved to the new value by the end of max_duration
-            keep the same value, default: 3.40282e+38, ex: 10
-        revert: The number of days before an node moves back to its original NodeProperty value,
-            default: 0 (means the new value is kept forever, never reverted), example: 35 (revert after 35 days)
-        nodeIDs: list of nodes to which the campaign will be distributed, example:[2384,12,932]
-        node_property_restrictions: use this to restrict which NodeProperty Value you want to change FROM.
-            Restricts intervention based on list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land) nodes
-        ind_property_restrictions: Restricts intervention based on list of dictionaries of individual properties in
-            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich) individuals
-        triggered_campaign_delay: number of days campaign is delayed after being triggered,
-            default: 0 (no delay), ex: 3 (delay property change by 3 days)
-        trigger_condition_list:  list of events that trigger property change, makes property change a triggered event
-            that's initially created on the start_day, default: None (not a triggered event)
-            example: ["NewClinicalCase", "NewInfection"]
-        listening_duration: how many days the triggered campaign will be active for,
-            default: -1 (intervention is active forever), example: 60 (only active for 60 days)
-        blackout_flag: set to true if you don't want triggered intervention to be distributed to the same person more
-            than once a day, default: true
-        disqualifying_properties: A list of NodeProperty key:value pairs that cause an intervention to be aborted
-            (persistent interventions will stop being distributed to nodes with these values).
-            default: None, no restrictions, example: ["Risk:High"]
-        target_residents_only: if only the people who started out the simulation in this node and are still in that
-            node will be affected, default: False
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        target_property_name: The individual property key to assign to the
+            individual. For example, InterventionStatus.
+        target_property_value: The individual property value to assign to the
+            individual. For example, RecentDrug.
+        target: The individuals to target with the intervention. To
+            restrict by age, provide a dictionary of ``{'agemin' : x, 'agemax' :
+            y}``. Default is targeting everyone.
+        start_day: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the
+            intervention (**Demographic_Coverage** parameter).
+        daily_prob: The daily probability that an individual's property value
+            will be updated (**Daily_Probability** parameter).
+                max_duration: The maximum amount of time nodes have to move to a new
+            NodeProperty value. This timing works in conjunction with
+            **daily_prob**; nodes not moved to the new value by the end of
+            **max_duration** keep the same value.
+        revert: The number of days before a node reverts to its original
+            property value. Default of 0 means the new value is kept forever.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, defaults to all nodes.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention (**Node_Property_Restrictions**
+            parameter). In the format ``[{"Place":"Swamp", "Place":"NoRoads"},
+            {"Place":"ForestLand}]``. Restrictions within each dictionary are
+            connected with "and" condition and within the list are "or",
+            so the example restricts the intervention to (Swamp Land AND No
+            Roads) OR (Forest Land) nodes.
+        ind_property_restrictions: The IndividualProperty key:value pairs to
+            target (**Property_Restrictions_Within_Node** parameter). In the
+            format ``[{"IndividualProperty1" : "PropertyValue1"},
+            {'IndividualProperty2': "PropertyValue2"}, ...]``
+         triggered_campaign_delay: The number of days the campaign is delayed
+            after being triggered.
+        trigger_condition_list: A list of the events that will
+            trigger the intervention. If included, **start_day** is the day
+            when monitoring for triggers begins.
+        listening_duration: The number of time steps that the
+            triggered campaign will be active for. Default is -1, which is
+            indefinitely.
+        blackout_flag: Set to True if you don't want the triggered intervention
+            to be distributed to the same person more than once a day.
+        disqualifying_properties: A list of NodeProperty key:value pairs that
+            cause an intervention to be aborted (persistent interventions
+            will stop being distributed to nodes with these values). For
+            example, ["Place:Swamp"].
+        target_residents_only: Set to True to target only the individuals who
+            started the simulation in this node and are still in the node.
+
     Returns:
-        Nothings, adds an intervention event to the campaign.json
+        None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_individual_property(cb,
+                                       target_property_name="InterventionStatus",
+                                       target_property_value="DiagnosedPos",
+                                       target_group="Everyone", start_day=0,
+                                       coverage=1, daily_prob=1,
+                                       max_duration=1, revert=0,
+                                       node_property_restrictions: list=None,
+                                       ind_property_restrictions=[{"InterventionStatus": "Naive"}],
+                                       triggered_campaign_delay=0,
+                                       trigger_condition_list=["HIVTestedPositive"],
+                                       listening_duration=-1, blackout_flag=True,
+                                       target_residents_only=False)
     """
     if not target_property_name or not target_property_value:
         raise ValueError("Please define both:  target_property_name and target_property_value.\n")
