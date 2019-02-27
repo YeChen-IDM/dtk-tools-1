@@ -1,6 +1,6 @@
 import json
 from dtk.utils.Campaign.utils.RawCampaignObject import RawCampaignObject
-
+from dtk.utils.Campaign.CampaignClass import *
 
 class CampaignDecoder(json.JSONDecoder):
     """
