@@ -1,6 +1,6 @@
 import os
 
-from dtk.interventions.larvicides import add_larvicides
+from dtk.interventions.novel_vector_control import add_larvicides
 from dtk.utils.analyzers import TimeseriesAnalyzer, group_by_name
 from dtk.utils.core.DTKConfigBuilder import DTKConfigBuilder
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
@@ -22,7 +22,7 @@ cb.set_param('Simulation_Duration', 5*365)
 # Here we are interested on sweeping on the start date of the intervention.
 def set_larvicides(cb, start):
     # Add larvicides to the campaign held in the ConfigBuilder
-    add_larvicides(cb,start)
+    add_larvicides(cb, start)
 
     # Returns the tag we want our simulation to have
     # In order to identify which value of the sweep we used, we are tagging our simulations
@@ -49,8 +49,9 @@ def set_larvicides(cb, start):
 # | 365               | 4              |
 # | 730               | 4              |
 # +-------------------+----------------+
+
 builder = ModBuilder.from_combos(
-    [ModFn(set_larvicides, start_time ) for start_time in (0,5,10, 365, 730)],
+    [ModFn(set_larvicides, start_time) for start_time in (0, 5, 10, 365, 730)],
     [ModFn(DTKConfigBuilder.set_param, 'Run_Number', seed) for seed in range(5)],
 )
 
