@@ -23,11 +23,10 @@ def ivermectin_config_by_duration(box_duration='WEEK', initial_effect: float=0.9
 
     Args:
         drug_code: The duration of drug efficacy. Supported values are:
-
             * DAY
             * WEEK
             * MONTH
-            * XDAYS where "X" is an integer.
+            * 90DAYS
         initial_effect: The initial efficacy of the drug treatment.
 
     Returns:
@@ -55,18 +54,14 @@ def ivermectin_config_by_duration(box_duration='WEEK', initial_effect: float=0.9
                          "'90DAYS'.\nInt or Float of number of days for the Box_Duration.\n")
 
     cfg.Killing_Config.Initial_Effect = initial_effect
-
-
     return cfg
-
 
 
 def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: float=0.95, coverage: float=1.0,
                    start_days: list=None, trigger_condition_list: list=None, triggered_campaign_delay: int=0,
                    listening_duration: int=-1, nodeIDs: list=None, target_group: any="Everyone",
                    target_residents_only: bool=1, node_property_restrictions: list=None,
-                   ind_property_restrictions: list=None):
-
+                   ind_property_restrictions: list=None, check_eligibility_at_trigger: bool=False):
     """
     Add an ivermectin intervention to the campaign using the **Ivermectin**
     class.
@@ -98,7 +93,7 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is
             indefinitely.
-        node_IDs: The list of nodes to apply this intervention to (**Node_List**
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
             parameter).
         target_group: A dictionary targeting an age range and gender of
             individuals for treatment. In the format
@@ -115,7 +110,10 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
             that individuals must have to receive the intervention
             (**Property_Restrictions_Within_Node** parameter). In the format
             ``[{"BitingRisk":"High"}, {"IsCool":"Yes}]``.
-
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay. In the format
+            ``True``  or ``1``
     Returns:
         None
 
@@ -133,7 +131,8 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
                                          "agemax": 10,
                                          "gender": "female"},
                            target_residents_only=1,
-                           ind_property_restrictions=[{"BitingRisk": "Medium"}])
+                           ind_property_restrictions=[{"BitingRisk": "Medium"}],
+                           check_eligibility_at_trigger=False)
     """
 
     if node_property_restrictions is None:
@@ -153,13 +152,20 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
     if triggered_campaign_delay > 0:
         if not trigger_condition_list:
             raise Exception("When using triggered_campaign_delay, please specify triggered_condition_list, too.\n")
+        trigger_node_property_restrictions = []
+        trigger_ind_property_restrictions = []
+        if check_eligibility_at_trigger:
+            trigger_node_property_restrictions = node_property_restrictions
+            trigger_ind_property_restrictions = ind_property_restrictions
+            node_property_restrictions = []
+            ind_property_restrictions = []
         trigger_condition_list = [triggered_campaign_delay_event(config_builder, start_days[0],
                                                                  nodeIDs=nodeIDs,
                                                                  triggered_campaign_delay=triggered_campaign_delay,
                                                                  trigger_condition_list=trigger_condition_list,
                                                                  listening_duration=listening_duration,
-                                                                 ind_property_restrictions=ind_property_restrictions,
-                                                                 node_property_restrictions=node_property_restrictions)]
+                                                                 ind_property_restrictions=trigger_ind_property_restrictions,
+                                                                 node_property_restrictions=trigger_node_property_restrictions)]
 
     gender = "All"
     age_min = 0
@@ -186,8 +192,8 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
                         Intervention_Config=NodeLevelHealthTriggeredIV(
                             Trigger_Condition_List=trigger_condition_list,
                             Target_Residents_Only=target_residents_only,
-                            Property_Restrictions_Within_Node=ind_property_restrictions,
-                            Node_Property_Restrictions=node_property_restrictions,
+                            Property_Restrictions_Within_Node=[],
+                            Node_Property_Restrictions=[],
                             Duration=listening_duration,
                             Demographic_Coverage=coverage,
                             Target_Demographic=target_group,

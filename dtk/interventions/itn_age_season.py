@@ -7,7 +7,7 @@ from dtk.utils.Campaign.CampaignClass import *
 def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, discard={},
                        age_dep={}, seasonal_dep={}, cost=5, nodeIDs=[], as_birth=False, duration=-1,
                        triggered_campaign_delay=0, trigger_condition_list=[],
-                       ind_property_restrictions=[], node_property_restrictions=[]):
+                       ind_property_restrictions=[], node_property_restrictions=[], check_eligibility_at_trigger=False ):
 
     """
     Add an insecticide-treated net (ITN) intervention with a seasonal usage
@@ -66,6 +66,10 @@ def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, disca
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
             parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay.
+
 
     Returns:
         None
@@ -228,10 +232,20 @@ def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, disca
     else:
         if trigger_condition_list:
             if triggered_campaign_delay:
-                trigger_condition_list = [triggered_campaign_delay_event(config_builder, start, nodeIDs,
-                                                                         triggered_campaign_delay,
-                                                                         trigger_condition_list,
-                                                                         duration)]
+                trigger_node_property_restrictions = []
+                trigger_ind_property_restrictions = []
+                if check_eligibility_at_trigger:
+                    trigger_node_property_restrictions = node_property_restrictions
+                    trigger_ind_property_restrictions = ind_property_restrictions
+                    node_property_restrictions = []
+                    ind_property_restrictions = []
+                trigger_condition_list = [triggered_campaign_delay_event(config_builder, start=start,
+                                                                         nodeIDs=nodeIDs,
+                                                                         triggered_campaign_delay=triggered_campaign_delay,
+                                                                         trigger_condition_list=trigger_condition_list,
+                                                                         listening_duration=duration,
+                                                                         ind_property_restrictions=trigger_ind_property_restrictions,
+                                                                         node_property_restrictions=trigger_node_property_restrictions)]
 
             itn_event = CampaignEvent(
                 Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(

@@ -14,7 +14,8 @@ receiving_itn_event = BroadcastEvent(Broadcast_Event='Received_ITN')
 
 
 def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=[], node_property_restrictions=[],
-            ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=1):
+            ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=1,
+            check_eligibility_at_trigger=False):
     """
      Add an insecticide-treated net (ITN) intervention to the campaign
      using the **SimpleBednet** class.
@@ -54,7 +55,9 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
             configure birth-triggered ITN (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is indefinitely.
-
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay.
     Returns:
         None
 
@@ -89,11 +92,21 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
         nodeset_config = NodeSetNodeList(Node_List=nodeIDs)
 
     if triggered_campaign_delay:
+        trigger_node_property_restrictions = []
+        trigger_ind_property_restrictions = []
+        if check_eligibility_at_trigger:
+            trigger_node_property_restrictions = node_property_restrictions
+            trigger_ind_property_restrictions = ind_property_restrictions
+            node_property_restrictions = []
+            ind_property_restrictions = []
+
         trigger_condition_list = [str(triggered_campaign_delay_event(config_builder,
-                                                                     start,  nodeIDs,
-                                                                     triggered_campaign_delay,
-                                                                     trigger_condition_list,
-                                                                     listening_duration))]
+                                                                     start=start,  nodeIDs=nodeIDs,
+                                                                     triggered_campaign_delay=triggered_campaign_delay,
+                                                                     trigger_condition_list=trigger_condition_list,
+                                                                     listening_duration=listening_duration,
+                                                                     ind_property_restrictions=trigger_ind_property_restrictions,
+                                                                     node_property_restrictions=trigger_node_property_restrictions))]
 
     for coverage_by_age in coverage_by_ages:
         if trigger_condition_list:

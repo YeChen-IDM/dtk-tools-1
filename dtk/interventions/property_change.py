@@ -8,7 +8,7 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
                          daily_prob: float=1, max_duration: int=3.40282e+38, revert: int=0, nodeIDs: list=None,
                          node_property_restrictions: list=None, triggered_campaign_delay: int=0,
                          trigger_condition_list: list=None, listening_duration: int=-1,
-                         disqualifying_properties: list=None):
+                         disqualifying_properties: list=None, check_eligibility_at_trigger: bool=False):
     """
     Add an intervention that changes the node property value to another on a
     particular day or after a triggering event using the
@@ -55,6 +55,9 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
             cause an intervention to be aborted (persistent interventions
             will stop being distributed to nodes with these values). For
             example, ["Place:Swamp"].
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay.
 
     Returns:
         None
@@ -91,10 +94,15 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
 
     if trigger_condition_list:
         if triggered_campaign_delay:
-            trigger_condition_list = [str(triggered_campaign_delay_event(cb, start_day, nodeIDs,
-                                                                         triggered_campaign_delay,
-                                                                         trigger_condition_list,
-                                                                         listening_duration))]
+            trigger_node_property_restrictions = []
+            if check_eligibility_at_trigger:
+                trigger_node_property_restrictions = node_property_restrictions
+                node_property_restrictions = []
+            trigger_condition_list = [str(triggered_campaign_delay_event(cb, start=start_day, nodeIDs=nodeIDs,
+                                                                         triggered_campaign_delay=triggered_campaign_delay,
+                                                                         trigger_condition_list=trigger_condition_list,
+                                                                         listening_duration=listening_duration,
+                                                                         node_property_restrictions=trigger_node_property_restrictions))]
 
         changer_event = CampaignEvent(
             Start_Day=start_day,
@@ -127,7 +135,6 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
         cb.add_event(changer_event)
 
 
-
 def change_individual_property_at_age(cb, target_property_name: str=None, target_property_value: str=None,
                                       change_age_in_days: int=None, start_day: int=0,
                                       listening_duration: int=-1, coverage: float=1, daily_prob: float=1,
@@ -150,7 +157,7 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
             value.
         start_day: The day on which to start distributing the intervention
             (**Start_Day** parameter).
-        duration: The number of days to continue the intervention after
+        max_duration: The number of days to continue the intervention after
             **start_day**.
         coverage: The proportion of the population that will receive the
             intervention (**Demographic_Coverage** parameter).
@@ -239,7 +246,6 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
         )
     )
 
-
     cb.add_event(campaign_event)
 
 
@@ -249,7 +255,8 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
                                node_property_restrictions: list=None, ind_property_restrictions: list=None,
                                triggered_campaign_delay: int=0, trigger_condition_list: list=None,
                                listening_duration: int=-1, blackout_flag: bool=True,
-                               disqualifying_properties: list=None, target_residents_only: bool=False):
+                               disqualifying_properties: list=None, target_residents_only: bool=False,
+                               check_eligibility_at_trigger: bool=False):
     """
     Add an intervention that changes the individual property value to another on a
     particular day or after a triggering event using the
@@ -262,7 +269,7 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
             individual. For example, InterventionStatus.
         target_property_value: The individual property value to assign to the
             individual. For example, RecentDrug.
-        target: The individuals to target with the intervention. To
+        target_group: The individuals to target with the intervention. To
             restrict by age, provide a dictionary of ``{'agemin' : x, 'agemax' :
             y}``. Default is targeting everyone.
         start_day: The day on which to start distributing the intervention
@@ -275,6 +282,8 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
             NodeProperty value. This timing works in conjunction with
             **daily_prob**; nodes not moved to the new value by the end of
             **max_duration** keep the same value.
+        max_duration: The number of days to continue the intervention after
+            **start_day**.
         revert: The number of days before a node reverts to its original
             property value. Default of 0 means the new value is kept forever.
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
@@ -290,7 +299,7 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
             target (**Property_Restrictions_Within_Node** parameter). In the
             format ``[{"IndividualProperty1" : "PropertyValue1"},
             {'IndividualProperty2': "PropertyValue2"}, ...]``
-         triggered_campaign_delay: The number of days the campaign is delayed
+        triggered_campaign_delay: The number of days the campaign is delayed
             after being triggered.
         trigger_condition_list: A list of the events that will
             trigger the intervention. If included, **start_day** is the day
@@ -306,7 +315,9 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
             example, ["Place:Swamp"].
         target_residents_only: Set to True to target only the individuals who
             started the simulation in this node and are still in the node.
-
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay.
     Returns:
         None
 
@@ -367,11 +378,20 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
 
     if trigger_condition_list:
         if triggered_campaign_delay:
+            trigger_node_property_restrictions = []
+            trigger_ind_property_restrictions = []
+            if check_eligibility_at_trigger:
+                trigger_node_property_restrictions = node_property_restrictions
+                trigger_ind_property_restrictions = ind_property_restrictions
+                node_property_restrictions = []
+                ind_property_restrictions = []
             trigger_condition_list = [triggered_campaign_delay_event(cb, start_day,
                                                                      nodeIDs=nodeIDs,
                                                                      triggered_campaign_delay=triggered_campaign_delay,
                                                                      trigger_condition_list=trigger_condition_list,
-                                                                     listening_duration=listening_duration)]
+                                                                     listening_duration=listening_duration,
+                                                                     ind_property_restrictions=trigger_ind_property_restrictions,
+                                                                     node_property_restrictions=trigger_node_property_restrictions)]
         changer_event = CampaignEvent(
                 Start_Day=start_day,
                 Nodeset_Config=node_cfg,

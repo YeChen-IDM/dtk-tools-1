@@ -10,9 +10,9 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
                         duration_of_stay=100, duration_of_stay_2=0, 
                         duration_before_leaving_distr_type='FIXED_DURATION', 
                         duration_before_leaving=0, duration_before_leaving_2=0, 
-                        target='Everyone', nodesfrom={"class": "NodeSetAll"},
+                        target='Everyone', nodesfrom=None,
                         ind_property_restrictions=[], node_property_restrictions=[], triggered_campaign_delay=0,
-                        trigger_condition_list=[], listening_duration=-1):
+                        trigger_condition_list=[], listening_duration=-1, check_eligibility_at_trigger=False):
 
     """
     Add a migration event to a campaign that moves individuals from one node
@@ -91,6 +91,10 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
         NodeID_To_Migrate_To=nodeto,
         Is_Moving=False
     )
+    if nodesfrom:
+        node_cfg = NodeSetNodeList(Node_List=nodesfrom)
+    else:
+        node_cfg = NodeSetAll()
 
     migration_event = update_duration_type(migration_event, duration_at_node_distr_type,
                                            dur_param_1=duration_of_stay, dur_param_2=duration_of_stay_2,
@@ -101,13 +105,23 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
 
     if trigger_condition_list:
         if repetitions > 1 or triggered_campaign_delay > 0:
+            trigger_node_property_restrictions = []
+            trigger_ind_property_restrictions = []
+            if check_eligibility_at_trigger:
+                trigger_node_property_restrictions = node_property_restrictions
+                trigger_ind_property_restrictions = ind_property_restrictions
+                node_property_restrictions = []
+                ind_property_restrictions = []
             event_to_send_out = random.randrange(100000)
             for x in range(repetitions):
                 # create a trigger for each of the delays.
-                triggered_campaign_delay_event(cb, start_day, nodesfrom,
-                                               triggered_campaign_delay + x * tsteps_btwn,
-                                               trigger_condition_list,
-                                               listening_duration, event_to_send_out)
+                triggered_campaign_delay_event(cb, start=start_day, nodeIDs=nodesfrom,
+                                               triggered_campaign_delay=triggered_campaign_delay + x * tsteps_btwn,
+                                               trigger_condition_list=trigger_condition_list,
+                                               listening_duration=listening_duration,
+                                               event_to_send_out=event_to_send_out,
+                                               ind_property_restrictions=trigger_ind_property_restrictions,
+                                               node_property_restrictions=trigger_node_property_restrictions)
             trigger_condition_list = [str(event_to_send_out)]
 
         event = CampaignEvent(
@@ -125,7 +139,7 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
                     Actual_IndividualIntervention_Config=migration_event
                 )
             ),
-            Nodeset_Config=nodesfrom
+            Nodeset_Config=node_cfg
         )
 
         if isinstance(target, dict) and all([k in target.keys() for k in ['agemin', 'agemax']]):
@@ -148,7 +162,7 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
                 Demographic_Coverage=coverage,
                 Intervention_Config=migration_event
             ),
-            Nodeset_Config=nodesfrom
+            Nodeset_Config=node_cfg
         )
 
         if isinstance(target, dict) and all([k in target for k in ['agemin', 'agemax']]):
@@ -210,8 +224,8 @@ def update_duration_type(migration_event, duration_at_node_distr_type, dur_param
         setattr(migration_event, "Duration_" + trip_end + "_Fixed", dur_param_1)
     elif duration_at_node_distr_type == 'UNIFORM_DURATION' :
         setattr(migration_event, "Duration_" + trip_end + "_Distribution_Type", MigrateFamily_Duration_Enum.UNIFORM_DURATION)
-        setattr(migration_event, "Duration_" + trip_end + "_Uniform_Min", dur_param_1)
-        setattr(migration_event, "Duration_" + trip_end + "_Uniform_Max", dur_param_2)
+        setattr(migration_event, "Duration_" + trip_end + "_Min", dur_param_1)
+        setattr(migration_event, "Duration_" + trip_end + "_Max", dur_param_2)
     elif duration_at_node_distr_type == 'GAUSSIAN_DURATION' :
         setattr(migration_event, "Duration_" + trip_end + "_Distribution_Type", MigrateFamily_Duration_Enum.GAUSSIAN_DURATION)
         setattr(migration_event, "Duration_" + trip_end + "_Gausian_Mean", dur_param_1)

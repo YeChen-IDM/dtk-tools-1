@@ -47,7 +47,8 @@ node_irs_config = SpaceSpraying(
 
 def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
             initial_killing=0.5, duration=90, waning={}, node_property_restrictions=[],
-            ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1):
+            ind_property_restrictions=[], triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1,
+            check_eligibility_at_trigger=False):
     """
     Add an indoor residual spraying (IRS) intervention using the
     **IRSHousingModification** class, an individual-level intervention. This
@@ -92,6 +93,9 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
             configure birth-triggered IRS (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is indefinitely.
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay.
 
     Returns:
         None
@@ -125,14 +129,22 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
         irs_housingmod.Cost_To_Consumer = cost
 
     irs_housingmod_w_event = MultiInterventionDistributor(Intervention_List=[irs_housingmod, receiving_irs_event])
-
     nodeset_config = NodeSetAll() if not nodeIDs else NodeSetNodeList(Node_List=nodeIDs)
 
-    if triggered_campaign_delay :
-        trigger_condition_list = [triggered_campaign_delay_event(config_builder, start, nodeIDs,
-                                                                 triggered_campaign_delay,
-                                                                 trigger_condition_list,
-                                                                 listening_duration)]
+    if triggered_campaign_delay:
+        trigger_node_property_restrictions = []
+        trigger_ind_property_restrictions = []
+        if check_eligibility_at_trigger:
+            trigger_node_property_restrictions = node_property_restrictions
+            trigger_ind_property_restrictions = ind_property_restrictions
+            node_property_restrictions = []
+            ind_property_restrictions = []
+        trigger_condition_list = [triggered_campaign_delay_event(config_builder, start=start, nodeIDs=nodeIDs,
+                                                                 triggered_campaign_delay=triggered_campaign_delay,
+                                                                 trigger_condition_list=trigger_condition_list,
+                                                                 listening_duration=listening_duration,
+                                                                 ind_property_restrictions=trigger_node_property_restrictions,
+                                                                 node_property_restrictions=trigger_ind_property_restrictions)]
 
     for coverage_by_age in coverage_by_ages:
         if trigger_condition_list:
@@ -167,6 +179,7 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
                 Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
                     Demographic_Coverage=coverage_by_age["coverage"],
                     Target_Residents_Only=True,
+                    Node_Property_Restrictions=node_property_restrictions,
                     Intervention_Config=irs_housingmod_w_event
                 )
             )
@@ -201,7 +214,8 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
 def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
                  waning_effect_type='WaningEffectExponential', cost=None,
                  irs_ineligibility_duration=0, nodeIDs=[], node_property_restrictions=[],
-                 triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1):
+                 triggered_campaign_delay=0, trigger_condition_list=[], listening_duration=-1,
+                 check_eligibility_at_trigger=False):
     """
     Add an indoor residual spraying (IRS) intervention using the
     **SpaceSpraying** class, a node-level intervention. This can be distributed
@@ -237,6 +251,9 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
             configure birth-triggered IRS (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is indefinitely.
+        check_eligibility_at_trigger: if triggered event is delayed, you have an
+            option to check individual/node's eligibility at the initial trigger
+            or when the event is actually distributed after delay.
 
     Returns:
         None
@@ -285,10 +302,15 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
 
     if trigger_condition_list:
         if triggered_campaign_delay:
+            trigger_node_property_restrictions = []
+            if check_eligibility_at_trigger:
+                trigger_node_property_restrictions = node_property_restrictions
+                node_property_restrictions = []
             trigger_condition_list = [str(triggered_campaign_delay_event(config_builder, start, nodeIDs,
                                                                          triggered_campaign_delay=triggered_campaign_delay,
                                                                          trigger_condition_list=trigger_condition_list,
-                                                                         listening_duration=listening_duration))]
+                                                                         listening_duration=listening_duration,
+                                                                         node_property_restrictions=trigger_node_property_restrictions))]
 
         IRS_event.Event_Coordinator_Config.Intervention_Config = NodeLevelHealthTriggeredIV(
             Blackout_On_First_Occurrence=True,
