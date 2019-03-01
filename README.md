@@ -54,7 +54,7 @@ Run the initialization:
 
 If you want to access the examples, navigate to the desired folder and run:
 ```bash
-> dtkseup examples
+> dtksetup examples
 ```
 It will create an `examples` directory containing all the built-in dtk-tools examples.
 
