@@ -27,13 +27,13 @@ Create a python virtual environment:
 
 Activate the virtual environment, on Windows:
 ```bash
-> cd idmtools\Scripts
-> activate
+> cd idmtools
+> Scripts\activate
 ```
 On unix platform:
 ```bash
-> cd idmtools/bin
-> ./activate
+> cd idmtools
+> ./bin/activate
 ```
 
 Create a `pip.ini` file (`pip.conf` if on Unix or Mac) in your virtual environment folder (here `idmtools`) with the following content:
