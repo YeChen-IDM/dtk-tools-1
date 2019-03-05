@@ -295,8 +295,7 @@ def add_ors_node(config_builder, start_day: int=0, coverage: float=1, killing_in
                 Start_Day=start_day,
                 Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
                     Node_Property_Restrictions=node_property_restrictions,
-                    Intervention_Config=[
-                        SpaceSpraying(
+                    Intervention_Config=SpaceSpraying(
                             Spray_Kill_Target=SpaceSpraying_Spray_Kill_Target_Enum.SpaceSpray_FemalesAndMales,
                             Habitat_Target=SpaceSpraying_Habitat_Target_Enum.ALL_HABITATS,
                             Cost_To_Consumer=cost,
@@ -309,7 +308,6 @@ def add_ors_node(config_builder, start_day: int=0, coverage: float=1, killing_in
                                 Box_Duration=365
                             )
                         )
-                    ]
                 )
     )
     config_builder.add_event(ors_event)
