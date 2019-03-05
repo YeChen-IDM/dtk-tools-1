@@ -61,6 +61,8 @@ It will create an `examples` directory containing all the built-in dtk-tools exa
 
 #### Installation for development
 
+The following steps are based on the virtual environment and `pip.ini` file mentioned above.
+
 To install the dtk-tools, first clone the repository:
 ```
 > git clone https://github.com/InstituteforDiseaseModeling/dtk-tools.git
