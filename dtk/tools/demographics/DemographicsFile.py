@@ -71,10 +71,12 @@ class DemographicsFile(BaseInputFile):
         self.content['Nodes'] = []
 
         for node in self.nodes.values():
-            self.content['Nodes'].append({
+            d = {
                 'NodeID': node.id,
                 'NodeAttributes': node.to_dict()
-            })
+            }
+            d.update(node.meta)
+            self.content['Nodes'].append(d)
 
         # Update node count
         self.content['Metadata']['NodeCount'] = len(self.nodes)

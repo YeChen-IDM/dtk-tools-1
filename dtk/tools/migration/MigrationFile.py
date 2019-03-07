@@ -99,7 +99,7 @@ class MigrationFile(BaseInputFile):
         with open(rates_txt_file_path, 'w') as fout:
             items = self.flatten_matrix(self.matrix)
             for src, dest, mig in items:
-                fout.write('%d %d %0.1g\n' % (int(src), int(dest), mig))
+                fout.write('%d %d %0.3g\n' % (int(src), int(dest), mig))
 
     def load_from_text(self, rates_txt_file_path: str):
         """

@@ -7,7 +7,7 @@ class Node:
     default_population = 1000
     res_in_degrees = 2.5 / 60
 
-    def __init__(self, lat, lon, pop, name='', area=None, forced_id=None, extra_attributes={}):
+    def __init__(self, lat, lon, pop, name='', area=None, forced_id=None, extra_attributes={}, meta={}):
         """
         Represent a Node
         :param lat: Latitude
@@ -24,6 +24,7 @@ class Node:
         self.pop = pop
         self.forced_id = forced_id
         self.extra_attributes = extra_attributes
+        self.meta = meta
 
         if area:
             self.density = pop / area
