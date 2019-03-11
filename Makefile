@@ -78,10 +78,10 @@ servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 do-staging-upload: ## Uploads to staging
-	twine upload --verbose -r staging dist/*
+	twine upload -r staging dist/*
 
 do-production-upload: # Uploading dist to production
-	twine upload --verbose -r production dist/*
+	twine upload -r production dist/*
 
 prepare-version: ## Updates any files that have version info in them
 	echo Version: $(VERSION)
