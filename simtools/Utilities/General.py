@@ -1,7 +1,9 @@
 import contextlib
 import functools
+import importlib
 import logging
 import os
+import pkgutil
 import re
 import sys
 
@@ -326,8 +328,6 @@ def is_running(pid, name_part):
     return False
 
 
-import importlib
-import pkgutil
 
 
 def import_submodules(package, recursive=True):
