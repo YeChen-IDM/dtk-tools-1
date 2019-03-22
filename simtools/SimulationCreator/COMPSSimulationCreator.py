@@ -2,7 +2,7 @@ from COMPS.Data import Simulation, Configuration
 from COMPS.Data import SimulationFile
 from simtools.SetupParser import SetupParser
 from simtools.SimulationCreator.BaseSimulationCreator import BaseSimulationCreator
-from simtools.Utilities.COMPSUtilities import COMPS_login, get_experiment_by_id
+from simtools.Utilities.COMPSUtilities import COMPS_login
 from simtools.Utilities.General import nostdout
 
 
