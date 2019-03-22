@@ -45,8 +45,14 @@ class AgeBin:
         other_bin = other_bin if isinstance(other_bin, AgeBin) else AgeBin.from_string(other_bin)
         return self.start <= other_bin.start and self.end >= other_bin.end
 
+    def to_tuple(self):
+        return tuple([self.start, self.end])
+
     def __str__(self):
         return self.STR_FORMAT % (self.start, self.delimiter, self.end)
+
+    def __repr__(self):
+        return self.__str__()
 
     def __eq__(self, other):
         return self.start == other.start and self.end == other.end
