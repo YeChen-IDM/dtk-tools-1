@@ -316,7 +316,7 @@ class CalibManager(object):
         # validate input iter_step
         it = IterationState.restore_state(self.name, resume_iteration)
 
-        latest_step = StatusPoint[it.status]
+        latest_step = it.status
         if iter_step is None:
             iter_step = latest_step.name
 

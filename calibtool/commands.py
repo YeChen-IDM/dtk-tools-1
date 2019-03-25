@@ -77,12 +77,15 @@ def resample(args, unknownArgs):
 
 
 def resume(args, unknownArgs):
+    from calibtool.utils import StatusPoint
+
     if args.iter_step:
         if args.iter_step not in ['commission', 'analyze', 'plot', 'next_point']:
             print("Invalid iter_step '%s', ignored." % args.iter_step)
             exit()
     manager = get_calib_manager(args, unknownArgs, force_metadata=True)
-    manager.resume_calibration(args.iteration, iter_step=args.iter_step)
+    iter_step = None if args.iter_step is None else StatusPoint[args.iter_step]
+    manager.resume_calibration(args.iteration, iter_step=iter_step)
 
 
 def cleanup(args, unknownArgs):
