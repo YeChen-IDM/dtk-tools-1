@@ -50,9 +50,9 @@
     "test": "=="
   },
   "statsmodels": {
-    "version": "0.8.0",
+    "version": "0.9.0",
     "test": "==",
-    "wheel": "statsmodels-0.8.0-cp36-cp36m-win_amd64.whl"
+    "wheel": "statsmodels-0.9.0-cp36-cp36m-win_amd64.whl"
   },
   "SQLAlchemy": {
     "version": "1.2.4",
