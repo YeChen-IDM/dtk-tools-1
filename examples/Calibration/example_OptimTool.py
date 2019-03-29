@@ -131,7 +131,7 @@ def map_sample_to_model_input(cb, sample):
                 print('Warning: %s not in sample, perhaps resuming previous iteration' % p['Name'])
                 continue
             value = sample.pop(p['Name'])
-            tags.update(cb.set_param(p['Name'], value))
+            tags.update(cb.set_param(p['MapTo'], value))
 
     for name,value in sample.items():
         print('UNUSED PARAMETER:'+name)
