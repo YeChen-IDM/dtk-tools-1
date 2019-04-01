@@ -90,7 +90,7 @@ class Experiment(Base):
         return "%s_%s" % (self.exp_name,self.exp_id)
 
     def get_path(self):
-        if self.location == "LOCAL":
+        if self.location == "LOCAL" or self.location == "CLUSTER":
             return os.path.join(self.sim_root, self.id)
 
     def contains_simulation(self, simid):

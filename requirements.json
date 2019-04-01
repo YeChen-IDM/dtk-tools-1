@@ -90,5 +90,9 @@
   "geopy": {
     "version": "1.18.0",
     "test": ">="
+  },
+  "astunparse": {
+    "version": "1.6.2",
+    "test": ">="
   }
 }

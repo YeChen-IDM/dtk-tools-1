@@ -548,7 +548,7 @@ class DTKConfigBuilder(SimConfigBuilder):
 
         # complete the path to each dll before writing emodules_map.json
         location = SetupParser.get('type')
-        if location == 'LOCAL':
+        if location == 'LOCAL' or location == 'CLUSTER':
             root = self.assets.dll_root
         elif location == 'HPC':
             root = 'Assets'

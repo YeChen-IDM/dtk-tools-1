@@ -14,6 +14,9 @@ class ExperimentManagerFactory(object):
         if type == 'HPC':
             from simtools.ExperimentManager.CompsExperimentManager import CompsExperimentManager
             return CompsExperimentManager
+        if type == "CLUSTER":
+            from simtools.ExperimentManager.ClusterExperimentManager import ClusterExperimentManager
+            return ClusterExperimentManager
         raise Exception("ExperimentManagerFactory location argument should be either 'LOCAL' or 'HPC'.")
 
     @classmethod
@@ -23,7 +26,8 @@ class ExperimentManagerFactory(object):
             from simtools.Utilities.Experiments import retrieve_experiment
             experiment = retrieve_experiment(experiment)
 
-        logger.debug("Factory - Creating ExperimentManager for experiment %s pid: %d location: %s" % (experiment.id, os.getpid(), experiment.location))
+        logger.debug("Factory - Creating ExperimentManager for experiment %s pid: %d location: %s" % (
+        experiment.id, os.getpid(), experiment.location))
         manager_class = cls._factory(type=experiment.location)
         manager = manager_class(experiment=experiment, config_builder=config_builder)
 
@@ -38,8 +42,9 @@ class ExperimentManagerFactory(object):
     def from_setup(cls):
         location = SetupParser.get('type')
         logger.debug('Factory - Initializing %s ExperimentManager from parsed setup' % location)
-        logger.warning('ExperimentManagerFactory.from_setup is deprecated. Use ExperimentManagerFactory.init() instead or '
-                       'ExperimentManagerFactory.from_cb(config_builder) if you have a config_builder')
+        logger.warning(
+            'ExperimentManagerFactory.from_setup is deprecated. Use ExperimentManagerFactory.init() instead or '
+            'ExperimentManagerFactory.from_cb(config_builder) if you have a config_builder')
         return cls._factory(location)(experiment=None, config_builder=None)
 
     @classmethod
@@ -53,5 +58,3 @@ class ExperimentManagerFactory(object):
         location = SetupParser.get('type')
         logger.debug('Factory - Initializing %s ExperimentManager from config_builder' % location)
         return cls._factory(location)(experiment=None, config_builder=config_builder)
-
-

@@ -234,7 +234,6 @@ class BaseExperimentManager(CacheEnabled):
         for _ in range(max_creator_processes):
             creator_process = self.get_simulation_creator(work_queue=work_queue)
             creator_process.daemon = True
-            creator_process.start()
             creator_processes.append(creator_process)
 
         # Display some info
@@ -242,6 +241,10 @@ class BaseExperimentManager(CacheEnabled):
             logger.info("Creating the simulations")
             logger.info(" | Creator processes: {} ".format(max_creator_processes))
             logger.info(" | Simulations per batch: {}".format(sim_per_batch))
+
+        # Start the creator processes
+        for p in creator_processes:
+            p.start()
 
         # Status display
         while any([p.is_alive() for p in creator_processes]) or t.isAlive():

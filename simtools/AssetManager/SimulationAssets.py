@@ -157,7 +157,7 @@ class SimulationAssets(object):
         # and generate a 'super AssetCollection' containing all file references.
         asset_files = {}
         for collection in sorted_collections:
-            if location == 'LOCAL':
+            if location == 'LOCAL' or location == 'CLUSTER':
                 for asset in collection.asset_files_to_use:
                     asset_files[(asset.file_name, asset.relative_path)] = asset
             else:

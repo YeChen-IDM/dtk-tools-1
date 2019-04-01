@@ -226,15 +226,12 @@ class SetupParser(metaclass=SetupParserMeta):
         block_type = parser.get(current_block, 'type')
         is_root_block = (current_block == block_type)
 
-        if is_root_block:
+        if is_root_block or not parser.has_section(block_type):
             merged_options = {}
         else:
             # e.g. terminate recursion on block 'HPC' with type 'HPC'
             # continue down the inheritance chain
             parent = block_type
-            if not parser.has_section(parent):
-                raise self.InvalidBlock('simtools.ini block: %s is of type: %s, but there is no such block.'
-                                        % (current_block, parent))
             block_type, merged_options = self._merge_inherited_options(parser, current_block=parent)
 
         # merge this current block's info on top of any results from deeper recursion results

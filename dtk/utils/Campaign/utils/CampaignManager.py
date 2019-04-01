@@ -9,7 +9,7 @@ import subprocess
 import shutil
 
 import astor
-from dtk.utils.Campaign.utils import Astunparse as astunparse
+import astunparse
 
 from dtk.utils.Campaign.utils.ClassParser import ClassParser
 from dtk.utils.Campaign.utils.SchemaParser import SchemaParser

@@ -75,10 +75,11 @@ class ExperimentDataStore:
     def get_active_experiments(cls, location=None):
         logger.debug("Get active experiments")
         with session_scope() as session:
-            experiments = session.query(Experiment).distinct(Experiment.exp_id) \
+            experiments = session.query(Experiment).distinct(Experiment.exp_id).filter(Experiment.location != "CLUSTER") \
                 .join(Experiment.simulations) \
                 .options(joinedload('simulations').joinedload('experiment')) \
                 .filter(~Simulation.status_s.in_((SimulationState.Succeeded.name, SimulationState.Failed.name, SimulationState.Canceled.name)))
+
             if location:
                 experiments = experiments.filter(Experiment.location == location)
 
