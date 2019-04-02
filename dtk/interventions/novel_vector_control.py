@@ -1,5 +1,5 @@
 from dtk.utils.Campaign.CampaignClass import *
-
+import copy
 
 def add_ATSB(cb, start_day: int=0, coverage: float=0.15, kill_cfg: any=None, duration: int=180, duration_std_dev: int=14,
              nodeIDs: list=None, node_property_restrictions: list=None):
@@ -60,7 +60,7 @@ def add_ATSB(cb, start_day: int=0, coverage: float=0.15, kill_cfg: any=None, dur
                         }]
             or kill_cfg = {"Killing_Config":{
                                 "Box_Duration": 3650,
-                                "Initial_Effect": 0,
+                                "Initial_Effect": 0.93,
                                 "class": "WaningEffectBox"}
                            }
             add_ATSB(cb, start=30, coverage=0.15, kill_cfg=kill_cfg,
@@ -76,6 +76,10 @@ def add_ATSB(cb, start_day: int=0, coverage: float=0.15, kill_cfg: any=None, dur
 
     cfg_species = [x for x in cb.get_param('Vector_Species_Names')
                    if cb.get_param('Vector_Species_Params')[x]['Vector_Sugar_Feeding_Frequency'] != 'VECTOR_SUGAR_FEEDING_NONE']
+    if not cfg_species:
+        raise ValueError("No species found without \"VECTOR_SUGAR_FEEDING_NONE\" setting. "
+                         "Please review/update and try again.\n")
+
     atsb_master = WaningEffectBoxExponential(
         Initial_Effect=0.0337*coverage,
         Box_Duration=180,
@@ -88,30 +92,31 @@ def add_ATSB(cb, start_day: int=0, coverage: float=0.15, kill_cfg: any=None, dur
     # if user has specified a kill cfg, just use dicts rather than CampaignClasses.
     # If user doesn't specified a kill cfg, use the default killing cfg
     if kill_cfg:
+        local_kill_cfg = copy.deepcopy(kill_cfg)
         # if user-inputed killing cfg is dict and species not specified, make a list
-        if isinstance(kill_cfg, dict):
-            if 'Killing_Config' not in kill_cfg:
+        if isinstance(local_kill_cfg, dict):
+            if 'Killing_Config' not in local_kill_cfg:
                 raise ValueError('Each config in SugarTrap killing config list must contain Killing_Config')
             else:
-                kill_cfg['Killing_Config']['Initial_Effect'] *= coverage
-            if 'Species' not in kill_cfg:
+                local_kill_cfg['Killing_Config']['Initial_Effect'] *= coverage
+            if 'Species' not in local_kill_cfg:
                 killing_cfg = [{'Species': sp,
-                                'Killing_Config': kill_cfg['Killing_Config']} for sp in cfg_species]
+                                'Killing_Config': local_kill_cfg['Killing_Config']} for sp in cfg_species]
             else :
-                killing_cfg = [kill_cfg]
+                killing_cfg = [local_kill_cfg]
         # if user-inputed killing cfg is list, check if each listed species is sugar-feeding species in config.
-        elif isinstance(kill_cfg, list):
-            for x in kill_cfg:
+        elif isinstance(local_kill_cfg, list):
+            for x in local_kill_cfg:
                 if 'Species' not in x:
                     raise ValueError('Each config in SugarTrap killing config list must contain species name')
                 elif 'Killing_Config' not in x:
                     raise ValueError('Each config in SugarTrap killing config list must contain Killing_Config')
                 else:
                     x['Killing_Config']['Initial_Effect'] *= coverage
-            listed_sp = [x['Species'] for x in kill_cfg]
+            listed_sp = [x['Species'] for x in local_kill_cfg]
             if any([x not in cfg_species for x in listed_sp]) :
                 raise ValueError('A targeted SugarTrap species is not a sugar-feeding species in config')
-            killing_cfg = [x for x in kill_cfg if x['Species'] in cfg_species]
+            killing_cfg = [x for x in local_kill_cfg if x['Species'] in cfg_species]
         else :
             raise ValueError('Invalid SugarTrap killing config')
 
