@@ -11,9 +11,28 @@ Modules contained in this package are intended to:
 - Enable the configuration of arbitrary collections of simulations (e.g. parameteric sweeps) through an extensible library of builder classes;
 - Collect a library of post-processing analysis functionality, e.g. filtering, mapping, averaging, plotting.
 
-#### Recommended Installation steps
-
+#### Pre-requisites
 Make sure you have **Python 3.6 x64** installed (available [here](https://www.python.org/downloads/)).
+
+##### UNIX Platforms
+On Ubuntu platforms, please install the following system packages:
+```bash
+apt-get install python3.6-dev
+apt-get install libsnappy-dev
+```
+
+On Centos, please install the following system packages:
+```bash
+yum install python36u-devel
+yum install snappy-devel
+```
+
+On MacOS, you will need to run the following command:
+```bash
+brew install snappy
+```
+
+#### Recommended Installation steps
 
 Install python virtualenv:
 ```bash

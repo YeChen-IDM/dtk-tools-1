@@ -339,6 +339,12 @@ def get_experiments_by_name(name, user=None):
     return Experiment.get(query_criteria=QueryCriteria().where(filters))
 
 
+@retry_function
+def get_most_recent_experiment_id_by_name(name, user=None):
+    experiments = {e.date_created: e for e in get_experiments_by_name(name, user)}
+    return experiments[max(experiments.keys())].id
+
+
 def sims_from_experiment(e):
     return e.get_simulations(QueryCriteria().select(['id', 'state']).select_children('hpc_jobs'))
 

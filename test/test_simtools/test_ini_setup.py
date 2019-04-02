@@ -1,14 +1,7 @@
 import os
-import stat
 import unittest
 
-from simtools.DataAccess.DataStore import DataStore
-from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
-from simtools.ModBuilder import ModBuilder, SingleSimulationBuilder, RunNumberSweepBuilder, ModFn
 from simtools.SetupParser import SetupParser
-from simtools.SimConfigBuilder import SimConfigBuilder
-from simtools.Utilities.General import get_md5, CommandlineGenerator
-from COMPS.Data.Simulation import SimulationState
 
 
 class TestSetupParser(unittest.TestCase):
