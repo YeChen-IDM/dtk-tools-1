@@ -216,7 +216,6 @@ class BaseExperimentManager(CacheEnabled):
         max_creator_processes = min(multiprocessing.cpu_count() - 1, int(SetupParser.get('max_threads', default=multiprocessing.cpu_count() - 1)))
         creator_processes = []
         work_queue = Queue(max_creator_processes*5)
-        simulations_created = 0
 
         def fill_queue(mods, sim_per_batch, max_creator_processes, work_queue):
             global simulations_expected
@@ -248,6 +247,9 @@ class BaseExperimentManager(CacheEnabled):
 
         # Status display
         while any([p.is_alive() for p in creator_processes]) or t.isAlive():
+            # Refresh the number of sims created
+            simulations_created = len(self.cache)
+
             sys.stdout.write("\r {} Created simulations: {}/{}".format(next(animation), simulations_created, simulations_expected))
             sys.stdout.flush()
             time.sleep(0.3)
