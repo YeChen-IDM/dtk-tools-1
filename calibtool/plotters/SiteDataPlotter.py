@@ -1,7 +1,7 @@
 import logging
 import os
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -13,7 +13,7 @@ from calibtool.utils import StatusPoint
 from simtools.OutputParser import CompsDTKOutputParser
 
 sns.set_style('white', {'axes.linewidth': 0.5})
-
+    
 logger = logging.getLogger(__name__)
 
 
