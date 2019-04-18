@@ -1,4 +1,6 @@
 import copy
+import json
+
 from calibtool.CalibManager import CalibManager
 from examples.Separatrix.Models.ModelSite import ModelSite
 from examples.Separatrix.Models.ModelPlotter import ModelPlotter
@@ -55,15 +57,10 @@ def map_sample_to_model_input(cb, sample):
     return tags
 
 
-# params_user = {'Interest_Level': 0.7, 'Num_Candidates_Points': 10, 'Scale_Model_Sigma': 0.02,
-#                'h_rho': 0.3, 'c_rho': 0.5, 'gamma_rho': 0.8, 'c_inference': 4, 'Gamma_Inference': 0.8,
-#                'Min_Neighbors_for_KNN': 3, 'Fraction_LHS': 0, 'Max_Fraction_igBDOE': 0.25, 'min_g': 0,
-#                'max_g': 1, 'MCMC_Resolution': 1000, 'MCMC_Num_Iterations': 2, 'Blur_Sigma': 0.02,
-#                'Inference_Grid_Resolution': 100}
+# Load Separatrix settings
+Settings = json.load(open('Settings.json', 'r'))
 
-
-model_next_point = ModelNextPoint(params, Num_Initial_Samples=5, Num_Next_Samples=5, Num_Test_Points=6,
-                                 Interest_Level=0.7, Scale_Model_Sigma=0.02)
+model_next_point = ModelNextPoint(params, Num_Initial_Samples=5, Num_Next_Samples=5, Settings=Settings)
 
 calib_manager = CalibManager(name='Example_Model_3',
                              config_builder=cb,
