@@ -4,7 +4,7 @@ import json
 from calibtool.CalibManager import CalibManager
 from examples.Separatrix.Models.ModelSite import ModelSite
 from examples.Separatrix.Models.ModelPlotter import ModelPlotter
-from examples.Separatrix.Alogorithms.ModelNextPoint import ModelNextPoint
+from examples.Separatrix.Algorithms.ModelNextPoint import ModelNextPoint
 from examples.Separatrix.Models.ModelConfigBuilder import ModelConfigBuilder
 from simtools.SetupParser import SetupParser
 
