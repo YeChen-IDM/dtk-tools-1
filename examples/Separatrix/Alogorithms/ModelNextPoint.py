@@ -1,11 +1,9 @@
+import json
 import logging
 import numpy as np
 import pandas as pd
 from calibtool.algorithms.GenericIterativeNextPoint import GenericIterativeNextPoint
 from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
-
-import lhsmdu
-import matplotlib.pyplot as plt
 from examples.Separatrix.Alogorithms.AlgoHelper.LHS import LHSPointSelection
 from examples.Separatrix.Alogorithms.AlgoHelper.igBDOE import igBDOE
 from examples.Separatrix.Alogorithms.AlgoHelper.tanhModel import tanhModel
@@ -18,19 +16,24 @@ class ModelNextPoint(GenericIterativeNextPoint):
     """
     """
 
-    def __init__(self, params=None, Num_Initial_Samples=15, Num_Next_Samples=15, Num_Test_Points=10,
-                 Inference_Grid_Resolution=10, Interest_Level=0.7, Scale_Model_Sigma=0.02):
+    def __init__(self, params=None, Num_Initial_Samples=15, Num_Next_Samples=15, Settings={}):
         super().__init__(None)
         self.params = params
         self.Num_Initial_Samples = Num_Initial_Samples
         self.Num_Next_Samples = Num_Next_Samples
-        self.Num_Test_Points = Num_Test_Points
-        self.Inference_Grid_Resolution = Inference_Grid_Resolution
-        self.Interest_Level = Interest_Level
-        self.Scale_Model_Sigma = Scale_Model_Sigma
+        self.Settings = Settings
         self.data = pd.DataFrame()
         self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Min', 'Max'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
+        self.parameter_ranges = []
+
+        self.init()
+
+    def init(self):
+        for p in self.params:
+            min_v = p['Min']
+            max_v = p['Max']
+            self.parameter_ranges.append(dict(Min=min_v, Max=max_v))
 
     def choose_initial_samples_bk(self):
         self.data = pd.DataFrame(
@@ -68,7 +71,6 @@ class ModelNextPoint(GenericIterativeNextPoint):
         self.data['Results'] = self.data['Results'].astype(int)
 
         iteration = 0
-        parameter_ranges = []
 
         # Clear self.state in case of resuming iteration 0 from commission
         self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Min', 'Max'])
@@ -76,9 +78,9 @@ class ModelNextPoint(GenericIterativeNextPoint):
 
         for param in self.params:
             self.state.loc[len(self.state)] = [iteration, param['Name'], param['Min'], param['Max']]
-            parameter_ranges.append(dict(Min=param['Min'], Max=param['Max']))
 
-        points = LHSPointSelection(self.Num_Initial_Samples, ParameterRanges=parameter_ranges)
+        # Use LHS to generate points
+        points = LHSPointSelection(self.Num_Initial_Samples, ParameterRanges=self.parameter_ranges)
 
         initial_samples = pd.DataFrame(points)
         initial_samples.columns = [p["Name"] for p in self.params]
@@ -94,37 +96,26 @@ class ModelNextPoint(GenericIterativeNextPoint):
         :return:
         """
 
-        grid_res = self.Inference_Grid_Resolution
+        # Set Inference_Grid_Resolution
+        grid_res = self.Settings["Inference_Grid_Resolution"]
 
-        np.random.seed(1)
-        myrng = np.random.rand()
-        model = tanhModel(myrng=myrng)
-
+        # Convert samples to matrix format
         samples_all = self.data[['Point_X', 'Point_Y']]
         samples = []
         for index, rows in samples_all.iterrows():
             samples.append([rows.Point_X, rows.Point_Y])
 
         sample_x = np.array(samples)
-        if 'Result' in self.data.columns.tolist():
-            sample_y = self.data['Results']
-        else:
-            # Compute true/false outputs at the initial sample points
-            sample_y = model.Sample(sample_x)
+        sample_y = self.data['Results']
 
-        # test purpose: self.data['Results'] is not populated yet!
-        if np.isnan(sample_y[0]):
-            sample_y = model.Sample(sample_x)
-
-        parameter_ranges = []
-        for param in self.params:
-            parameter_ranges.append(dict(Min=param['Min'], Max=param['Max']))
-
-        ix, iy = np.meshgrid(np.linspace(0, parameter_ranges[0]['Max'], grid_res), np.linspace(0, parameter_ranges[1]['Max'], grid_res))
+        # Calculate inference_x
+        ix, iy = np.meshgrid(np.linspace(0, self.parameter_ranges[0]['Max'], grid_res),
+                             np.linspace(0, self.parameter_ranges[1]['Max'], grid_res))
         inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
         # print(inference_x)
 
-        new_sample_x = igBDOE(sample_x, sample_y, inference_x, parameter_ranges, self.params)
+        # Generate the next samples
+        new_sample_x = igBDOE(sample_x, sample_y, inference_x, self.parameter_ranges, self.Settings)
 
         # do it in ModelProcessor
         # new_sample_y = model.Sample(new_sample_x)
@@ -217,8 +208,10 @@ if __name__ == "__main__":
         },
     ]
 
-    model_next_point = ModelNextPoint(params, Num_Initial_Samples=5, Num_Next_Samples=5, Num_Test_Points=6,
-                                      Interest_Level=0.7, Scale_Model_Sigma=0.02)
+    # Load Separatrix settings
+    Settings = json.load(open('../Settings.json', 'r'))
+
+    model_next_point = ModelNextPoint(params, Num_Initial_Samples=5, Num_Next_Samples=5, Settings=Settings)
 
     initial_samples = model_next_point.choose_initial_samples()
     print(initial_samples)
