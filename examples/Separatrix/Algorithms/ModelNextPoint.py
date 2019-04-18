@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 from calibtool.algorithms.GenericIterativeNextPoint import GenericIterativeNextPoint
 from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
-from examples.Separatrix.Alogorithms.AlgoHelper.LHS import LHSPointSelection
-from examples.Separatrix.Alogorithms.AlgoHelper.igBDOE import igBDOE
-from examples.Separatrix.Alogorithms.AlgoHelper.tanhModel import tanhModel
+from examples.Separatrix.Algorithms.AlgoHelper.LHS import LHSPointSelection
+from examples.Separatrix.Algorithms.AlgoHelper.igBDOE import igBDOE
+from examples.Separatrix.Algorithms.AlgoHelper.tanhModel import tanhModel
 
 logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
