@@ -36,8 +36,9 @@ class tanhModel(ISeparatrixModel):
     def Sample(self, Points=None):
         # Outcomes = rand(self.myrng, np.size(Points, 0), 1) < self.Truth(Points)
         Outcomes = np.random.uniform(low=self.myrng, high=1, size=np.size(Points, 0)) < self.Truth(Points)
+        Outcomes = [1 if a else 0 for a in Outcomes]
 
-        return Outcomes
+        return np.array(Outcomes)
 
     def Truth(self, points=None):
         x = points[:, 0]
