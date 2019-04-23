@@ -1,6 +1,8 @@
 {
+   "Num_Dimensions": 2,
    "Interest_Level": 0.6,
-   "Num_Candidates_Points": 10,
+   "Num_Test_Points": 5,
+   "Num_Candidates_Points": 5,
    "Scale_Model_Sigma": 0.05,
    "h_rho": 0.3,
    "c_rho": 0.5,
