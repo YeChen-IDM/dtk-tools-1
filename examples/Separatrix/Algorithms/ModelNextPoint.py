@@ -35,34 +35,6 @@ class ModelNextPoint(GenericIterativeNextPoint):
             max_v = p['Max']
             self.parameter_ranges.append(dict(Min=min_v, Max=max_v))
 
-    def choose_initial_samples_bk(self):
-        self.data = pd.DataFrame(
-            columns=['Iteration', '__sample_index__', 'Results', *self.get_param_names()])
-        self.data['Iteration'] = self.data['Iteration'].astype(int)
-        self.data['__sample_index__'] = self.data['__sample_index__'].astype(int)
-
-        iteration = 0
-
-        # Clear self.state in case of resuming iteration 0 from commission
-        self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Min', 'Max'])
-        self.state['Iteration'] = self.state['Iteration'].astype(int)
-
-        for param in self.params:
-            self.state.loc[len(self.state)] = [iteration, param['Name'], param['Min'], param['Max']]
-
-        initial_samples = pd.DataFrame()
-        for p in self.params:
-            col_name = p['Name']
-            min_v = p['Min']
-            max_v = p['Max']
-            type_v = p['Type']
-            initial_samples[col_name] = [np.random.uniform(min_v, max_v) for _ in range(self.Num_Initial_Samples)]
-            initial_samples[col_name] = initial_samples[col_name].astype(type_v)
-
-        self.add_samples(initial_samples, iteration)
-
-        return initial_samples
-
     def choose_initial_samples(self):
         self.data = pd.DataFrame(
             columns=['Iteration', '__sample_index__', 'Results', *self.get_param_names()])
@@ -219,5 +191,5 @@ if __name__ == "__main__":
     next_samples = model_next_point.choose_next_samples(1)
     print(next_samples)
 
-    next_samples = model_next_point.choose_next_samples(1)
+    next_samples = model_next_point.choose_next_samples(2)
     print(next_samples)
