@@ -81,8 +81,8 @@ class ModelNextPoint(GenericIterativeNextPoint):
         sample_y = self.data['Results']
 
         # Calculate inference_x
-        ix, iy = np.meshgrid(np.linspace(0, self.parameter_ranges[0]['Max'], grid_res),
-                             np.linspace(0, self.parameter_ranges[1]['Max'], grid_res))
+        ix, iy = np.meshgrid(np.linspace(self.parameter_ranges[0]['Min'], self.parameter_ranges[0]['Max'], grid_res),
+                             np.linspace(self.parameter_ranges[1]['Min'], self.parameter_ranges[1]['Max'], grid_res))
         inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
         # print(inference_x)
 
