@@ -14,7 +14,7 @@
    "Max_Fraction_igBDOE": 0.25,
    "min_g": 0,
    "max_g": 1,
-   "MCMC_Resolution": 1000,
+   "MCMC_Resolution": 5,
    "MCMC_Num_Iterations": 2,
    "Blur_Sigma": 0.02,
    "Inference_Grid_Resolution": 20
