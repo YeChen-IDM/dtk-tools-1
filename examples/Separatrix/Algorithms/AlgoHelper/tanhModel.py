@@ -5,11 +5,8 @@
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 
 import numpy as np
-import scipy
-from scipy import interpolate
-from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
-from examples.Separatrix.Tests.Separatrix_test.ISeparatrixModel import ISeparatrixModel
+from examples.Separatrix.Algorithms.AlgoHelper.ISeparatrixModel import ISeparatrixModel
 
 
 class tanhModel(ISeparatrixModel):
