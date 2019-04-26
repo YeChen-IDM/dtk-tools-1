@@ -36,6 +36,9 @@ class OptimTool(NextPointAlgorithm):
         self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Center', 'Min', 'Max', 'Dynamic'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
 
+        if center_repeats >= samples_per_iteration:
+            raise Exception('OptimTool requires samples_per_itertion > center_repeats.')
+
         self.params = params  # TODO: Check min <= center <= max
         self.mu_r = mu_r
         self.sigma_r = sigma_r
