@@ -4,4 +4,4 @@ __all__ = ['generic',
            'utils',
            'vector']
 
-__version__ = 'v1.1.3'
+__version__ = 'v1.1.4'
