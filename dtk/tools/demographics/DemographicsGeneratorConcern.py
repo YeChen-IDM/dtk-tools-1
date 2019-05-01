@@ -688,7 +688,7 @@ class WorldBankBirthRateConcern(DemographicsGeneratorConcern):
         """
         if 'IndividualAttributes' not in defaults:
             defaults['IndividualAttributes'] = {}
-        if 'IndividualAttributes' not in defaults:
+        if 'NodeAttributes' not in defaults:
             defaults['NodeAttributes'] = {}
         ia = defaults['IndividualAttributes']
         # set the default birth rate metadata
