@@ -84,7 +84,8 @@ class DemographicsGenerator:
         return arcsec / 3600.0
 
     @classmethod
-    def from_grid_file(cls, population_input_file: str,
+    def from_dataframe(cls,
+                       df,
                        demographics_filename: Optional[str] = None,
                        concerns: Optional[Union[DemographicsGeneratorConcern,
                                                 List[DemographicsGeneratorConcern]]] = None,
@@ -94,8 +95,115 @@ class DemographicsGenerator:
                        load_other_columns_as_attributes=False,
                        include_columns: Optional[List[str]] = None,
                        exclude_columns: Optional[List[str]] = None,
+                       nodeid_column_name: Optional[str] = None,
                        latitude_column_name: str = 'lat',
-                       longitude_column_name: str = 'lon', population_column_name: str = 'pop'):
+                       longitude_column_name: str = 'lon',
+                       population_column_name: str = 'pop'
+                       ):
+        """
+
+        Generates a demographics file from a dataframe
+
+        Args:
+            df: pandas DataFrame containing demographics information. Must contain all the columns specified by latitude_column_name,
+                longitude_column_name. The population_column_name is optional. If not found, we fall back to default_population
+            demographics_filename: demographics file to save the demographics file too. This is optional
+            concerns (Optional[DemographicsNodeGeneratorConcern]): What DemographicsNodeGeneratorConcern should
+            we apply. If not specified, we use the DefaultWorldBankEquilibriumConcern
+            res_in_arcsec: Resolution in Arcseconds
+            node_id_from_lat_long: Determine if we should calculate the node id from the lat long. By default this is
+             true unless you also set res_in_arcsec to CUSTOM_RESOLUTION. When not using lat/long for ids, the first
+             fallback it to check the node for a forced id. If that is not found, we assign it an index as id
+            load_other_columns_as_attributes: Load additional columns from a csv file as node attributes
+            include_columns: A list of columns that should be added as node attributes from the csv file. To be used in
+             conjunction with load_other_columns_as_attributes.
+            exclude_columns: A list of columns that should be ignored as attributes when
+                load_other_columns_as_attributes is enabled. This cannot be combined with include_columns
+            default_population: Default population. Only used if population_column_name does not exist
+            nodeid_column_name: Column name to load nodeid values from
+            latitude_column_name: Column name to load latitude values from
+            longitude_column_name: Column name to load longitude values from
+            population_column_name: Column name to load population values from
+
+        Returns:
+            demographics file as a dictionary
+        """
+        nodes_list = list()
+        warn_no_pop = False
+        cls.validate_res_in_arcsec(res_in_arcsec)
+        res_in_deg = cls.arcsec_to_deg(cls.VALID_RESOLUTIONS[res_in_arcsec])
+
+        if latitude_column_name not in df.columns.values:
+            raise ValueError(f'Column {latitude_column_name} is required in input population file.')
+
+        if longitude_column_name not in df.columns.values:
+            raise ValueError(f'Column {longitude_column_name} is required in input population file.')
+
+        if not warn_no_pop and population_column_name not in df.columns.values:
+            warn_no_pop = True
+            logger.warning(f'Could not locate population column{population_column_name}. Using the default '
+                           f'population value of {default_population}')
+            df[population_column_name] = default_population
+        else :
+            df[population_column_name] = df[population_column_name].astype(int)
+
+        if not node_id_from_lat_long and not nodeid_column_name :
+            logger.warning(f'NodeID column not specified. Reverting to csv  index + 1')
+            df['node_label'] = df.index + 1
+        if node_id_from_lat_long and 'node_label' not in df.columns.values:
+            df['node_label'] = df.apply(lambda x : nodeid_from_lat_lon(x[latitude_column_name],
+                                                                       x[longitude_column_name],
+                                                                       res_in_deg), axis=1)
+
+        if include_columns :
+            include_columns_verified = [x for x in include_columns if x in df.columns.values]
+            include_columns = include_columns_verified
+
+        for r, row in df.iterrows() :
+            extra_attrs = {}
+
+            if load_other_columns_as_attributes:
+                if include_columns :
+                    extra_attrs = { x : row[x] for x in include_columns}
+                elif exclude_columns :
+                    exclude_columns += [latitude_column_name, longitude_column_name,
+                                        population_column_name, nodeid_column_name]
+                    extra_attrs = { x : row[x] for x in df.columns.values if x not in exclude_columns}
+
+            node_label = nodeid_column_name if nodeid_column_name else 'node_label'
+
+            # Append the newly created node to the list
+            nodes_list.append(Node(row[latitude_column_name],
+                                   row[longitude_column_name],
+                                   row[population_column_name],
+                                   row[node_label], extra_attributes=extra_attrs))
+
+        demo = cls(nodes_list, concerns=concerns, res_in_arcsec=res_in_arcsec,
+                   node_id_from_lat_long=node_id_from_lat_long)
+        demographics = demo.generate_demographics()
+
+        if demographics_filename:
+            demo_f = open(demographics_filename, 'w+')
+            json.dump(demographics, demo_f, indent=4, sort_keys=True)
+            demo_f.close()
+        return demographics
+
+    @classmethod
+    def from_grid_file(cls,
+                       population_input_file: str,
+                       demographics_filename: Optional[str] = None,
+                       concerns: Optional[Union[DemographicsGeneratorConcern,
+                                                List[DemographicsGeneratorConcern]]] = None,
+                       res_in_arcsec=CUSTOM_RESOLUTION,
+                       node_id_from_lat_long=True,
+                       default_population: int = 1000,
+                       load_other_columns_as_attributes=False,
+                       include_columns: Optional[List[str]] = None,
+                       exclude_columns: Optional[List[str]] = None,
+                       nodeid_column_name: Optional[str] = None,
+                       latitude_column_name: str = 'lat',
+                       longitude_column_name: str = 'lon',
+                       population_column_name: str = 'pop'):
         """
 
         Generates a demographics file from a CSV population
@@ -116,6 +224,7 @@ class DemographicsGenerator:
             exclude_columns: A list of columns that should be ignored as attributes when
                 load_other_columns_as_attributes is enabled. This cannot be combined with include_columns
             default_population: Default population. Only used if population_column_name does not exist
+            nodeid_column_name: Column name to load nodeid values from
             latitude_column_name: Column name to load latitude values from
             longitude_column_name: Column name to load longitude values from
             population_column_name: Column name to load population values from
@@ -123,58 +232,20 @@ class DemographicsGenerator:
         Returns:
             demographics file as a dictionary
         """
-        nodes_list = list()
-        warn_no_pop = False
-        cls.validate_res_in_arcsec(res_in_arcsec)
-        with open(population_input_file, 'r') as pop_csv:
-            reader = csv.DictReader(pop_csv)
-            for row in reader:
-                # Latitude
-                if latitude_column_name not in row:
-                    raise ValueError(f'Column {latitude_column_name} is required in input population file.')
-                lat = float(row[latitude_column_name])
-
-                # Longitude
-                if longitude_column_name not in row:
-                    raise ValueError(f'Column {longitude_column_name} is required in input population file.')
-                lon = float(row[longitude_column_name])
-
-                # Node label
-                res_in_deg = cls.arcsec_to_deg(cls.VALID_RESOLUTIONS[res_in_arcsec])
-                node_label = row['node_label'] if 'node_label' in row else nodeid_from_lat_lon(lat, lon, res_in_deg)
-
-                # Population
-                if not warn_no_pop and population_column_name not in row:
-                    warn_no_pop = True
-                    logger.warning(f'Could not location population column{population_column_name}. Using the default '
-                                f'population value of {default_population}')
-                pop = int(float(row[population_column_name])) if population_column_name in row else default_population
-
-                # for the rest of columns,
-                extra_attrs = {}
-                if exclude_columns is None:
-                    exclude_columns = []
-
-                if load_other_columns_as_attributes:
-                    exclude_columns += [latitude_column_name, longitude_column_name, population_column_name]
-                    for col in row.keys():
-                        if col and include_columns and col in include_columns:
-                            extra_attrs[col] = row[col]
-                        elif col and not include_columns and col not in exclude_columns:
-                            extra_attrs[col] = row[col]
-
-                # Append the newly created node to the list
-                nodes_list.append(Node(lat, lon, pop, node_label, extra_attributes=extra_attrs))
-
-        demo = cls(nodes_list, concerns=concerns, res_in_arcsec=res_in_arcsec,
-                   node_id_from_lat_long=node_id_from_lat_long)
-        demographics = demo.generate_demographics()
-
-        if demographics_filename:
-            demo_f = open(demographics_filename, 'w+')
-            json.dump(demographics, demo_f, indent=4, sort_keys=True)
-            demo_f.close()
-        return demographics
+        df = pd.read_csv(population_input_file)
+        return cls.from_dataframe(df,
+                                  demographics_filename=demographics_filename,
+                                  concerns=concerns,
+                                  res_in_arcsec=res_in_arcsec,
+                                  node_id_from_lat_long=node_id_from_lat_long,
+                                  default_population=default_population,
+                                  load_other_columns_as_attributes=load_other_columns_as_attributes,
+                                  include_columns=include_columns,
+                                  exclude_columns=exclude_columns,
+                                  nodeid_column_name=nodeid_column_name,
+                                  latitude_column_name=latitude_column_name,
+                                  longitude_column_name=longitude_column_name,
+                                  population_column_name=population_column_name)
 
     @classmethod
     def validate_res_in_arcsec(cls, res_in_arcsec):
