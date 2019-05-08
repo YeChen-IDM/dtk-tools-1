@@ -1,9 +1,11 @@
 import os
 import re
+from typing import Union, Dict
 
 import dtk.tools.demographics.compiledemog as compiledemog
 from dtk.tools.migration import createmigrationheader
 from dtk.tools.migration.LinkRatesModelGenerator import LinkRatesModelGenerator
+from dtk.tools.migration.StaticLinkRatesModelGenerator import StaticLinkRatesModelGenerator
 from dtk.tools.migration.MigrationFile import MigrationFile, MigrationTypes
 from . import visualize_routes
 
@@ -18,6 +20,7 @@ class MigrationGenerator(object):
     # process_input doesn't appear to be a supported method
     def __init__(self, migration_file_name: str = './migration.bin',
                  migration_type: MigrationTypes = MigrationTypes.local,
+                 link_rates: Dict[str, Dict[str, Union[int, float]]] = None,
                  link_rates_model: LinkRatesModelGenerator = None):
         """
         MigrationGenerator helps create a migration file
@@ -25,6 +28,8 @@ class MigrationGenerator(object):
         Args:
             migration_file_name: What to save the migration file as. Defaults to './migration.bin'
             migration_type: What type of migration is it. See the MigrationTypes Enum for supported values
+            link_rates: Optional predefined list of link rates. This will be used with the StaticLinkRatesGenerator
+             to be uses in leiu of an actual model
             link_rates_model: An instance of an LinkRatesModelGenerator. This will generate the rates matrix
         """
 
@@ -43,6 +48,10 @@ class MigrationGenerator(object):
         if not isinstance(migration_type, MigrationTypes):
             raise ValueError("A MigrationTypes is required.")
         self.migration_type = migration_type
+
+        # if the user passes in a static link rates list, use that
+        if link_rates:
+            link_rates_model = StaticLinkRatesModelGenerator(link_rates)
 
         if not isinstance(link_rates_model, LinkRatesModelGenerator):
             raise ValueError("A Link Rates Model Generator is required.")
