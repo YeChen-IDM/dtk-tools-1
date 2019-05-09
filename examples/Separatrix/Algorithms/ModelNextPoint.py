@@ -2,7 +2,6 @@ import json
 import logging
 import numpy as np
 import pandas as pd
-from calibtool.algorithms.GenericIterativeNextPoint import GenericIterativeNextPoint
 from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
 from examples.Separatrix.Algorithms.AlgoHelper.LHS import LHSPointSelection
 from examples.Separatrix.Algorithms.AlgoHelper.igBDOE import igBDOE
@@ -12,12 +11,12 @@ logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class ModelNextPoint(GenericIterativeNextPoint):
+class ModelNextPoint(NextPointAlgorithm):
     """
     """
 
     def __init__(self, params=None, Num_Initial_Samples=15, Num_Next_Samples=15, Settings={}):
-        super().__init__(None)
+        super().__init__()
         self.params = params
         self.Num_Initial_Samples = Num_Initial_Samples
         self.Num_Next_Samples = Num_Next_Samples
@@ -153,6 +152,9 @@ class ModelNextPoint(GenericIterativeNextPoint):
         data.rename(columns={'Iteration': 'iteration'}, inplace=True)
         return data, data
 
+    def get_results_to_cache(self, results):
+        return results.to_dict(orient='list')
+
     def get_final_samples(self):
         """
         Resample Stage:
@@ -162,6 +164,19 @@ class ModelNextPoint(GenericIterativeNextPoint):
         final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
 
         return {'final_samples': final_samples.to_dict(orient='list')}
+
+    def get_state(self):
+        return self.data
+
+    def set_state(self, state, iteration):
+        self.data = state
+
+    def cleanup(self):
+        pass
+
+    def end_condition(self):
+        return False
+
 
 
 if __name__ == "__main__":
