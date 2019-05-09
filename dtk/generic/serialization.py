@@ -1,4 +1,4 @@
-def add_SerializationTimesteps(config_builder, timesteps, end_at_final=False):
+def add_SerializationTimesteps(config_builder, timesteps, end_at_final=False, use_absolute_times=False):
     """
     Serialize the population of this simulation at specified timesteps.
     If the simulation is run on multiple cores, multiple files will be created.
@@ -8,8 +8,16 @@ def add_SerializationTimesteps(config_builder, timesteps, end_at_final=False):
     :param end_at_final: (False) set the simulation duration such that the last
                          serialized_population file ends the simluation. NOTE: may not work
                          if timestep size is not 1
+     :use_absolute_times: (False) method will define simulation times instead of timesteps
+                          see documentation on "Serailization_Type" for details
     """
-    config_builder.set_param("Serialization_Time_Steps", sorted(timesteps))
+    if not use_absolute_times:
+        config_builder.set_param("Serialization_Type", "TIMESTEP") #Note: This should work in both 2.18 and 2.20
+        config_builder.set_param("Serialization_Time_Steps", sorted(timesteps))
+    else:
+        config_builder.set_param("Serialization_Type", "TIME")
+        config_builder.set_param("Serialization_Times", sorted(timesteps))
+
     if end_at_final:
         start_day = config_builder.params["Start_Time"]
         last_serialization_day = sorted(timesteps)[-1]

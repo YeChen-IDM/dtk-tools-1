@@ -160,7 +160,7 @@ class MigrationFile(BaseInputFile):
 
                         # trim destinations to max size of route
                         destinations = {k: destinations[k] for k in
-                                        destinations.keys()[:MAX_DESTINATIONS_BY_ROUTE[route]]}
+                                        list(destinations.keys())[:MAX_DESTINATIONS_BY_ROUTE[route]]}
                     max_destinations = max(len(destinations), max_destinations)
 
                 destinations_id = pack('L' * len(destinations.keys()), *destinations.keys())
