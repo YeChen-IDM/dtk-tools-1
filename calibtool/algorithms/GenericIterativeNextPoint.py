@@ -71,7 +71,7 @@ class GenericIterativeNextPoint(NextPointAlgorithm):
         return False
 
     def get_final_samples(self):
-        return {}
+        return {'final_samples': {}}
 
     def update_summary_table(self, iteration_state, previous_results):
         return self.data, self.data #json.dumps(self.data, indent=3)
