@@ -103,6 +103,9 @@ def constrain_sample(sample):
     if 'Min Days Between Clinical Incidents' in sample:
         sample['Min Days Between Clinical Incidents'] = int(round(sample['Min Days Between Clinical Incidents']))
 
+    if 'Falciparum PfEMP1 Variants' in sample:
+        sample['Falciparum PfEMP1 Variants'] = int(round(sample['Falciparum PfEMP1 Variants']))
+
     return sample
 
 
