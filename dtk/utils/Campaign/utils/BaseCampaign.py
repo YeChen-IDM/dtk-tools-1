@@ -58,10 +58,10 @@ class BaseCampaign:
         else:
             return json.dumps(w, sort_keys=True)
 
-    def save_to_file(self, filename=None):
+    def save_to_file(self, filename=None, use_defaults=True):
         if filename is None:
             filename = 'output_class'
-        content = self.to_json()
+        content = self.to_json(use_defaults=use_defaults)
         f = open('{}.json'.format(filename), 'w')
         f.write(content)
         f.close()

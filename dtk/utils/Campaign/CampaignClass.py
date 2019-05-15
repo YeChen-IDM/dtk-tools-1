@@ -2091,6 +2091,29 @@ class WaningEffectConstant(BaseCampaign):
         self.Initial_Effect = Initial_Effect
 
 
+class MeaslesVaccine(BaseCampaign):
+    _definition = {'Acquire_Config': {'description': 'The configuration for measles vaccine acquisition.', 'type': 'idmType:WaningEffect'}, 'Existing_Antibody_Blocking_Multiplier':{'default': 0.0, 'description': 'If a child has existing antibodies, maternal or otherwise, take rate of measles vaccine is multiplied by this number', 'max': 999999, 'min': 0, 'type': 'float'}, 'Cost_To_Consumer': {'default': 10, 'description': 'Unit cost per vaccine (unamortized). ', 'max': 999999, 'min': 0, 'type': 'float'}, 'Disqualifying_Properties': {'default': [], 'description': 'A list of IndividualProperty key:value pairs that cause an intervention to be aborted. Generally used to control the flow of health care access. For example, to prevent the same individual from accessing health care via two different routes at the same time.', 'type': 'Dynamic String Set', 'value_source': ''}, 'Dont_Allow_Duplicates': {'default': 0, 'description': "If an individual's container has an intervention, set to true (1) to prevent them from receiving another copy of the intervention. Supported by all intervention classes.", 'type': 'bool'}, 'Intervention_Name': {'default': 'MeaslesVaccine', 'description': 'The optional name used to refer to this intervention as a means to differentiate it from others that use the same class.', 'type': 'string'}, 'Mortality_Config': {'description': 'The configuration for multi-effect vaccine mortality.', 'type': 'idmType:WaningEffect'}, 'New_Property_Value': {'description': 'An optional IndividualProperty key:value pair that will be assigned when the intervention is distributed. Generally used to indicate the broad category of health care cascade to which an intervention belongs to prevent individuals from accessing care through multiple pathways. ', 'type': 'Constrained String', 'value_source': "'<demographics>::*.Individual_Properties.*.Property':'<demographics>::*.Individual_Properties.*.Values'"}, 'Sim_Types': ['*'], 'Transmit_Config': {'description': 'The configuration for multi-effect vaccine transmission.', 'type': 'idmType:WaningEffect'}, 'Vaccine_Take_Vs_Age_Map': {'default': {'Times': [0, 99999], 'Values':[0, 1]}, 'description': 'Age-dependent rate at which delivered vaccines will successfully stimulate an immune response and achieve the desired efficacy.  Times represents age at receipt, Values represents take rate at that age.  Take is linearly interpolated between age points', 'type': 'dict'}, 'class': 'MultiEffectVaccine', 'iv_type': 'IndividualTargeted'}
+    _validator = ClassValidator(_definition, 'MeaslesVaccine')
+
+    def __init__(self, Acquire_Config=None, Cost_To_Consumer=10, Disqualifying_Properties=[], Dont_Allow_Duplicates=False, Existing_Antibody_Blocking_Multiplier =None, Intervention_Name='MultiEffectVaccine', Mortality_Config=None, New_Property_Value=None, Sim_Types=['*'], Transmit_Config=None, Vaccine_Take_Vs_Age_Map = None, iv_type='IndividualTargeted', **kwargs):
+        super(MeaslesVaccine, self).__init__(**kwargs)
+        self.Acquire_Config = WaningEffectConstant(Initial_Effect=1.0) if Acquire_Config is None else Acquire_Config
+        self.Cost_To_Consumer = Cost_To_Consumer
+        self.Disqualifying_Properties = Disqualifying_Properties
+        self.Dont_Allow_Duplicates = Dont_Allow_Duplicates
+        self.Existing_Antibody_Blocking_Multiplier = 0.4 if Existing_Antibody_Blocking_Multiplier is None else Existing_Antibody_Blocking_Multiplier
+        self.Intervention_Name = Intervention_Name
+        self.Mortality_Config = Mortality_Config
+        self.New_Property_Value = New_Property_Value
+        self.Sim_Types = Sim_Types
+        self.Transmit_Config = Transmit_Config
+        if Vaccine_Take_Vs_Age_Map is None:
+            self.Vaccine_Take_Vs_Age_Map = {'Times': [0, 90, 120, 150, 180, 210, 240, 270, 300, 330, 365, 100000],
+                                            'Values': [0, 0, 0.53, 0.66, 0.77, 0.82, 0.89, 0.95, 0.95, 0.95, 0.95, 0.95]}
+        else:
+            self.Vaccine_Take_Vs_Age_Map = Vaccine_Take_Vs_Age_Map
+        self.iv_type = iv_type
+
 
 class WaningEffectExponential(BaseCampaign):
     _definition = {'Decay_Time_Constant': {'default': 100, 'description': 'The exponential decay length, in days.', 'max': 100000, 'min': 0, 'type': 'float'}, 'Initial_Effect': {'default': 1, 'description': 'Initial strength of the effect. The effect decays over time.', 'max': 1, 'min': 0, 'type': 'float'}, 'class': 'WaningEffectExponential'}
