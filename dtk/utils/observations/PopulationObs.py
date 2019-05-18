@@ -55,11 +55,15 @@ class PopulationObs(DataFrameWrapper):
         self.verify_required_items(needed=required_data)
         return sorted(self._dataframe['Year'].unique())
 
-    def adjust_years(self):
+    def adjust_years(self, exclude_channels=None):
         if not self.adjusted_years:
             required_data = ['Year']
             self.verify_required_items(needed=required_data)
             self._dataframe = self._dataframe.assign(**{'Year': self._dataframe['Year'] + 0.5})
+            if exclude_channels is not None:
+                for ch in set(exclude_channels):  # undo the addition above
+                    if ch in self._dataframe.columns:
+                        self._dataframe.loc[self._dataframe[ch].notnull(), 'Year'] -= 0.5
             self.adjusted_years = True
 
     def add_percentile_values(self, channel, distribution, p):
