@@ -51,7 +51,7 @@ setup(name='dtk-tools',
           'astor',
           'openpyxl>=2.5.3',
           'geopy'],
-      dependency_links=['https://packages.idmod.org/api/pypi/idm-pypi-production/simple'],
+      dependency_links=['https://packages.idmod.org/api/pypi/pypi-production/simple'],
       entry_points={
           'console_scripts': ['calibtool = calibtool.commands:main', 'dtk = dtk.commands:main',
                               'dtksetup = dtk.post_install:main']
