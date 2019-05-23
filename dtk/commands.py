@@ -457,7 +457,7 @@ def sync(args, unknownArgs):
     if exp_name:
         experiments = get_experiments_by_name(exp_name, user)
         for experiment_data in experiments:
-            experiment = COMPS_experiment_to_local_db(exp_id=str(experiment_data.id),
+            experiment = COMPS_experiment_to_local_db(id_or_name=str(experiment_data.id),
                                                       endpoint=endpoint,
                                                       verbose=True,
                                                       save_new_experiment=False)
@@ -466,7 +466,7 @@ def sync(args, unknownArgs):
 
     elif exp_id:
         # Create a new experiment
-        experiment = COMPS_experiment_to_local_db(exp_id=exp_id,
+        experiment = COMPS_experiment_to_local_db(id_or_name=exp_id,
                                                   endpoint=endpoint,
                                                   verbose=True,
                                                   save_new_experiment=False)
@@ -483,7 +483,7 @@ def sync(args, unknownArgs):
         # For each of them, check if they are in the db
         for exp in get_experiments_per_user_and_date(user, limit_date):
             # Create a new experiment
-            experiment = COMPS_experiment_to_local_db(exp_id=str(exp.id),
+            experiment = COMPS_experiment_to_local_db(id_or_name=str(exp.id),
                                                       endpoint=endpoint,
                                                       save_new_experiment=False)
 
@@ -809,7 +809,10 @@ def catalyst(args, unknownArgs):
         mod.run_sim_args['config_builder'].enable('Spatial_Output')
         mod.run_sim_args['config_builder'].params['Spatial_Output_Channels'] = spatial_channel_names
     else:
-        mod.run_sim_args['config_builder'].disable('Spatial_Output')
+        try:
+            mod.run_sim_args['config_builder'].disable('Spatial_Output')
+        except:
+            pass
         mod.run_sim_args['config_builder'].params['Spatial_Output_Channels'] = []
 
     # additional initialization overrides
@@ -875,8 +878,8 @@ def reload_experiment(args=None, try_sync=True):
         exp = DataStore.get_most_recent_experiment(exp_id)
     elif try_sync:
         try:
-            exp = retrieve_experiment(exp_id,verbose=False)
-        except:
+            exp = retrieve_experiment(exp_id, verbose=False)
+        except Exception as e:
             exp = None
 
     if not exp:

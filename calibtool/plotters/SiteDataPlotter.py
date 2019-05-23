@@ -1,7 +1,7 @@
 import logging
 import os
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg', warn=False, force=True)
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import pandas as pd

@@ -1,3 +1,5 @@
+import getpass
+
 from simtools.DataAccess.DataStore import DataStore
 from simtools.DataAccess.Schema import Experiment, Simulation
 from simtools.SetupParser import SetupParser
@@ -73,18 +75,23 @@ def retrieve_experiment(exp_id, sync_if_missing=True, verbose=False, force_updat
     :param sync_if_missing: Should we try to sync if not present?
     :return: The experiment found
     """
-    if not exp_id: raise Exception("Trying to retrieve an experiment without providing an experiment ID")
+    if not exp_id:
+        raise Exception("Trying to retrieve an experiment without providing an experiment ID")
     from uuid import UUID
-    if isinstance(exp_id,UUID): exp_id = str(exp_id)
+    if isinstance(exp_id, UUID):
+        exp_id = str(exp_id)
 
-    # If we dont force the update -> look first in the DB
-    exp = DataStore.get_experiment(exp_id) or DataStore.get_most_recent_experiment(exp_id)
+    # If we don't force the update -> look first in the DB
+    exp = DataStore.get_experiment(exp_id)
+    if not exp:
+        exp = DataStore.get_most_recent_experiment(exp_id)
+
     if exp:
         # If we have an experiment and we want to force the update -> delete it
-        if not force_update:
-            return exp
-        else:
+        if force_update:
             DataStore.delete_experiment(exp)
+        else:
+            return exp
 
     if not sync_if_missing:
         raise Exception('Experiment %s not found in the local database and sync disabled.' % exp_id)
@@ -93,9 +100,10 @@ def retrieve_experiment(exp_id, sync_if_missing=True, verbose=False, force_updat
     with SetupParser.TemporarySetup(temporary_block='HPC') as sp:
         endpoint = sp.get('server_endpoint')
 
-    exp = COMPS_experiment_to_local_db(exp_id, endpoint, verbose)
+    exp = COMPS_experiment_to_local_db(exp_id, endpoint, verbose=verbose)
 
-    if exp: return exp
+    if exp:
+        return exp
     raise Exception("Experiment '%s' could not be retrieved." % exp_id)
 
 
@@ -139,38 +147,55 @@ def retrieve_simulation(sim_id, sync_if_missing=True, verbose=False, force_updat
     raise Exception("Simulation '%s' could not be retrieved." % sim_id)
 
 
-def COMPS_experiment_to_local_db(exp_id, endpoint, verbose=False, save_new_experiment=True):
+def COMPS_experiment_to_local_db(id_or_name, endpoint, verbose=False, save_new_experiment=True):
     """
     Return a DB object representing an experiment coming from COMPS.
     This function saves the newly retrieved experiment in the DB by default but this behavior can be changed by switching
     the save_new_experiment parameter allowing to return an experiment object and save later with a batch for example.
-    :param exp_id:
+    :param id_or_name:
     :param endpoint:
     :param verbose:
     :param save_new_experiment:
     :return:
     """
-    # Make sure we are logged in
-    COMPS_login(endpoint)
+    # Ensure exp_id is a string
+    id_or_name = str(id_or_name)
 
-    #Ensure exp_id is a string
-    exp_id = str(exp_id)
+    # First try to find the experiment locally by experiment id
+    experiment = DataStore.get_experiment(id_or_name)
+    if experiment and verbose:
+        print('Found experiment locally.')
 
-    # IF the experiment already exists and
-    experiment = DataStore.get_experiment(exp_id)
     if experiment and experiment.is_done():
         if verbose:
-            print("Experiment ('%s') already exists in local db." % exp_id)
+            print("Experiment ('%s') already exists in local db." % id_or_name)
         # Do not bother with finished experiments
         return None
 
+    # second, try to find the experiment from COMPS by experiment id
+    exp_comps = None
+    COMPS_login(endpoint)
     from COMPS.Data import QueryCriteria
+    query_criteria = QueryCriteria().select_children('tags')
     try:
-        query_criteria = QueryCriteria().select_children('tags')
-        exp_comps = get_experiment_by_id(exp_id, query_criteria) or get_experiments_by_name(exp_id, query_criteria)[-1]
-    except:
+        exp_comps = get_experiment_by_id(id_or_name, query_criteria)
+    except ValueError as e:
+        exp_comps = None
+    if exp_comps is not None and verbose:
+        print('Found experiment in COMPS by id.')
+
+    # finally, try to find the experiment from comps by experiment name
+    if exp_comps is None:
+        try:
+            exp_comps = get_experiments_by_name(id_or_name, user=getpass.getuser())[-1]
+        except IndexError as e:
+            exp_comps = None
+        if exp_comps is not None and verbose:
+            print('Found experiment in COMPS by name.')
+
+    if exp_comps is None:
         if verbose:
-            print("The experiment ('%s') doesn't exist in COMPS." % exp_id)
+            print("The experiment ('%s') doesn't exist in COMPS." % id_or_name)
         return None
 
     # Case: experiment doesn't exist in local db
@@ -193,9 +218,9 @@ def COMPS_experiment_to_local_db(exp_id, endpoint, verbose=False, save_new_exper
     if len(sims) == 0 or len(sims) == len(experiment.simulations):
         if verbose:
             if len(sims) == 0:
-                print("Skip empty experiment ('%s')." % exp_id)
+                print("Skip empty experiment ('%s')." % id_or_name)
             elif len(sims) == len(experiment.simulations):
-                print("Skip experiment ('%s') since local one has the same number of simulations." % exp_id)
+                print("Skip experiment ('%s') since local one has the same number of simulations." % id_or_name)
         return None
 
     # Go through the sims and create them
