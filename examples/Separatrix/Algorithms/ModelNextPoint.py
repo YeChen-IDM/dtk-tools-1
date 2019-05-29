@@ -3,9 +3,13 @@ import logging
 import numpy as np
 import pandas as pd
 from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
-from examples.Separatrix.Algorithms.AlgoHelper.LHS import LHSPointSelection
+from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
+# from examples.Separatrix.Algorithms.AlgoHelper.PointsManager import generate_requested_points, zeroCorners
+# from examples.Separatrix.Algorithms.AlgoHelper.igBDOE import igBDOE
 from examples.Separatrix.Algorithms.AlgoHelper.igBDOE import igBDOE
 from examples.Separatrix.Algorithms.AlgoHelper.tanhModel import tanhModel
+from examples.Separatrix.Algorithms.AlgoHelper.SigmoidalModel import SigmoidalModel
+from examples.Separatrix.Algorithms.AlgoHelper.utils import generate_requested_points, zeroCorners
 
 logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,16 +19,22 @@ class ModelNextPoint(NextPointAlgorithm):
     """
     """
 
-    def __init__(self, params=None, Num_Initial_Samples=15, Num_Next_Samples=15, Settings={}):
+    def __init__(self, params=None, Num_Dimensions=2, Num_Initial_Samples=10, Num_Next_Samples=10, Num_Test_Points=10, Num_Candidates_Points=10, Settings={}):
         super().__init__()
         self.params = params
+        self.Num_Dimensions = Num_Dimensions
         self.Num_Initial_Samples = Num_Initial_Samples
         self.Num_Next_Samples = Num_Next_Samples
+        self.Num_Test_Points = Num_Test_Points
+        self.Num_Candidates_Points = Num_Candidates_Points
         self.Settings = Settings
         self.data = pd.DataFrame()
         self.state = pd.DataFrame(columns=['Iteration', 'Parameter', 'Min', 'Max'])
         self.state['Iteration'] = self.state['Iteration'].astype(int)
         self.parameter_ranges = []
+        self.test_points = pd.DataFrame()
+        self.possible_points = pd.DataFrame()
+        self.inference_x = None
 
         self.init()
 
@@ -33,6 +43,88 @@ class ModelNextPoint(NextPointAlgorithm):
             min_v = p['Min']
             max_v = p['Max']
             self.parameter_ranges.append(dict(Min=min_v, Max=max_v))
+
+        # update counts as we will use Settings in code
+        if self.Num_Dimensions is not None:
+            self.Settings["Num_Dimensions"] = self.Num_Dimensions
+        else:
+            self.Num_Dimensions = self.Settings["Num_Dimensions"]
+
+        if self.Num_Initial_Samples is not None:
+            self.Settings["Num_Initial_Samples"] = self.Num_Initial_Samples
+        else:
+            self.Num_Initial_Samples = self.Settings["Num_Initial_Samples"]
+
+        if self.Num_Next_Samples is not None:
+            self.Settings["Num_Next_Samples"] = self.Num_Next_Samples
+        else:
+            self.Num_Next_Samples = self.Settings["Num_Next_Samples"]
+
+        if self.Num_Test_Points is not None:
+            self.Settings["Num_Test_Points"] = self.Num_Test_Points
+        else:
+            self.Num_Test_Points = self.Settings["Num_Test_Points"]
+
+        if self.Num_Candidates_Points is not None:
+            self.Settings["Num_Candidates_Points"] = self.Num_Candidates_Points
+        else:
+            self.Num_Candidates_Points = self.Settings["Num_Candidates_Points"]
+
+        # calculate inference_x
+        if self.Num_Dimensions == 1:
+            self.inference_x = np.linspace(0, self.parameter_ranges[0]['Max'], self.Settings["Inference_Grid_Resolution"])
+            self.inference_x = self.inference_x.reshape(self.inference_x.shape[0], 1)
+        elif self.Num_Dimensions == 2:
+            ix, iy = np.meshgrid(
+                np.linspace(0, self.parameter_ranges[0]['Max'], self.Settings["Inference_Grid_Resolution"]),
+                np.linspace(0, self.parameter_ranges[1]['Max'], self.Settings["Inference_Grid_Resolution"]))
+            # print(ix)
+            # print(iy)
+            # inference_x = np.concatenate((ix.flatten(1), iy.flatten()), axis=1)
+            # print(np.vstack((ix.flatten(1), iy.flatten(1))))
+            self.inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
+            # Zdu: seems inference_x has no relation with sample_x or sample_y
+            # print("inference_x:\n", self.inference_x)
+
+    def get_lhs_samples(self, num_samples):
+        points = LHSPointSelection(num_samples, self.Num_Dimensions, ParameterRanges=self.parameter_ranges)
+        return points
+
+    def get_test_samples(self, iteration):
+        samples_all = self.test_points.copy()
+        samples_all = samples_all[samples_all['Iteration'] == iteration]
+
+        samples = []
+        if self.Num_Dimensions == 1:
+            data_by_iter = samples_all[['Point_X']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X])
+        elif self.Num_Dimensions == 2:
+            data_by_iter = samples_all[['Point_X', 'Point_Y']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X, rows.Point_Y])
+
+        sample_x = np.array(samples)
+
+        return sample_x
+
+    def get_possible_samples(self, iteration):
+        samples_all = self.possible_points.copy()
+        samples_all = samples_all[samples_all['Iteration'] == iteration]
+
+        samples = []
+        if self.Num_Dimensions == 1:
+            data_by_iter = samples_all[['Point_X']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X])
+        elif self.Num_Dimensions == 2:
+            data_by_iter = samples_all[['Point_X', 'Point_Y']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X, rows.Point_Y])
+
+        sample_x = np.array(samples)
+
+        return sample_x
 
     def choose_initial_samples(self):
         self.data = pd.DataFrame(
@@ -51,12 +143,13 @@ class ModelNextPoint(NextPointAlgorithm):
             self.state.loc[len(self.state)] = [iteration, param['Name'], param['Min'], param['Max']]
 
         # Use LHS to generate points
-        points = LHSPointSelection(self.Num_Initial_Samples, ParameterRanges=self.parameter_ranges)
-
-        initial_samples = pd.DataFrame(points)
-        initial_samples.columns = [p["Name"] for p in self.params]
+        points = self.get_lhs_samples(self.Settings["Num_Initial_Samples"])
+        initial_samples = self.convert_points_to_df(points)
 
         self.add_samples(initial_samples, iteration)
+
+        # Generate test and possible points...
+        self.post_samples(iteration=0)
 
         return initial_samples
 
@@ -66,39 +159,43 @@ class ModelNextPoint(NextPointAlgorithm):
         :param iteration:
         :return:
         """
+        # retrieve all previous samples
+        sample_x, sample_y = self.get_all_samples()
 
-        # Set Inference_Grid_Resolution
-        grid_res = self.Settings["Inference_Grid_Resolution"]
+        # # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
+        np.random.seed(1)
+        myrng = np.random.rand()
+        if self.Num_Dimensions == 1:
+            model = SigmoidalModel(myrng=myrng)
+        else:
+            model = tanhModel(myrng=myrng)
 
-        # Convert samples to matrix format
-        samples_all = self.data[['Point_X', 'Point_Y']]
-        samples = []
-        for index, rows in samples_all.iterrows():
-            samples.append([rows.Point_X, rows.Point_Y])
+        sample_y = model.Sample(sample_x)
 
-        sample_x = np.array(samples)
-        sample_y = self.data['Results']
 
-        # Calculate inference_x
-        ix, iy = np.meshgrid(np.linspace(self.parameter_ranges[0]['Min'], self.parameter_ranges[0]['Max'], grid_res),
-                             np.linspace(self.parameter_ranges[1]['Min'], self.parameter_ranges[1]['Max'], grid_res))
-        inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
-        # print(inference_x)
+        # [TODO]: retrieve test and possible points
+        # testPoints = sample_x
+        # possibleSamplePoints = sample_x
+
+        testPoints = self.get_test_samples(iteration - 1)
+        possibleSamplePoints = self.get_possible_samples(iteration - 1)
+        testPoints = zeroCorners(testPoints)
+        possibleSamplePoints = zeroCorners(possibleSamplePoints)
 
         # Generate the next samples
-        new_sample_x = igBDOE(sample_x, sample_y, inference_x, self.parameter_ranges, self.Settings)
+        new_sample_x, testPoints, possibleSamplePoints = igBDOE(sample_x, sample_y, self.inference_x, self.parameter_ranges, self.Settings, testPoints, possibleSamplePoints)
 
-        # do it in ModelProcessor
-        # new_sample_y = model.Sample(new_sample_x)
-
-        # Join new samples with old
-        # next_samples_x = np.concatenate((sample_x, new_sample_x), axis=0)
-        # next_samples_y = np.concatenate((sample_y, new_sample_y), axis=0)
-
-        next_samples = pd.DataFrame(new_sample_x)
-        next_samples.columns = [p["Name"] for p in self.params]
-
+        # store new samples
+        next_samples = self.convert_points_to_df(new_sample_x)
         self.add_samples(next_samples, iteration)
+
+        # store new test samples
+        testPoints = self.convert_points_to_df(testPoints)
+        self.test_points = self.add_samples_to_df(testPoints, self.test_points, iteration)
+
+        # store possible samples
+        possibleSamplePoints = self.convert_points_to_df(possibleSamplePoints)
+        self.possible_points = self.add_samples_to_df(possibleSamplePoints, self.possible_points, iteration)
 
         return next_samples
 
@@ -152,9 +249,6 @@ class ModelNextPoint(NextPointAlgorithm):
         data.rename(columns={'Iteration': 'iteration'}, inplace=True)
         return data, data
 
-    def get_results_to_cache(self, results):
-        return results.to_dict(orient='list')
-
     def get_final_samples(self):
         """
         Resample Stage:
@@ -164,6 +258,83 @@ class ModelNextPoint(NextPointAlgorithm):
         final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
 
         return {'final_samples': final_samples.to_dict(orient='list')}
+
+    def convert_df_to_points(self, iteration):
+        # Convert samples to matrix format
+        samples_all = self.data.copy()
+        samples_all = samples_all[samples_all['Iteration'] == iteration]
+
+        samples = []
+        if self.Num_Dimensions == 1:
+            data_by_iter = samples_all[['Point_X']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X])
+        elif self.Num_Dimensions == 2:
+            data_by_iter = samples_all[['Point_X', 'Point_Y']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X, rows.Point_Y])
+
+        sample_x = np.array(samples)
+        sample_y = samples_all[['Results']]
+
+        sample_y = np.array(sample_y)
+
+        return sample_x, sample_y
+
+    def get_all_samples(self):
+        # Convert samples to matrix format
+        samples_all = self.data.copy()
+
+        # convert df to matrix
+        samples = []
+        if self.Num_Dimensions == 1:
+            data_by_iter = samples_all[['Point_X']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X])
+        elif self.Num_Dimensions == 2:
+            data_by_iter = samples_all[['Point_X', 'Point_Y']]
+            for index, rows in data_by_iter.iterrows():
+                samples.append([rows.Point_X, rows.Point_Y])
+
+        sample_x = np.array(samples)
+        sample_y = samples_all[['Results']]
+
+        return sample_x, sample_y
+
+    def convert_points_to_df(self, points):
+        points_df = pd.DataFrame(points)
+        points_df.columns = [p["Name"] for p in self.params]
+
+        return points_df
+
+    def add_samples_to_df(self, samples, df, iteration):
+        samples_cpy = samples.copy()
+        samples_cpy.index.name = '__sample_index__'
+        samples_cpy['Iteration'] = iteration
+        samples_cpy.reset_index(inplace=True)
+
+        df = pd.concat([df, samples_cpy], ignore_index=True)
+        df['__sample_index__'] = df['__sample_index__'].astype(int)
+
+        return df
+
+    def post_samples(self, iteration):
+        """
+        Generate requested test points and possible interested points
+        :param iteration:
+        :return:
+        """
+        test_points = generate_requested_points(self.Settings["Num_Test_Points"], self.Num_Dimensions, self.parameter_ranges)
+        # print(test_points)
+        test_samples = self.convert_points_to_df(test_points)
+        self.test_points = self.add_samples_to_df(test_samples, self.test_points, iteration)
+
+        # print('----------------')
+
+        possible_points = generate_requested_points(self.Settings["Num_Candidates_Points"], self.Num_Dimensions, self.parameter_ranges)
+        # print(possible_points)
+        possible_samples = self.convert_points_to_df(possible_points)
+        self.possible_points = self.add_samples_to_df(possible_samples, self.possible_points, iteration)
 
     def get_state(self):
         return self.data
@@ -179,7 +350,7 @@ class ModelNextPoint(NextPointAlgorithm):
 
 
 
-if __name__ == "__main__":
+def test_2d():
     params = [
         {
             'Name': 'Point_X',
@@ -198,7 +369,7 @@ if __name__ == "__main__":
     # Load Separatrix settings
     Settings = json.load(open('../Settings.json', 'r'))
 
-    model_next_point = ModelNextPoint(params, Num_Initial_Samples=5, Num_Next_Samples=5, Settings=Settings)
+    model_next_point = ModelNextPoint(params, Num_Dimensions=2, Num_Initial_Samples=20, Num_Next_Samples=20, Settings=Settings)
 
     initial_samples = model_next_point.choose_initial_samples()
     print(initial_samples)
@@ -208,3 +379,39 @@ if __name__ == "__main__":
 
     next_samples = model_next_point.choose_next_samples(2)
     print(next_samples)
+
+
+def test_1d():
+    params = [
+        {
+            'Name': 'Point_X',
+            'MapTo': 'Point_X',
+            'Min': 0,
+            'Max': 1
+        }
+    ]
+
+    # Load Separatrix settings
+    Settings = json.load(open('../Settings.json', 'r'))
+
+    model_next_point = ModelNextPoint(params, Num_Dimensions=1, Num_Initial_Samples=10, Num_Next_Samples=10,
+                                      Settings=Settings)
+
+    initial_samples = model_next_point.choose_initial_samples()
+    print(initial_samples)
+
+    next_samples = model_next_point.choose_next_samples(1)
+    print(next_samples)
+
+    next_samples = model_next_point.choose_next_samples(2)
+    print(next_samples)
+
+
+
+
+if __name__ == "__main__":
+    test_2d()
+    exit()
+
+    test_1d()
+    exit()
