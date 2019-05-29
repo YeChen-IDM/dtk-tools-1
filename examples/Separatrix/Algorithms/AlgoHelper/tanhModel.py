@@ -5,13 +5,20 @@
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 
 import numpy as np
+import matplotlib.pyplot as plt
+import scipy.interpolate
 from scipy.interpolate import griddata
+from mpl_toolkits import mplot3d
+
+from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from examples.Separatrix.Algorithms.AlgoHelper.ISeparatrixModel import ISeparatrixModel
 
 
 class tanhModel(ISeparatrixModel):
 
-    def __init__(self, Model_Name='My Model', Parameter_Names=['Point_X', 'Point_Y'], Parameter_Ranges=[dict(min=0, max=1), dict(min=0, max=1)], myrng=1, mx=10, bx=0.5, my=3, by=0.3, EvaluationPoints=[], config=None):
+    def __init__(self, Model_Name='My Model', Parameter_Names=['Point_X', 'Point_Y'],
+                 Parameter_Ranges=[dict(Min=0, Max=1), dict(Min=0, Max=1)], myrng=1, mx=10, bx=0.5, my=3, by=0.3,
+                 EvaluationPoints=[], config=None):
         super().__init__(Model_Name, Parameter_Names, Parameter_Ranges, config)
         self.myrng = myrng
         self.mx = 10
@@ -44,42 +51,60 @@ class tanhModel(ISeparatrixModel):
         return Probability
 
     def TrueSeparatrix(self, iso=None):
+        from scipy.interpolate import interp1d
+        from scipy.interpolate import interp2d
+
         # Use contour3 to extract the separatrix
-        print('In TrueSeparatrix...')
+        # print('In TrueSeparatrix...')
         # return None
 
-        l1 = np.linspace(self.Parameter_Ranges[0]["min"], self.Parameter_Ranges[0]["max"], 2)
-        l2 = np.linspace(self.Parameter_Ranges[1]["min"], self.Parameter_Ranges[1]["max"], 2)
+        # Zdu: checking...
+        # l1 = np.linspace(self.Parameter_Ranges[0]["Min"], self.Parameter_Ranges[0]["Max"], 2)
+        # l2 = np.linspace(self.Parameter_Ranges[1]["Min"], self.Parameter_Ranges[1]["Max"], 2)
 
-        xx, yy = np.meshgrid(np.linspace(self.Parameter_Ranges[0]["min"], self.Parameter_Ranges[0]["max"], 2),
-                          np.linspace(self.Parameter_Ranges[1]["min"], self.Parameter_Ranges[1]["max"], 2))
+        # use the following forInterpolant
+        xx, yy = np.meshgrid(np.linspace(self.Parameter_Ranges[0]["Min"], self.Parameter_Ranges[0]["Max"], 30),
+                             np.linspace(self.Parameter_Ranges[1]["Min"], self.Parameter_Ranges[1]["Max"], 30))
 
         pts2D = np.vstack((xx.flatten(1), yy.flatten(1))).T
-        print(pts2D)
+        # print(pts2D)
 
-        Probability = self.Truth(pts2D)
+        # Zdu: checking...
+        # Probability = self.Truth(pts2D)
 
         # zinterp = scatteredInterpolant(pts2D, self.Truth(pts2D))
-        # [TODO]: seems the following doesn't match to the above function!
-        zinterp = griddata(pts2D, self.Truth(pts2D), (xx, yy), method='linear')
-        print(zinterp)
+        X = pts2D[:, 0].reshape(pts2D.shape[0], 1)
+        Y = pts2D[:, 1].reshape(pts2D.shape[0], 1)
 
-        xx, yy = np.meshgrid(np.linspace(self.Parameter_Ranges[0]["min"], self.Parameter_Ranges[0]["max"], 5),
-                          np.linspace(self.Parameter_Ranges[1]["min"], self.Parameter_Ranges[1]["max"], 5))
+        xx, yy = np.meshgrid(np.linspace(self.Parameter_Ranges[0]["Min"], self.Parameter_Ranges[0]["Max"], 1000),
+                             np.linspace(self.Parameter_Ranges[1]["Min"], self.Parameter_Ranges[1]["Max"], 1000))
 
-        # print(xx)
-        # print(yy)
-        zz = zinterp(xx, yy)
-        print(zz)
 
-        # h = figure(235235)
+        # Approach #1
+        # Zdu testing used to plot 2D: Approach #4: 2D contour
+        rbf = Rbf(X, Y, self.Truth(pts2D), function='linear')
+        zz = rbf(xx, yy)
+        qcs = plt.contour(xx, yy, zz, levels=[iso])
+        return qcs
 
-        true_separatrix, __ = contour3(xx, yy, zinterp(xx, yy), iso*np.ones((2, 1)))
+        # Approach #2
+        pts2D = np.vstack((xx.flatten(1), yy.flatten(1))).T
+        zz = griddata(pts2D, self.Truth(pts2D), (xx, yy), method='linear')
+        # print(zz)
 
-        true_separatrix = true_separatrix.T
+        # Approach #3: Not working yet...
+        # f = interp2d(X, Y, self.Truth(pts2D), kind='linear')  # ‘linear’, ‘cubic’, ‘quintic’}, optional
+        # Z = f(X.flatten(), Y.flatten())      # ValueError: x and y should both be 1-D arrays
+        # print(Z)
 
-        # close_(h)
-        return true_separatrix
+        ax = plt.axes(projection='3d')
+        qcs = ax.contour3D(xx, yy, zz, levels=[iso], cmap='binary')
+        # qcs = ax.contour3D(xx, yy, zz, iso*np.ones((2,1)), cmap='binary')   # ERROR: Contour levels must be increasing
+        # qcs2 = ax.contour(X, Y, Z, 1)
+        # qcs = plt.contour(X, Y, Z, levels=[iso], cmap='binary')
+
+
+        return qcs
 
 
     def OverlayIsocline(self, h=None, iso=None):
@@ -95,3 +120,15 @@ class tanhModel(ISeparatrixModel):
         # set(hlines, 'linewidth', 2)
         # set(hlines, 'zdata', get(hlines, 'zdata') + 1)
         return
+
+
+def test():
+    np.random.seed(1)
+    myrng = np.random.rand()
+    model = tanhModel(myrng=myrng)
+    model.TrueSeparatrix(iso=0.6)
+
+
+if __name__ == "__main__":
+    test()
+    exit()
