@@ -20,7 +20,7 @@ class ModelNextPoint(NextPointAlgorithm):
     """
 
     def __init__(self, params=None, Settings={}, Num_Dimensions=2, Num_Initial_Samples=10, Num_Next_Samples=10,
-                 Num_Test_Points=10, Num_Candidates_Points=10):
+                 Num_Test_Points=10, Num_Candidates_Points=10, **kwargs):
         super().__init__()
         self.params = params
         self.Num_Dimensions = Num_Dimensions
@@ -37,9 +37,9 @@ class ModelNextPoint(NextPointAlgorithm):
         self.possible_points = pd.DataFrame()
         self.inference_x = None
 
-        self.init()
+        self.init(**kwargs)
 
-    def init(self):
+    def init(self, **kwargs):
         # 1. build params ranges
         for p in self.params:
             min_v = p['Min']
@@ -72,7 +72,11 @@ class ModelNextPoint(NextPointAlgorithm):
         else:
             self.Num_Candidates_Points = self.Settings["Num_Candidates_Points"]
 
-        # 3. calculate inference_x
+        # 3. update possible extra parameters
+        for key, value in kwargs.items():
+            self.Settings[key] = value
+
+        # 4. calculate inference_x
         if self.Num_Dimensions == 1:
             self.inference_x = np.linspace(0, self.parameter_ranges[0]['Max'],
                                            self.Settings["Inference_Grid_Resolution"])
@@ -83,7 +87,7 @@ class ModelNextPoint(NextPointAlgorithm):
                 np.linspace(0, self.parameter_ranges[1]['Max'], self.Settings["Inference_Grid_Resolution"]))
             self.inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
 
-        # 4. initialize model
+        # 5. initialize model
         np.random.seed(self.Settings["Random_Seed"])
         myrng = np.random.rand()
         if self.Num_Dimensions == 1:
@@ -367,8 +371,8 @@ def test_2d():
     # Load Separatrix settings
     Settings = json.load(open('../Settings.json', 'r'))
 
-    model_next_point = ModelNextPoint(params, Num_Dimensions=2, Num_Initial_Samples=20, Num_Next_Samples=20,
-                                      Settings=Settings)
+    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Dimensions=2, Num_Initial_Samples=20,
+                                      Num_Next_Samples=20)
 
     initial_samples = model_next_point.choose_initial_samples()
     print(initial_samples)
