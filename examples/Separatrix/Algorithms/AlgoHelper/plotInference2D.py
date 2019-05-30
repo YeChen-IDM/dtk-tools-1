@@ -58,9 +58,9 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
 
         h = ax1.plot(cp[:, 0], cp[:, 1], '--', color='black', label='Estimate')
 
-        qcs = ax1.contour(ix, iy, iz, levels=[iso], colors=['k'], linestyles='solid', norm=None)
+        # qcs = ax1.contour(ix, iy, iz, levels=[iso], colors=['k'], linestyles='solid', norm=None)
 
-        qcs.collections[0].set_label('True')
+        # qcs.collections[0].set_label('True')
         ax1.legend(loc='lower left')
         # plt.legend([h, qcs], labels=['Estimate', 'True'])
 
