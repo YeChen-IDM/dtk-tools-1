@@ -19,7 +19,8 @@ class ModelNextPoint(NextPointAlgorithm):
     """
     """
 
-    def __init__(self, params=None, Num_Dimensions=2, Num_Initial_Samples=10, Num_Next_Samples=10, Num_Test_Points=10, Num_Candidates_Points=10, Settings={}):
+    def __init__(self, params=None, Settings={}, Num_Dimensions=2, Num_Initial_Samples=10, Num_Next_Samples=10,
+                 Num_Test_Points=10, Num_Candidates_Points=10):
         super().__init__()
         self.params = params
         self.Num_Dimensions = Num_Dimensions
@@ -39,12 +40,13 @@ class ModelNextPoint(NextPointAlgorithm):
         self.init()
 
     def init(self):
+        # 1. build params ranges
         for p in self.params:
             min_v = p['Min']
             max_v = p['Max']
             self.parameter_ranges.append(dict(Min=min_v, Max=max_v))
 
-        # update counts as we will use Settings in code
+        # 2. update counts as we will use Settings in code
         if self.Num_Dimensions is not None:
             self.Settings["Num_Dimensions"] = self.Num_Dimensions
         else:
@@ -70,21 +72,24 @@ class ModelNextPoint(NextPointAlgorithm):
         else:
             self.Num_Candidates_Points = self.Settings["Num_Candidates_Points"]
 
-        # calculate inference_x
+        # 3. calculate inference_x
         if self.Num_Dimensions == 1:
-            self.inference_x = np.linspace(0, self.parameter_ranges[0]['Max'], self.Settings["Inference_Grid_Resolution"])
+            self.inference_x = np.linspace(0, self.parameter_ranges[0]['Max'],
+                                           self.Settings["Inference_Grid_Resolution"])
             self.inference_x = self.inference_x.reshape(self.inference_x.shape[0], 1)
         elif self.Num_Dimensions == 2:
             ix, iy = np.meshgrid(
                 np.linspace(0, self.parameter_ranges[0]['Max'], self.Settings["Inference_Grid_Resolution"]),
                 np.linspace(0, self.parameter_ranges[1]['Max'], self.Settings["Inference_Grid_Resolution"]))
-            # print(ix)
-            # print(iy)
-            # inference_x = np.concatenate((ix.flatten(1), iy.flatten()), axis=1)
-            # print(np.vstack((ix.flatten(1), iy.flatten(1))))
             self.inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
-            # Zdu: seems inference_x has no relation with sample_x or sample_y
-            # print("inference_x:\n", self.inference_x)
+
+        # 4. initialize model
+        np.random.seed(self.Settings["Random_Seed"])
+        myrng = np.random.rand()
+        if self.Num_Dimensions == 1:
+            self.model = SigmoidalModel(myrng=myrng)
+        else:
+            self.model = tanhModel(myrng=myrng)
 
     def get_lhs_samples(self, num_samples):
         points = LHSPointSelection(num_samples, self.Num_Dimensions, ParameterRanges=self.parameter_ranges)
@@ -162,16 +167,8 @@ class ModelNextPoint(NextPointAlgorithm):
         # retrieve all previous samples
         sample_x, sample_y = self.get_all_samples()
 
-        # # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
-        np.random.seed(1)
-        myrng = np.random.rand()
-        if self.Num_Dimensions == 1:
-            model = SigmoidalModel(myrng=myrng)
-        else:
-            model = tanhModel(myrng=myrng)
-
-        sample_y = model.Sample(sample_x)
-
+        # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
+        # sample_y = self.model.Sample(sample_x)
 
         # [TODO]: retrieve test and possible points
         # testPoints = sample_x
@@ -183,7 +180,9 @@ class ModelNextPoint(NextPointAlgorithm):
         possibleSamplePoints = zeroCorners(possibleSamplePoints)
 
         # Generate the next samples
-        new_sample_x, testPoints, possibleSamplePoints = igBDOE(sample_x, sample_y, self.inference_x, self.parameter_ranges, self.Settings, testPoints, possibleSamplePoints)
+        new_sample_x, testPoints, possibleSamplePoints = igBDOE(sample_x, sample_y, self.inference_x,
+                                                                self.parameter_ranges, self.Settings, testPoints,
+                                                                possibleSamplePoints)
 
         # store new samples
         next_samples = self.convert_points_to_df(new_sample_x)
@@ -275,9 +274,7 @@ class ModelNextPoint(NextPointAlgorithm):
                 samples.append([rows.Point_X, rows.Point_Y])
 
         sample_x = np.array(samples)
-        sample_y = samples_all[['Results']]
-
-        sample_y = np.array(sample_y)
+        sample_y = np.array(samples_all[['Results']])
 
         return sample_x, sample_y
 
@@ -297,7 +294,7 @@ class ModelNextPoint(NextPointAlgorithm):
                 samples.append([rows.Point_X, rows.Point_Y])
 
         sample_x = np.array(samples)
-        sample_y = samples_all[['Results']]
+        sample_y = np.array(samples_all['Results'])
 
         return sample_x, sample_y
 
@@ -324,14 +321,16 @@ class ModelNextPoint(NextPointAlgorithm):
         :param iteration:
         :return:
         """
-        test_points = generate_requested_points(self.Settings["Num_Test_Points"], self.Num_Dimensions, self.parameter_ranges)
+        test_points = generate_requested_points(self.Settings["Num_Test_Points"], self.Num_Dimensions,
+                                                self.parameter_ranges)
         # print(test_points)
         test_samples = self.convert_points_to_df(test_points)
         self.test_points = self.add_samples_to_df(test_samples, self.test_points, iteration)
 
         # print('----------------')
 
-        possible_points = generate_requested_points(self.Settings["Num_Candidates_Points"], self.Num_Dimensions, self.parameter_ranges)
+        possible_points = generate_requested_points(self.Settings["Num_Candidates_Points"], self.Num_Dimensions,
+                                                    self.parameter_ranges)
         # print(possible_points)
         possible_samples = self.convert_points_to_df(possible_points)
         self.possible_points = self.add_samples_to_df(possible_samples, self.possible_points, iteration)
@@ -347,7 +346,6 @@ class ModelNextPoint(NextPointAlgorithm):
 
     def end_condition(self):
         return False
-
 
 
 def test_2d():
@@ -369,7 +367,8 @@ def test_2d():
     # Load Separatrix settings
     Settings = json.load(open('../Settings.json', 'r'))
 
-    model_next_point = ModelNextPoint(params, Num_Dimensions=2, Num_Initial_Samples=20, Num_Next_Samples=20, Settings=Settings)
+    model_next_point = ModelNextPoint(params, Num_Dimensions=2, Num_Initial_Samples=20, Num_Next_Samples=20,
+                                      Settings=Settings)
 
     initial_samples = model_next_point.choose_initial_samples()
     print(initial_samples)
@@ -394,8 +393,8 @@ def test_1d():
     # Load Separatrix settings
     Settings = json.load(open('../Settings.json', 'r'))
 
-    model_next_point = ModelNextPoint(params, Num_Dimensions=1, Num_Initial_Samples=10, Num_Next_Samples=10,
-                                      Settings=Settings)
+    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Dimensions=1, Num_Initial_Samples=10,
+                                      Num_Next_Samples=10)
 
     initial_samples = model_next_point.choose_initial_samples()
     print(initial_samples)
@@ -405,8 +404,6 @@ def test_1d():
 
     next_samples = model_next_point.choose_next_samples(2)
     print(next_samples)
-
-
 
 
 if __name__ == "__main__":
