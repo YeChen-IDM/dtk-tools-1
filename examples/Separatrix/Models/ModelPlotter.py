@@ -43,7 +43,7 @@ class ModelPlotter(BasePlotter):
         self.site_analyzer_names = iteration_state.site_analyzer_names
         iteration_status = self.iteration_state.status
 
-        # self.directory = self.iteration_state.iteration_directory
+        self.directory = self.iteration_state.iteration_directory
         self.param_names = self.iteration_state.param_names
         self.data = self.iteration_state.next_point_algo.get_state()
 
@@ -56,11 +56,9 @@ class ModelPlotter(BasePlotter):
             raise Exception('Unknown stage %s' % iteration_status.name)
 
     def visualize_results(self):
+        self.plot_separatrix()
 
-        directory = self.iteration_state.iteration_directory
-        self.plot_separatrix(directory)
-
-    def plot_separatrix(self, directory):
+    def plot_separatrix(self):
         model_algo = self.iteration_state.next_point_algo
         Settings = model_algo.Settings
         Num_Dimensions = model_algo.Num_Dimensions
@@ -180,8 +178,7 @@ class ModelPlotter(BasePlotter):
 
         # plt.show()
 
-        directory = self.iteration_state.iteration_directory
-        plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.pdf'))
+        plt.savefig(os.path.join(self.directory, 'Separatrix_Sample_Results.pdf'))
 
         fig.clf()
         plt.close(fig)
@@ -302,8 +299,7 @@ class ModelPlotter(BasePlotter):
 
         # plt.show()
 
-        directory = self.iteration_state.iteration_directory
-        plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.pdf'))
+        plt.savefig(os.path.join(self.directory, 'Separatrix_Sample_Results.pdf'))
 
         fig.clf()
         plt.close(fig)
