@@ -1,6 +1,7 @@
 import numpy as np
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
 
+
 # def sub2ind(shape, row_inds=[], col_indx=[]):
 #     inds = np.ravel_multi_index([row_inds, col_indx], shape, order='F')
 #
@@ -18,7 +19,6 @@ from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPoint
 #     row_inds, col_indx = np.unravel_index(index, X.shape, order='F')
 #
 #     return X[row_inds, col_indx]
-
 
 
 def sub2ind(dim, row_inds=[], col_indx=[]):
@@ -50,7 +50,6 @@ def find(X):
 
 
 def generate_requested_points(Num_Points, Num_Dimensions, ParameterRanges):
-
     # Use LHS to create points for now
     points = LHSPointSelection(Num_Points, Num_Dimensions, ParameterRanges)
 
@@ -66,8 +65,18 @@ def zeroCorners(pts=None):
         """
         if pts.shape[1] == 1:
             return np.flatnonzero(np.in1d(b[:, 0], a[:, 0]))
-        else:   #2-D
+        else:  # 2-D
             return np.flatnonzero(np.in1d(b[:, 0], a[:, 0]) & np.in1d(b[:, 1], a[:, 1]))
+
+    def increment(vec=None):
+        fz = np.size(vec, axis=1)
+        fz = fz - 1
+        while vec[0, fz] == 1:
+            vec[0, fz] = 0
+            fz = fz - 1
+
+        vec[0, fz] = 1
+        return vec
 
     Ndim = np.size(pts, 1)
     vec = np.zeros((1, Ndim), float)
@@ -84,14 +93,3 @@ def zeroCorners(pts=None):
         pts[cnt, :] = vec
 
     return pts
-
-
-def increment(vec=None):
-    fz = np.size(vec, axis=1)
-    fz = fz - 1
-    while vec[0, fz] == 1:
-        vec[0, fz] = 0
-        fz = fz - 1
-
-    vec[0, fz] = 1
-    return vec
