@@ -219,7 +219,7 @@ def test2():
             },
         ]
 
-        model_next_point = ModelNextPoint(params, Num_Dimensions=2, Num_Initial_Samples=40, Num_Next_Samples=20,
+        model_next_point = ModelNextPoint(params, Num_Initial_Samples=40, Num_Next_Samples=20,
                                           Settings=Settings)
 
         # Settings["Num_Initial_Samples"] = 20

@@ -62,15 +62,15 @@ def map_sample_to_model_input(cb, sample):
 # Load Separatrix settings
 Settings = json.load(open('Settings.json', 'r'))
 
-model_next_point = ModelNextPoint(params, Settings=Settings, Num_Dimensions=2, Num_Initial_Samples=50,
+model_next_point = ModelNextPoint(params, Settings=Settings, Num_Initial_Samples=50,
                                   Num_Next_Samples=50)
 
-calib_manager = CalibManager(name='Example_Model_2d_1',
+calib_manager = CalibManager(name='Example_Model_2d_3',
                              config_builder=cb,
                              map_sample_to_model_input_fn=map_sample_to_model_input,
                              sites=sites,
                              next_point=model_next_point,
-                             max_iterations=3,
+                             max_iterations=2,
                              plotters=plotters)
 
 run_calib_args = {
