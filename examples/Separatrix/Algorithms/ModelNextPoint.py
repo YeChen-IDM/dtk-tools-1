@@ -93,10 +93,6 @@ class ModelNextPoint(NextPointAlgorithm):
         else:
             self.model = tanhModel(myrng=myrng)
 
-    def get_lhs_samples(self, num_samples):
-        points = LHSPointSelection(num_samples, self.Num_Dimensions, ParameterRanges=self.parameter_ranges)
-        return points
-
     def get_test_sample_points(self, iteration):
         samples_all = self.test_points.copy()
         samples_all = samples_all[samples_all['Iteration'] == iteration]
