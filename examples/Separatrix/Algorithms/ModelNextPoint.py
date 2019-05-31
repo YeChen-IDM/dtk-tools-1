@@ -17,11 +17,11 @@ class ModelNextPoint(NextPointAlgorithm):
     """
     """
 
-    def __init__(self, params=None, Settings={}, Num_Dimensions=2, Num_Initial_Samples=10, Num_Next_Samples=10,
+    def __init__(self, params=None, Settings={}, Num_Initial_Samples=10, Num_Next_Samples=10,
                  Num_Test_Points=10, Num_Candidates_Points=10, **kwargs):
         super().__init__()
         self.params = params
-        self.Num_Dimensions = Num_Dimensions
+        self.Num_Dimensions = len(params)
         self.Num_Initial_Samples = Num_Initial_Samples
         self.Num_Next_Samples = Num_Next_Samples
         self.Num_Test_Points = Num_Test_Points
@@ -147,7 +147,7 @@ class ModelNextPoint(NextPointAlgorithm):
         sample_x, sample_y = self.get_all_samples()
 
         # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
-        # sample_y = self.model.Sample(sample_x)
+        sample_y = self.model.Sample(sample_x)
 
         # retrieve test and possible points
         testPoints = self.get_test_sample_points(iteration - 1)
@@ -199,10 +199,6 @@ class ModelNextPoint(NextPointAlgorithm):
             self.state = state_by_iter.loc[:iteration].reset_index()
 
         # Store results ... even if changed
-        print('set_results_for_iteration...')
-        print(data_by_iter)
-        print('-------')
-        print(results)
         data_by_iter.loc[iteration, 'Results'] = results
         self.data = data_by_iter.reset_index()
 
@@ -314,17 +310,15 @@ class ModelNextPoint(NextPointAlgorithm):
         :param iteration:
         :return:
         """
+        # generate and store test sample points
         test_points = generate_requested_points(self.Settings["Num_Test_Points"], self.Num_Dimensions,
                                                 self.parameter_ranges)
-        # print(test_points)
         test_samples = self.convert_points_to_df(test_points)
         self.test_points = self.add_samples_to_df(test_samples, self.test_points, iteration)
 
-        # print('----------------')
-
+        # generate and store possible sample points
         possible_points = generate_requested_points(self.Settings["Num_Candidates_Points"], self.Num_Dimensions,
                                                     self.parameter_ranges)
-        # print(possible_points)
         possible_samples = self.convert_points_to_df(possible_points)
         self.possible_points = self.add_samples_to_df(possible_samples, self.possible_points, iteration)
 
@@ -360,7 +354,7 @@ def test_2d():
     # Load Separatrix settings
     Settings = json.load(open('../Settings.json', 'r'))
 
-    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Dimensions=2, Num_Initial_Samples=20,
+    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Initial_Samples=20,
                                       Num_Next_Samples=20)
 
     initial_samples = model_next_point.choose_initial_samples()
@@ -386,7 +380,7 @@ def test_1d():
     # Load Separatrix settings
     Settings = json.load(open('../Settings.json', 'r'))
 
-    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Dimensions=1, Num_Initial_Samples=10,
+    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Initial_Samples=10,
                                       Num_Next_Samples=10)
 
     initial_samples = model_next_point.choose_initial_samples()
