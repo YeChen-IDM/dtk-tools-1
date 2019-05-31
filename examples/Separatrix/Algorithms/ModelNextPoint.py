@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
-# from examples.Separatrix.Algorithms.AlgoHelper.PointsManager import generate_requested_points, zeroCorners
-# from examples.Separatrix.Algorithms.AlgoHelper.igBDOE import igBDOE
 from examples.Separatrix.Algorithms.AlgoHelper.igBDOE import igBDOE
 from examples.Separatrix.Algorithms.AlgoHelper.tanhModel import tanhModel
 from examples.Separatrix.Algorithms.AlgoHelper.SigmoidalModel import SigmoidalModel
@@ -99,41 +97,17 @@ class ModelNextPoint(NextPointAlgorithm):
         points = LHSPointSelection(num_samples, self.Num_Dimensions, ParameterRanges=self.parameter_ranges)
         return points
 
-    def get_test_samples(self, iteration):
+    def get_test_sample_points(self, iteration):
         samples_all = self.test_points.copy()
         samples_all = samples_all[samples_all['Iteration'] == iteration]
 
-        samples = []
-        if self.Num_Dimensions == 1:
-            data_by_iter = samples_all[['Point_X']]
-            for index, rows in data_by_iter.iterrows():
-                samples.append([rows.Point_X])
-        elif self.Num_Dimensions == 2:
-            data_by_iter = samples_all[['Point_X', 'Point_Y']]
-            for index, rows in data_by_iter.iterrows():
-                samples.append([rows.Point_X, rows.Point_Y])
+        return self.convert_df_to_points(samples_all, include_results=False)
 
-        sample_x = np.array(samples)
-
-        return sample_x
-
-    def get_possible_samples(self, iteration):
+    def get_possible_sample_points(self, iteration):
         samples_all = self.possible_points.copy()
         samples_all = samples_all[samples_all['Iteration'] == iteration]
 
-        samples = []
-        if self.Num_Dimensions == 1:
-            data_by_iter = samples_all[['Point_X']]
-            for index, rows in data_by_iter.iterrows():
-                samples.append([rows.Point_X])
-        elif self.Num_Dimensions == 2:
-            data_by_iter = samples_all[['Point_X', 'Point_Y']]
-            for index, rows in data_by_iter.iterrows():
-                samples.append([rows.Point_X, rows.Point_Y])
-
-        sample_x = np.array(samples)
-
-        return sample_x
+        return self.convert_df_to_points(samples_all, include_results=False)
 
     def choose_initial_samples(self):
         self.data = pd.DataFrame(
@@ -152,7 +126,8 @@ class ModelNextPoint(NextPointAlgorithm):
             self.state.loc[len(self.state)] = [iteration, param['Name'], param['Min'], param['Max']]
 
         # Use LHS to generate points
-        points = self.get_lhs_samples(self.Settings["Num_Initial_Samples"])
+        # points = self.get_lhs_samples(self.Settings["Num_Initial_Samples"])
+        points = LHSPointSelection(self.Num_Initial_Samples, self.Num_Dimensions, ParameterRanges=self.parameter_ranges)
         initial_samples = self.convert_points_to_df(points)
 
         self.add_samples(initial_samples, iteration)
@@ -174,12 +149,9 @@ class ModelNextPoint(NextPointAlgorithm):
         # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
         # sample_y = self.model.Sample(sample_x)
 
-        # [TODO]: retrieve test and possible points
-        # testPoints = sample_x
-        # possibleSamplePoints = sample_x
-
-        testPoints = self.get_test_samples(iteration - 1)
-        possibleSamplePoints = self.get_possible_samples(iteration - 1)
+        # retrieve test and possible points
+        testPoints = self.get_test_sample_points(iteration - 1)
+        possibleSamplePoints = self.get_possible_sample_points(iteration - 1)
         testPoints = zeroCorners(testPoints)
         possibleSamplePoints = zeroCorners(possibleSamplePoints)
 
@@ -202,6 +174,7 @@ class ModelNextPoint(NextPointAlgorithm):
 
         return next_samples
 
+    # [TODO]: it may need to include test and possible points as well for resume!
     def get_samples_for_iteration(self, iteration):
         if iteration == 0:
             samples = self.choose_initial_samples()
@@ -262,45 +235,61 @@ class ModelNextPoint(NextPointAlgorithm):
 
         return {'final_samples': final_samples.to_dict(orient='list')}
 
-    def convert_df_to_points(self, iteration):
+    # Output test and possible points as well
+    def get_final_samples_test(self):
+        """
+        Resample Stage:
+        """
+        iteration = self.data['Iteration'].max()
+        data_by_iter = self.data[self.data['Iteration'] == iteration]
+        final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
+
+        data_by_iter = self.test_points[self.test_points['Iteration'] == iteration]
+        test_samples = data_by_iter.drop(['Iteration'], axis=1)
+
+        data_by_iter = self.possible_points[self.possible_points['Iteration'] == iteration]
+        possible_samples = data_by_iter.drop(['Iteration'], axis=1)
+
+        return {
+            'final_samples': {
+                'samples': final_samples.to_dict(orient='list'),
+                'test_samples': test_samples.to_dict(orient='list'),
+                'possible_samples': possible_samples.to_dict(orient='list')
+            }
+        }
+
+    def get_sample_points(self, iteration):
         # Convert samples to matrix format
         samples_all = self.data.copy()
         samples_all = samples_all[samples_all['Iteration'] == iteration]
 
+        return self.convert_df_to_points(samples_all)
+
+    def convert_df_to_points(self, df, include_results=True):
+        # Convert samples to matrix format
         samples = []
         if self.Num_Dimensions == 1:
-            data_by_iter = samples_all[['Point_X']]
+            data_by_iter = df[['Point_X']]
             for index, rows in data_by_iter.iterrows():
                 samples.append([rows.Point_X])
         elif self.Num_Dimensions == 2:
-            data_by_iter = samples_all[['Point_X', 'Point_Y']]
+            data_by_iter = df[['Point_X', 'Point_Y']]
             for index, rows in data_by_iter.iterrows():
                 samples.append([rows.Point_X, rows.Point_Y])
 
         sample_x = np.array(samples)
-        sample_y = np.array(samples_all[['Results']])
 
-        return sample_x, sample_y
+        if include_results:
+            sample_y = np.array(df[['Results']])
+            return sample_x, sample_y
+        else:
+            return sample_x
 
     def get_all_samples(self):
         # Convert samples to matrix format
         samples_all = self.data.copy()
 
-        # convert df to matrix
-        samples = []
-        if self.Num_Dimensions == 1:
-            data_by_iter = samples_all[['Point_X']]
-            for index, rows in data_by_iter.iterrows():
-                samples.append([rows.Point_X])
-        elif self.Num_Dimensions == 2:
-            data_by_iter = samples_all[['Point_X', 'Point_Y']]
-            for index, rows in data_by_iter.iterrows():
-                samples.append([rows.Point_X, rows.Point_Y])
-
-        sample_x = np.array(samples)
-        sample_y = np.array(samples_all['Results'])
-
-        return sample_x, sample_y
+        return self.convert_df_to_points(samples_all)
 
     def convert_points_to_df(self, points):
         points_df = pd.DataFrame(points)
