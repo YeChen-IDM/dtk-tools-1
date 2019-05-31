@@ -103,8 +103,8 @@ class ModelPlotter(BasePlotter):
             alpha, beta = SeparatrixInference(sample_x, sample_y, inference_x, Settings)
 
         # clear up the existing one!
-        plt.clf()
         plt.cla()
+        plt.clf()
         plt.close()
 
         if Num_Dimensions == 1:
@@ -246,8 +246,6 @@ class ModelPlotter(BasePlotter):
         def plot_variance(qcs):
 
             iso = params["Interest_Level"]
-            print('plot_variance, iso: ', iso)
-
             surf = ax2.pcolormesh(ix, iy, iz2, cmap='viridis', shading='gouraud')  # smooth
 
             cp = None
