@@ -5,26 +5,15 @@
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 import json
 import numpy as np
-import matplotlib.mlab as mlab
-from examples.Separatrix.Algorithms.AlgoHelper.tanhModel import tanhModel
 from examples.Separatrix.Algorithms.AlgoHelper.utils import find
 
 
 def computeKL(p=None, q=None):
-    # print("p:\n", p)
-    # print("q:\n", q)
     D_KL = 0
     for si in range(0, p.shape[0]):
-        # a1 = np.log2(p[si, :] / q[si, :])
-        # a2 = p[si, :].T
-        # print("a1:\n", a1)
-        # print("a2:\n", a2)
-
         delta_D_KL = np.dot(np.log2(p[si, :] / q[si, :]), p[si, :].T)
-        # print("delta_D_KL: ", delta_D_KL)
 
         if np.isnan(delta_D_KL) or np.isinf(delta_D_KL):
-            # domain = mlab.find(p[si, :] > 0 and q[si, :] > 0)
             domain = find(p[si, :] > 0 and q[si, :] > 0)
             delta_D_KL = np.dot(np.log2(p[si, domain] / q[si, domain], p[si, domain]).T)
 

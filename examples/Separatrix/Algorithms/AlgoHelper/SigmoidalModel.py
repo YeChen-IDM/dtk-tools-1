@@ -22,10 +22,6 @@ class SigmoidalModel(ISeparatrixModel):
         self.myrng = np.random.rand()
 
     def Sample(self, Points):
-        # Outcomes = rand(self.myrng, np.size(Points, 0), 1) < self.Truth(Points)
-        # return Outcomes
-
-        # Outcomes = rand(self.myrng, np.size(Points, 0), 1) < self.Truth(Points)
         Outcomes = np.random.uniform(low=self.myrng, high=1, size=(np.size(Points, 0), 1)) < self.Truth(Points)
         Outcomes = [1 if a else 0 for a in Outcomes]
 

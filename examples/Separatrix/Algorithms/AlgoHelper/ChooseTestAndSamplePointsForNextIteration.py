@@ -11,12 +11,9 @@ import math
 import numpy as np
 import copy
 import random
-import matplotlib.mlab as mlab
 from scipy.interpolate import interp1d
-
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
 from examples.Separatrix.Algorithms.AlgoHelper.utils import find
-# from examples.Separatrix.Tests.Separatrix_test.LHSPointSelection import LHSPointSelection
 
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 
@@ -86,7 +83,7 @@ def ChooseTestAndSamplePointsForNextIteration(testPoints=None, Interest_x=None, 
             print(ex)
 
     else:  # 2-D
-        # [TODO]: will use Rbf to replace scatteredInterpolant
+        # ZDU: will use Rbf to replace scatteredInterpolant
         # zinterp = scatteredInterpolant(UniqueInterestVariancePoints, logitInterestVariance)
         X = UniqueInterestVariancePoints[:, 0].reshape(UniqueInterestVariancePoints.shape[0], 1)
         Y = UniqueInterestVariancePoints[:, 1].reshape(UniqueInterestVariancePoints.shape[0], 1)
@@ -117,15 +114,12 @@ def ChooseTestAndSamplePointsForNextIteration(testPoints=None, Interest_x=None, 
         for dimension in range(0, params["Num_Dimensions"]):
             tp_blur = mcmcTestPoints[:, dimension] + params[
                 "Blur_Sigma"] * np.random.standard_normal(NtestPoints)  # Bug?? params["Num_Test_Points"]
-            # inds = mlab.find((tp_blur < 0).astype(int) | (tp_blur > 1).astype(int))
             inds = find((tp_blur < 0).astype(int) | (tp_blur > 1).astype(int))
             tp_blur[inds] = mcmcTestPoints[inds, dimension]
             mcmcTestPoints[:, dimension] = tp_blur
 
             psp_blur = mcmcPossibleSamplePoints[:, dimension] + params[
                 "Blur_Sigma"] * np.random.standard_normal(NpossibleSamplePoints)
-            # inds = mlab.find((psp_blur < ParameterRanges[dimension]["Min"]).astype(int) | (
-            #         psp_blur > ParameterRanges[dimension]["Max"]).astype(int))
             inds = find((psp_blur < ParameterRanges[dimension]["Min"]).astype(int) | (
                     psp_blur > ParameterRanges[dimension]["Max"]).astype(int))
             psp_blur[inds] = mcmcPossibleSamplePoints[inds, dimension]
@@ -140,9 +134,6 @@ def roulette(pdf=None, MCMCres=None):
     cdf = pdf.cumsum(axis=0)
 
     r = random.random() * cdf[-1]
-
-    # idx = find(cdf > r, 1, 'first')       # Matlab
-    # idx = mlab.find(cdf > r)
     idx = find(cdf > r)
 
     if idx is None or len(idx) == 0:
