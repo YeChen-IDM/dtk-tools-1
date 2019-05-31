@@ -7,9 +7,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.interpolate
-from scipy.interpolate import griddata
 from mpl_toolkits import mplot3d
-
+from scipy.interpolate import griddata
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from examples.Separatrix.Algorithms.AlgoHelper.ISeparatrixModel import ISeparatrixModel
 
@@ -54,23 +53,11 @@ class tanhModel(ISeparatrixModel):
         from scipy.interpolate import interp1d
         from scipy.interpolate import interp2d
 
-        # Use contour3 to extract the separatrix
-        # print('In TrueSeparatrix...')
-        # return None
-
-        # Zdu: checking...
-        # l1 = np.linspace(self.Parameter_Ranges[0]["Min"], self.Parameter_Ranges[0]["Max"], 2)
-        # l2 = np.linspace(self.Parameter_Ranges[1]["Min"], self.Parameter_Ranges[1]["Max"], 2)
-
-        # use the following forInterpolant
+        # use the following for Interpolant
         xx, yy = np.meshgrid(np.linspace(self.Parameter_Ranges[0]["Min"], self.Parameter_Ranges[0]["Max"], 30),
                              np.linspace(self.Parameter_Ranges[1]["Min"], self.Parameter_Ranges[1]["Max"], 30))
 
         pts2D = np.vstack((xx.flatten(1), yy.flatten(1))).T
-        # print(pts2D)
-
-        # Zdu: checking...
-        # Probability = self.Truth(pts2D)
 
         # zinterp = scatteredInterpolant(pts2D, self.Truth(pts2D))
         X = pts2D[:, 0].reshape(pts2D.shape[0], 1)
@@ -82,10 +69,10 @@ class tanhModel(ISeparatrixModel):
 
         # Approach #1
         # Zdu testing used to plot 2D: Approach #4: 2D contour
-        rbf = Rbf(X, Y, self.Truth(pts2D), function='linear')
-        zz = rbf(xx, yy)
-        qcs = plt.contour(xx, yy, zz, levels=[iso])
-        return qcs
+        # rbf = Rbf(X, Y, self.Truth(pts2D), function='linear')
+        # zz = rbf(xx, yy)
+        # qcs = plt.contour(xx, yy, zz, levels=[iso])
+        # return qcs
 
         # Approach #2
         pts2D = np.vstack((xx.flatten(1), yy.flatten(1))).T
@@ -108,17 +95,6 @@ class tanhModel(ISeparatrixModel):
 
 
     def OverlayIsocline(self, h=None, iso=None):
-        # pts = np.linspace(0, 1, 30)
-        #
-        # xx, yy = np.meshgrid(pts, pts, nargout=2)
-        #
-        # set(0, 'currentfigure', h)
-        # hold('on')
-        # __, hlines = contour3(xx, yy, reshape(self.Truth(np.concatenate((xx.ravel()), yy.ravel())), 30, 30), np.dot(iso, ones(2, 1)),
-        #                       'k--', nargout=2)
-        #
-        # set(hlines, 'linewidth', 2)
-        # set(hlines, 'zdata', get(hlines, 'zdata') + 1)
         return
 
 
