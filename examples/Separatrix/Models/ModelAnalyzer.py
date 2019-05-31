@@ -1,5 +1,4 @@
 import io
-import os
 import json
 import numpy as np
 import pandas as pd
@@ -16,7 +15,6 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
 
         # Calculate the interested properties for comparison with the reference data
         result_dict = data.copy()
-        # result_dict.update({"sample_index": simulation.tags.get('__sample_index__')})
         result_dict["sample_index"] = data['__sample_index__']
         result_dict.pop('__sample_index__')
 
@@ -28,6 +26,7 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
 
         df = pd.DataFrame(data)
 
+        # Here is a chance to do something with the data, say calculate LL or plotting
         self.plot(df)
 
         return df['Result']
@@ -57,7 +56,6 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
         # show the plot on the screen
         plt.show()
 
-        # fig = plt.gcf()
         # fig.savefig('demo.png')
 
         plt.close(fig)
