@@ -15,10 +15,11 @@ logger = logging.getLogger(__name__)
 
 class ModelNextPoint(NextPointAlgorithm):
     """
+    Sepratrix Next Point Algirithm
     """
 
-    def __init__(self, params=None, Settings={}, Num_Initial_Samples=10, Num_Next_Samples=10,
-                 Num_Test_Points=10, Num_Candidates_Points=10, **kwargs):
+    def __init__(self, params=None, Settings={}, Num_Initial_Samples=None, Num_Next_Samples=None,
+                 Num_Test_Points=None, Num_Candidates_Points=None, **kwargs):
         super().__init__()
         self.params = params
         self.Num_Dimensions = len(params)
