@@ -101,13 +101,15 @@ class ModelNextPoint(NextPointAlgorithm):
         samples_all = self.test_points.copy()
         samples_all = samples_all[samples_all['Iteration'] == iteration]
 
-        return self.convert_df_to_points(samples_all, include_results=False)
+        testPoints = self.convert_df_to_points(samples_all, include_results=False)
+        return zeroCorners(testPoints)
 
     def get_possible_sample_points(self, iteration):
         samples_all = self.possible_points.copy()
         samples_all = samples_all[samples_all['Iteration'] == iteration]
 
-        return self.convert_df_to_points(samples_all, include_results=False)
+        possibleSamplePoints = self.convert_df_to_points(samples_all, include_results=False)
+        return zeroCorners(possibleSamplePoints)
 
     def choose_initial_samples(self):
         self.data = pd.DataFrame(
@@ -147,13 +149,11 @@ class ModelNextPoint(NextPointAlgorithm):
         sample_x, sample_y = self.get_all_samples()
 
         # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
-        sample_y = self.model.Sample(sample_x)
+        # sample_y = self.model.Sample(sample_x)
 
         # retrieve test and possible points
         testPoints = self.get_test_sample_points(iteration - 1)
         possibleSamplePoints = self.get_possible_sample_points(iteration - 1)
-        testPoints = zeroCorners(testPoints)
-        possibleSamplePoints = zeroCorners(possibleSamplePoints)
 
         # Generate the next samples
         new_sample_x, testPoints, possibleSamplePoints = igBDOE(sample_x, sample_y, self.inference_x,

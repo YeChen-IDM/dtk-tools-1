@@ -12,12 +12,9 @@ from scipy.special import betainc
 
 def computeInterestDistribution(alpha=None, beta=None, Interest_Level=None):
     interestDistrib = np.zeros((np.size(alpha, 0), 2), float)
-    # print(interestDistrib.shape)
-    # print(interestDistrib)
 
     for j in range(0, np.size(alpha, 0)):
         tmp = betainc(alpha[j, 0], beta[j, 0], [Interest_Level, 1])
-        # print("j={} - ({}, {}): {}".format(j, alpha[j, 0], beta[j, 0], tmp))
 
         # Second component is mass above separatrix
         # interestDistrib(j,:) = [tmp(1); diff(tmp)];       # Matlab

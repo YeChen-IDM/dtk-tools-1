@@ -6,7 +6,6 @@
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 
 import numpy as np
-from numpy.matlib import repmat
 
 
 def computeD2(row_points=None, col_points=None):

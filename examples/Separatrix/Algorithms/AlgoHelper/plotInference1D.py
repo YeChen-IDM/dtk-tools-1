@@ -1,8 +1,8 @@
 import logging
 import os
+import numpy as np
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
 from scipy.special import betainc
 from examples.Separatrix.Algorithms.AlgoHelper.utils import find
 
@@ -23,8 +23,6 @@ def plotInference1D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
         pdf[:, j] = np.append(tmp[0], np.diff(tmp, n=1, axis=0))
 
     [xx, yy] = np.meshgrid(inference_x, (PMFBinCenters - PMFBinCenters[0]) / (PMFBinCenters[-1] - PMFBinCenters[0]))
-    # print(xx)
-    # print(yy)
 
     # create a grid picture
     # fig = plt.figure(figsize=(10, 6))

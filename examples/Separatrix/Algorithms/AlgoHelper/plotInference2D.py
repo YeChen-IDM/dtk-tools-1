@@ -1,9 +1,9 @@
 import json
 import logging
 import os
+import numpy as np
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
 from scipy.interpolate import Rbf
 
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
@@ -29,7 +29,6 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
     ix, iy = np.meshgrid(np.linspace(ParameterRanges[0]['Min'], ParameterRanges[0]['Max'], grid_res),
                          np.linspace(ParameterRanges[1]['Min'], ParameterRanges[1]['Max'], grid_res))
     inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
-    # print("inference_x:\n", inference_x)
 
     X = inference_x[:, 0]
     Y = inference_x[:, 1]
@@ -73,8 +72,6 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
     def plot_variance(qcs):
 
         iso = params["Interest_Level"]
-        print('plot_variance, iso: ', iso)
-
         surf = ax2.pcolormesh(ix, iy, iz2, cmap='viridis', shading='gouraud')  # smooth
 
         cp = None

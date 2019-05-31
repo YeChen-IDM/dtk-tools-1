@@ -27,10 +27,6 @@ from examples.Separatrix.Algorithms.AlgoHelper.computeKL import computeKL
 
 def igBDOE(sample_x=None, sample_y=None, inference_x=None, ParameterRanges=None, params=None, testPoints=None,
            possibleSamplePoints=None):
-    print("igBDOE...sample_x.shape: ", sample_x.shape)
-    print("igBDOE...testPoints.shape: ", testPoints.shape)
-    print("igBDOE...possibleSamplePoints.shape: ", possibleSamplePoints.shape)
-
     NumPoints = np.size(sample_x, 0)
     # Read parameters from config:
     NumNextPoints = params["Num_Next_Samples"]

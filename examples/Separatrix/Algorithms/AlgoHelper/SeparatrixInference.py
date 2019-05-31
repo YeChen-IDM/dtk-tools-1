@@ -6,9 +6,6 @@ from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPoint
 from examples.Separatrix.Algorithms.AlgoHelper.tanhModel import tanhModel
 from examples.Separatrix.Algorithms.AlgoHelper.utils import sub2ind
 
-ParameterRanges = [dict(Min=0, Max=1), dict(Min=0, Max=1)]
-grid_res = 10
-
 # SeparatrixInference performs the inferece step of the Separatrix Algorithm.
 # Inputs:
 #  sample_x: (Number of samples) by (number of dimensions) of sample points
@@ -25,19 +22,6 @@ grid_res = 10
 
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 from examples.Separatrix.Algorithms.AlgoHelper.computeD2 import computeD2
-
-
-# Zdu: my function
-# def sub2ind(dim, row_inds=[], col_indx=[]):
-#     prod = zip(row_inds, col_indx)
-#
-#     inds = []
-#     for i, j in prod:
-#         idx = j * dim[0] + i
-#         inds.append(idx)
-#
-#     inds = [int(i) for i in inds]
-#     return inds
 
 
 def SeparatrixInference(sample_x=None, sample_y=None, inference_x=None, params=None):
@@ -96,13 +80,9 @@ def SeparatrixInference(sample_x=None, sample_y=None, inference_x=None, params=N
     D2_samp_inf_sorted = D2_samp_inf_sorted.flatten(1)
 
     # D_kNN_inf = np.sqrt(
-    #     D2_samp_inf_sorted[sub2ind([Nsamp, Ninference], (kNN_inference + 1).T[0], range(0, Ninference))])
 
-    try:
-        D_kNN_inf = np.sqrt(
-            D2_samp_inf_sorted[sub2ind([Nsamp, Ninference], (kNN_inference + 1).T[0], range(0, Ninference))])
-    except Exception as ex:
-        print(ex)
+    D_kNN_inf = np.sqrt(
+        D2_samp_inf_sorted[sub2ind([Nsamp, Ninference], (kNN_inference + 1).T[0], range(0, Ninference))])
 
     D_kNN_inf = np.minimum(params["max_g"], np.maximum(params["min_g"], D_kNN_inf)).reshape(D_kNN_inf.shape[0], 1)
 
