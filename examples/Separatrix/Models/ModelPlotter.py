@@ -198,8 +198,6 @@ class ModelPlotter(BasePlotter):
         grid_res = params["Inference_Grid_Resolution"]
         ix, iy = np.meshgrid(np.linspace(ParameterRanges[0]['Min'], ParameterRanges[0]['Max'], grid_res),
                              np.linspace(ParameterRanges[1]['Min'], ParameterRanges[1]['Max'], grid_res))
-        inference_x = np.vstack((ix.flatten(1), iy.flatten(1))).T
-        # print("inference_x:\n", inference_x)
 
         X = inference_x[:, 0]
         Y = inference_x[:, 1]
@@ -232,7 +230,6 @@ class ModelPlotter(BasePlotter):
 
             qcs.collections[0].set_label('True')
             ax1.legend(loc='lower left')
-            # plt.legend([h, qcs], labels=['Estimate', 'True'])
 
             ax1.set_title('Mode of Success Probability')
             ax1.set_xlabel('X')
