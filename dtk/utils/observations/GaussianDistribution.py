@@ -32,8 +32,6 @@ class GaussianDistribution(BaseDistribution):
 
     @staticmethod
     def construct_gaussian_channel(channel, type):
-        # age_bins = age_bins if isinstance(age_bins, list) else [age_bins]
-        # age_bin_str = '_'.join([str(age_bin) for age_bin in age_bins])
         return '%s--Gaussian-%s' % (channel, type)
 
     def add_percentile_values(self, dfw, channel, p):
@@ -52,23 +50,20 @@ class GaussianDistribution(BaseDistribution):
         # Note: Might be called extra times by pandas on apply for purposes of "optimization"
         # http://stackoverflow.com/questions/21635915/why-does-pandas-apply-calculate-twice
         #
-        log_root_2pi = np.multiply(0.5,np.log(np.multiply(2,np.pi)))
+        log_root_2pi = np.multiply(0.5, np.log(np.multiply(2, np.pi)))
 
         raw_data = df[reference_channel]
         sim_data = df[data_channel]
 
         two_sigma = df[self.UNCERTAINTY_CHANNEL]
         if len(two_sigma.unique()) != 1:
-            raise Exception('Could not determine what the raw data uncertainty is since reference data varies between replicates.')
+            raise Exception('Cannot determine what the raw data uncertainty is since it varies between replicates.')
         two_sigma = list(two_sigma)[0]
 
-        # ck4, set the default value for uncertainty in the ingest parser
+        raw_data_variance = np.divide(two_sigma, 1.96)**2
 
-        raw_data_variance = np.divide(two_sigma, 2)**2
-
-        # return np.subtract(raw_data,sim_data)
-
-        log_of_gaussian = - log_root_2pi - np.multiply(0.5, np.log(raw_data_variance)) -\
+        log_of_gaussian = - log_root_2pi -\
+                          np.multiply(0.5, np.log(raw_data_variance)) -\
                           np.divide(np.multiply(0.5, ((sim_data - raw_data)**2)), raw_data_variance)
 
         # add likelihood columns to df
@@ -87,7 +82,8 @@ class GaussianDistribution(BaseDistribution):
             df_sample_PA['log_of_gaussian'] <= df_sample_PA['scale_min'],
             df_sample_PA['log_of_gaussian'] > df_sample_PA['scale_min']]
 
-        choices = [df_sample_PA['scale_min'], df_sample_PA['log_of_gaussian']+df_sample_PA['scale_max']-df_sample_PA['lplg']]
+        choices = [df_sample_PA['scale_min'],
+                   df_sample_PA['log_of_gaussian'] + df_sample_PA['scale_max'] - df_sample_PA['lplg']]
 
         df_sample_PA['scaled_log_of_gaussian'] = np.select(conditions, choices, default=-708.3964)
 
