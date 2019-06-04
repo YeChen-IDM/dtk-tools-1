@@ -29,7 +29,7 @@ def sub2ind(dim, row_inds=[], col_indx=[]):
         idx = j * dim[0] + i
         inds.append(idx)
 
-    inds = [int(i) for i in inds]
+    inds = [int(i) - 1 for i in inds]   # Python is 0-based
     return inds
 
 
