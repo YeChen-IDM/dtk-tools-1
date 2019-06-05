@@ -171,7 +171,6 @@ class ModelNextPoint(NextPointAlgorithm):
 
         return next_samples
 
-    # [TODO]: it may need to include test and possible points as well for resume!
     def get_samples_for_iteration(self, iteration):
         if iteration == 0:
             samples = self.choose_initial_samples()
@@ -220,36 +219,12 @@ class ModelNextPoint(NextPointAlgorithm):
 
     def get_final_samples(self):
         """
-        Resample Stage:
         """
         iteration = self.data['Iteration'].max()
         data_by_iter = self.data[self.data['Iteration'] == iteration]
         final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
 
         return {'final_samples': final_samples.to_dict(orient='list')}
-
-    # Output test and possible points as well
-    def get_final_samples_test(self):
-        """
-        Resample Stage:
-        """
-        iteration = self.data['Iteration'].max()
-        data_by_iter = self.data[self.data['Iteration'] == iteration]
-        final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
-
-        data_by_iter = self.test_points[self.test_points['Iteration'] == iteration]
-        test_samples = data_by_iter.drop(['Iteration'], axis=1)
-
-        data_by_iter = self.possible_points[self.possible_points['Iteration'] == iteration]
-        possible_samples = data_by_iter.drop(['Iteration'], axis=1)
-
-        return {
-            'final_samples': {
-                'samples': final_samples.to_dict(orient='list'),
-                'test_samples': test_samples.to_dict(orient='list'),
-                'possible_samples': possible_samples.to_dict(orient='list')
-            }
-        }
 
     def get_sample_points(self, iteration):
         # Convert samples to matrix format
@@ -320,10 +295,39 @@ class ModelNextPoint(NextPointAlgorithm):
         self.possible_points = self.add_samples_to_df(possible_samples, self.possible_points, iteration)
 
     def get_state(self):
-        return self.data
+        if len(self.data) == 0:
+            return {}
+
+        iteration = self.data['Iteration'].max()
+        # data_by_iter = self.data[self.data['Iteration'] == iteration]
+        # final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
+        # final_samples = data_by_iter
+        final_samples = self.data
+
+        if len(self.test_points) == 0:
+            data_by_iter = self.test_points
+        else:
+            data_by_iter = self.test_points[self.test_points['Iteration'] == iteration]
+        # test_samples = data_by_iter.drop(['Iteration'], axis=1)
+        test_samples = data_by_iter
+
+        if len(self.possible_points) == 0:
+            data_by_iter = self.possible_points
+        else:
+            data_by_iter = self.possible_points[self.possible_points['Iteration'] == iteration]
+        # possible_samples = data_by_iter.drop(['Iteration'], axis=1)
+        possible_samples = data_by_iter
+
+        return {
+                'samples': final_samples.to_dict(orient='list'),
+                'test_points': test_samples.to_dict(orient='list'),
+                'possible_points': possible_samples.to_dict(orient='list')
+        }
 
     def set_state(self, state, iteration):
-        self.data = state
+        self.data = pd.DataFrame(data=state['samples'])
+        self.test_points = pd.DataFrame(data=state['test_points'])
+        self.possible_points = pd.DataFrame(data=state['possible_points'])
 
     def cleanup(self):
         pass
