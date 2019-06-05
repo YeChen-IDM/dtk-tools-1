@@ -318,23 +318,30 @@ class CalibManager(object):
 
         latest_step = it.status
         if iter_step is None:
-            iter_step = latest_step.name
+            iter_step = latest_step
 
-        given_step = StatusPoint[iter_step]
+        if isinstance(iter_step, StatusPoint):
+            given_step = iter_step
+        else:
+            given_step = StatusPoint[iter_step]
+
         if given_step == StatusPoint.analyze:
             given_step = StatusPoint.running
-            
+
         if given_step.value > latest_step.value:
             raise Exception("The iter_step '%s' is beyond the latest step '%s'" % (given_step.name, latest_step.name))
 
         # move forward if status is done
         if given_step == StatusPoint.done:
-            iter_step = StatusPoint.next_point.name
+            iter_step = StatusPoint.next_point
 
         # finally check user input location and experiment location and provide options for resume
         self.check_location(it)
 
-        return it, StatusPoint[iter_step]
+        if isinstance(iter_step, StatusPoint):
+            return it, iter_step
+        else:
+            return it, StatusPoint[iter_step]
 
     def check_location(self, iteration_state):
         """
