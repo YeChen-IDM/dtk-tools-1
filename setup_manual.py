@@ -137,7 +137,7 @@ def get_requirements_by_os():
         if not val or 'platform' not in val or LocalOS.name in val['platform']:
             # OS: Mac or Linux. No wheel needed except catalyst and pyCOMPS
             if LocalOS.name in (LocalOS.MAC, LocalOS.LINUX) and val and 'wheel' in val:
-                if name not in ('pyCOMPS', 'catalyst'):
+                if name not in ('pyCOMPS', 'catalyst-report'):
                     val.pop('wheel')
 
             # OS: Linux. No version for some packages
