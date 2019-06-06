@@ -1,11 +1,11 @@
-import logging
+import json
 import os
+import logging
 import numpy as np
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.special import betainc
 from examples.Separatrix.Algorithms.AlgoHelper.utils import find
-
 
 logger = logging.getLogger(__name__)
 
@@ -72,10 +72,10 @@ def plotInference1D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
 
     plot_main(true_separatrix)
 
-    # plt.show()
+    plt.show()
 
-
-    plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.pdf'))
+    # plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.pdf'))
+    # plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.png'))
 
     fig.clf()
     plt.close(fig)
