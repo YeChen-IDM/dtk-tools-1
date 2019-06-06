@@ -1,5 +1,4 @@
 import json
-import os
 from simtools.SimConfigBuilder import SimConfigBuilder
 from simtools.Utilities.Encoding import NumpyEncoder
 

@@ -125,7 +125,6 @@ class ModelNextPoint(NextPointAlgorithm):
             self.state.loc[len(self.state)] = [iteration, param['Name'], param['Min'], param['Max']]
 
         # Use LHS to generate points
-        # points = self.get_lhs_samples(self.Settings["Num_Initial_Samples"])
         points = LHSPointSelection(self.Num_Initial_Samples, self.Num_Dimensions, ParameterRanges=self.parameter_ranges)
         initial_samples = self.convert_points_to_df(points)
 
@@ -144,9 +143,6 @@ class ModelNextPoint(NextPointAlgorithm):
         """
         # retrieve all previous samples
         sample_x, sample_y = self.get_all_samples()
-
-        # [TODO]: Zdu: test (sample_y has nan results). Should be removed late!
-        # sample_y = self.model.Sample(sample_x)
 
         # retrieve test and possible points
         testPoints = self.get_test_sample_points(iteration - 1)
@@ -299,23 +295,20 @@ class ModelNextPoint(NextPointAlgorithm):
             return {}
 
         iteration = self.data['Iteration'].max()
-        # data_by_iter = self.data[self.data['Iteration'] == iteration]
-        # final_samples = data_by_iter.drop(['Iteration', 'Results'], axis=1)
-        # final_samples = data_by_iter
         final_samples = self.data
 
         if len(self.test_points) == 0:
             data_by_iter = self.test_points
         else:
             data_by_iter = self.test_points[self.test_points['Iteration'] == iteration]
-        # test_samples = data_by_iter.drop(['Iteration'], axis=1)
+
         test_samples = data_by_iter
 
         if len(self.possible_points) == 0:
             data_by_iter = self.possible_points
         else:
             data_by_iter = self.possible_points[self.possible_points['Iteration'] == iteration]
-        # possible_samples = data_by_iter.drop(['Iteration'], axis=1)
+
         possible_samples = data_by_iter
 
         return {
@@ -334,69 +327,3 @@ class ModelNextPoint(NextPointAlgorithm):
 
     def end_condition(self):
         return False
-
-
-def test_2d():
-    params = [
-        {
-            'Name': 'Point_X',
-            'MapTo': 'Point_X',
-            'Min': 0,
-            'Max': 1
-        },
-        {
-            'Name': 'Point_Y',
-            'MapTo': 'Point_Y',
-            'Min': 0,
-            'Max': 1
-        },
-    ]
-
-    # Load Separatrix settings
-    Settings = json.load(open('../Settings.json', 'r'))
-
-    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Initial_Samples=20,
-                                      Num_Next_Samples=20)
-
-    initial_samples = model_next_point.choose_initial_samples()
-    print(initial_samples)
-
-    next_samples = model_next_point.choose_next_samples(1)
-    print(next_samples)
-
-    next_samples = model_next_point.choose_next_samples(2)
-    print(next_samples)
-
-
-def test_1d():
-    params = [
-        {
-            'Name': 'Point_X',
-            'MapTo': 'Point_X',
-            'Min': 0,
-            'Max': 1
-        }
-    ]
-
-    # Load Separatrix settings
-    Settings = json.load(open('../Settings.json', 'r'))
-
-    model_next_point = ModelNextPoint(params, Settings=Settings, Num_Initial_Samples=10,
-                                      Num_Next_Samples=10)
-
-    initial_samples = model_next_point.choose_initial_samples()
-    print(initial_samples)
-
-    next_samples = model_next_point.choose_next_samples(1)
-    print(next_samples)
-
-    next_samples = model_next_point.choose_next_samples(2)
-    print(next_samples)
-
-
-if __name__ == "__main__":
-    test_2d()
-    exit()
-
-    test_1d()
-    exit()
