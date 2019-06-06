@@ -27,11 +27,11 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
         df = pd.DataFrame(data)
 
         # Here is a chance to do something with the data, say calculate LL or plotting
-        # self.plot(df)
+        # self.plot_demo(df)
 
         return df['Result']
 
-    def plot(self, df):
+    def plot_demo(self, df):
         import matplotlib.pyplot as plt
         from matplotlib.font_manager import FontProperties
         font_set = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=15)

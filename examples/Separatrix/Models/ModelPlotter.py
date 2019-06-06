@@ -61,7 +61,7 @@ class ModelPlotter(BasePlotter):
         Settings = model_algo.Settings
         Num_Dimensions = model_algo.Num_Dimensions
 
-        ParameterRanges = model_algo.parameter_ranges  # [dict(Min=0, Max=1), dict(Min=0, Max=1)]
+        ParameterRanges = model_algo.parameter_ranges
 
         grid_res = model_algo.Settings["Inference_Grid_Resolution"]
 
@@ -81,7 +81,7 @@ class ModelPlotter(BasePlotter):
         elif Num_Dimensions == 2:
             model = tanhModel(myrng=myrng)
 
-        iso = Settings["Interest_Level"]  # 0.7
+        iso = Settings["Interest_Level"]
         true_separatrix_qcs = model.TrueSeparatrix(iso)
 
         # Make data.
