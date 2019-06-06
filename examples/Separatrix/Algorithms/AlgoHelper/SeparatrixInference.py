@@ -2,6 +2,8 @@
 
 import numpy as np
 from examples.Separatrix.Algorithms.AlgoHelper.utils import sub2ind
+from examples.Separatrix.Algorithms.AlgoHelper.computeD2 import computeD2
+
 
 # SeparatrixInference performs the inferece step of the Separatrix Algorithm.
 # Inputs:
@@ -18,7 +20,6 @@ from examples.Separatrix.Algorithms.AlgoHelper.utils import sub2ind
 # can be computed by plugging alpha and beta into a Beta distribution.
 
 # Separatrix Demo, Institute for Disease Modeling, May 2014
-from examples.Separatrix.Algorithms.AlgoHelper.computeD2 import computeD2
 
 
 def SeparatrixInference(sample_x=None, sample_y=None, inference_x=None, params=None):
@@ -35,16 +36,12 @@ def SeparatrixInference(sample_x=None, sample_y=None, inference_x=None, params=N
 
     # Compute squared distance from each sample point to the k-th
     # nearest neighboring sample point (eqn 5)
-    # zdu_t = params["c_rho"] * Nsamp ** params["gamma_rho"]
-    # print(zdu_t)
     kNN_rho = np.max((params["Min_Neighbors_for_KNN"], np.floor(params["c_rho"] * Nsamp ** params["gamma_rho"])))
 
     D2_samp_samp = computeD2(sample_x, sample_x)
 
     D2_samp_samp_sorted = np.sort(D2_samp_samp, axis=0)  # sort each column in increasing
 
-    # D_kNN_rho = sqrt(D2_samp_samp_sorted( sub2ind([Nsamp Nsamp], (kNN_rho+1)*ones(1,Nsamp), 1:Nsamp) ))';  # matlab
-    # Zdu: make it as an array
     D2_samp_samp_sorted = D2_samp_samp_sorted.flatten(1)
 
     D_kNN_rho = np.sqrt(
@@ -82,7 +79,6 @@ def SeparatrixInference(sample_x=None, sample_y=None, inference_x=None, params=N
     D_kNN_inf = np.minimum(params["max_g"], np.maximum(params["min_g"], D_kNN_inf)).reshape(D_kNN_inf.shape[0], 1)
 
     # Compute the kernel and apply to get alpha and beta
-    # kernel = np.diag(1.0 / rho_xx) * np.exp(-1 / 2 * D2_samp_inf * np.diag(1.0 / D_kNN_inf ** 2))
     kernel = np.dot(np.diag((1.0 / rho_xx).flatten()),
                     np.exp(-1 / 2 * np.dot(D2_samp_inf, np.diag((1.0 / D_kNN_inf ** 2).flatten()))))
 

@@ -22,19 +22,3 @@ def computeD2(row_points=None, col_points=None):
                                                                                               col_points[:, d])) ** 2
 
     return D2
-
-
-def demo():
-    data = [[3, 6, 5], [7, -2, 4], [1, 0, -9]]
-
-    A = np.array(data)
-
-    row_points = A
-    col_points = A
-
-    D2 = computeD2(row_points, col_points)
-    print(D2)
-
-
-if __name__ == "__main__":
-    demo()

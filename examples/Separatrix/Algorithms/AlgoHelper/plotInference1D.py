@@ -1,6 +1,5 @@
-import json
-import os
 import logging
+import os
 import numpy as np
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -25,7 +24,6 @@ def plotInference1D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
     [xx, yy] = np.meshgrid(inference_x, (PMFBinCenters - PMFBinCenters[0]) / (PMFBinCenters[-1] - PMFBinCenters[0]))
 
     # create a grid picture
-    # fig = plt.figure(figsize=(10, 6))
     fig, ax = plt.subplots(figsize=(10, 8))
 
     def plot_main(true_separatrix):
@@ -61,9 +59,7 @@ def plotInference1D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
 
         ax.set_xlabel('X')
         ax.set_ylabel('Probability Density')
-        # ax.set_title('Samples')
 
-        # plt.legend(loc='upper left')
         plt.legend(loc='center left', bbox_to_anchor=(1.2, 0.5))
 
         plt.ylim([-.10, 1.10])
@@ -72,10 +68,10 @@ def plotInference1D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
 
     plot_main(true_separatrix)
 
-    plt.show()
+    # plt.show()
 
     # plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.pdf'))
-    # plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.png'))
+    plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.png'))
 
     fig.clf()
     plt.close(fig)

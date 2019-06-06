@@ -7,15 +7,14 @@
 
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 
-import math
+
 import numpy as np
-import copy
 import random
 from scipy.interpolate import interp1d
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
 from examples.Separatrix.Algorithms.AlgoHelper.utils import find
 
-from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
+from scipy.interpolate import Rbf
 
 
 def ChooseTestAndSamplePointsForNextIteration(testPoints=None, Interest_x=None, InterestDistributionTestPoints=None,
@@ -27,7 +26,6 @@ def ChooseTestAndSamplePointsForNextIteration(testPoints=None, Interest_x=None, 
 
     MCMCres = params["MCMC_Resolution"]
 
-    # [TODO]: zdu, maybe there is a bug
     NtestPoints = np.size(mcmcTestPoints, 0)
 
     NpossibleSamplePoints = np.size(possibleSamplePoints, 0)
@@ -113,7 +111,7 @@ def ChooseTestAndSamplePointsForNextIteration(testPoints=None, Interest_x=None, 
         # Apply Gaussian blur
         for dimension in range(0, params["Num_Dimensions"]):
             tp_blur = mcmcTestPoints[:, dimension] + params[
-                "Blur_Sigma"] * np.random.standard_normal(NtestPoints)  # Bug?? params["Num_Test_Points"]
+                "Blur_Sigma"] * np.random.standard_normal(NtestPoints)  # Bug?? Matlab code: params["Num_Test_Points"]
             inds = find((tp_blur < 0).astype(int) | (tp_blur > 1).astype(int))
             tp_blur[inds] = mcmcTestPoints[inds, dimension]
             mcmcTestPoints[:, dimension] = tp_blur

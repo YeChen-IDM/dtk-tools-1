@@ -16,7 +16,6 @@
 
 # Separatrix Demo, Institute for Disease Modeling, May 2014
 import numpy as np
-
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
 from examples.Separatrix.Algorithms.AlgoHelper.ChooseTestAndSamplePointsForNextIteration import \
     ChooseTestAndSamplePointsForNextIteration
@@ -70,9 +69,6 @@ def igBDOE(sample_x=None, sample_y=None, inference_x=None, ParameterRanges=None,
         ED_KL[i] = mu * D_KL_success + (1 - mu) * D_KL_failure
 
     # Choose next sample points based on expected KL divergence
-    # __, order = sorted(ED_KL, reverse=True)
-    # NextPointsInds = order(range(0, NumNextPoints))
-    # sort eigenvalue in decreasing order
     NextPointsInds = ED_KL.argsort(axis=0)[::-1]
     NextPointsInds = NextPointsInds[0:int(NumNextPoints)]
     NextPointsInds = list(NextPointsInds[:, 0])
