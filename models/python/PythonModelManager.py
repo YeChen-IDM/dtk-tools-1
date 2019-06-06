@@ -25,9 +25,12 @@ class PythonModelManager(object):
 
     @staticmethod
     def set_config(cb, config):
-        # cb.sim_config = config            # list
-        cb.sim_config = {'config': config}  # dict
-        return {"config": config}
+        if len(config) == 1:
+            cb.sim_config = {'config':config[0]}
+            return {k:v for k,v in config[0].items()}
+        else:
+            cb.sim_config = {'config': config}  # dict
+            return cb.sim_config
 
     def execute(self, check_status=True):
 
