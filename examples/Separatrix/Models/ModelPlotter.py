@@ -43,7 +43,6 @@ class ModelPlotter(BasePlotter):
         self.site_analyzer_names = iteration_state.site_analyzer_names
         iteration_status = self.iteration_state.status
 
-        self.directory = self.iteration_state.iteration_directory
         self.param_names = self.iteration_state.param_names
         self.data = self.iteration_state.next_point_algo.get_state()
 
@@ -177,8 +176,8 @@ class ModelPlotter(BasePlotter):
         plot_main(true_separatrix)
 
         # plt.show()
-
-        plt.savefig(os.path.join(self.directory, 'Separatrix_Sample_Results.pdf'))
+        # plt.savefig(os.path.join(self.iteration_state.iteration_directory, 'Separatrix_Sample_Results.pdf'))
+        plt.savefig(os.path.join(self.iteration_state.iteration_directory, 'Separatrix_Sample_Results.png'))
 
         fig.clf()
         plt.close(fig)
@@ -192,10 +191,8 @@ class ModelPlotter(BasePlotter):
         ax2 = plt.subplot2grid((2, 3), (0, 2))
         ax3 = plt.subplot2grid((2, 3), (1, 2))
 
-        iso = params["Interest_Level"]
-
         # Make data.
-        grid_res = params["Inference_Grid_Resolution"]
+        grid_res = 1000
         ix, iy = np.meshgrid(np.linspace(ParameterRanges[0]['Min'], ParameterRanges[0]['Max'], grid_res),
                              np.linspace(ParameterRanges[1]['Min'], ParameterRanges[1]['Max'], grid_res))
 
@@ -204,6 +201,16 @@ class ModelPlotter(BasePlotter):
 
         Z = (a - 1) / (a + b - 2)
         Z2 = a * b / ((a + b) ** 2 * (a + b + 1))
+
+        # [TODO]: what is the decision?
+        Z[np.isneginf(Z)] = 0
+        Z[np.isinf(Z)] = 0
+        Z[np.isnan(Z)] = 0
+
+        # [TODO]: what is the decision?
+        Z2[np.isneginf(Z2)] = 0
+        Z2[np.isinf(Z2)] = 0
+        Z2[np.isnan(Z2)] = 0
 
         rbf = Rbf(X, Y, Z, function='linear')
         iz = rbf(ix, iy)
@@ -257,7 +264,7 @@ class ModelPlotter(BasePlotter):
             # qcs.collections[0].set_label('True')
             # ax2.legend(loc='lower left')
 
-            ax2.set_title('Variacne')
+            ax2.set_title('Variance')
             ax2.set_xlabel('X')
             ax2.set_ylabel('Y')
 
@@ -296,7 +303,8 @@ class ModelPlotter(BasePlotter):
 
         # plt.show()
 
-        plt.savefig(os.path.join(self.directory, 'Separatrix_Sample_Results.pdf'))
+        # plt.savefig(os.path.join(self.iteration_state.iteration_directory, 'Separatrix_Sample_Results.png'))
+        plt.savefig(os.path.join(self.iteration_state.iteration_directory, 'Separatrix_Sample_Results.png'))
 
         fig.clf()
         plt.close(fig)
