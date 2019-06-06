@@ -1,6 +1,5 @@
 import copy
 import json
-
 from calibtool.CalibManager import CalibManager
 from examples.Separatrix.Models.ModelSite import ModelSite
 from examples.Separatrix.Models.ModelPlotter import ModelPlotter
@@ -12,7 +11,6 @@ from simtools.SetupParser import SetupParser
 SetupParser.default_block = 'HPC'
 
 # This config builder will be modify by the different sites defined below
-# [TODO]: we may use PythonModelManager but we need to consider how to create config.json for each sample point!
 cb = ModelConfigBuilder()
 cb.set_dll_root('Assets')
 
@@ -65,12 +63,12 @@ Settings = json.load(open('Settings.json', 'r'))
 model_next_point = ModelNextPoint(params, Settings=Settings, Num_Initial_Samples=50,
                                   Num_Next_Samples=50)
 
-calib_manager = CalibManager(name='Example_Model_2d_3',
+calib_manager = CalibManager(name='Example_Model_2d',
                              config_builder=cb,
                              map_sample_to_model_input_fn=map_sample_to_model_input,
                              sites=sites,
                              next_point=model_next_point,
-                             max_iterations=2,
+                             max_iterations=3,
                              plotters=plotters)
 
 run_calib_args = {
