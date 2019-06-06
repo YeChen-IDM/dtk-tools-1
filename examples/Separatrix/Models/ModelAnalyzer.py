@@ -27,7 +27,7 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
         df = pd.DataFrame(data)
 
         # Here is a chance to do something with the data, say calculate LL or plotting
-        self.plot(df)
+        # self.plot(df)
 
         return df['Result']
 

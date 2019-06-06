@@ -2,25 +2,6 @@ import numpy as np
 from examples.Separatrix.Algorithms.AlgoHelper.LHSPointSelection import LHSPointSelection
 
 
-# def sub2ind(shape, row_inds=[], col_indx=[]):
-#     inds = np.ravel_multi_index([row_inds, col_indx], shape, order='F')
-#
-#     return sorted(inds)
-#
-#
-# def ind2sub(shape, index=[]):
-#     row_inds, col_indx = np.unravel_index(index, shape, order='F')
-#
-#     return row_inds, col_indx
-#
-#
-# def get_data_by_index(X, index=[]):
-#     # row_inds, col_indx = ind2sub(X.shape, index)
-#     row_inds, col_indx = np.unravel_index(index, X.shape, order='F')
-#
-#     return X[row_inds, col_indx]
-
-
 def sub2ind(dim, row_inds=[], col_indx=[]):
     prod = zip(row_inds, col_indx)
 
@@ -29,7 +10,7 @@ def sub2ind(dim, row_inds=[], col_indx=[]):
         idx = j * dim[0] + i
         inds.append(idx)
 
-    inds = [int(i) - 1 for i in inds]   # Python is 0-based
+    inds = [int(i) - 1 for i in inds]  # Python is 0-based
     return inds
 
 
@@ -50,7 +31,6 @@ def find(X):
 
 
 def generate_requested_points(Num_Points, Num_Dimensions, ParameterRanges):
-    # Use LHS to create points for now
     points = LHSPointSelection(Num_Points, Num_Dimensions, ParameterRanges)
 
     # Hit the corners (required for current MCMC implementation)

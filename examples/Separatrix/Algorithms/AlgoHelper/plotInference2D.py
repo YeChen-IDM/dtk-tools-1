@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import numpy as np
@@ -41,14 +40,14 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
     Z2[np.isinf(Z2)] = 0
     Z2[np.isnan(Z2)] = 0
 
-    # Approach #1: works
+    # Approach #1: use Rbf
     rbf = Rbf(X, Y, Z, function='linear')
     zz = rbf(xx, yy)
 
     rbf2 = Rbf(X, Y, Z2, function='linear')
     zz2 = rbf2(xx, yy)
 
-    # Approach #2: works as Approach #1
+    # Approach #2: use interp2d
     # x = np.linspace(ParameterRanges[0]['Min'], ParameterRanges[0]['Max'], grid_res)
     # y = np.linspace(ParameterRanges[1]['Min'], ParameterRanges[1]['Max'], grid_res)
     #
@@ -75,9 +74,7 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
 
         qcs = ax1.contour(xx, yy, zz, levels=[iso], colors=['k'], linestyles='solid', norm=None)
 
-        # qcs.collections[0].set_label('True')
         ax1.legend(loc='lower left')
-        # plt.legend([h, qcs], labels=['Estimate', 'True'])
 
         ax1.set_title('Mode of Success Probability')
         ax1.set_xlabel('X')
@@ -102,14 +99,10 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
 
         qcs = ax2.contour(xx, yy, zz, levels=[iso], colors=['k'], linestyles='solid', norm=None)
 
-        # qcs.collections[0].set_label('True')
-        # ax2.legend(loc='lower left')
-
         ax2.set_title('Variance')
         ax2.set_xlabel('X')
         ax2.set_ylabel('Y')
 
-        # cbar = plt.colorbar(surf, ax=ax2)
 
     def plot_samples(sample_x, sample_y, new_sample_x=None, new_sample_y=None):
 
@@ -135,8 +128,6 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
         ax3.set_ylabel('Y')
         ax3.set_title('Samples')
 
-        # ax3.legend([h1, h2], labels=['Success', 'Fail'], loc='lower center')
-        # ax3.legend([h1, h2], labels=['Success', 'Fail'], loc='lower left', bbox_to_anchor=(0., -0.14, 1., .102), ncol=3, mode="expand", borderaxespad=0.)  # [TODO]: Cause warning!
         ax3.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), shadow=True, ncol=2)
 
     qcs = true_separatrix
@@ -144,10 +135,10 @@ def plotInference2D(inference_x, sample_x, new_sample_x, sample_y, new_sample_y,
     plot_variance(qcs)
     plot_samples(sample_x, sample_y, new_sample_x, new_sample_y)
 
-    plt.show()
+    # plt.show()
 
     # plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.pdf'))
-    # plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.png'))
+    plt.savefig(os.path.join(directory, 'Separatrix_Sample_Results.png'))
 
     fig.clf()
     plt.close(fig)

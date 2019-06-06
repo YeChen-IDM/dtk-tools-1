@@ -20,8 +20,3 @@ class ISeparatrixModel(BaseHandel):
 
     def TrueSeparatrix(self, interestLevel):
         pass
-
-
-if __name__ == "__main__":
-    s = ISeparatrixModel(Model_Name=None, Parameter_Names=None, Parameter_Ranges=None, config=None)
-    print(s)

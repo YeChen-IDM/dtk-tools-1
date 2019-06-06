@@ -16,8 +16,6 @@ class SigmoidalModel(ISeparatrixModel):
 
     def Initialize(self):
         self.Model_Name = self.__class__.__name__
-
-        # self.myrng = RandStream('mt19937ar', 'seed', self.config.RandomSeed)
         np.random.seed(1)
         self.myrng = np.random.rand()
 
