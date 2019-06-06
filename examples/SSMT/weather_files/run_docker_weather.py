@@ -14,10 +14,19 @@ def main():
     end_date = 2015002
 
     # Optional arguments
-    optional_args = '--id-ref "Custom user" --node-col node_id'
 
-    # Prepare the work item (NOT to be modified).
-    docker_image = "weather-files:1.0"
+    # Data source selection: use "--ds" to select a data source. Currently available data sources are:
+    #   ERA5: world-wide daily estimates for air/ground temperature, humidity and rainfall at 30km resolution.
+    #   TAMSATv3: Daily rainfall estimates for all of Africa at 4km resolution.
+
+    # CSV output format: use "--outtype csvfile" to generate weather files in .csv format.
+    # Consider the size of the output CSV file. For example, for 1 node and 1 year the size will be ~20KB.
+
+    optional_args = '--ds ERA5 --id-ref "Custom user" --node-col node_id'
+
+    # To run a specific version add a tag (for example, "weather-files:1.1").
+    # See available versions here: https://github.com/InstituteforDiseaseModeling/dst-era5-weather-data-tools/releases.
+    docker_image = "weather-files"
     command_pattern = "python /app/generate_weather_asset_collection.py {} {} {} {}"
     command = command_pattern.format(points_file, start_date, end_date, optional_args)
     user_files = FileList(root='.', files_in_root=[points_file])
