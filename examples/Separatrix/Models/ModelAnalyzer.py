@@ -29,6 +29,10 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
         # Here is a chance to do something with the data, say calculate LL or plotting
         # self.plot_demo(df)
 
+        # Note: More information about plotting:
+        # Here all_data is the results of all simulation in current iteration. As Separatrix' plotting needs simulation
+        # results from the previous iteration, so we can't do the plotting here and we will do the plotting with plotter
+
         return df['Result']
 
     def plot_demo(self, df):
@@ -56,6 +60,7 @@ class ModelAnalyzer(BaseCalibrationAnalyzer):
         # show the plot on the screen
         plt.show()
 
+        # fig.savefig('demo.pdf')
         # fig.savefig('demo.png')
 
         plt.close(fig)
