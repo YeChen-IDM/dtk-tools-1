@@ -31,8 +31,9 @@ class SiteDataPlotter(BasePlotter):
         for site, analyzers in self.site_analyzer_names.items():
             if site_name != site:
                 continue
+            site_analyzer = '%s_%s' % (site_name, analyzer_name)
             for analyzer in self.iteration_state.analyzer_list:
-                if analyzer_name == analyzer.name:
+                if site_analyzer == analyzer.uid:
                     return analyzer
         raise Exception('Unable to find analyzer=%s for site=%s' % (analyzer_name, site_name))
 
@@ -56,7 +57,8 @@ class SiteDataPlotter(BasePlotter):
                     self.combine_by_site(site_name, analyzer_names, self.all_results)
                     sorted_results = self.all_results.sort_values(by='%s_total' % site_name, ascending=False).reset_index()
                     self.plot_analyzers(site_name, analyzer_names, sorted_results)
-        except:
+        except Exception as e:
+            raise e
             logger.info("SiteDataPlotter could not plot for one or more analyzer(s).")
 
         try:

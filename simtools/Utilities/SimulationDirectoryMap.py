@@ -27,7 +27,7 @@ class SimulationDirectoryMap:
     @classmethod
     def single_simulation_dir(cls, simulation):
         exp = simulation.experiment
-        if exp.location == "LOCAL":
+        if exp.location == "LOCAL" or exp.location == "CLUSTER":
             path = os.path.join(exp.sim_root, '%s_%s' % (exp.exp_name, exp.exp_id), simulation.id)
         else:
             from simtools.Utilities.COMPSUtilities import workdirs_from_simulations

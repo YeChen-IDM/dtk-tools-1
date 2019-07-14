@@ -414,7 +414,8 @@ class CalibManager(object):
             return
 
         logger.info("Waiting to complete cancellation...")
-        exp_manager.wait_for_finished(verbose=False, sleep_time=1)
+        if exp_manager.location != "CLUSTER":
+            exp_manager.wait_for_finished(verbose=False, sleep_time=1)
 
         # Print confirmation
         logger.info("Calibration %s successfully cancelled!" % self.name)

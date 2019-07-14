@@ -570,7 +570,7 @@ class DTKConfigBuilder(SimConfigBuilder):
         self.file_writer(write_file)
 
         from simtools.SetupParser import SetupParser
-        if SetupParser.get('type') == "LOCAL":
+        if SetupParser.get('type') == "LOCAL" or SetupParser.get("type") == "CLUSTER":
             for file in self.experiment_files:
                 shutil.copy(file.absolute_path, working_directory)
 

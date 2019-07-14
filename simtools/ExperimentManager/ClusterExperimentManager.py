@@ -1,4 +1,12 @@
+import sys
+from tempfile import TemporaryDirectory
+
+from COMPS.Data.Simulation import SimulationState
+
+from simtools.DataAccess.DataStore import DataStore
 from simtools.ExperimentManager.BaseExperimentManager import BaseExperimentManager
+from simtools.SetupParser import SetupParser
+from simtools.SimulationCreator.ClusterSimulationsCreator import ClusterSimulationCreator
 from simtools.Utilities.Experiments import validate_exp_name
 from simtools.Utilities.General import init_logging
 
@@ -8,7 +16,52 @@ import os
 import re
 import shutil
 from datetime import datetime
-from simtools.SimulationCreator.LocalSimulationCreator import LocalSimulationCreator
+
+script_template = """#/bin/bash
+#SBATCH --job-name {job_name}  # A single job name for the array
+#SBATCH --partition={partition} # Which partition to use
+#SBATCH --mem-per-cpu={memory} # Memory per core
+#SBATCH --time={time_limit}    # Time limit
+#SBATCH --tasks=1
+#SBATCH --cpus-per-task={cpu_per_task}
+#SBATCH --nodes={nodes}        # How many nodes to request.
+#SBATCH --mail-type=ALL 
+#SBATCH --mail-user={email}
+#SBATCH --array=0-{folders_length} 
+folders = ({folders})
+current_folder = ${{folders[$SLURM_ARRAY_TASK_ID]}}
+cd $current_folder
+../Assets/Eradication -C ./config.json -I ../Assets
+"""
+
+# Requires the following type of section in simtools.ini
+# [CLUSTERMODE]
+# type = CLUSTER
+# # Path where the simulation outputs will be stored
+# sim_root = P:\Eradication\simulations
+#
+# # Path for the model to find the input files
+# input_root = P:\Projects\dtk-tools-br\examples\inputs
+#
+# # Path where a 'reporter_plugins' folder containing the needed DLLs
+# dll_root = P:\Projects\dtk-tools-br\examples\inputs\dlls
+#
+# # Path to the model executable
+# exe_path = P:\Projects\dtk-tools-br\examples\inputs\Eradication.exe
+#
+# # Resources request
+# nodes = 1
+# cpu_per_task = 1
+# memory_per_cpu = 8GB
+#
+# # Which email to send the notifications to
+# notification_email = braybaud@intven.com
+#
+# # NYU partition to use
+# partition = cpu_short
+#
+# # Limit time on this job hrs:min:sec
+# time_limit = 10:00:00
 
 
 class ClusterExperimentManager(BaseExperimentManager):
@@ -38,8 +91,8 @@ class ClusterExperimentManager(BaseExperimentManager):
 
         # Get the path and create it if needed
         experiment_path = self.experiment.get_path()
-        if not os.path.exists(experiment_path):
-            os.makedirs(experiment_path)
+        os.makedirs(experiment_path, exist_ok=True)
+        os.makedirs(os.path.join(experiment_path, "Assets"), exist_ok=True)
 
     @staticmethod
     def create_suite(suite_name):
@@ -70,7 +123,7 @@ class ClusterExperimentManager(BaseExperimentManager):
         pass
 
     def get_simulation_creator(self, work_queue):
-        return LocalSimulationCreator(config_builder=self.config_builder,
+        return ClusterSimulationCreator(config_builder=self.config_builder,
                                       initial_tags=self.exp_builder.tags,
                                       work_queue=work_queue,
                                       experiment=self.experiment,
@@ -115,8 +168,11 @@ class ClusterExperimentManager(BaseExperimentManager):
         # Dump the meta-data file
         self.dump_metadata()
 
-        # Dump the required assets
-        self.dump_assets()
+        # Dump the shell script
+        self.dump_shell_script()
+
+        # Package
+        self.package()
 
     def dump_metadata(self):
         metadata = {
@@ -134,23 +190,42 @@ class ClusterExperimentManager(BaseExperimentManager):
         with open(os.path.join(self.experiment.get_path(), "metadata.json"), 'w') as fp:
             json.dump(metadata, fp, indent=4)
 
-    def dump_assets(self):
-        assets_path = os.path.join(self.experiment.get_path(), "Assets")
-        os.mkdir(assets_path)
+    def dump_shell_script(self):
+        folders = " ".join(s.id for s in self.experiment.simulations)
+        with open(os.path.join(self.experiment.get_path(), "run_script.sh"), 'w') as fp:
+            fp.write(script_template.format(job_name=self.experiment.id,
+                                            partition=SetupParser.get("partition"),
+                                            memory=SetupParser.get("memory_per_cpu"),
+                                            time_limit=SetupParser.get("time_limit"),
+                                            cpu_per_task=SetupParser.get("cpu_per_task"),
+                                            nodes=SetupParser.get("nodes"),
+                                            email=SetupParser.get("notification_email"),
+                                            folders_length=len(self.experiment.simulations)-1,
+                                            folders=folders))
 
-        from simtools.AssetManager.SimulationAssets import SimulationAssets
-        for collection in SimulationAssets.COLLECTION_TYPES:
-            for file in self.assets._gather_files(self.config_builder, collection) or []:
-                # For each file found in the assets, check if the folder exist
-                folder = os.path.join(assets_path, file.relative_path or "")
-                if not os.path.exists(folder):
-                    os.mkdir(folder)
-
-                # And copy it there
-                shutil.copyfile(file.absolute_path, os.path.join(folder, file.file_name))
+    def package(self):
+        with TemporaryDirectory() as tmpdir:
+            zipfile = os.path.join(tmpdir, self.experiment.id)
+            shutil.make_archive(zipfile, 'zip', self.experiment.get_path())
+            shutil.move(f"{zipfile}.zip", self.experiment.get_path())
 
     def wait_for_finished(self, verbose=False, sleep_time=5):
-        return
+        print("CLUSTER MODE")
+        print("----------------------------------")
+        print(f"- Copy the {self.experiment.id}.zip file from {self.experiment.get_path()} to scratch")
+        print(f"- Connect to prince (either through bastion or directly if on site)")
+        print(f"- Unpack the {self.experiment.id}.zip file")
+        print(f"- Run sbatch run_script.sh from the {self.experiment.id} folder")
+        print(f"- Wait for the jobs to complete (you will receive an email when done)")
+        print(f"- Copy the jobs with their outputs to {self.experiment.get_path()}")
+        print("Press Enter when all those steps are done to continue")
+        sys.stdin.readline()
+        print("----------------------------------")
+
+        for s in self.experiment.simulations:
+            s.status = SimulationState.Succeeded
+            DataStore.save_simulation(s)
 
     def succeeded(self):
         return True
+

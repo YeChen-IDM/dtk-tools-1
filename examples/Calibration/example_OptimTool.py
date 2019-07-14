@@ -22,7 +22,7 @@ except ImportError as e:
     raise ImportError(message)
 
 # Which simtools.ini block to use for this calibration
-SetupParser.default_block = 'HPC'
+SetupParser.default_block = 'CLUSTERMODE'
 
 # Start from a base MALARIA_SIM config builder
 # This config builder will be modify by the different sites defined below
@@ -36,7 +36,6 @@ sites = [sites[0]]
 
 # The default plotters used in an Optimization with OptimTool
 plotters = [LikelihoodPlotter(combine_sites=True),
-            SiteDataPlotter(num_to_plot=5, combine_sites=True),
             OptimToolPlotter()  # OTP must be last because it calls gc.collect()
 ]
 
@@ -167,7 +166,7 @@ optimtool = OptimTool(params,
     mu_r=r,             # <-- radius for numerical derivatve.  CAREFUL not to go too small with integer parameters
     sigma_r=r/10.,      # <-- stdev of radius
     center_repeats=2,   # <-- Number of times to replicate the center (current guess).  Nice to compare intrinsic to extrinsic noise
-    samples_per_iteration=6  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
+    samples_per_iteration=3  # 32 # <-- Samples per iteration, includes center repeats.  Actual number of sims run is this number times number of sites.
 )
 
 calib_manager = CalibManager(name='ExampleOptimization',    # <-- Please customize this name
@@ -175,7 +174,7 @@ calib_manager = CalibManager(name='ExampleOptimization',    # <-- Please customi
                              map_sample_to_model_input_fn=map_sample_to_model_input,
                              sites=sites,
                              next_point=optimtool,
-                             sim_runs_per_param_set=3,  # <-- Replicates
+                             sim_runs_per_param_set=1,  # <-- Replicates
                              max_iterations=3,          # <-- Iterations
                              plotters=plotters)
 
