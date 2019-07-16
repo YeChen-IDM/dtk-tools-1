@@ -94,6 +94,10 @@ class ClusterExperimentManager(BaseExperimentManager):
         os.makedirs(experiment_path, exist_ok=True)
         os.makedirs(os.path.join(experiment_path, "Assets"), exist_ok=True)
 
+    def refresh_experiment(self):
+        # Refresh the experiment
+        self.experiment = DataStore.get_experiment(self.experiment.exp_id)    
+
     @staticmethod
     def create_suite(suite_name):
         suite_id = suite_name + '_' + re.sub('[ :.-]', '_', str(datetime.now()))
